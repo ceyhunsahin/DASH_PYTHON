@@ -1,1 +1,1 @@
-web: gunicorn dashappv1:app
+web gunicorn dashappv1:app
