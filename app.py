@@ -1,33 +1,24 @@
+
 import base64
 import datetime
 import io
-from logging import PlaceHolder
-from glob import glob
 import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_daq as daq  # #
 import dash_html_components as html
-import os
-from urllib.parse import quote as urlquote
-from flask import Flask, send_from_directory
 import dash_table  # #
-import numpy as np
-import OpenOPC
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
-from attr import validate
 from dash import no_update
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from numpy import trapz
-from numpy.distutils.system_info import dfftw_threads_info
-from plotly.subplots import make_subplots
+
 
 # Initialize the app
-app = dash.Dash(__name__,external_stylesheets=[dbc.themes.BOOTSTRAP])
-server = Flask(__name__)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+server = app.server
 app.config.suppress_callback_exceptions = True
 
 # connect OPC 
@@ -38,25 +29,26 @@ getDataFromModbus = []
 
 
 
-extra_data_list = ['Mass de Bois', 'Volume gaz', 'Vitesse de rotation', 'Puissance Thermique',
-                   'Puissance Electrique', 'CO', 'CO2', 'NO', 'NOX', 'Temperature de Fumée']
+extra_data_list = [
+    'Mass de Bois', 'Volume gaz', 'Vitesse de rotation', 'Puissance Thermique',
+    'Puissance Electrique', 'CO', 'CO2', 'NO', 'NOX', 'Temperature de Fumée'
+]
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content')
 ])
-
 # 4 page
 index_page = html.Div(className = "indexpage",
-    children = [
-    dcc.Link(html.Button('Go to ENERBAT', id="indexPageStyle"), href='/page-1'),
-    html.Br(),
-    dcc.Link(html.Button('Go to X', id="indexPageStyle"), href='/page-2'),
-    html.Br(),
-    dcc.Link(html.Button('Go to Y', id="indexPageStyle"), href='/page-3'),
-    html.Br(),
-    dcc.Link(html.Button('Go to Z', id="indexPageStyle"), href='/page-4'),
-])
+                        children = [
+                        dcc.Link(html.Button('Go to ENERBAT', id="indexPageStyle"), href='/page-1'),
+                        html.Br(),
+                        dcc.Link(html.Button('Go to X', id="indexPageStyle"), href='/page-2'),
+                        html.Br(),
+                        dcc.Link(html.Button('Go to Y', id="indexPageStyle"), href='/page-3'),
+                        html.Br(),
+                        dcc.Link(html.Button('Go to Z', id="indexPageStyle"), href='/page-4'),
+                    ])
 
 page_1_layout =html.Div(
             className = 'main_container',
@@ -121,10 +113,20 @@ page_1_layout =html.Div(
                                                             html.Div(id='hiddenShapeDate',children = [],style = {'visibility':'hidden','height' : '0%', 'width' : '0%'}),],),
                                                             html.Div(id='hiddenDifferance',children = [],style = {'visibility':'hidden','height' : '0%', 'width' : '0%'}),
                                                             html.Div(id='retrieve',children = [],style = {'visibility':'hidden','height' : '0%', 'width' : '0%'}),
-                                                            
+                                                            html.Div(id='datatablehidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='radiographhidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='sliderHeightTab1hidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='sliderWidthTab1hidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='minimumValueGraphhidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='firstchoosenvalhidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='secondchoosenvalhidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='leftintegralfirsthidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='leftintegralsecondhidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='rightintegralfirsthidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='rightintegralsecondhidden',children = [],style = {'display':'None'}),
                                                             ]),
-                                                            
-                    
+
+
                                                     ]),
                             
                                   
@@ -181,7 +183,7 @@ page_1_layout =html.Div(
                                                         style = {'visibility' : 'hidden'},
                                                         selected_className='custom-tab--selected'
                                                     ),
-                                                                                                        dcc.Tab(
+                                                    dcc.Tab(
                                                         id = "tab5",
                                                         label='Tab for one option',
                                                         value='tab-5',
@@ -250,35 +252,6 @@ def display_page(pathname):
         return index_page
 
 
-@app.callback(Output('tab2','children'),
-              [Input("my-toggle-switch", "on"),Input('interval','n_intervals')])
-
-def values(on, n_intervals):    
-    
-    if on == 1 :
-        
-        opc=OpenOPC.client()
-        opc.servers()
-        opc.connect('Kepware.KEPServerEX.V6')
-        
-        for name, value, quality, time in opc.iread( 
-                ['schneider_Xflow.MAF.CoAd', 'schneider_Xflow.MAF.ComManCoP2',
-                'schneider_Xflow.MAF.ComManCoP3P4P5','schneider_Xflow.MAF.ComManPompeSec',
-                'schneider_Xflow.MAF.CompteurEnergie','schneider_Xflow.MAF.CoP2',
-                'schneider_Xflow.MAF.CtempDepChauff','schneider_Xflow.MAF.D1',
-                'schneider_Xflow.MAF.D2','schneider_Xflow.MAF.D3','schneider_Xflow.MAF.D4',
-                'schneider_Xflow.MAF.MarcheBruleur','schneider_Xflow.MAF.Teg',
-                'schneider_Xflow.MAF.SdeBasBouMelange','schneider_Xflow.MAF.SdeBasHauMelange',
-                'schneider_Xflow.MAF.TambN3','schneider_Xflow.MAF.Tb1','schneider_Xflow.MAF.Tb2',
-                'schneider_Xflow.MAF.Tb3','schneider_Xflow.MAF.Tb4','schneider_Xflow.MAF.TdepPLC',
-                'schneider_Xflow.MAF.Teb','schneider_Xflow.MAF.Tec ','schneider_Xflow.MAF.Teev',
-                'schneider_Xflow.MAF.TempminMaf','schneider_Xflow.MAF.Text','schneider_Xflow.MAF.Tsb',
-                'schneider_Xflow.MAF.Tsc','schneider_Xflow.MAF.Tsev','schneider_Xflow.MAF.Tsg'] ):
-            
-            getDataFromModbus.append((name, value, quality, time)) 
-            df = pd.DataFrame(getDataFromModbus, columns = ['ItemID','Value', 'DataType', 'TimeStamp'])   
-            df.to_csv("cc.csv") 
-    return getDataFromModbus
 def parse_contents(contents, filename, date):
     content_type, content_string = contents.split(',')
 
@@ -288,7 +261,7 @@ def parse_contents(contents, filename, date):
             # Assume that the user uploaded a CSV file
             df = pd.read_csv(
                 io.StringIO(decoded.decode('utf-8')))
-        elif 'xls' in filename:
+        elif 'xlsx' in filename:
             # Assume that the user uploaded an excel file
             df = pd.read_excel(io.BytesIO(decoded))
             df['index'] = df.index
@@ -315,6 +288,7 @@ def parse_contents(contents, filename, date):
             'maxWidth': 0,
             'fontSize':'1rem',
             'TextAlign' : 'center',
+
             
                         },
             fixed_rows={'headers': True},
@@ -355,13 +329,13 @@ def parse_contents(contents, filename, date):
 
         html.Hr(),  # horizontal line
     ])
-@app.callback([Output('tab5', 'children'),Output('retrieve', 'children')],
+@app.callback([Output('datatablehidden', 'children'),Output('retrieve', 'children')],
              
               [Input('upload-data', 'contents'),Input("my-toggle-switch", "on"),],
               [State('upload-data', 'filename'),
               State('upload-data', 'last_modified'),
               State('retrieve', 'children'),
-              State('tab5', 'children')])
+              State('datatablehidden', 'children')])
 def update_output(list_of_contents, on, list_of_names, list_of_dates,retrieve,content):
     if on == 0:
         raise PreventUpdate
@@ -376,7 +350,7 @@ def update_output(list_of_contents, on, list_of_names, list_of_dates,retrieve,co
     else : return(no_update,no_update)
    
 @app.callback(Output('output-data-upload','children'),
-              Input('tab5', 'children'),
+              [Input('datatablehidden', 'children')],
               )
 
 def retrieve(retrieve):
@@ -384,16 +358,16 @@ def retrieve(retrieve):
     return retrieve
     # else : return no_update
 @app.callback(Output('tab2DashTable', 'children'),
-              Input('tab5', 'children'),
+              [Input('datatablehidden', 'children')],
               )
 
-def retrieve(retrieve):
+def retrieve2(retrieve):
 #     # if len(choosen)==0:
     return retrieve
     # else : return no_update    
 @app.callback(
     Output('datatable-interactivity', 'style_data_conditional'),
-    Input('datatable-interactivity', 'selected_columns')
+    [Input('datatable-interactivity', 'selected_columns')]
 )
 def update_styles(selected_columns):
     return [{
@@ -405,7 +379,8 @@ def update_styles(selected_columns):
     # for this created a hiddev div as opcLoad,
     # Output('tab2','children') : also hidden tab, for the graph           
 @app.callback([Output("opcLoad","children"),Output('upload-data','style')],
-              Input("my-toggle-switch", "on")
+              [Input("my-toggle-switch", "on")]
+
               )
 def opcLoadingData (on):
     ocploadlist  = []
@@ -483,13 +458,11 @@ def opcLoadingData (on):
         ])
         return (ocploadlist, visibilty)
 
-    else : 
-        opc=OpenOPC.client()
-        opc.close()    
+    else :
         return (ocploadlist, {'visibility' : 'hidden'})
     
 @app.callback(Output("dropdownLeft","options"),
-              Input("retrieve", "children"))
+              [Input("retrieve", "children")])
 def dropdownlistcontrol(retrieve):
     if len(retrieve)>0:
         df = pd.read_excel('{}'.format(retrieve[0]))
@@ -500,8 +473,8 @@ def dropdownlistcontrol(retrieve):
 
 @app.callback(
      [Output("leftSideDropdownHidden", "children"),Output("leftSidedroptValue","children")],
-     Input("dropdownLeft", "value"),
-     State("leftSideDropdownHidden", "children")
+     [Input("dropdownLeft", "value")],
+     [State("leftSideDropdownHidden", "children")]
 )
 
 def hiddendiv(val_dropdownLeft, children):
@@ -521,7 +494,7 @@ def hiddendiv(val_dropdownLeft, children):
         Output("leftSideDropdown", "children"),
         [Input("showLeft", "n_clicks"),
         Input("clearLeft", "n_clicks"),],
-        State("leftSideDropdownHidden", "children"),
+        [State("leftSideDropdownHidden", "children")],
        
     
 )
@@ -638,7 +611,7 @@ def edit_list2(ncr1,ncr2, valeur, children):
    
 
 @app.callback(Output('tabs-content-classes', 'children'),
-              Input('tabs-with-classes', 'value'),
+              [Input('tabs-with-classes', 'value')],
              
       
             
@@ -660,8 +633,8 @@ def render_content(tab):
 
 
 @app.callback(Output('tab1Data','children'),
-              Input("my-toggle-switch", "on"),
-              Input("leftSidedroptValue", "children")
+              [Input("my-toggle-switch", "on"),
+              Input("leftSidedroptValue", "children")]
               )
 
 def LoadingDataTab1 (on,dropdownhidden):
@@ -807,55 +780,115 @@ def LoadingDataTab1 (on,dropdownhidden):
         
         return loadTab1
     
-    
+ # bunu bi duzeltmeye calisacam
 @app.callback(Output("leftSideChecklistValueHidden","children"),
               [Input('choosenChecklistLeft', 'value')],
-              State("leftSideChecklistValueHidden","children")
+              [State("leftSideChecklistValueHidden","children")]
               )
 
 
 def res(val,hiddenval):
     if val == None:
-        raise PreventUpdate 
+        raise PreventUpdate
     hiddenval = val
     print('valllllllllll',val)
     print('hiddenval',hiddenval)
     return hiddenval
 
+@app.callback(Output("radiographhidden","children"),
+              [Input("radiograph", "value")],
 
+              )
+def radio(radiograph):
+    return radiograph
+
+@app.callback(Output("sliderHeightTab1hidden","children"),
+              [Input("sliderHeightTab1", "value")],
+              )
+def tabheight(height):
+    return height
+
+@app.callback(Output("sliderWidthTab1hidden","children"),
+              [Input("sliderWidthTab1", "value")],
+
+              )
+def tabwidth(width):
+    return width
+
+@app.callback(Output("minimumValueGraphhidden","children"),
+              [Input("minimumValueGraph", "value")],
+              )
+def min(minval):
+    return minval
+
+@app.callback(Output("firstchoosenvalhidden","children"),
+              [Input("firstChoosenValue", "value")],
+              [State("firstchoosenvalhidden","children")]
+              )
+def firstchleft(firstchoosen,hiddenfirstchoosen):
+    hiddenfirstchoosen.append(firstchoosen)
+    return hiddenfirstchoosen
+
+@app.callback(Output("secondchoosenvalhidden","children"),
+              [Input("secondChoosenValue", "value")],
+              )
+def secondchleft(secondchoosen):
+    return secondchoosen
+
+@app.callback(Output("leftintegralfirsthidden","children"),
+              [Input("leftIntegralFirst", "value")],
+              )
+def firstchright(leftintfirst):
+    return leftintfirst
+@app.callback(Output("leftintegralsecondhidden","children"),
+              [Input("leftIntegralSecond", "value")],
+
+              )
+def secondchright(leftintsecond):
+    return leftintsecond
+@app.callback(Output("rightintegralfirsthidden","children"),
+              [Input("rightIntegralFirst", "value")],
+              )
+def rightfrst(rightintfirst):
+    return rightintfirst
+@app.callback(Output("rightintegralsecondhidden","children"),
+              [Input("rightIntegralSecond", "value")],
+              )
+def rightscnd(rightintsecond):
+    return rightintsecond
 # for show graph and changement
+
+
+
+
+
+
 @app.callback([Output('graph','figure'),
                Output('hiddenDifferance','children'),],
               [Input("leftSideChecklistValueHidden","children"),
-               Input("radiograph", "value"),
+               Input("radiographhidden","children"),
                Input('pointLeftFirst', 'children'),
                Input('pointRightFirst', 'children'),
-               Input("sliderHeightTab1","value"),
-               Input("sliderWidthTab1","value"),
-               Input('minimumValueGraph', 'value'),
-               Input('firstChoosenValue','value'),
-               Input('secondChoosenValue','value'),
-               Input('leftIntegralFirst','value'),
-               Input('leftIntegralSecond','value'),
-               Input('rightIntegralFirst','value'),
-               Input('rightIntegralSecond','value'),
-            #    Input('tab1Data','nclicks')
-            #    Input('datatable-interactivity','data'),
-            #    Input('datatable-interactivity','columns'),
-               
-               
-            #    Input ('interpolation', "n_clicks")
+               Input("sliderHeightTab1hidden","children"),
+               Input("sliderWidthTab1hidden","children"),
+               Input('minimumValueGraphhidden', 'children'),
+               Input('firstchoosenvalhidden','children'),
+               Input('secondchoosenvalhidden','children'),
+               Input('leftintegralfirsthidden','children'),
+               Input('leftintegralsecondhidden','children'),
+               Input('rightintegralfirsthidden','children'),
+               Input('rightintegralsecondhidden','children'),
                ],
               [State('hiddenDifferance','children'),
                State('retrieve','children')]
                )
               
                
-def res(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
+def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
         minVal,firstchoosen, secondchoosen,leftfirstval,leftsecondval,
         rightfirstval,rightsecondval, differance,retrieve):
-    # if val == [] or val == None or retrieve == None or retrieve == []:
-    #     raise PreventUpdate
+    if val == [] or val == None or retrieve == None or retrieve == []:
+         raise PreventUpdate
     if len(retrieve)>0:
         df = pd.read_excel('{}'.format(retrieve[0]))
         df_shape = pd.read_excel('{}'.format(retrieve[0]))
@@ -863,6 +896,7 @@ def res(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
         df_shape.index = df_shape['date']
         dt = ["{}-{:02.0f}-{:02.0f} {:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day,d.hour,d.minute,d.second) for d in df_shape.index]
         fig = go.Figure()
+        print("firstshape",firstshape)
         for i in range(len(val)) : 
             print('valgraf',val)
             y_axis = df[val[i]]
@@ -927,6 +961,9 @@ def res(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
             def controlShape() : 
                 if firstchoosen != None :
                     print('firstshape', firstshape)
+                    print('leftfirstval',leftfirstval)
+                    print('firstchoosen',firstchoosen)
+
                     if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:      
                         if int(firstshape[1])>int(firstshape[0]):
                             
@@ -935,7 +972,7 @@ def res(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                                             y0=21 if minVal == None else minVal,
                                             line_width = 0,
                                             x1=dt[k+1],
-                                            y1=df[firstchoosen][k],
+                                            y1=df[firstchoosen[-1]][k],
                                             fillcolor=  'blue',
                                             opacity=0.5,
                                             ) for k in range(int(firstshape[0]),int(firstshape[1]))] 
@@ -946,16 +983,20 @@ def res(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                                             x0= dt[k],
                                             y0=21 if minVal == None else minVal,
                                             x1=dt[k+1],
-                                            y1=df[firstchoosen][k],
+                                            y1=df[firstchoosen[-1]][k],
                                             fillcolor=  'blue',
                                             opacity=0.5,
                                             line_width = 0
                                             ) for k in range(int(firstshape[1]),int(firstshape[0]))] 
-                            return fig.add_shape 
+                            return fig.add_shape
+
 
                     
             def controlShape2() :    
-                if secondchoosen != None :        
+                if secondchoosen != None :
+                    print('secondshape', secondshape)
+                    print('rightfirstval',rightfirstval)
+                    print('secondchoosen',secondchoosen)
                     if len(secondshape) == 2 and rightfirstval != None and rightsecondval != None:    
                         if int(secondshape[1])>int(secondshape[0]):
                             
@@ -981,7 +1022,7 @@ def res(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                                             line_width = 0
                                             )  for k in range(int(secondshape[1]),int(secondshape[0]))]
                             return fig.add_shape
-                
+
             a = controlShape()
             b = controlShape2()
             if a != None and b != None:
@@ -1056,7 +1097,7 @@ def res(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
     else : return (no_update, no_update)
 
 @app.callback(Output('tab2Data','children'),
-              Input("my-toggle-switch", "on"))
+              [Input("my-toggle-switch", "on")])
 
 def LoadingDataTab2 (on):
     
@@ -1173,7 +1214,7 @@ def contractdropdown(x,y,):
     return x,y 
 
 @app.callback([Output("tabDropdownTop","options"),Output("tabDropdownDown","options")],
-              Input("retrieve", "children"))
+              [Input("retrieve", "children")])
 def dropdownlistcontrol(retrieve):
     if len(retrieve)>0:
         df = pd.read_excel('{}'.format(retrieve[0]))
@@ -1183,7 +1224,7 @@ def dropdownlistcontrol(retrieve):
     
 @app.callback([Output('hiddenTextxaxis','children'),Output('hiddenTextyaxis','children'),
                Output('hiddenTextHeader','children'),Output('hiddenTextNote','children')],
-              Input('addText','n_clicks'),
+              [Input('addText','n_clicks')],
               [State('textarea','value'),State('dropadd','value'),
               State('hiddenTextxaxis','children'),State('hiddenTextyaxis','children'),
               State('hiddenTextHeader','children'),State('hiddenTextNote','children')]
@@ -1217,9 +1258,9 @@ def detailedGraph(addtextclick,textarea,add,g1,g2,head,note):
               Input('sliderHeight','value'),Input('sliderWidth', 'value'),
               Input('hiddenTextxaxis','children'),Input('hiddenTextyaxis','children'),
               Input('hiddenTextHeader','children'),Input('hiddenTextNote','children')],
-              State('retrieve','children')
+              [State('retrieve','children')]
               )
-def detailedGraph(radio,  valx, valy,slideheight,slidewidth,g1,g2,head,note,retrieve):
+def detailedGraph2(radio,  valx, valy,slideheight,slidewidth,g1,g2,head,note,retrieve):
     
 
     if valx == [] or valy ==[] or valx == None or valy ==None or g1 == None or g2  == None or head  == None or note == None :
@@ -1279,6 +1320,7 @@ def detailedGraph(radio,  valx, valy,slideheight,slidewidth,g1,g2,head,note,retr
 def valint(clickData,firstchoosen,value,leftchild,rightchild,retrieve):
     if value is [] or value is None or clickData == None or clickData== [] or firstchoosen ==None or retrieve == None or retrieve== []:
         raise PreventUpdate
+    print('firstchoosen',firstchoosen)
     spaceList1 = []
     zero = 0
     spaceList2 = []
@@ -1310,19 +1352,30 @@ def valint(clickData,firstchoosen,value,leftchild,rightchild,retrieve):
             # else : return(no_update,no_update)
     else : return(no_update,no_update)
         
-@app.callback(
-    [Output('leftIntegralFirst', 'value'),Output('leftIntegralSecond', 'value'),
-     ],
+@app.callback([Output('leftIntegralFirst', 'value'),Output('leftIntegralSecond', 'value')],
     [Input('pointLeftFirst', 'children'),Input('pointLeftSecond', 'children')],
-    [State('leftIntegralFirst', 'value'),State('leftIntegralSecond', 'value'),
-     State('firstChoosenValue','value')],)
-def display_hover_data(leftchild,rightchild, st1left,st1right,firstchoosen):
-    if leftchild == None or rightchild==None or  leftchild == [] or rightchild==[] or firstchoosen ==None:
+    [State('firstChoosenValue','value')],)
+def display_hover_data(leftchild,rightchild,firstchoosen):
+    if leftchild == None or rightchild==None or leftchild == [] or rightchild==[] or firstchoosen ==None :
         raise PreventUpdate
-    st1right = max(leftchild) 
-    st1left = min(rightchild) 
-    if firstchoosen != []:
-        return 'T '+str(st1left) , 'T '+str(st1right)
+    minchild = 0
+    maxchild = 0
+    if len(leftchild) ==2:
+        for i in range(len(leftchild)):
+            if leftchild[0] < leftchild[1] :
+                minchild = leftchild[0]
+                maxchild = leftchild[1]
+            else :
+                minchild = leftchild[1]
+                maxchild = leftchild[0]
+        print('minchild',minchild)
+        print('maxchild',maxchild)
+    else :
+        minchild = leftchild[0]
+        maxchild = leftchild[0]
+
+    if firstchoosen !='' and len(leftchild)==2:
+        return ('T '+str(minchild), 'T '+str(maxchild))
     else : return (no_update, no_update)
     
 @app.callback(
@@ -1335,7 +1388,7 @@ def display_hover_data(leftchild,rightchild, st1left,st1right,firstchoosen):
      State('pointRightSecond', 'children'),
      State('retrieve', 'children')]
     )
-def valint(clickData,secondchoosen, value,leftchild,rightchild,retrieve):
+def valint2(clickData,secondchoosen, value,leftchild,rightchild,retrieve):
     if value is [] or value is None or clickData == None or clickData== [] or secondchoosen==None or retrieve == None or retrieve== []:
         raise PreventUpdate
     spaceList1 = []
@@ -1370,23 +1423,32 @@ def valint(clickData,secondchoosen, value,leftchild,rightchild,retrieve):
     [Output('rightIntegralFirst', 'value'),Output('rightIntegralSecond', 'value'),
      ],
     [Input('pointRightFirst', 'children'),Input('pointRightSecond', 'children')],
-    [State('rightIntegralFirst', 'value'),State('rightIntegralSecond', 'value'),
-     State('secondChoosenValue','value')],)
-def display_hover_data(leftchild1,rightchild1, st2left,st2right,secondchoosen):
+    [State('secondChoosenValue','value')],)
+def display_hover_data2(leftchild1,rightchild1,secondchoosen):
     if leftchild1 == None or rightchild1==None or leftchild1 == [] or rightchild1==[] or secondchoosen ==None :
         raise PreventUpdate
-
-    st2right = max(leftchild1) 
-    st2left = min(rightchild1) 
-    if secondchoosen != []:
-        return 'T '+str(st2left) , 'T '+str(st2right)    
+    if len(leftchild1) ==2:
+        for i in range(len(leftchild1)):
+            if leftchild1[0] < leftchild1[1] :
+                minchild = leftchild1[0]
+                maxchild = leftchild1[1]
+            else :
+                minchild = leftchild1[1]
+                maxchild = leftchild1[0]
+    else :
+        minchild = leftchild1[0]
+        maxchild = leftchild1[0]
+    print('secondminchild', minchild)
+    print('secondmaxchild', maxchild)
+    if secondchoosen !='' and len(leftchild1)==2:
+        return 'T '+str(minchild) , 'T '+str(maxchild)
     else : return (no_update, no_update)
 
 @app.callback(Output('leftIntegral','value'),
             [Input('leftIntegralFirst', 'value'),
              Input('leftIntegralSecond', 'value'),
              Input('firstChoosenValue','value'),
-             ],State('retrieve', 'children')
+             ],[State('retrieve', 'children')]
             
     )
 
@@ -1428,10 +1490,10 @@ def integralCalculation(st1left,st1right,valuechoosenleft,retrieve):
             [Input('rightIntegralFirst', 'value'),
              Input('rightIntegralSecond', 'value'),
              Input('secondChoosenValue','value'),
-             ],State('retrieve', 'children')
+             ],[State('retrieve', 'children')]
     )
 
-def integralCalculation(st2left,st2right,valuechoosenright,retrieve):
+def integralCalculation2(st2left,st2right,valuechoosenright,retrieve):
     print('retrieve',retrieve)
     if st2left == None or st2right ==None or valuechoosenright == None or valuechoosenright == [] or retrieve == None or retrieve== []:
         raise PreventUpdate
@@ -1501,8 +1563,13 @@ def differanceCalculation(hiddendif, valuechoosenright,valuechoosenleft,leftfirs
 
     # (len(hiddendif)>=2 and len(valuechoosenright)==1) or (len(hiddendif)>=2 and len(valuechoosenleft)==1) or 
     if (len(hiddendif)>=2):
-        a = max(hiddendif)
-        b = min(hiddendif)
+        for i in range(len(hiddendif)):
+            if hiddendif[0] < hiddendif[1]:
+                a = hiddendif[0]
+                b = hiddendif[1]
+            else:
+                a= hiddendif[1]
+                b= hiddendif[0]
         print('a',a)
         print('b',b)
         differance = []
@@ -1533,6 +1600,16 @@ def differanceCalculation(hiddendif, valuechoosenright,valuechoosenleft,leftfirs
         else : return 'intersection'
 
     
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  
  
