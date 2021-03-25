@@ -454,7 +454,7 @@ def opcLoadingData (on):
 def dropdownlistcontrol(retrieve):
     if len(retrieve)>0:
         df = pd.read_excel('{}'.format(retrieve[0]))
-        dff = [{'label': i, 'value': i} for i in df.columns if i != 'date']
+        dff = [{'label': i, 'value': i} for i in df.columns]
         return dff
     else : return no_update
     
@@ -889,7 +889,7 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
 
             y_axis = df[val[i]]
             if 'date' not in df.columns :
-                x_axis = df['index']
+                x_axis = df['Temps s']
             else : x_axis = df['date']
             fig.add_trace(go.Scattergl(x = x_axis,y = y_axis, mode = radiograph,name = val[i]))
             color = {0 : 'blue', 1 : 'red', 2: 'green', 3 : 'purple', 4 : 'orange' }            
