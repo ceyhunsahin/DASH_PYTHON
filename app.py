@@ -96,23 +96,23 @@ page_1_layout =html.Div(
                                                                 html.Button('File', id='file_save', n_clicks=0, ),
                                                                 html.Button('Database', id='db_save', n_clicks=0, ),
                                                                 ]),
-                                                            html.Div(id = 'pointLeftFirst',children = [], style = {'visibility' : 'hidden'}),
-                                                            html.Div(id = 'pointLeftSecond',children = [], style = {'visibility' : 'hidden'}),
-                                                            html.Div(id = 'pointRightFirst',children = [], style = {'visibility' : 'hidden'}),
-                                                            html.Div(id = 'pointRightSecond',children = [], style = {'visibility' : 'hidden'}),
-                                                            html.Div(id = 'leftSideChecklistValue',children = [], style = {'visibility' : 'hidden'}),
-                                                            html.Div(id = 'leftSidedroptValue',children = [], style = {'visibility' : 'hidden'}),
-                                                            html.Div(id = 'leftSideChecklistValueHidden',children = [], style = {'visibility' : 'hidden'}),
-                                                            html.Div(id='tab2hiddenValuex_axis',style = {'visibility' : 'hidden'},children = []),
-                                                            html.Div(id='tab2hiddenValuey_axis',style = {'visibility' : 'hidden'},children = []),
-                                                            html.Div(id='hiddenTextHeader',children = [],style = {'visibility':'hidden','height' : '0%', 'width' : '0%'}),
-                                                            html.Div(id='hiddenTextNote',children = [],style = {'visibility':'hidden','height' : '0%', 'width' : '0%'}),
-                                                            html.Div(id='hiddenTextxaxis',children = [],style = {'visibility':'hidden','height' : '0%', 'width' : '0%'}),
-                                                            html.Div(id='hiddenTextyaxis',children = [],style = {'visibility':'hidden','height' : '0%', 'width' : '0%'}),
-                                                            html.Div(id='hiddenShapeVal',children = [],style = {'visibility':'hidden','height' : '0%', 'width' : '0%'}),
-                                                            html.Div(id='hiddenShapeDate',children = [],style = {'visibility':'hidden','height' : '0%', 'width' : '0%'}),],),
-                                                            html.Div(id='hiddenDifferance',children = [],style = {'visibility':'hidden','height' : '0%', 'width' : '0%'}),
-                                                            html.Div(id='retrieve',children = [],style = {'visibility':'hidden','height' : '0%', 'width' : '0%'}),
+                                                            html.Div(id = 'pointLeftFirst',children = [], style = {'display':'None'}),
+                                                            html.Div(id = 'pointLeftSecond',children = [], style = {'display':'None'}),
+                                                            html.Div(id = 'pointRightFirst',children = [], style = {'display':'None'}),
+                                                            html.Div(id = 'pointRightSecond',children = [], style = {'display':'None'}),
+                                                            html.Div(id = 'leftSideChecklistValue',children = [], style = {'display':'None'}),
+                                                            html.Div(id = 'leftSidedroptValue',children = [], style = {'display':'None'}),
+                                                            html.Div(id = 'leftSideChecklistValueHidden',children = [], style = {'display':'None'}),
+                                                            html.Div(id='tab2hiddenValuex_axis',style = {'display':'None'},children = []),
+                                                            html.Div(id='tab2hiddenValuey_axis',style = {'display':'None'},children = []),
+                                                            html.Div(id='hiddenTextHeader',children = [],style = {'display':'None'}),
+                                                            html.Div(id='hiddenTextNote',children = [],style = {'display':'None'}),
+                                                            html.Div(id='hiddenTextxaxis',children = [],style = {'display':'None'}),
+                                                            html.Div(id='hiddenTextyaxis',children = [],style = {'display':'None'}),
+                                                            html.Div(id='hiddenShapeVal',children = [],style = {'display':'None'}),
+                                                            html.Div(id='hiddenShapeDate',children = [],style = {'display':'None'}),],),
+                                                            html.Div(id='hiddenDifferance',children = [],style = {'display':'None'}),
+                                                            html.Div(id='retrieve',children = [],style = {'display':'None'}),
                                                             html.Div(id='datatablehidden',children = [],style = {'display':'None'}),
                                                             html.Div(id='radiographhidden',children = [],style = {'display':'None'}),
                                                             html.Div(id='sliderHeightTab1hidden',children = [],style = {'display':'None'}),
@@ -124,16 +124,10 @@ page_1_layout =html.Div(
                                                             html.Div(id='leftintegralsecondhidden',children = [],style = {'display':'None'}),
                                                             html.Div(id='rightintegralfirsthidden',children = [],style = {'display':'None'}),
                                                             html.Div(id='rightintegralsecondhidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='tableinteractivehidden',children = [],style = {'display':'None'}),
                                                             ]),
-
-
                                                     ]),
-                            
-                                  
-                              
-                    
-            
-                
+
             html.Div(className = "eight-columns-div-for-charts",
                          children = [
                              html.Div(
@@ -153,8 +147,6 @@ page_1_layout =html.Div(
                                                         className='custom-tab',
                                                         selected_className='custom-tab--selected',
                                                         children = [],
-                                                                                                                        
-                                                        
                                                     ),
                                                     dcc.Tab(
                                                         id = 'tab4',
@@ -162,10 +154,7 @@ page_1_layout =html.Div(
                                                         value='tab-4',
                                                         className='custom-tab',
                                                         selected_className='custom-tab--selected',
-                                                        
                                                         children=[
-                                                            
-                                                                
                                                             ]
                                                     ),
                                                     dcc.Tab(
@@ -404,7 +393,7 @@ def opcLoadingData (on):
                                children = [html.Div(className='aa',
                                                         children=[html.Div(
                         dcc.Dropdown(id='dropdownLeft', 
-                            options=[{'label': i, 'value': i} for i in data_list],
+                            options=[{'label': i, 'value': i} for i in data_list if i != 'date'],
                             multi=False, 
                             style={ "cursor": "pointer"},
                             className='stockSelectorClass',
@@ -412,9 +401,9 @@ def opcLoadingData (on):
                             placeholder = 'Select your parameters...',
                                     ),
                             ), 
-                    html.Div([html.Button('Show', id = 'showLeft',n_clicks=0, style = {'height' : '50px', 'width':'30%', 'fontSize' : '1.5rem' }),
-                              html.Button('Delete', id = 'clearLeft', n_clicks=0, style = {'height' : '50px','width':'30%', 'fontSize' : '1.5rem'})], className = 'buttons'),   
-                    html.Div(id = 'leftSideDropdownHidden', children = [],style = {'visibility':'hidden'}),
+                    html.Div([html.Button('Show', id = 'showLeft',n_clicks=0, style ={'height': '40px', 'width': '80px','fontSize': '1.2rem'}),
+                              html.Button('Delete', id = 'clearLeft', n_clicks=0, style = {'height' : '40px','width':'80px', 'fontSize' : '1.2rem'})], className = 'buttons'),
+                    html.Div(id = 'leftSideDropdownHidden', children = [],style = {'display' : 'None'}),
                     html.Div(id = 'leftSideDropdown', children = []),
                     html.Div(
                                 [
@@ -447,8 +436,8 @@ def opcLoadingData (on):
                                                                             placeholder = 'Select your parameters...',
                                                                             ),
                                                                     )       ,
-                                                    html.Div([html.Button('Show', id = 'showRight',n_clicks=0, style = {'height' : '50px', 'width':'30%', 'fontSize' : '1.5rem' }),
-                                                              html.Button('Delete', id = 'clearRight', n_clicks=0, style = {'height' : '50px','width':'30%', 'fontSize' : '1.5rem'})], className = 'buttons'),
+                                                    html.Div([html.Button('Show', id = 'showRight',n_clicks=0, style = {'height' : '40px', 'width':'80px', 'fontSize' : '1.2rem' }),
+                                                              html.Button('Delete', id = 'clearRight', n_clicks=0, style = {'height' : '40px','width':'80px', 'fontSize' : '1.2rem'})], className = 'buttons'),
                                                     html.Div(id = 'rightSideDropdownHidden', children = [],style = {'visibility':'hidden'}),
                                                     html.Div(id = "rightSideDropdown", children = [])
                                                     ],
@@ -465,7 +454,7 @@ def opcLoadingData (on):
 def dropdownlistcontrol(retrieve):
     if len(retrieve)>0:
         df = pd.read_excel('{}'.format(retrieve[0]))
-        dff = [{'label': i, 'value': i} for i in df.columns]
+        dff = [{'label': i, 'value': i} for i in df.columns if i != 'date']
         return dff
     else : return no_update
     
@@ -511,13 +500,13 @@ def displayLeftDropdown(n_clicks1,n_clicks2,valeur):
         a = []
         a.append(valeur)
         print('aaaaaaaaa',a)
-        print('valur', valeur)
+        print('valeur', valeur)
         new_checklist += html.Div([dbc.Checklist(
                         id = 'choosenChecklistLeft',
                         options = [{'label' : i, 'value' : i} for i in valeur if i in a[0]],
                         value = [],
                         labelStyle={"display": "Block"}, 
-                        ), ],style = {"marginLeft" : "30px"})
+                        ), ],style = {"marginTop" : "10px"})
     if n_clicks2 > 0:
         print("silmeden once",valeur)
         for i in range(n_clicks2):
@@ -762,7 +751,7 @@ def LoadingDataTab1 (on,dropdownhidden):
                       dcc.Slider(id = "sliderHeightTab1",
                                                     max=2100,
                                                     min=400,
-                                                    value=600,
+                                                    value=530,
                                                     step=100,
                                                     vertical = True,
                                                     updatemode='drag')],className = 'abc'),
@@ -770,7 +759,7 @@ def LoadingDataTab1 (on,dropdownhidden):
             html.Div([dcc.Slider(id = "sliderWidthTab1",                        
                         max=2000,
                         min=600,
-                        value=1200,
+                        value=1000,
                         step=100,
                         updatemode='drag'),
             html.Div(id='output-data-upload',children = [])]),
@@ -1001,7 +990,7 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                             
                             fig.add_shape = [dict(type='rect',
                                                 x0= dt[k],
-                                                y0=21 if minVal == None else minVal,
+                                                y0=0 if minVal == None else minVal,
                                                 x1=dt[k+1],
                                                 y1=df[secondchoosen][k],
                                                 fillcolor= 'red',
@@ -1013,7 +1002,7 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                             
                             fig.add_shape = [dict(type='rect',
                                             x0= dt[k],
-                                            y0=21 if minVal == None else minVal,
+                                            y0=0 if minVal == None else minVal,
                                             x1=dt[k+1],
                                             y1=df[secondchoosen][k],
                                             fillcolor= 'red',
@@ -1039,8 +1028,8 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                                             l=50,
                                             r=50,
                                             b=100,
-                                        t=50,
-                                        pad=4
+                                            t=50,
+                                            pad=4
                                     ),
                                     paper_bgcolor="LightSteelBlue",
                     #                 uirevision= firstchoosen,
@@ -1107,7 +1096,7 @@ def LoadingDataTab2 (on):
                  'Tb2', 'Tb3', 'Tb4', 'TdepPLC', 'Teb', 'Tec', 'Teev', 'TempminMaf', 'Text', 'Tsb', 'Tsc', 'Tsev']
     
         loadlist = html.Div(children = [
-                        html.Div([dcc.Dropdown(id='tabDropdownTop', 
+                        html.Div([html.Div([html.Div([dcc.Dropdown(id='tabDropdownTop',
                             options=[{'label': i, 'value': i} for i in data_list],
                             multi=True, 
                             style={ "cursor": "pointer"},
@@ -1122,8 +1111,18 @@ def LoadingDataTab2 (on):
                             className='stockSelectorClass2',
                             clearable=True,
                             placeholder = 'Select your y-axis value...',
-                                    ),
-                        html.Div([dcc.Dropdown(id = "dropadd",
+                                    ),],className = "ab"),
+                        html.Div(dcc.RadioItems(id="radiograph2",
+                                                options=[
+                                                        {'label': 'Point', 'value': 'markers'},
+                                                        {'label': 'Line', 'value': 'lines'},
+                                                        {'label': 'Line + Point', 'value': 'lines+markers'}],
+                                                value='markers',
+                                                labelClassName='groupgraph',
+                                                labelStyle={'margin': '10px', },
+                                                inputStyle={'margin': '10px', }
+                                                ), ),],className = "ac"),
+                                  html.Div([dcc.Dropdown(id = "dropadd",
                                         options=[
                                             {'label': 'Note', 'value': 'note'},
                                             {'label': 'Header', 'value': 'header'},
@@ -1139,33 +1138,20 @@ def LoadingDataTab2 (on):
                                     style={'width': '15rem','marginTop' : '0.5rem'},
                                     autoFocus = 'Saisir',
                                 ),
-                                  
-                    
                                   ],className = "aa"),
                         
                         html.Button('addText', id='addText', n_clicks=0, style = {'marginTop' : '1.5rem'} ),
-                        html.Div(dcc.RadioItems(id = "radiograph2",
-                        options=[
-                            {'label': 'Point', 'value': 'markers'},
-                            {'label': 'Line', 'value': 'lines'},
-                            {'label': 'Line + Point', 'value': 'lines+markers'},
-                            
-                        ],
-                        value='markers',
-                        labelClassName = 'groupgraph',
-                        labelStyle= {'margin' : '10px',},
-                        inputStyle={'margin' : '10px',}
-                    ), ), 
+
                         ],className = "tabDesign",),
                         
                         html.Div([dcc.Graph(id = 'graph2',config = {'displayModeBar': True,
                                                           'scrollZoom': True,
                                                           'modeBarButtonsToAdd':[
-                                        'drawopenpath',
-                                        'drawcircle',
-                                        'eraseshape',
-                                        'select2d',
-                                       ]},
+                                                          'drawopenpath',
+                                                          'drawcircle',
+                                                          'eraseshape',
+                                                          'select2d',
+                                                           ]},
                                   figure = {
                             'layout': {'legend': {'tracegroupgap': 0},
                                         
@@ -1173,22 +1159,19 @@ def LoadingDataTab2 (on):
 }
                         ),
                                 dcc.Slider(id = "sliderHeight",
-                                                #    marks={i: '{}'.format(10 ** i) for i in range(4)},
                                                     max=2100,
                                                     min=400,
-                                                    value=600,
+                                                    value=500,
                                                     step=100,
                                                     vertical = True,
                                                     updatemode='drag')],className = 'abc'),
                         
                         html.Div([dcc.Slider(id = "sliderWidth",
-                                                #    marks={i: '{}'.format(10 ** i) for i in range(4)},
                                                     max=2000,
                                                     min=600,
-                                                    value=1200,
+                                                    value=950,
                                                     step=100,
                                                     updatemode='drag'),
-        
                         html.Div(id = "tab2DashTable",children = [])]),
         ])
 
@@ -1272,8 +1255,7 @@ def detailedGraph2(radio,  valx, valy,slideheight,slidewidth,g1,g2,head,note,ret
             for k in range(len(valx)): 
                 a = df[valy[j]]
                 b = df[valx[k]]
-                fig.add_trace(go.Scatter(x = a,y = b,
-                                                    mode = radio, name = "{}/{}".format(valy[j],valx[k]))) 
+                fig.add_trace(go.Scatter(x = a,y = b,mode = radio, name = "{}/{}".format(valy[j],valx[k])))
                 
                 fig.update_xaxes(
                         tickangle = 90,
@@ -1551,7 +1533,7 @@ def differanceintegration(value1, value2,ops):
     elif ops == []:
         return []
 
-@app.callback(Output('intersection','value'),
+@app.callback([Output('intersection','value'),Output('tableinteractivehidden','children')],
             [Input('hiddenDifferance', 'children'),
              Input('firstChoosenValue','value'),
              Input('secondChoosenValue','value'),
@@ -1561,6 +1543,9 @@ def differanceintegration(value1, value2,ops):
                 
 ]
     )
+
+
+
 
 def differanceCalculation(hiddendif, valuechoosenright,valuechoosenleft,leftfirst,rightfirst,diff,retrieve):
     if hiddendif == None or hiddendif == [] or retrieve == None or retrieve== []:
@@ -1580,6 +1565,9 @@ def differanceCalculation(hiddendif, valuechoosenright,valuechoosenleft,leftfirs
                 b= hiddendif[0]
         print('a',a)
         print('b',b)
+        zz = []
+        zz.append(a)
+        zz.append(b)
         differance = []
         if len(retrieve)>0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
         
@@ -1604,13 +1592,12 @@ def differanceCalculation(hiddendif, valuechoosenright,valuechoosenleft,leftfirs
                     differance.append(tt[i])
                 if yy[i] < tt[i] : 
                     differance.append(yy[i])
+            print('differance',differance)
             diff = (abs(trapz(differance,dx = 1)))
-            return diff
+            return diff,zz
         else : return 'intersection'
 
-    
- 
- 
+
  
  
  

@@ -85,25 +85,30 @@
    
     
 }
+.ac{
+    display: flex;
+    flex-direction : column;
+    justify-content: space-around;
+
+
+}
 .ab{ 
     display: flex;
     flex-direction : row;
     justify-content:space-around;
-    width : 90%;
-    
-    
+
 }
 .abc{ 
     display: flex;
     flex-direction : row;
     justify-content: space-between;
-    width : 90%;
+
 }
 .abcd{ 
     display: flex;
     flex-direction : row;
     justify-content: flex-start;
-    width : 90%;}
+    }
 
 #active_server {
     background-color: #0fb315; /* Green */
@@ -134,14 +139,14 @@
 } */
 /*leftside dropdown*/
 .value_design {
-    display : "block";
-    margin :7px;
+    display : block;
     padding : 5px;
     color: black;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 1.4rem;
+    font-size: 1rem;
     cursor: pointer;
-    width : 100%
+    width : 100%;
+
 
 } 
 /*Rightside dropdown- add-filter*/
@@ -150,7 +155,7 @@
     color: black;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 14px;
     border-radius: 5px;
     width: 90%;
     margin: auto;
@@ -341,7 +346,7 @@
         flex-wrap: nowrap;
         justify-content: space-around;
         align-items: flex-start;
-        width : 90rem;
+        width : 90%;
         margin-bottom: 2rem;
     
     }
@@ -350,7 +355,7 @@
         color: black;
         font-family: Arial, Helvetica, sans-serif;
         font-weight: bold;
-        font-size: 1.2rem;
+        font-size: 14px;
         border-radius: 5px;
         width : 20rem;
 }
