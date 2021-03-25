@@ -288,8 +288,6 @@ def parse_contents(contents, filename, date):
             'maxWidth': 0,
             'fontSize':'1rem',
             'TextAlign' : 'center',
-
-            
                         },
             fixed_rows={'headers': True},
             tooltip_data=[
@@ -301,12 +299,13 @@ def parse_contents(contents, filename, date):
             style_cell_conditional=[
                 {
             'if': {'column_id': c},
-            'textAlign': 'center',
-            'width': '8%'}
+                'textAlign': 'center',
+                'width': '8%'}
+
              for c in df.columns if c != 'date'],
             # style_cell_conditional=[
             # {'if': {'column_id': 'date'},
-            #  'width': '15%'} 
+            #  'width': '15%'}
             
             style_header={
                 'backgroundColor': 'rgb(230, 230, 230)',
@@ -316,8 +315,8 @@ def parse_contents(contents, filename, date):
             sort_action="native",
             sort_mode="multi",
             column_selectable="single",
-            row_selectable="multi",
-            row_deletable=True,
+            # row_selectable="multi",
+            # row_deletable=True,
             selected_columns=[],
             selected_rows=[],
             page_action="native",
@@ -520,11 +519,11 @@ def displayLeftDropdown(n_clicks1,n_clicks2,valeur):
                         labelStyle={"display": "Block"}, 
                         ), ],style = {"marginLeft" : "30px"})
     if n_clicks2 > 0:
-        print("silmeden once",valeur) 
-    for i in range(n_clicks2):
-        if valeur != []:
-            valeur.pop(-1) 
-    print("sildikten sonra",valeur) 
+        print("silmeden once",valeur)
+        for i in range(n_clicks2):
+            if valeur != []:
+                valeur.pop(-1)
+
     new_checklist = html.Div([dbc.Checklist(
                     id = 'choosenChecklistLeft',
                     options = [{'label' : i, 'value' : i} for i in valeur],
@@ -858,11 +857,6 @@ def rightscnd(rightintsecond):
     return rightintsecond
 # for show graph and changement
 
-
-
-
-
-
 @app.callback([Output('graph','figure'),
                Output('hiddenDifferance','children'),],
               [Input("leftSideChecklistValueHidden","children"),
@@ -887,23 +881,28 @@ def rightscnd(rightintsecond):
 def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
         minVal,firstchoosen, secondchoosen,leftfirstval,leftsecondval,
         rightfirstval,rightsecondval, differance,retrieve):
-    if val == [] or val == None or retrieve == None or retrieve == []:
+    if retrieve == None or retrieve == []:
          raise PreventUpdate
     if len(retrieve)>0:
         df = pd.read_excel('{}'.format(retrieve[0]))
-        df_shape = pd.read_excel('{}'.format(retrieve[0]))
-        df_shape['newindex'] = df_shape.index
-        df_shape.index = df_shape['date']
-        dt = ["{}-{:02.0f}-{:02.0f} {:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day,d.hour,d.minute,d.second) for d in df_shape.index]
+        df['index'] = df.index
+        df = df.reindex(columns=sorted(df.columns, reverse=True))
+        if 'date' not in df.columns:
+            dt = [d for d in df.index]
+            print('dt',dt)
+        else :
+            df_shape = pd.read_excel('{}'.format(retrieve[0]))
+            df_shape['newindex'] = df_shape.index
+            df_shape.index = df_shape['date']
+            dt = ["{}-{:02.0f}-{:02.0f} {:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day,d.hour,d.minute,d.second) for d in df_shape.index]
         fig = go.Figure()
-        print("firstshape",firstshape)
         for i in range(len(val)) : 
-            print('valgraf',val)
+
             y_axis = df[val[i]]
-            x_axis = df['date']
-            fig.add_trace(
-                go.Scattergl(x = x_axis,y = y_axis,
-                                        mode = radiograph,name = val[i]))
+            if 'date' not in df.columns :
+                x_axis = df['index']
+            else : x_axis = df['date']
+            fig.add_trace(go.Scattergl(x = x_axis,y = y_axis, mode = radiograph,name = val[i]))
             color = {0 : 'blue', 1 : 'red', 2: 'green', 3 : 'purple', 4 : 'orange' }            
             if len(firstshape) == 2 and leftfirstval != firstshape[0]  and leftfirstval != None  :
                 print('leffirstval',leftfirstval)
@@ -969,7 +968,7 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                             
                             fig.add_shape  = [dict(type='rect',
                                             x0= dt[k],
-                                            y0=21 if minVal == None else minVal,
+                                            y0=0 if minVal == None else minVal,
                                             line_width = 0,
                                             x1=dt[k+1],
                                             y1=df[firstchoosen[-1]][k],
@@ -981,7 +980,7 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                             
                             fig.add_shape = [dict(type='rect',
                                             x0= dt[k],
-                                            y0=21 if minVal == None else minVal,
+                                            y0=0 if minVal == None else minVal,
                                             x1=dt[k+1],
                                             y1=df[firstchoosen[-1]][k],
                                             fillcolor=  'blue',
@@ -1326,6 +1325,7 @@ def valint(clickData,firstchoosen,value,leftchild,rightchild,retrieve):
     spaceList2 = []
     if len(retrieve)>0 :
         df = pd.read_excel('{}'.format(retrieve[0]))
+        df['index'] = df.index
         for i in range(len(value)):
             spaceList1.append(zero)
             zero+=1
@@ -1336,7 +1336,9 @@ def valint(clickData,firstchoosen,value,leftchild,rightchild,retrieve):
             if k[1] == firstchoosen: 
                 if k[0]==curvenumber:   
                     x_val = clickData['points'][0]['x']
-                    dff = df[df['date'] == x_val]
+                    if 'date' in df.columns :
+                        dff = df[df['date'] == x_val]
+                    else : dff = df[df['index'] == x_val]
                     a = []
                     a.append(dff[firstchoosen].index)
                     for i in range(len(a)):
@@ -1396,6 +1398,7 @@ def valint2(clickData,secondchoosen, value,leftchild,rightchild,retrieve):
     spaceList2 = []
     if len(retrieve)>0 :
         df = pd.read_excel('{}'.format(retrieve[0]))
+        df['index'] = df.index
         for i in range(len(value)):
             spaceList1.append(zero)
             zero+=1
@@ -1406,7 +1409,9 @@ def valint2(clickData,secondchoosen, value,leftchild,rightchild,retrieve):
             if k[1] == secondchoosen:
                 if k[0]==curvenumber:  
                     x_val = clickData['points'][0]['x']
-                    dff = df[df['date'] == x_val]
+                    if 'date' in df.columns :
+                        dff = df[df['date'] == x_val]
+                    else : dff = df[df['index'] == x_val]
                     a = []
                     a.append(dff[secondchoosen].index)
                     for i in range(len(a)):
@@ -1420,8 +1425,7 @@ def valint2(clickData,secondchoosen, value,leftchild,rightchild,retrieve):
     else : return (no_update, no_update)
 
 @app.callback(
-    [Output('rightIntegralFirst', 'value'),Output('rightIntegralSecond', 'value'),
-     ],
+    [Output('rightIntegralFirst', 'value'),Output('rightIntegralSecond', 'value')],
     [Input('pointRightFirst', 'children'),Input('pointRightSecond', 'children')],
     [State('secondChoosenValue','value')],)
 def display_hover_data2(leftchild1,rightchild1,secondchoosen):
@@ -1473,10 +1477,12 @@ def integralCalculation(st1left,st1right,valuechoosenleft,retrieve):
         print('st1right',st1right)
         if st1left != '' and st1right != '' :
             df = pd.read_excel('{}'.format(retrieve[0]))
+            df['index'] = df.index
+            df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff1 =df[(df[valuechoosenleft].index>=float(st1left))  & (df[valuechoosenleft].index<=float(st1right)) |
                     (df[valuechoosenleft].index>=float(st1right))  & (df[valuechoosenleft].index<=float(st1left))]
             c = dff1[valuechoosenleft]
-            area1 = trapz(c,dx = 1)
+            area1 = abs(trapz(c,dx = 1))
 
             return area1
         elif (st1left == '' and st1right != '') or (st1left != '' and st1right == ''): 
@@ -1512,10 +1518,12 @@ def integralCalculation2(st2left,st2right,valuechoosenright,retrieve):
     if len(retrieve)>0:
         if st2left != '' and st2right != '' :
             df = pd.read_excel('{}'.format(retrieve[0]))
+            df['index'] = df.index
+            df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff2 =df[(df[valuechoosenright].index>=float(st2left))  & (df[valuechoosenright].index<=float(st2right)) |
                 (df[valuechoosenright].index>=float(st2right))  & (df[valuechoosenright].index<=float(st2left))]
             f = dff2[valuechoosenright]
-            area2 = trapz(f,dx = 1)
+            area2 = abs(trapz(f,dx = 1))
             return area2
         elif (st2left == '' and st2right != '') or (st2left != '' and st2right == ''): 
             return 'total integration'
@@ -1576,7 +1584,8 @@ def differanceCalculation(hiddendif, valuechoosenright,valuechoosenleft,leftfirs
         if len(retrieve)>0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
         
             df = pd.read_excel('{}'.format(retrieve[0]))
-    
+            df['index'] = df.index
+            df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff =df[(df[valuechoosenright].index>=float(a))  & (df[valuechoosenright].index<=float(b)) |
                     (df[valuechoosenright].index>=float(b))  & (df[valuechoosenright].index<=float(a))]
             l = dff[valuechoosenright]
