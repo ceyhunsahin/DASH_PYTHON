@@ -1,6 +1,7 @@
 
 import base64
 import datetime
+import time
 import io
 import dash
 import dash_bootstrap_components as dbc
@@ -14,6 +15,7 @@ from dash import no_update
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from numpy import trapz
+from openpyxl import Workbook
 
 
 # Initialize the app
@@ -125,6 +127,9 @@ page_1_layout =html.Div(
                                                             html.Div(id='rightintegralfirsthidden',children = [],style = {'display':'None'}),
                                                             html.Div(id='rightintegralsecondhidden',children = [],style = {'display':'None'}),
                                                             html.Div(id='tableinteractivehidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='writeexcelhidden',children = [],style = {'display':'None'}),
+                                                            html.Div(id='aaaa',children = [],style = {'display':'None'}),
+                                                            html.Div(id='bbbb',children = [],style = {'display':'None'})
                                                             ]),
                                                     ]),
 
@@ -629,7 +634,7 @@ def render_content(tab):
 def LoadingDataTab1 (on,dropdownhidden):
     if on == 1:
         
-        loadTab1 = html.Div([html.Div([html.Div([dcc.Dropdown(id='firstChoosenValue', 
+        loadTab1 = html.Div([html.Div([html.Div([html.Div([dcc.Dropdown(id='firstChoosenValue',
                                                             options=[{'label': i, 'value': i} for i in dropdownhidden],
                                                             multi=False, 
                                                             style={ "cursor": "pointer",'width' : '180px'},
@@ -660,7 +665,7 @@ def LoadingDataTab1 (on,dropdownhidden):
                                                     style = {'width': '8rem',"marginTop" : "1.5rem"},
                                                     autoFocus=True,
                                                     placeholder = "total integration"),
-                                           ]),
+                                           ]),html.Button("Write",id = "write_excel", n_clicks = 0, style= {'fontSize': '1rem'}, className="ad")]),
                                  html.Div([dbc.Checklist(
                                             id = 'operateur',
                                             options = [{'label' : i, 'value' : i} for i in ['Plus','Moins','Multiplie','Division']],
@@ -1107,7 +1112,7 @@ def LoadingDataTab2 (on):
                             style={ "cursor": "pointer"},
                             className='stockSelectorClass2',
                             clearable=True,
-                            placeholder = 'Select your x-axis value...',
+                            placeholder = 'Select your y-axis value...',
                                     ),
                         dcc.Dropdown(id='tabDropdownDown', 
                             options=[{'label': i, 'value': i} for i in data_list],
@@ -1115,7 +1120,7 @@ def LoadingDataTab2 (on):
                             style={ "cursor": "pointer"},
                             className='stockSelectorClass2',
                             clearable=True,
-                            placeholder = 'Select your y-axis value...',
+                            placeholder = 'Select your x-axis value...',
                                     ),],className = "ab"),
                         html.Div(dcc.RadioItems(id="radiograph2",
                                                 options=[
@@ -1614,10 +1619,58 @@ def differanceCalculation(hiddendif, valuechoosenright,valuechoosenleft,leftfirs
             return diff,zz
         else : return 'intersection'
 
+@app.callback(Output('writeexcelhidden','children'),
+              [Input('write_excel','n_clicks')],
+              [State('firstChoosenValue','value'),
+               State('leftIntegralFirst', 'value'),
+               State('leftIntegralSecond', 'value'),
+               State('leftIntegral', 'value'),
+               State('secondChoosenValue','value'),
+               State('rightIntegralFirst', 'value'),
+               State('rightIntegralSecond', 'value'),
+               State('rightIntegral', 'value'),
+               State('operation','value'),
+               State('intersection','value'),
+               ],
+               )
 
- 
- 
- 
+
+def write_excel(nc, a,b,c,d,e,f,g,h,i,j) :
+    if nc>0:
+        from datetime import datetime
+
+        # datetime object containing current date and time
+        now = datetime.now()
+        return (now,a,b,c,d,e,f,g,h,i,j)
+
+
+t = []
+@app.callback(Output('bbbb','children'),
+              [Input('writeexcelhidden','children')],
+
+              )
+
+def xxx(s):
+    print('s',s)
+    t.append(s)
+    now = time.strftime("%x")
+    book = Workbook()
+    sheet = book.active
+    for row in t[2:]:
+        sheet.append(row)
+    book.save('appending.xlsx')
+
+
+
+
+# @app.callback(Output,
+#               [Input('writeexcelhidden', 'children')],
+#               [State('bbbb', 'children')])
+#
+# def nihai(a,b):
+#     if a !=[]:
+#         b.append(a[0])
+#     print(b)
  
  
  

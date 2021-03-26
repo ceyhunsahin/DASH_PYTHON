@@ -92,6 +92,12 @@
 
 
 }
+.ad{
+    display: flex;
+    flex-direction : column;
+    margin : -120px -120px -120px 170px;
+
+}
 .ab{ 
     display: flex;
     flex-direction : row;
@@ -271,7 +277,7 @@
   
     
 }
-#showLeft, #showRight, #showTab, #upload_data {
+#showLeft, #showRight, #showTab, #upload_data, #write_excel {
     background-color: #0996ce; 
     border: none;
     color: white;
@@ -283,11 +289,11 @@
     cursor: pointer;
     border-radius: 0.3rem;
 }
-#showLeft:hover, #showRight:hover, #showTab:hover   {
+#showLeft:hover, #showRight:hover, #showTab:hover, #write_excel:hover   {
     background-color: #052b5e; 
     color: white;
 }
-#showLeft:active, #showRight:active, #showTab:active {
+#showLeft:active, #showRight:active, #showTab:active , #write_excel:active{
     background-color: #052b5e; 
     color: white;
 }
