@@ -878,7 +878,11 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
         df['index'] = df.index
         df = df.reindex(columns=sorted(df.columns, reverse=True))
         if 'date' not in df.columns:
-            dt = [d for d in df.index]
+            a = ''
+            for v in df.columns:
+                if 'Temps' in v:
+                    a += v
+                    dt = [d for d in df[v]]
             print('dt',dt)
         else :
             df_shape = pd.read_excel('{}'.format(retrieve[0]))
@@ -1038,11 +1042,6 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                                             pad=4
                                     ),
                                     paper_bgcolor="LightSteelBlue",
-                    #                 uirevision= firstchoosen,
-                    #                 transition={
-                    #         'duration': 500,
-                    # },
-                                    
                                     )   
         
             if len(firstshape)==2 and len(secondshape) == 2:
@@ -1326,7 +1325,14 @@ def valint(clickData,firstchoosen,value,leftchild,rightchild,retrieve):
                     x_val = clickData['points'][0]['x']
                     if 'date' in df.columns :
                         dff = df[df['date'] == x_val]
-                    else : dff = df[df['index'] == x_val]
+                    else :
+                        a = ''
+                        for v in df.columns:
+                            if 'Temps' in v:
+                                a += v
+                                dff = df[df[v] == x_val]
+
+
                     a = []
                     a.append(dff[firstchoosen].index)
                     for i in range(len(a)):
@@ -1399,7 +1405,12 @@ def valint2(clickData,secondchoosen, value,leftchild,rightchild,retrieve):
                     x_val = clickData['points'][0]['x']
                     if 'date' in df.columns :
                         dff = df[df['date'] == x_val]
-                    else : dff = df[df['index'] == x_val]
+                    else :
+                        a = ''
+                        for v in df.columns:
+                            if 'Temps' in v:
+                                a += v
+                                dff = df[df[v] == x_val]
                     a = []
                     a.append(dff[secondchoosen].index)
                     for i in range(len(a)):
