@@ -1,4 +1,5 @@
-
+# -*- coding: utf-8 -*-
+import sys
 import base64
 import datetime
 import time
@@ -28,7 +29,6 @@ app.config.suppress_callback_exceptions = True
 # get data from MAF
 
 getDataFromModbus = []
-
 
 
 extra_data_list = [
@@ -827,6 +827,7 @@ def firstchleft(firstchoosen,hiddenfirstchoosen):
               [Input("secondChoosenValue", "value")],
               )
 def secondchleft(secondchoosen):
+    print("secondchoosen",secondchoosen)
     return secondchoosen
 
 @app.callback(Output("leftintegralfirsthidden","children"),
@@ -836,7 +837,6 @@ def firstchright(leftintfirst):
     return leftintfirst
 @app.callback(Output("leftintegralsecondhidden","children"),
               [Input("leftIntegralSecond", "value")],
-
               )
 def secondchright(leftintsecond):
     return leftintsecond
@@ -883,30 +883,24 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
         df['index'] = df.index
         df = df.reindex(columns=sorted(df.columns, reverse=True))
         if 'date' not in df.columns:
-            a = ''
-            for v in df.columns:
-                if 'Temps' in v:
-                    a += v
-                    dt = [d for d in df[v]]
-            print('dt',dt)
+            baseval = ''
+            for col in df.columns:
+                if 'Temps' in col:
+                    baseval  += col
+                    dt = df[baseval]
         else :
             df_shape = pd.read_excel('{}'.format(retrieve[0]))
             df_shape['newindex'] = df_shape.index
             df_shape.index = df_shape['date']
             dt = ["{}-{:02.0f}-{:02.0f} {:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day,d.hour,d.minute,d.second) for d in df_shape.index]
         fig = go.Figure()
-        for i in range(len(val)) : 
+        for i_val in range(len(val)) :
 
-            y_axis = df[val[i]]
+            y_axis = df[val[i_val]]
             if 'date' not in df.columns :
-                a = ''
-                for v in df.columns:
-                    print('vvvvvvvvvvvvvvvvvvvvvv', v)
-                    if 'Temps' in v:
-                        a +=v
-                        x_axis = df[v]
+                x_axis = df[baseval]
             else : x_axis = df['date']
-            fig.add_trace(go.Scattergl(x = x_axis,y = y_axis, mode = radiograph,name = val[i]))
+            fig.add_trace(go.Scattergl(x = x_axis,y = y_axis, mode = radiograph,name = val[i_val]))
             color = {0 : 'blue', 1 : 'red', 2: 'green', 3 : 'purple', 4 : 'orange' }            
             if len(firstshape) == 2 and leftfirstval != firstshape[0]  and leftfirstval != None  :
                 print('leffirstval',leftfirstval)
@@ -961,79 +955,160 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                 del firstshape[1]
 
             # else : return(no_update)
-            def controlShape() : 
-                if firstchoosen != None :
-                    print('firstshape', firstshape)
-                    print('leftfirstval',leftfirstval)
-                    print('firstchoosen',firstchoosen)
+            def controlShape() :
+                pathline = ''
+                pathline2 = ''
+                if firstchoosen != [None,None] and secondchoosen != None :
+                    if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None and len(secondshape) == 2 and rightsecondval != None and rightfirstval != None :
+                        if int(firstshape[1]) > int(firstshape[0]) and int(secondshape[1]) > int(secondshape[0]):
+                            rangeshape = range(int(firstshape[0]), int(firstshape[1]))
+                            for k in rangeshape:
+                                if k == rangeshape[0]:
+                                    pathline = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(int(dt[k])) + ', ' + str(
+                                        df[firstchoosen[-1]][k]) + ' '
 
-                    if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:      
+                                elif k != rangeshape[0] and k != rangeshape[-1]:
+                                    pathline += ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
+
+                            pathline += ' L' + str(int(dt[k])) + ', ' + str(0)
+                            pathline += ' Z'
+                            rangeshape2 = range(int(secondshape[0]), int(secondshape[1]))
+
+                            for k in rangeshape2:
+                                if k == rangeshape2[0]:
+                                    pathline2 = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(
+                                        int(dt[k])) + ', ' + str(
+                                        df[secondchoosen][k]) + ' '
+
+                                elif k != rangeshape2[0] and k != rangeshape2[-1]:
+                                    pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
+
+                            pathline2 += ' L' + str(int(dt[k])) + ', ' + str(0)
+                            pathline2 += ' Z'
+
+                    return [dict(
+                                type="path",
+                                path=pathline,
+                                layer='below',
+                                fillcolor="PaleTurquoise",
+                                line_color="LightSeaGreen",
+                            ),dict(
+                                type="path",
+                                path= pathline2,
+                                layer='below',
+                                fillcolor="red",
+                                opacity = 0.5,
+                                line_color="red",
+                            )]
+
+
+
+                if firstchoosen[-1] != None and secondchoosen == None :
+                    if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:
                         if int(firstshape[1])>int(firstshape[0]):
-                            
-                            fig.add_shape  = [dict(type='rect',
-                                            x0= dt[k],
-                                            y0=0 if minVal == None else minVal,
-                                            line_width = 0,
-                                            x1=dt[k+1],
-                                            y1=df[firstchoosen[-1]][k],
-                                            fillcolor=  'blue',
-                                            opacity=0.5,
-                                            ) for k in range(int(firstshape[0]),int(firstshape[1]))] 
-                            return fig.add_shape    
+                            pathline = ''
+                            rangeshape = range(int(firstshape[0]),int(firstshape[1]))
+                            for k in rangeshape:
+                                if k == rangeshape[0]:
+                                    pathline = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
+
+                                elif  k != rangeshape[0] and k != rangeshape[-1]:
+                                    pathline+= ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
+
+                            pathline += ' L' + str(int(dt[k])) + ', ' + str(0)
+                            pathline += ' Z'
+
+                            return  [dict(
+                                                type="path",
+                                                path=pathline,
+                                                layer= 'below',
+                                                fillcolor="PaleTurquoise",
+                                                line_color="LightSeaGreen",
+                                            )]
+
                         if int(firstshape[0]) > int(firstshape[1]):
-                            
-                            fig.add_shape = [dict(type='rect',
-                                            x0= dt[k],
-                                            y0=0 if minVal == None else minVal,
-                                            x1=dt[k+1],
-                                            y1=df[firstchoosen[-1]][k],
-                                            fillcolor=  'blue',
-                                            opacity=0.5,
-                                            line_width = 0
-                                            ) for k in range(int(firstshape[1]),int(firstshape[0]))] 
-                            return fig.add_shape
+                            rangeshape = range(int(firstshape[1]),int(firstshape[0]))
+                            pathline = ''
+                            for k in rangeshape:
+                                if k == rangeshape[0]:
+                                    pathline = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
+
+                                elif  k != rangeshape[0] and k != rangeshape[-1]:
+                                    pathline+= ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
+
+                            pathline += ' L' + str(int(dt[k])) + ', ' + str(0)
+                            pathline+= ' Z'
+
+                            return  [dict(
+                                        type="path",
+                                        path=pathline,
+                                        layer= 'below',
+                                        fillcolor="PaleTurquoise",
+                                        line_color="LightSeaGreen",
+                                        )]
 
 
-                    
-            def controlShape2() :    
-                if secondchoosen != None :
-                    print('secondshape', secondshape)
-                    print('rightfirstval',rightfirstval)
-                    print('secondchoosen',secondchoosen)
-                    if len(secondshape) == 2 and rightfirstval != None and rightsecondval != None:    
-                        if int(secondshape[1])>int(secondshape[0]):
-                            
-                            fig.add_shape = [dict(type='rect',
-                                                x0= dt[k],
-                                                y0=0 if minVal == None else minVal,
-                                                x1=dt[k+1],
-                                                y1=df[secondchoosen][k],
-                                                fillcolor= 'red',
-                                                opacity=0.5,
-                                                line_width = 0
-                                                ) for k in range(int(secondshape[0]),int(secondshape[1]))] 
-                            return fig.add_shape        
+                if secondchoosen != None and firstchoosen[-1] == None:
+                    if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
+                        if int(secondshape[1]) > int(secondshape[0]):
+
+                            rangeshape = range(int(secondshape[0]), int(secondshape[1]))
+                            for k in rangeshape:
+                                if k == rangeshape[0]:
+                                    pathline2 = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(int(dt[k])) + ', ' + str(
+                                        df[secondchoosen][k]) + ' '
+
+                                elif k != rangeshape[0] and k != rangeshape[-1]:
+                                    pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
+
+                            pathline2 += ' L' + str(int(dt[k])) + ', ' + str(0)
+                            pathline2 += ' Z'
+
+                            return [dict(
+                                    type="path",
+                                    path=pathline2,
+                                    layer='below',
+                                    fillcolor="red",
+                                    opacity=0.5,
+                                    line_color="LightSeaGreen",
+                                )]
+
                         if int(secondshape[0]) > int(secondshape[1]):
-                            
-                            fig.add_shape = [dict(type='rect',
-                                            x0= dt[k],
-                                            y0=0 if minVal == None else minVal,
-                                            x1=dt[k+1],
-                                            y1=df[secondchoosen][k],
-                                            fillcolor= 'red',
-                                            opacity=0.5,
-                                            line_width = 0
-                                            )  for k in range(int(secondshape[1]),int(secondshape[0]))]
-                            return fig.add_shape
+                            rangeshape = range(int(secondshape[1]), int(secondshape[0]))
+                            for k in rangeshape:
+                                if k == rangeshape[0]:
+                                    pathline2 = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(int(dt[k])) + ', ' + str(
+                                        df[secondchoosen][k]) + ' '
+
+                                elif k != rangeshape[0] and k != rangeshape[-1]:
+                                    pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
+
+                            pathline2 += ' L' + str(int(dt[k])) + ', ' + str(0)
+                            pathline2 += ' Z'
+
+                            return [dict(
+                                    type="path",
+                                    path=pathline2,
+                                    layer='below',
+                                    fillcolor="red",
+                                    opacity=0.5,
+                                    line_color="LightSeaGreen",
+                                )]
+
 
             a = controlShape()
-            b = controlShape2()
-            if a != None and b != None:
-                a = a+b
-            if a == None and b != None:
-                a = b
-            if a != None and b == None:
-                a = a
+            # b = controlShapeSecond()
+            # print('aaaaaaaa',a)
+            # print('bbbbbbbbbbbbb',b)
+
+            # if a != None and b != None:
+            #     g.append(a)
+            #     g.append(b)
+            # if a == None and b != None:
+
+            # if a != None and b == None:
+            #     g.append(a)
+
             fig.update_layout(
                                         autosize=False,
                                         width=sliderwidth,
@@ -1047,7 +1122,7 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                                             pad=4
                                     ),
                                     paper_bgcolor="LightSteelBlue",
-                                    )   
+                                    )
         
             if len(firstshape)==2 and len(secondshape) == 2:
                 a = int(firstshape[0])
@@ -1350,7 +1425,7 @@ def valint(clickData,firstchoosen,value,leftchild,rightchild,retrieve):
                         print('leftchild3',leftchild)
                     return (leftchild,leftchild)
                 else : return(no_update,no_update)
-            # else : return(no_update,no_update)
+            else : return(no_update,no_update)
     else : return(no_update,no_update)
         
 @app.callback([Output('leftIntegralFirst', 'value'),Output('leftIntegralSecond', 'value')],
@@ -1425,7 +1500,7 @@ def valint2(clickData,secondchoosen, value,leftchild,rightchild,retrieve):
                         leftchild.pop(0)    
                     return (leftchild,leftchild)
                 else : return (no_update, no_update)
-            # else : return (no_update, no_update)
+            else : return (no_update, no_update)
     else : return (no_update, no_update)
 
 @app.callback(
@@ -1555,7 +1630,7 @@ def differanceintegration(value1, value2,ops):
     elif ops == []:
         return []
 
-@app.callback([Output('intersection','value'),Output('tableinteractivehidden','children')],
+@app.callback(Output('intersection','value'),
             [Input('hiddenDifferance', 'children'),
              Input('firstChoosenValue','value'),
              Input('secondChoosenValue','value'),
@@ -1616,8 +1691,8 @@ def differanceCalculation(hiddendif, valuechoosenright,valuechoosenleft,leftfirs
                     differance.append(yy[i])
             print('differance',differance)
             diff = (abs(trapz(differance,dx = 1)))
-            return diff,zz
-        else : return 'intersection'
+            return diff
+        else : return ['intersection']
 
 @app.callback(Output('writeexcelhidden','children'),
               [Input('write_excel','n_clicks')],
@@ -1644,21 +1719,21 @@ def write_excel(nc, a,b,c,d,e,f,g,h,i,j) :
         return (now,a,b,c,d,e,f,g,h,i,j)
 
 
-t = []
-@app.callback(Output('bbbb','children'),
-              [Input('writeexcelhidden','children')],
-
-              )
-
-def xxx(s):
-    print('s',s)
-    t.append(s)
-    now = time.strftime("%x")
-    book = Workbook()
-    sheet = book.active
-    for row in t[2:]:
-        sheet.append(row)
-    book.save('appending.xlsx')
+# t = []
+# @app.callback(Output('bbbb','children'),
+#               [Input('writeexcelhidden','children')],
+#
+#               )
+#
+# def xxx(s):
+#     print('s',s)
+#     t.append(s)
+#     now = time.strftime("%x")
+#     book = Workbook()
+#     sheet = book.active
+#     for row in t[2:]:
+#         sheet.append(row)
+#     book.save('appending.xlsx')
 
 
 
