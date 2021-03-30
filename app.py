@@ -128,8 +128,8 @@ page_1_layout =html.Div(
                                                             html.Div(id='rightintegralsecondhidden',children = [],style = {'display':'None'}),
                                                             html.Div(id='tableinteractivehidden',children = [],style = {'display':'None'}),
                                                             html.Div(id='writeexcelhidden',children = [],style = {'display':'None'}),
-                                                            html.Div(id='aaaa',children = [],style = {'display':'None'}),
-                                                            html.Div(id='bbbb',children = [],style = {'display':'None'})
+                                                            html.Div(id='hiddenrecord1',children = [],style = {'display':'None'}),
+                                                            html.Div(id='hiddenrecord2',children = [],style = {'display':'None'})
                                                             ]),
                                                     ]),
 
@@ -731,6 +731,7 @@ def LoadingDataTab1 (on,dropdownhidden):
                                 type="text", 
                                 min=-10000, max=10000, step=1, 
                                 bs_size="sm",
+                                value = 0,
                                 style = {'width': '7rem',"marginTop" : "1rem"},
                                 autoFocus=True,
                                 placeholder = "Enter Minimum Value of Graph..."),
@@ -871,19 +872,19 @@ def rightscnd(rightintsecond):
               [State('hiddenDifferance','children'),
                State('retrieve','children')]
                )
-              
-               
+
+
 def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
         minVal,firstchoosen, secondchoosen,leftfirstval,leftsecondval,
         rightfirstval,rightsecondval, differance,retrieve):
-    if retrieve == None or retrieve == []:
+    if retrieve == None or retrieve == [] :
          raise PreventUpdate
-    if len(retrieve)>0:
+    if len(retrieve)> 0 :
         df = pd.read_excel('{}'.format(retrieve[0]))
         df['index'] = df.index
         df = df.reindex(columns=sorted(df.columns, reverse=True))
+        baseval = ''
         if 'date' not in df.columns:
-            baseval = ''
             for col in df.columns:
                 if 'Temps' in col:
                     baseval  += col
@@ -892,7 +893,8 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
             df_shape = pd.read_excel('{}'.format(retrieve[0]))
             df_shape['newindex'] = df_shape.index
             df_shape.index = df_shape['date']
-            dt = ["{}-{:02.0f}-{:02.0f} {:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day,d.hour,d.minute,d.second) for d in df_shape.index]
+            dt = ["{}-{:02.0f}-{:02.0f}_{:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day,d.hour,d.minute,d.second) for d in df_shape.index]
+        print('baseval',dt[0])
         fig = go.Figure()
         for i_val in range(len(val)) :
 
@@ -901,10 +903,9 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                 x_axis = df[baseval]
             else : x_axis = df['date']
             fig.add_trace(go.Scattergl(x = x_axis,y = y_axis, mode = radiograph,name = val[i_val]))
-            color = {0 : 'blue', 1 : 'red', 2: 'green', 3 : 'purple', 4 : 'orange' }            
+            color = {0 : 'blue', 1 : 'red', 2: 'green', 3 : 'purple', 4 : 'orange' }
             if len(firstshape) == 2 and leftfirstval != firstshape[0]  and leftfirstval != None  :
                 print('leffirstval',leftfirstval)
-                print(type(leftfirstval))
                 if leftfirstval.startswith('T')==1:
                     del firstshape[0]
                     firstshape.append(float(leftfirstval[2:]))
@@ -958,33 +959,60 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
             def controlShape() :
                 pathline = ''
                 pathline2 = ''
-                if firstchoosen != [None,None] and secondchoosen != None :
-                    if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None and len(secondshape) == 2 and rightsecondval != None and rightfirstval != None :
-                        if int(firstshape[1]) > int(firstshape[0]) and int(secondshape[1]) > int(secondshape[0]):
+                if firstchoosen[-1] != None and secondchoosen != None :
+                    if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:
+                        if int(firstshape[1]) > int(firstshape[0]):
+                            pathline = ''
                             rangeshape = range(int(firstshape[0]), int(firstshape[1]))
-                            for k in rangeshape:
-                                if k == rangeshape[0]:
-                                    pathline = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(int(dt[k])) + ', ' + str(
-                                        df[firstchoosen[-1]][k]) + ' '
+                            if ':' or '-' in dt[0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(dt[k]) + ', ' + str(minVal) + ' L' + str(
+                                            dt[k]) + ', ' + str(
+                                            df[firstchoosen[-1]][k]) + ' '
 
-                                elif k != rangeshape[0] and k != rangeshape[-1]:
-                                    pathline += ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k])
+                                pathline += ' L' + str(dt[k]) + ', ' + str(minVal)
+                                pathline += ' Z'
+                            else:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(int(dt[k])) + ', ' + str(minVal) + ' L' + str(
+                                            int(dt[k])) + ', ' + str(
+                                            df[firstchoosen[-1]][k]) + ' '
 
-                            pathline += ' L' + str(int(dt[k])) + ', ' + str(0)
-                            pathline += ' Z'
-                            rangeshape2 = range(int(secondshape[0]), int(secondshape[1]))
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
+                                pathline += ' L' + str(int(dt[k])) + ', ' + str(minVal)
+                                pathline += ' Z'
 
-                            for k in rangeshape2:
-                                if k == rangeshape2[0]:
-                                    pathline2 = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(
-                                        int(dt[k])) + ', ' + str(
-                                        df[secondchoosen][k]) + ' '
+                    if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
+                        if int(secondshape[1]) > int(secondshape[0]):
+                            rangeshape = range(int(secondshape[0]), int(secondshape[1]))
+                            if ':' or '-' in dt[0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline2 += 'M ' + str(dt[k]) + ', ' + str(minVal) + ' L' + str(
+                                            dt[k]) + ', ' + str(
+                                            df[secondchoosen][k]) + ' '
 
-                                elif k != rangeshape2[0] and k != rangeshape2[-1]:
-                                    pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline2 += ' L' + str(dt[k]) + ', ' + str(df[secondchoosen][k])
+                                pathline2 += ' L' + str(dt[k]) + ', ' + str(minVal)
+                                pathline2 += ' Z'
+                            else:
+                                for k in rangeshape:
 
-                            pathline2 += ' L' + str(int(dt[k])) + ', ' + str(0)
-                            pathline2 += ' Z'
+                                    if k == rangeshape[0]:
+                                        pathline2 += 'M ' + str(int(dt[k])) + ', ' + str(minVal) + ' L' + str(
+                                            int(dt[k])) + ', ' + str(
+                                            df[secondchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
+                                pathline2 += ' L' + str(int(dt[k])) + ', ' + str(minVal)
+                                pathline2 += ' Z'
 
                     return [dict(
                                 type="path",
@@ -1001,22 +1029,35 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                                 line_color="red",
                             )]
 
-
-
-                if firstchoosen[-1] != None and secondchoosen == None :
-                    if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:
+                if firstchoosen[-1] != None and secondchoosen == None:
+                    print('firstchoosen nonelardan sonra',firstchoosen)
+                    if len(firstshape) == 2 :
                         if int(firstshape[1])>int(firstshape[0]):
                             pathline = ''
                             rangeshape = range(int(firstshape[0]),int(firstshape[1]))
-                            for k in rangeshape:
-                                if k == rangeshape[0]:
-                                    pathline = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
+                            if ':' or '-' in dt[0] :
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(dt[k]) + ', ' + str(minVal) + ' L' + str(
+                                            dt[k]) + ', ' + str(
+                                            df[firstchoosen[-1]][k]) + ' '
 
-                                elif  k != rangeshape[0] and k != rangeshape[-1]:
-                                    pathline+= ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k])
+                                pathline += ' L' + str(dt[k]) + ', ' + str(minVal)
+                                pathline += ' Z'
+                            else:
+                                for k in rangeshape:
 
-                            pathline += ' L' + str(int(dt[k])) + ', ' + str(0)
-                            pathline += ' Z'
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(int(dt[k])) + ', ' + str(minVal) + ' L' + str(
+                                            int(dt[k])) + ', ' + str(
+                                            df[firstchoosen[-1]][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
+                                pathline += ' L' + str(int(dt[k])) + ', ' + str(minVal)
+                                pathline += ' Z'
 
                             return  [dict(
                                                 type="path",
@@ -1028,16 +1069,29 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
 
                         if int(firstshape[0]) > int(firstshape[1]):
                             rangeshape = range(int(firstshape[1]),int(firstshape[0]))
-                            pathline = ''
-                            for k in rangeshape:
-                                if k == rangeshape[0]:
-                                    pathline = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
+                            if ':' or '-' in dt[0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(dt[k]) + ', ' + str(minVal) + ' L' + str(
+                                            dt[k]) + ', ' + str(
+                                            df[firstchoosen[-1]][k]) + ' '
 
-                                elif  k != rangeshape[0] and k != rangeshape[-1]:
-                                    pathline+= ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k])
+                                pathline += ' L' + str(dt[k]) + ', ' + str(minVal)
+                                pathline += ' Z'
+                            else:
+                                for k in rangeshape:
 
-                            pathline += ' L' + str(int(dt[k])) + ', ' + str(0)
-                            pathline+= ' Z'
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(int(dt[k])) + ', ' + str(minVal) + ' L' + str(
+                                            int(dt[k])) + ', ' + str(
+                                            df[firstchoosen[-1]][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
+                                pathline += ' L' + str(int(dt[k])) + ', ' + str(minVal)
+                                pathline += ' Z'
 
                             return  [dict(
                                         type="path",
@@ -1051,18 +1105,30 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                 if secondchoosen != None and firstchoosen[-1] == None:
                     if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
                         if int(secondshape[1]) > int(secondshape[0]):
-
                             rangeshape = range(int(secondshape[0]), int(secondshape[1]))
-                            for k in rangeshape:
-                                if k == rangeshape[0]:
-                                    pathline2 = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(int(dt[k])) + ', ' + str(
-                                        df[secondchoosen][k]) + ' '
+                            if ':' or '-' in dt[0] :
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline2 += 'M ' + str(dt[k]) + ', ' + str(minVal) + ' L' + str(
+                                            dt[k]) + ', ' + str(
+                                            df[secondchoosen][k]) + ' '
 
-                                elif k != rangeshape[0] and k != rangeshape[-1]:
-                                    pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline2 += ' L' + str(dt[k]) + ', ' + str(df[secondchoosen][k])
+                                pathline2 += ' L' + str(dt[k]) + ', ' + str(minVal)
+                                pathline2 += ' Z'
+                            else:
+                                for k in rangeshape:
 
-                            pathline2 += ' L' + str(int(dt[k])) + ', ' + str(0)
-                            pathline2 += ' Z'
+                                    if k == rangeshape[0]:
+                                        pathline2 += 'M ' + str(int(dt[k])) + ', ' + str(minVal) + ' L' + str(
+                                            int(dt[k])) + ', ' + str(
+                                            df[secondchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
+                                pathline2 += ' L' + str(int(dt[k])) + ', ' + str(minVal)
+                                pathline2 += ' Z'
 
                             return [dict(
                                     type="path",
@@ -1077,16 +1143,28 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                             rangeshape = range(int(secondshape[1]), int(secondshape[0]))
                             for k in rangeshape:
                                 if k == rangeshape[0]:
-                                    pathline2 = 'M ' + str(int(dt[k])) + ', ' + str(0) + ' L' + str(int(dt[k])) + ', ' + str(
+                                    pathline2 += 'M ' + str(dt[k]) + ', ' + str(minVal) + ' L' + str(
+                                        dt[k]) + ', ' + str(
+                                        df[secondchoosen][k]) + ' '
+
+                                elif k != rangeshape[0] and k != rangeshape[-1]:
+                                    pathline2 += ' L' + str(dt[k]) + ', ' + str(df[secondchoosen][k])
+                            pathline2 += ' L' + str(dt[k]) + ', ' + str(minVal)
+                            pathline2 += ' Z'
+                        else:
+                            for k in rangeshape:
+
+                                if k == rangeshape[0]:
+                                    pathline2 += 'M ' + str(int(dt[k])) + ', ' + str(minVal) + ' L' + str(
+                                        int(dt[k])) + ', ' + str(
                                         df[secondchoosen][k]) + ' '
 
                                 elif k != rangeshape[0] and k != rangeshape[-1]:
                                     pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
-
-                            pathline2 += ' L' + str(int(dt[k])) + ', ' + str(0)
+                            pathline2 += ' L' + str(int(dt[k])) + ', ' + str(minVal)
                             pathline2 += ' Z'
 
-                            return [dict(
+                        return [dict(
                                     type="path",
                                     path=pathline2,
                                     layer='below',
@@ -1097,18 +1175,6 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
 
 
             a = controlShape()
-            # b = controlShapeSecond()
-            # print('aaaaaaaa',a)
-            # print('bbbbbbbbbbbbb',b)
-
-            # if a != None and b != None:
-            #     g.append(a)
-            #     g.append(b)
-            # if a == None and b != None:
-
-            # if a != None and b == None:
-            #     g.append(a)
-
             fig.update_layout(
                                         autosize=False,
                                         width=sliderwidth,
@@ -1123,7 +1189,7 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                                     ),
                                     paper_bgcolor="LightSteelBlue",
                                     )
-        
+
             if len(firstshape)==2 and len(secondshape) == 2:
                 a = int(firstshape[0])
                 c = int(secondshape[0])
@@ -1160,13 +1226,13 @@ def res2(val,radiograph,firstshape, secondshape,sliderheight,sliderwidth,
                     if set(range(c,d)).issuperset(set(range(a,b)))==1 :
                         differance.append(a)
                         differance.append(b)
-                        
+
                 else : differance = [0,0]
 
             print('diffff',differance[-2:])
 
-        return fig,differance[-2:]        
-        
+        return fig,differance[-2:]
+
     else : return (no_update, no_update)
 
 @app.callback(Output('tab2Data','children'),
@@ -1425,17 +1491,18 @@ def valint(clickData,firstchoosen,value,leftchild,rightchild,retrieve):
                         print('leftchild3',leftchild)
                     return (leftchild,leftchild)
                 else : return(no_update,no_update)
-            else : return(no_update,no_update)
+            # else : return(no_update,no_update)
     else : return(no_update,no_update)
         
 @app.callback([Output('leftIntegralFirst', 'value'),Output('leftIntegralSecond', 'value')],
     [Input('pointLeftFirst', 'children'),Input('pointLeftSecond', 'children')],
     [State('firstChoosenValue','value')],)
 def display_hover_data(leftchild,rightchild,firstchoosen):
-    if leftchild == None or rightchild==None or leftchild == [] or rightchild==[] or firstchoosen ==None :
+    if leftchild == None or rightchild==None or leftchild == [] or rightchild==[] :
         raise PreventUpdate
     minchild = 0
     maxchild = 0
+    print(' firstChoosenValue silmek icin',firstchoosen)
     if len(leftchild) ==2:
         for i in range(len(leftchild)):
             if leftchild[0] < leftchild[1] :
@@ -1500,7 +1567,7 @@ def valint2(clickData,secondchoosen, value,leftchild,rightchild,retrieve):
                         leftchild.pop(0)    
                     return (leftchild,leftchild)
                 else : return (no_update, no_update)
-            else : return (no_update, no_update)
+            # else : return (no_update, no_update)
     else : return (no_update, no_update)
 
 @app.callback(
@@ -1637,14 +1704,14 @@ def differanceintegration(value1, value2,ops):
              Input('leftIntegralFirst','value'),
              Input('rightIntegralFirst','value'),], 
              [State('intersection','value'),State('retrieve', 'children'),
-                
+
 ]
     )
 
 
 
 
-def differanceCalculation(hiddendif, valuechoosenright,valuechoosenleft,leftfirst,rightfirst,diff,retrieve):
+def differanceCalculation(hiddendif, valuechoosenleft,valuechoosenright,leftfirst,rightfirst,diff,retrieve):
     if hiddendif == None or hiddendif == [] or retrieve == None or retrieve== []:
         raise PreventUpdate
     print('hiddendif',hiddendif)
@@ -1712,48 +1779,35 @@ def differanceCalculation(hiddendif, valuechoosenright,valuechoosenleft,leftfirs
 
 def write_excel(nc, a,b,c,d,e,f,g,h,i,j) :
     if nc>0:
-        from datetime import datetime
-
-        # datetime object containing current date and time
-        now = datetime.now()
+        now = datetime.datetime.now()
+        if i==[] or j == ['intersection']:
+            i,j = None,None
+        print('now,a,b,c,d,e,f,g,h,i,j',now,a,b,c,d,e,f,g,h,i,j)
         return (now,a,b,c,d,e,f,g,h,i,j)
 
 
-# t = []
-# @app.callback(Output('bbbb','children'),
-#               [Input('writeexcelhidden','children')],
-#
-#               )
-#
-# def xxx(s):
-#     print('s',s)
-#     t.append(s)
-#     now = time.strftime("%x")
-#     book = Workbook()
-#     sheet = book.active
-#     for row in t[2:]:
-#         sheet.append(row)
-#     book.save('appending.xlsx')
+exportdatalist = [None,None,['Date', 'Firstchoosenvalue', 'leftfirstIntegralVal','leftSecondIntegralVal','leftIntegral',
+                             'Secondchoosenvalue','rightFirstIntegralVal','rightSecondIntegralVal','rightIntegral','result','Interection']]
+@app.callback(Output('hiddenrecord2','children'),
+              [Input('writeexcelhidden','children')],
+              [State("my-toggle-switch", "on")]
+
+              )
+
+def exportdata(s,on):
+    if on==1:
+        exportdatalist.append(s)
+
+        book = Workbook()
+        sheet = book.active
+        print('exportdatalist',exportdatalist)
+        for row in exportdatalist[2:]:
+            if row != None :
+                sheet.append(row)
+        book.save('new_fichier.xlsx')
 
 
 
 
-# @app.callback(Output,
-#               [Input('writeexcelhidden', 'children')],
-#               [State('bbbb', 'children')])
-#
-# def nihai(a,b):
-#     if a !=[]:
-#         b.append(a[0])
-#     print(b)
- 
- 
- 
- 
- 
- 
- 
- 
- 
 if __name__ == '__main__' :
     app.run_server(debug=True)
