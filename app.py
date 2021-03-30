@@ -1804,7 +1804,7 @@ def exportdata(s,on):
         for row in exportdatalist[2:]:
             if row != None :
                 sheet.append(row)
-        book.save('new_fichier.xlsx')
+        book.save('C:/Users/sahin/PycharmProjects/pythonProject/dashappv1/new_fichier.xlsx')
 
 
 
