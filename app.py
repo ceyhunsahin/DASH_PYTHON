@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import os
 import base64
 import datetime
 import time
@@ -16,13 +17,36 @@ from dash import no_update
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from numpy import trapz
-from openpyxl import Workbook
+from openpyxl import Workbook,load_workbook
 
+
+
+# Uploaded_File= "C:/Bureau/App_Loaded_File"
+# if not os.path.exists(Uploaded_File):
+#     os.makedirs(Uploaded_File)
 # Initialize the app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 app.config.suppress_callback_exceptions = True
+# @server.route("/download/<path:path>")
 
+# def download(path):
+#     """Serve a file from the upload directory."""
+#     return send_from_directory(Uploaded_File, path, as_attachment=True)
+#
+# def save_file(list_of_names, list_of_contents):
+#     """Decode and store a file uploaded with Plotly Dash."""
+#     data = list_of_contents.encode("utf8").split(b";base64,")[1]
+#     with open(os.path.join(Uploaded_File, list_of_names), "wb") as fp:
+#         fp.write(base64.decodebytes(data))
+# def uploaded_files():
+#     """List the files in the upload directory."""
+#     files = []
+#     for filename in os.listdir(Uploaded_File):
+#         path = os.path.join(Uploaded_File, filename)
+#         if os.path.isfile(path):
+#             files.append(filename)
+#     return files
 # connect OPC 
 
 # get data from MAF
@@ -66,9 +90,9 @@ page_1_layout = html.Div(
                                  'Drag and Drop or ',
                                  html.A('Select Files for work')
                              ]),
-                             style={
-                                 'visibility': 'hidden',
-                             },
+                             # style={
+                             #     'visibility': 'hidden',
+                             # },
                              # Allow multiple files to be uploaded
                              multiple=True,
 
@@ -264,6 +288,8 @@ def parse_contents(contents, filename, date):
             df = pd.read_excel(io.BytesIO(decoded))
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
+            print(df)
+            df.to_excel("appending.xlsx")
     except Exception as e:
         print(e)
         return html.Div([
@@ -344,7 +370,7 @@ def update_output(list_of_contents, on, list_of_names, list_of_dates, retrieve, 
             parse_contents(c, n, d) for c, n, d in
             zip(list_of_contents, list_of_names, list_of_dates)]
         retrieve = list_of_names
-        print('sahin', retrieve)
+
         return content, retrieve
     else:
         return (no_update, no_update)
@@ -497,9 +523,9 @@ def opcLoadingData(on):
               [Input("retrieve", "children")])
 def dropdownlistcontrol(retrieve):
     if len(retrieve) > 0:
-        df = pd.read_excel('{}'.format(retrieve[0]))
-        dff = [{'label': i, 'value': i} for i in df.columns]
-        print('dff', dff)
+        df = pd.read_excel('appending.xlsx')
+        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un')!=1 and i != 'index' and i != 'date']
+        print('dff', df.columns)
         return dff
     else:
         return no_update
@@ -937,7 +963,7 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
     if retrieve == None or retrieve == []:
         raise PreventUpdate
     if len(retrieve) > 0:
-        df = pd.read_excel('{}'.format(retrieve[0]))
+        df = pd.read_excel('appending.xlsx')
         df['index'] = df.index
         df = df.reindex(columns=sorted(df.columns, reverse=True))
         baseval = ''
@@ -947,7 +973,7 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                     baseval += col
                     dt = df[baseval]
         else:
-            df_shape = pd.read_excel('{}'.format(retrieve[0]))
+            df_shape = pd.read_excel('appending.xlsx')
             df_shape['newindex'] = df_shape.index
             df_shape.index = df_shape['date']
             dt = ["{}-{:02.0f}-{:02.0f}_{:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day, d.hour, d.minute,
@@ -1411,8 +1437,8 @@ def contractdropdown(x, y, ):
               [Input("retrieve", "children")])
 def dropdownlistcontrol(retrieve):
     if len(retrieve) > 0:
-        df = pd.read_excel('{}'.format(retrieve[0]))
-        dff = [{'label': i, 'value': i} for i in df.columns]
+        df = pd.read_excel('appending.xlsx')
+        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un')!=1 and i != 'index' and i != 'date']
         return (dff, dff)
     else:
         return (no_update, no_update)
@@ -1460,7 +1486,7 @@ def detailedGraph2(radio, valx, valy, slideheight, slidewidth, g1, g2, head, not
     if valx == [] or valy == [] or valx == None or valy == None or g1 == None or g2 == None or head == None or note == None:
         raise PreventUpdate
     if len(retrieve) > 0:
-        df = pd.read_excel('{}'.format(retrieve[0]))
+        df = pd.read_excel('appending.xlsx')
         fig = go.Figure()
 
         for j in range(len(valy)):
@@ -1516,7 +1542,7 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, retrieve):
     zero = 0
     spaceList2 = []
     if len(retrieve) > 0:
-        df = pd.read_excel('{}'.format(retrieve[0]))
+        df = pd.read_excel('appending.xlsx')
         df['index'] = df.index
         for i in range(len(value)):
             spaceList1.append(zero)
@@ -1601,7 +1627,7 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, retrieve):
     zero = 0
     spaceList2 = []
     if len(retrieve) > 0:
-        df = pd.read_excel('{}'.format(retrieve[0]))
+        df = pd.read_excel('appending.xlsx')
         df['index'] = df.index
         for i in range(len(value)):
             spaceList1.append(zero)
@@ -1689,7 +1715,7 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
         print('st1left', type(valuechoosenleft))
         print('st1right', st1right)
         if st1left != '' and st1right != '':
-            df = pd.read_excel('{}'.format(retrieve[0]))
+            df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
@@ -1731,7 +1757,7 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
         st2right = st2right[2:]
     if len(retrieve) > 0:
         if st2left != '' and st2right != '':
-            df = pd.read_excel('{}'.format(retrieve[0]))
+            df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff2 = df[
@@ -1802,7 +1828,7 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
         if len(
                 retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
 
-            df = pd.read_excel('{}'.format(retrieve[0]))
+            df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff = df[(df[valuechoosenright].index >= float(a)) & (df[valuechoosenright].index <= float(b)) |
@@ -1847,16 +1873,18 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
 def write_excel(nc, a, b, c, d, e, f, g, h, i, j):
     if nc > 0:
         now = datetime.datetime.now()
-        if i == [] or j == ['intersection']:
-            i, j = None, None
-        print('now,a,b,c,d,e,f,g,h,i,j', now, a, b, c, d, e, f, g, h, i, j)
+        print("jjjjjjjjjjjjjjjjjjjjjjjjj",j)
+        if i == [] :
+            i= None
+        if j == ['intersection']:
+            j = None
         return (now, a, b, c, d, e, f, g, h, i, j)
 
 
 exportdatalist = [None, None,
                   ['Date', 'Firstchoosenvalue', 'leftfirstIntegralVal', 'leftSecondIntegralVal', 'leftIntegral',
                    'Secondchoosenvalue', 'rightFirstIntegralVal', 'rightSecondIntegralVal', 'rightIntegral', 'result',
-                   'Interection']]
+                   'Intersection']]
 
 
 @app.callback(Output('hiddenrecord2', 'children'),
