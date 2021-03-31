@@ -731,16 +731,24 @@ def LoadingDataTab1(on, dropdownhidden):
                                                                      style={'width': '8rem', "marginTop": "1.5rem"},
                                                                      autoFocus=True,
                                                                      placeholder="total integration"),
-                                                           ]), html.Button("Write", id="write_excel", n_clicks=0,
+                                                           ]), html.Button("Save", id="write_excel", n_clicks=0,
                                                                            style={'fontSize': '1rem'},
-                                                                           className="ad")]),
+                                                                           className="ad"),
+
+                                                                 ]),
                                        html.Div([dbc.Checklist(
                                            id='operateur',
                                            options=[{'label': i, 'value': i} for i in
                                                     ['Plus', 'Moins', 'Multiplie', 'Division']],
                                            value=[],
                                            labelStyle={"display": "Block"},
-                                       ), ]),
+                                       ), dbc.Input(id='fichier',
+                                                                           type="text",
+                                                                           bs_size="sm",
+                                                                           style={'width': '8rem', "marginTop": "1.5rem"},
+                                                                           autoFocus=True,
+                                                                           value = 'C:',
+                                                                           placeholder="where (C:/a/b/)"),]),
                                        html.Div([dcc.Dropdown(id='secondChoosenValue',
                                                               options=[{'label': i, 'value': i} for i in
                                                                        dropdownhidden],
@@ -1889,19 +1897,18 @@ exportdatalist = [None, None,
 
 @app.callback(Output('hiddenrecord2', 'children'),
               [Input('writeexcelhidden', 'children')],
-              [State("my-toggle-switch", "on")]
+              [State("fichier", "value")]
               )
-def exportdata(s, on):
-    if on == 1:
-        exportdatalist.append(s)
+def exportdata(s, where):
+    exportdatalist.append(s)
 
-        book = Workbook()
-        sheet = book.active
-        print('exportdatalist', exportdatalist)
-        for row in exportdatalist[2:]:
-            if row != None:
-                sheet.append(row)
-        book.save('C:/Documents/new_fichier.xlsx')
+    book = Workbook()
+    sheet = book.active
+    print('exportdatalist', exportdatalist)
+    for row in exportdatalist[2:]:
+        if row != None:
+            sheet.append(row)
+    book.save('{}/new_fichier.xlsx'.format(where))
 
 
 
