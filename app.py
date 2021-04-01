@@ -1889,7 +1889,10 @@ def write_excel(nc, a, b, c, d, e, f, g, h, i, j):
             j = None
         return (now, a, b, c, d, e, f, g, h, i, j)
 
-
+# def file_download_link(a):
+#     """Create a Plotly Dash 'A' element that downloads a file from the app."""
+#     location = "/download/{}".format(urlquote(a))
+#     return html.A(a, href=location)
 exportdatalist = [None, None,
                   ['Date', 'Firstchoosenvalue', 'leftfirstIntegralVal', 'leftSecondIntegralVal', 'leftIntegral',
                    'Secondchoosenvalue', 'rightFirstIntegralVal', 'rightSecondIntegralVal', 'rightIntegral', 'result',
@@ -1901,10 +1904,13 @@ exportdatalist = [None, None,
              )
 def exportdata(s):
 
-    exportdatalist.append(s)
-    print(exportdatalist)
-    df = pd.DataFrame(exportdatalist[5:])
-    df.to_excel('C:/Documents/new_fichier.xlsx')
+    if len(exportdatalist)>2:
+        exportdatalist.append(s)
+        df = pd.DataFrame(exportdatalist[5:])
+        df.to_excel('C:/Documents/new_fichier.xlsx')
+
+
+
 
 
 if __name__ == '__main__' :
