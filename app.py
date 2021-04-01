@@ -18,8 +18,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from urllib.parse import quote as urlquote
 from numpy import trapz
-from openpyxl import Workbook,load_workbook
-
+from flask import send_file
 
 
 Uploaded_File= "C:/Bureau/App_Loaded_File"
@@ -817,6 +816,13 @@ def LoadingDataTab1(on, dropdownhidden):
                                                  style={'width': '7rem', "marginTop": "1rem"},
                                                  autoFocus=True,
                                                  placeholder="Enter Minimum Value of Graph..."),
+                                       html.A(
+                                           'Download Data',
+                                           id='download_excel',
+                                           # download="rawdata.csv",
+                                           href="/download_excel/",
+                                           # target="_blank"
+                                       )
                                        ], className='abcd'),
 
                              html.Div([dcc.Graph(id='graph',
@@ -1893,24 +1899,74 @@ def write_excel(nc, a, b, c, d, e, f, g, h, i, j):
 #     """Create a Plotly Dash 'A' element that downloads a file from the app."""
 #     location = "/download/{}".format(urlquote(a))
 #     return html.A(a, href=location)
-exportdatalist = [None, None,
-                  ['Date', 'Firstchoosenvalue', 'leftfirstIntegralVal', 'leftSecondIntegralVal', 'leftIntegral',
-                   'Secondchoosenvalue', 'rightFirstIntegralVal', 'rightSecondIntegralVal', 'rightIntegral', 'result',
-                   'Intersection']]
+
 
 
 @app.callback(Output('hiddenrecord2', 'children'),
               [Input('writeexcelhidden', 'children')],
+              [State('hiddenrecord2', 'children')],
+
              )
-def exportdata(s):
+def exportdata(s, exportdatalist):
 
-    if len(exportdatalist)>2:
+    if len(exportdatalist) == 0:
+        exportdatalist.append(['Date', 'Firstchoosenvalue', 'leftfirstIntegralVal', 'leftSecondIntegralVal', 'leftIntegral',
+                   'Secondchoosenvalue', 'rightFirstIntegralVal', 'rightSecondIntegralVal', 'rightIntegral', 'result',
+                   'Intersection'])
+        print('exportdatalist1', exportdatalist)
+    if s != None :
         exportdatalist.append(s)
-        df = pd.DataFrame(exportdatalist[5:])
-        df.to_excel('C:/Documents/new_fichier.xlsx')
+    # if len(exportdatalist) == 1:
+    #     return exportdatalist[0]
+    #     print('exportdatalist',exportdatalist)
+    #
+    # else :
+    #     print('exportdatalist',exportdatalist)
+    print('exportdatalist2', exportdatalist)
+    return exportdatalist
+
+@app.callback(Output('hiddenrecord1', 'children'),
+              [Input('hiddenrecord2', 'children')],)
+def exportdata2(exportdatalist):
+
+    df = pd.DataFrame(exportdatalist)
+    df.to_excel('new_fichier.xlsx')
+    print(df)
 
 
 
+
+
+# @app.callback(
+#     dash.dependencies.Output('download-link', 'href'),
+#     [dash.dependencies.Input('hiddenrecord2', 'children')])
+#
+# def update_download_link(val):
+#     dff = pd.DataFrame(val)
+#     print('df son',dff)
+#     csv_string = dff.to_csv(index=False, encoding='utf-8')
+#     csv_string = "data:text/csv;charset=utf-8," + urlquote(csv_string)
+#     return csv_string
+
+@app.server.route("/download_excel/")
+def download_excel():
+    # Create DF
+    dff = pd.read_excel("new_fichier.xlsx")
+    print("dfdfdfdfdfdf",dff)
+    # Convert DF
+    buf = io.BytesIO()
+    excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
+    dff.to_excel(excel_writer, sheet_name="sheet1")
+    excel_writer.save()
+    excel_data = buf.getvalue()
+    buf.seek(0)
+    return send_file(
+        buf,
+        mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        attachment_filename="test11311.xlsx",
+        as_attachment=True,
+        cache_timeout=0
+    )
 
 
 if __name__ == '__main__' :
