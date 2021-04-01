@@ -1898,8 +1898,7 @@ exportdatalist = [None, None,
 
 @app.callback(Output('hiddenrecord2', 'children'),
               [Input('writeexcelhidden', 'children')],
-              [State("fichier", "value")]
-              )
+             )
 def exportdata(s):
 
     exportdatalist.append(s)
