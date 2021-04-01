@@ -95,7 +95,13 @@
 .ad{
     display: flex;
     flex-direction : column;
-    margin : -120px -120px -120px 170px;
+    margin : -120px -110px -120px 140px;
+
+}
+.adc{
+    display: flex;
+    flex-direction : column;
+    margin : 82px -110px -120px 200px;
 
 }
 .ab{ 
@@ -277,7 +283,7 @@
   
     
 }
-#showLeft, #showRight, #showTab, #upload_data, #write_excel {
+#showLeft, #showRight, #showTab, #upload_data, #write_excel, #download {
     background-color: #0996ce; 
     border: none;
     color: white;
@@ -289,11 +295,11 @@
     cursor: pointer;
     border-radius: 0.3rem;
 }
-#showLeft:hover, #showRight:hover, #showTab:hover, #write_excel:hover   {
+#showLeft:hover, #showRight:hover, #showTab:hover, #write_excel:hover, #download:hover   {
     background-color: #052b5e; 
     color: white;
 }
-#showLeft:active, #showRight:active, #showTab:active , #write_excel:active{
+#showLeft:active, #showRight:active, #showTab:active , #write_excel:active, #download:active{
     background-color: #052b5e; 
     color: white;
 }

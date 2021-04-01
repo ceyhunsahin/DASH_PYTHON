@@ -16,14 +16,15 @@ import plotly.graph_objects as go
 from dash import no_update
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+from urllib.parse import quote as urlquote
 from numpy import trapz
 from openpyxl import Workbook,load_workbook
 
 
 
-# Uploaded_File= "C:/Bureau/App_Loaded_File"
-# if not os.path.exists(Uploaded_File):
-#     os.makedirs(Uploaded_File)
+Uploaded_File= "C:/Bureau/App_Loaded_File"
+if not os.path.exists(Uploaded_File):
+    os.makedirs(Uploaded_File)
 # Initialize the app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
@@ -748,7 +749,7 @@ def LoadingDataTab1(on, dropdownhidden):
                                                                            style={'width': '8rem', "marginTop": "1.5rem"},
                                                                            autoFocus=True,
                                                                            value = 'C:',
-                                                                           placeholder="where (C:/a/b/)"),]),
+                                                                           placeholder=" (C:/a/b/)"),]),
                                        html.Div([dcc.Dropdown(id='secondChoosenValue',
                                                               options=[{'label': i, 'value': i} for i in
                                                                        dropdownhidden],
@@ -1899,34 +1900,12 @@ exportdatalist = [None, None,
               [Input('writeexcelhidden', 'children')],
               [State("fichier", "value")]
               )
-def exportdata(s, where):
+def exportdata(s):
+
     exportdatalist.append(s)
-
-    book = Workbook()
-    sheet = book.active
-    print('exportdatalist', exportdatalist)
-    for row in exportdatalist[2:]:
-        if row != None:
-            sheet.append(row)
-    book.save('{}/new_fichier.xlsx'.format(where))
-
-
-
-
-# def exportdata(s,on):
-#     if on==1:
-#         exportdatalist.append(s)
-#
-#         print('exportdatalist',exportdatalist)
-#         wb = Workbook()
-#         ws = wb.active
-#         ws.title = "{}".format('ceyhun')
-#         sheet1 = wb.add_sheet("Sheet 1")
-#         a = 0
-#         for i in exportdatalist[2:]:
-#             sheet1.write(1,0,i)
-#         wb.save("Bureau/workbook.xls")
-
+    print(exportdatalist)
+    df = pd.DataFrame(exportdatalist[5:])
+    df.to_excel('C:/Documents/new_fichier.xlsx')
 
 
 if __name__ == '__main__' :
