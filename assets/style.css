@@ -94,7 +94,7 @@
 }
 .ad{
     display: flex;
-    flex-direction : column;
+    flex-direction : row;
     margin : -120px -110px -120px 140px;
 
 
