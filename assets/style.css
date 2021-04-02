@@ -97,6 +97,8 @@
     flex-direction : column;
     margin : -120px -110px -120px 140px;
 
+
+
 }
 .adc{
     display: flex;
@@ -283,7 +285,7 @@
   
     
 }
-#showLeft, #showRight, #showTab, #upload_data, #write_excel, #download {
+#showLeft, #showRight, #showTab, #upload_data, #write_excel, #download, #download_data {
     background-color: #0996ce; 
     border: none;
     color: white;
@@ -295,11 +297,11 @@
     cursor: pointer;
     border-radius: 0.3rem;
 }
-#showLeft:hover, #showRight:hover, #showTab:hover, #write_excel:hover, #download:hover   {
+#showLeft:hover, #showRight:hover, #showTab:hover, #write_excel:hover, #download:hover,#download_data:hover   {
     background-color: #052b5e; 
     color: white;
 }
-#showLeft:active, #showRight:active, #showTab:active , #write_excel:active, #download:active{
+#showLeft:active, #showRight:active, #showTab:active , #write_excel:active, #download:active, #download_data:active{
     background-color: #052b5e; 
     color: white;
 }

@@ -19,6 +19,7 @@ from dash.exceptions import PreventUpdate
 from urllib.parse import quote as urlquote
 from numpy import trapz
 from flask import send_file
+from openpyxl import Workbook,load_workbook
 
 
 Uploaded_File= "C:/Bureau/App_Loaded_File"
@@ -60,7 +61,7 @@ extra_data_list = [
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content')
+    html.Div(id='page-content'),
 ])
 # 4 page
 index_page = html.Div(className="indexpage",
@@ -142,23 +143,25 @@ page_1_layout = html.Div(
                                                html.Div(id='hiddenShapeVal', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenShapeDate', children=[],
                                                         style={'display': 'None'}), ], ),
-                                  html.Div(id='hiddenDifferance', children=[], style={'display': 'None'}),
-                                  html.Div(id='retrieve', children=[], style={'display': 'None'}),
-                                  html.Div(id='datatablehidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='radiographhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='sliderHeightTab1hidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='sliderWidthTab1hidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='minimumValueGraphhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='firstchoosenvalhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='secondchoosenvalhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='leftintegralfirsthidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='leftintegralsecondhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='rightintegralfirsthidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='rightintegralsecondhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='tableinteractivehidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='writeexcelhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='hiddenrecord1', children=[], style={'display': 'None'}),
-                                  html.Div(id='hiddenrecord2', children=[], style={'display': 'None'})
+                                                  html.Div(id='hiddenDifferance', children=[], style={'display': 'None'}),
+                                                  html.Div(id='retrieve', children=[], style={'display': 'None'}),
+                                                  html.Div(id='datatablehidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='radiographhidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='sliderHeightTab1hidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='sliderWidthTab1hidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='minimumValueGraphhidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='firstchoosenvalhidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='secondchoosenvalhidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='leftintegralfirsthidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='leftintegralsecondhidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='rightintegralfirsthidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='rightintegralsecondhidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='tableinteractivehidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='writeexcelhidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='hiddenrecord1', children=[], style={'display': 'None'}),
+                                                  html.Div(id='hiddenrecord2', children=[], style={'display': 'None'}),
+                                                  html.Div(id='hiddenrecord3', children=[], style={'display': 'None'}),
+                                                  html.Div(id='hiddenrecord4', children=[], style={'display': 'None'})
                               ]),
                  ]),
 
@@ -731,9 +734,18 @@ def LoadingDataTab1(on, dropdownhidden):
                                                                      style={'width': '8rem', "marginTop": "1.5rem"},
                                                                      autoFocus=True,
                                                                      placeholder="total integration"),
-                                                           ]), html.Button("Save", id="write_excel", n_clicks=0,
-                                                                           style={'fontSize': '1rem'},
-                                                                           className="ad"),
+                                                           ]), html.Div([html.Button("Save", id="write_excel", n_clicks=0,
+                                                                           style={'fontSize': '1rem','width' : '4rem', 'margin' : '1rem'},
+                                                                           ),
+                                                                 html.A(html.Button("Download Data", id='download_data',
+                                                                                    n_clicks=0,
+                                                                                    style={'fontSize': '1rem', 'width' : '9rem'}, ),
+                                                                        id='download_excel',
+                                                                        # # download="rawdata.csv",
+                                                                        href="/download_excel/",
+                                                                        # target="_blank"
+                                                                        )
+                                                                 ], className='ad')
 
                                                                  ]),
                                        html.Div([dbc.Checklist(
@@ -816,13 +828,7 @@ def LoadingDataTab1(on, dropdownhidden):
                                                  style={'width': '7rem', "marginTop": "1rem"},
                                                  autoFocus=True,
                                                  placeholder="Enter Minimum Value of Graph..."),
-                                       html.A(
-                                           'Download Data',
-                                           id='download_excel',
-                                           # download="rawdata.csv",
-                                           href="/download_excel/",
-                                           # target="_blank"
-                                       )
+
                                        ], className='abcd'),
 
                              html.Div([dcc.Graph(id='graph',
@@ -1893,60 +1899,27 @@ def write_excel(nc, a, b, c, d, e, f, g, h, i, j):
             i= None
         if j == ['intersection']:
             j = None
-        return (now, a, b, c, d, e, f, g, h, i, j)
+        x = (now, a, b, c, d, e, f, g, h, i, j)
+        print('x1', x)
 
-# def file_download_link(a):
-#     """Create a Plotly Dash 'A' element that downloads a file from the app."""
-#     location = "/download/{}".format(urlquote(a))
-#     return html.A(a, href=location)
-
-
-
-@app.callback(Output('hiddenrecord2', 'children'),
-              [Input('writeexcelhidden', 'children')],
-              [State('hiddenrecord2', 'children')],
-
-             )
-def exportdata(s, exportdatalist):
-
-    if len(exportdatalist) == 0:
-        exportdatalist.append(['Date', 'Firstchoosenvalue', 'leftfirstIntegralVal', 'leftSecondIntegralVal', 'leftIntegral',
-                   'Secondchoosenvalue', 'rightFirstIntegralVal', 'rightSecondIntegralVal', 'rightIntegral', 'result',
-                   'Intersection'])
-        print('exportdatalist1', exportdatalist)
-    if s != None :
-        exportdatalist.append(s)
-    # if len(exportdatalist) == 1:
-    #     return exportdatalist[0]
-    #     print('exportdatalist',exportdatalist)
-    #
-    # else :
-    #     print('exportdatalist',exportdatalist)
-    print('exportdatalist2', exportdatalist)
-    return exportdatalist
-
+        return x
+x = []
 @app.callback(Output('hiddenrecord1', 'children'),
-              [Input('hiddenrecord2', 'children')],)
-def exportdata2(exportdatalist):
+              [Input('writeexcelhidden', 'children')],
+              [State('hiddenrecord1', 'children')]
+              )
 
-    df = pd.DataFrame(exportdatalist)
+def export(data,totaldata):
+    print('data',data)
+    if data ==None:
+        a = ['Date', 'Firstchoosenvalue', 'leftfirstIntegralVal', 'leftSecondIntegralVal', 'leftIntegral',
+                       'Secondchoosenvalue', 'rightFirstIntegralVal', 'rightSecondIntegralVal', 'rightIntegral', 'result',
+                       'Intersection']
+        x.append(a)
+    if data != None:
+        x.append(data)
+    df = pd.DataFrame(x)
     df.to_excel('new_fichier.xlsx')
-    print(df)
-
-
-
-
-
-# @app.callback(
-#     dash.dependencies.Output('download-link', 'href'),
-#     [dash.dependencies.Input('hiddenrecord2', 'children')])
-#
-# def update_download_link(val):
-#     dff = pd.DataFrame(val)
-#     print('df son',dff)
-#     csv_string = dff.to_csv(index=False, encoding='utf-8')
-#     csv_string = "data:text/csv;charset=utf-8," + urlquote(csv_string)
-#     return csv_string
 
 @app.server.route("/download_excel/")
 def download_excel():
