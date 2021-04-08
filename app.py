@@ -20,6 +20,10 @@ from urllib.parse import quote as urlquote
 from numpy import trapz
 from flask import send_file
 from openpyxl import Workbook,load_workbook
+from sshtunnel import SSHTunnelForwarder
+import mariadb
+# import pywintypes
+# pywintypes.datetime = pywintypes.TimeType
 
 
 
@@ -73,9 +77,9 @@ page_1_layout = html.Div(
                                  'Drag and Drop or ',
                                  html.A('Select Files for work')
                              ]),
-                             # style={
-                             #     'visibility': 'hidden',
-                             # },
+                             style={
+                                 'visibility': 'hidden',
+                             },
                              # Allow multiple files to be uploaded
                              multiple=True,
 
@@ -173,9 +177,9 @@ page_1_layout = html.Div(
                                              children=[],
                                          ),
                                          dcc.Tab(
-                                             id='tab4',
+                                             id='tab2',
                                              label='Tab for one option',
-                                             value='tab-4',
+                                             value='tab-2',
                                              className='custom-tab',
                                              selected_className='custom-tab--selected',
                                              children=[
@@ -183,15 +187,16 @@ page_1_layout = html.Div(
                                          ),
                                          dcc.Tab(
                                              id='tab3',
-                                             label='Tab for one option',
+                                             label='Work On Database',
                                              value='tab-3', className='custom-tab',
+
                                              # style = {'visibility' : 'hidden'},
                                              selected_className='custom-tab--selected'
                                          ),
                                          dcc.Tab(
-                                             id="tab2",
+                                             id="tab4",
                                              label='Tab for one option',
-                                             value='tab-2',
+                                             value='tab-4',
                                              className='custom-tab',
                                              style={'visibility': 'hidden'},
                                              selected_className='custom-tab--selected'
@@ -246,6 +251,33 @@ page_4_layout = html.Div([
     dcc.Link('Go back to home', href='/')
 ])
 
+
+# @app.callback(Output('tab2', 'children'),
+#               [Input("my-toggle-switch", "on"), Input('interval', 'n_intervals')])
+# def values(on, n_intervals):
+#     if on == 1:
+#
+#         opc = OpenOPC.client()
+#         opc.servers()
+#         opc.connect('Kepware.KEPServerEX.V6')
+#
+#         for name, value, quality, time in opc.iread(
+#                 ['schneider_Xflow.MAF.CoAd', 'schneider_Xflow.MAF.ComManCoP2',
+#                  'schneider_Xflow.MAF.ComManCoP3P4P5', 'schneider_Xflow.MAF.ComManPompeSec',
+#                  'schneider_Xflow.MAF.CompteurEnergie', 'schneider_Xflow.MAF.CoP2',
+#                  'schneider_Xflow.MAF.CtempDepChauff', 'schneider_Xflow.MAF.D1',
+#                  'schneider_Xflow.MAF.D2', 'schneider_Xflow.MAF.D3', 'schneider_Xflow.MAF.D4',
+#                  'schneider_Xflow.MAF.MarcheBruleur', 'schneider_Xflow.MAF.Teg',
+#                  'schneider_Xflow.MAF.SdeBasBouMelange', 'schneider_Xflow.MAF.SdeBasHauMelange',
+#                  'schneider_Xflow.MAF.TambN3', 'schneider_Xflow.MAF.Tb1', 'schneider_Xflow.MAF.Tb2',
+#                  'schneider_Xflow.MAF.Tb3', 'schneider_Xflow.MAF.Tb4', 'schneider_Xflow.MAF.TdepPLC',
+#                  'schneider_Xflow.MAF.Teb', 'schneider_Xflow.MAF.Tec ', 'schneider_Xflow.MAF.Teev',
+#                  'schneider_Xflow.MAF.TempminMaf', 'schneider_Xflow.MAF.Text', 'schneider_Xflow.MAF.Tsb',
+#                  'schneider_Xflow.MAF.Tsc', 'schneider_Xflow.MAF.Tsev', 'schneider_Xflow.MAF.Tsg']):
+#             getDataFromModbus.append((name, value, quality, time))
+#             df = pd.DataFrame(getDataFromModbus, columns=['ItemID', 'Value', 'DataType', 'TimeStamp'])
+#             df.to_csv("cc.csv")
+#     return getDataFromModbus
 
 # surf between pages
 # Update the index
@@ -682,13 +714,14 @@ def render_content(tab):
         return html.Div([
             html.Div(id='tab1Data')
         ])
-    if tab == 'tab-4':
+    if tab == 'tab-2':
         return html.Div([
             html.Div(id='tab2Data')
         ])
     if tab == 'tab-3':
         return html.Div([
-            html.P('zehra')
+            html.Div(id='tab3Data', children = [html.Button('Database Activate', id = 'activatedb', n_clicks = 0),
+                                                html.Div(id = 'Dbdesign')])
         ])
     else:
         pass
@@ -1006,14 +1039,15 @@ def Inputaxis(nclick,y_val,x_val, y_axis, x_axis):
                ],
               [
                State('hiddenDifferance', 'children'),
-               State('retrieve', 'children')]
+               State('retrieve', 'children'),
+               ]
               )
 def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
          minValfirst,minValsecond, firstchoosen, secondchoosen, leftfirstval, leftsecondval,
          rightfirstval, rightsecondval, rightsidedrop, right_y_axis,right_x_axis,differance, retrieve):
     if retrieve == None or retrieve == [] :
         raise PreventUpdate
-    if len(retrieve) > 0:
+    if len(retrieve) > 0 :
         df = pd.read_excel('appending.xlsx')
         df['index'] = df.index
         df = df.reindex(columns=sorted(df.columns, reverse=True))
@@ -1394,96 +1428,99 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
 
 
 @app.callback(Output('tab2Data', 'children'),
-              [Input("my-toggle-switch", "on")])
-def LoadingDataTab2(on):
-    if on == 1:
-        data_list = ['CoAd', 'ComManCoP2', 'ComManCoP3P4P5', 'ComManPompeSec', 'CompteurEnergie', 'CoP2',
-                     'CtempDepChauff',
-                     'D1', 'D2', 'D3', 'D4', 'MarcheBruleur', 'Teg', 'SdeBasBouMelange', 'SdeBasHauMelange', 'TambN3',
-                     'Tb1',
-                     'Tb2', 'Tb3', 'Tb4', 'TdepPLC', 'Teb', 'Tec', 'Teev', 'TempminMaf', 'Text', 'Tsb', 'Tsc', 'Tsev']
+              [Input("my-toggle-switch", "on")],
+              [State('tabs-with-classes', 'value')])
+def LoadingDataTab2(on,tab):
+    if tab == 'tab-2':
+        if on == 1:
 
-        loadlist = html.Div(children=[
-            html.Div([html.Div([html.Div([dcc.Dropdown(id='tabDropdownTop',
-                                                       options=[{'label': i, 'value': i} for i in data_list],
-                                                       multi=True,
-                                                       style={"cursor": "pointer"},
-                                                       className='stockSelectorClass2',
-                                                       clearable=True,
-                                                       placeholder='Select your y-axis value...',
-                                                       ),
-                                          dcc.Dropdown(id='tabDropdownDown',
-                                                       options=[{'label': i, 'value': i} for i in data_list],
-                                                       multi=True,
-                                                       style={"cursor": "pointer"},
-                                                       className='stockSelectorClass2',
-                                                       clearable=True,
-                                                       placeholder='Select your x-axis value...',
-                                                       ), ], className="ab"),
-                                html.Div(dcc.RadioItems(id="radiograph2",
-                                                        options=[
-                                                            {'label': 'Point', 'value': 'markers'},
-                                                            {'label': 'Line', 'value': 'lines'},
-                                                            {'label': 'Line + Point', 'value': 'lines+markers'}],
-                                                        value='markers',
-                                                        labelClassName='groupgraph',
-                                                        labelStyle={'margin': '10px', },
-                                                        inputStyle={'margin': '10px', }
-                                                        ), ), ], className="ac"),
-                      html.Div([dcc.Dropdown(id="dropadd",
-                                             options=[
-                                                 {'label': 'Note', 'value': 'note'},
-                                                 {'label': 'Header', 'value': 'header'},
-                                                 {'label': 'x-axis', 'value': 'x_axis'},
-                                                 {'label': 'y-axis', 'value': 'y_axis'},
+            data_list = ['CoAd', 'ComManCoP2', 'ComManCoP3P4P5', 'ComManPompeSec', 'CompteurEnergie', 'CoP2',
+                         'CtempDepChauff',
+                         'D1', 'D2', 'D3', 'D4', 'MarcheBruleur', 'Teg', 'SdeBasBouMelange', 'SdeBasHauMelange', 'TambN3',
+                         'Tb1',
+                         'Tb2', 'Tb3', 'Tb4', 'TdepPLC', 'Teb', 'Tec', 'Teev', 'TempminMaf', 'Text', 'Tsb', 'Tsc', 'Tsev']
 
-                                             ],
-                                             value='header',
-                                             ),
-                                dcc.Textarea(
-                                    id='textarea',
-                                    value='',
-                                    style={'width': '15rem', 'marginTop': '0.5rem'},
-                                    autoFocus='Saisir',
-                                ),
-                                ], className="aa"),
+            loadlist = html.Div(children=[
+                html.Div([html.Div([html.Div([dcc.Dropdown(id='tabDropdownTop',
+                                                           options=[{'label': i, 'value': i} for i in data_list],
+                                                           multi=True,
+                                                           style={"cursor": "pointer"},
+                                                           className='stockSelectorClass2',
+                                                           clearable=True,
+                                                           placeholder='Select your y-axis value...',
+                                                           ),
+                                              dcc.Dropdown(id='tabDropdownDown',
+                                                           options=[{'label': i, 'value': i} for i in data_list],
+                                                           multi=True,
+                                                           style={"cursor": "pointer"},
+                                                           className='stockSelectorClass2',
+                                                           clearable=True,
+                                                           placeholder='Select your x-axis value...',
+                                                           ), ], className="ab"),
+                                    html.Div(dcc.RadioItems(id="radiograph2",
+                                                            options=[
+                                                                {'label': 'Point', 'value': 'markers'},
+                                                                {'label': 'Line', 'value': 'lines'},
+                                                                {'label': 'Line + Point', 'value': 'lines+markers'}],
+                                                            value='markers',
+                                                            labelClassName='groupgraph',
+                                                            labelStyle={'margin': '10px', },
+                                                            inputStyle={'margin': '10px', }
+                                                            ), ), ], className="ac"),
+                          html.Div([dcc.Dropdown(id="dropadd",
+                                                 options=[
+                                                     {'label': 'Note', 'value': 'note'},
+                                                     {'label': 'Header', 'value': 'header'},
+                                                     {'label': 'x-axis', 'value': 'x_axis'},
+                                                     {'label': 'y-axis', 'value': 'y_axis'},
 
-                      html.Button('addText', id='addText', n_clicks=0, style={'marginTop': '1.5rem'}),
+                                                 ],
+                                                 value='header',
+                                                 ),
+                                    dcc.Textarea(
+                                        id='textarea',
+                                        value='',
+                                        style={'width': '15rem', 'marginTop': '0.5rem'},
+                                        autoFocus='Saisir',
+                                    ),
+                                    ], className="aa"),
 
-                      ], className="tabDesign", ),
+                          html.Button('addText', id='addText', n_clicks=0, style={'marginTop': '1.5rem'}),
 
-            html.Div([dcc.Graph(id='graph2', config={'displayModeBar': True,
-                                                     'scrollZoom': True,
-                                                     'modeBarButtonsToAdd': [
-                                                         'drawopenpath',
-                                                         'drawcircle',
-                                                         'eraseshape',
-                                                         'select2d',
-                                                     ]},
-                                figure={
-                                    'layout': {'legend': {'tracegroupgap': 0},
+                          ], className="tabDesign", ),
 
-                                               }
-                                }
-                                ),
-                      dcc.Slider(id="sliderHeight",
-                                 max=2100,
-                                 min=400,
-                                 value=500,
-                                 step=100,
-                                 vertical=True,
-                                 updatemode='drag')], className='abc'),
+                html.Div([dcc.Graph(id='graph2', config={'displayModeBar': True,
+                                                         'scrollZoom': True,
+                                                         'modeBarButtonsToAdd': [
+                                                             'drawopenpath',
+                                                             'drawcircle',
+                                                             'eraseshape',
+                                                             'select2d',
+                                                         ]},
+                                    figure={
+                                        'layout': {'legend': {'tracegroupgap': 0},
 
-            html.Div([dcc.Slider(id="sliderWidth",
-                                 max=2000,
-                                 min=600,
-                                 value=950,
-                                 step=100,
-                                 updatemode='drag'),
-                      html.Div(id="tab2DashTable", children=[])]),
-        ])
+                                                   }
+                                    }
+                                    ),
+                          dcc.Slider(id="sliderHeight",
+                                     max=2100,
+                                     min=400,
+                                     value=500,
+                                     step=100,
+                                     vertical=True,
+                                     updatemode='drag')], className='abc'),
 
-        return loadlist
+                html.Div([dcc.Slider(id="sliderWidth",
+                                     max=2000,
+                                     min=600,
+                                     value=950,
+                                     step=100,
+                                     updatemode='drag'),
+                          html.Div(id="tab2DashTable", children=[])]),
+            ])
+
+            return loadlist
 
 
 # @app2.callback(Output('graph2','figure'),
@@ -2007,10 +2044,69 @@ def download_excel():
     return send_file(
         buf,
         mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        attachment_filename="test11311.xlsx",
+        attachment_filename="LERMAB.xlsx",
         as_attachment=True,
         cache_timeout=0
     )
+
+@app.callback(Output('Dbdesign', 'children'),
+             [Input('activatedb', 'n_clicks')],
+              )
+def DBcall(button):
+    if button > 0 :
+        server = SSHTunnelForwarder(
+            ("193.54.2.211", 22),
+            ssh_username='soudani',
+            ssh_password="univ484067152",
+            remote_bind_address=("193.54.2.211", 3306))
+
+        server.start()
+
+        try:
+            conn = mariadb.connect(
+                user="dashapp",
+                password="dashapp",
+                host="193.54.2.211",
+                port=3306,
+                database = "rcckn"
+            )
+
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+
+        # Get Cursor
+        cur = conn.cursor()
+        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
+        # a = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format('received_variablevalues')
+        a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
+        cur.execute(a)
+        t = cur.fetchall()
+        print(t)
+        m = []
+        for i in t:
+            m.append(i[0])
+        datalist = html.Div(children = [html.Div(
+            dcc.Dropdown(id='dbcolumn',
+                         options=[{'label': i, 'value': i}
+                                  for i in m],
+                         multi=False,
+                         style={"cursor": "pointer"},
+                         className='stockSelectorClass',
+                         clearable=False,
+                         placeholder='Select your parameters...',
+                         ),
+        )])
+        return datalist
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__' :
