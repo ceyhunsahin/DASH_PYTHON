@@ -34,6 +34,7 @@ app.config.suppress_callback_exceptions = True
 
 
 
+
 # connect OPC
 
 # get data from MAF
@@ -721,6 +722,7 @@ def render_content(tab):
     if tab == 'tab-3':
         return html.Div([
             html.Div(id='tab3Data', children = [html.Button('Database Activate', id = 'activatedb', n_clicks = 0),
+                                                html.Button('Database Deactivate', id='deactivatedb', n_clicks=0),
                                                 html.Div(id = 'Dbdesign')])
         ])
     else:
@@ -2050,10 +2052,134 @@ def download_excel():
     )
 
 @app.callback(Output('Dbdesign', 'children'),
-             [Input('activatedb', 'n_clicks')],
+             [Input('tabs-with-classes', 'value')],
               )
-def DBcall(button):
-    if button > 0 :
+def DBcall(tab):
+    if tab == 'tab-3' :
+
+        datalist = html.Div(children = [html.Div(
+            dcc.Dropdown(id='dbvalchoosen',
+                         # options=[{'label': i, 'value': i}
+                         #          for i in df.columns],
+                         multi=False,
+                         style={"cursor": "pointer"},
+                         className='stockSelectorClass',
+                         clearable=False,
+                         placeholder='Select your parameters...',
+                         )
+        ),
+            html.Div(
+                dcc.Dropdown(id='dbvalname',
+                             # options=[{'label': i, 'value': i}
+                             #          for i in df.columns],
+                             multi=False,
+                             style={"cursor": "pointer"},
+                             className='stockSelectorClass',
+                             clearable=False,
+                             placeholder='Select your parameters...',
+                             )
+            ),
+            html.Div(
+                dcc.Dropdown(id='dbvaldate',
+                             # options=[{'label': i, 'value': i}
+                             #          for i in df.columns],
+                             multi=False,
+                             style={"cursor": "pointer"},
+                             className='stockSelectorClass',
+                             clearable=False,
+                             placeholder='Select your parameters...',
+                             )
+            ),
+            dcc.Store(id='memory-output'),
+            html.Div(dcc.Graph(id = "getdbgraph")),
+            html.Div(id = "getdbtable"),
+            html.Div(id="hiddendb1"),
+            html.Div(id="hiddendb2")
+        ])
+        return datalist
+
+# @app.callback(Output('memory-output', 'data'),
+#                 [Input('dbvalname', 'value')],
+# )
+# def filter_db(val_selected,activate,deactivate):
+#     if activate >0:
+#         server = SSHTunnelForwarder(
+#             ("193.54.2.211", 22),
+#             ssh_username='soudani',
+#             ssh_password="univ484067152",
+#             remote_bind_address=("193.54.2.211", 3306))
+#
+#         server.start()
+#
+#         try:
+#             conn = mariadb.connect(
+#                 user="dashapp",
+#                 password="dashapp",
+#                 host="193.54.2.211",
+#                 port=3306,
+#                 database="rcckn"
+#             )
+#
+#         except mariadb.Error as e:
+#             print(f"Error connecting to MariaDB Platform: {e}")
+#             sys.exit(1)
+#         #
+#         # Get Cursor
+#         cur = conn.cursor()
+#         # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
+#         # a = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format('received_variablevalues')
+#         a = "SELECT * FROM received_variablevalues "
+#         cur.execute(a)
+#         t = cur.fetchall()
+#         data = t
+#         df = pd.DataFrame(data)
+#         df.to_csv('aa.csv')
+#
+#     if deactivate >0 :
+#         sys.exit(0)
+#         server.stop()
+
+
+#
+#     if
+#     server = SSHTunnelForwarder(
+#             ("193.54.2.211", 22),
+#             ssh_username='soudani',
+#             ssh_password="univ484067152",
+#             remote_bind_address=("193.54.2.211", 3306))
+#
+#     server.start()
+#
+#     try:
+#         conn = mariadb.connect(
+#                 user="dashapp",
+#                 password="dashapp",
+#                 host="193.54.2.211",
+#                 port=3306,
+#                 database="rcckn"
+#             )
+#
+#     except mariadb.Error as e:
+#             print(f"Error connecting to MariaDB Platform: {e}")
+#             sys.exit(1)
+# #
+#         # Get Cursor
+#     cur = conn.cursor()
+#         # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
+#         # a = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format('received_variablevalues')
+#     a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
+#     cur.execute(a)
+#     t = cur.fetchall()
+#     data = t
+#     df = pd.DataFrame(data)
+#     df.to_csv('aa.csv')
+#
+#
+@app.callback(Output('dbvalchoosen','options'),
+             [Input('activatedb', 'n_clicks')],
+             )
+def connectiondb(button):
+    if button>0:
         server = SSHTunnelForwarder(
             ("193.54.2.211", 22),
             ssh_username='soudani',
@@ -2068,46 +2194,133 @@ def DBcall(button):
                 password="dashapp",
                 host="193.54.2.211",
                 port=3306,
-                database = "rcckn"
+                database="rcckn"
             )
 
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
-
         # Get Cursor
         cur = conn.cursor()
         # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        # a = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format('received_variablevalues')
-        a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
-        cur.execute(a)
+        b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format('received_variablevalues')
+        # a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
+
+        cur.execute(b)
         t = cur.fetchall()
-        print(t)
+        df = pd.DataFrame(t)
+        print(df)
         m = []
         for i in t:
             m.append(i[0])
-        datalist = html.Div(children = [html.Div(
-            dcc.Dropdown(id='dbcolumn',
-                         options=[{'label': i, 'value': i}
-                                  for i in m],
-                         multi=False,
-                         style={"cursor": "pointer"},
-                         className='stockSelectorClass',
-                         clearable=False,
-                         placeholder='Select your parameters...',
-                         ),
-        )])
-        return datalist
+        print(m)
 
 
+        return [{'label': i, 'value': i} for i in m if i != 'ID' and i != 'VARIABLE_STR_VALUE' and i != 'PROCESSED' and i != 'TIMED_OUT' and i != 'UNREFERENCED'
+                and i != 'converted_num_value' and i != 'REMOTE_ID' and i != 'REMOTE_TIMESTAMP' and i != 'REMOTE_MESSAGE_ID']
 
+    else : raise PreventUpdate
 
+@app.callback(Output('hiddendb1','children'),
+              [Input('dbvalchoosen','value')],)
+def zz(f):
+    if f != None :
+        return f
+    else : raise PreventUpdate
+@app.callback(Output('dbvalname','options'),
+              [Input('hiddendb1','children')],)
 
+def dbname(dbch):
 
+    if dbch != [] or dbch != None:
+        print('dbch',dbch)
+        server = SSHTunnelForwarder(
+            ("193.54.2.211", 22),
+            ssh_username='soudani',
+            ssh_password="univ484067152",
+            remote_bind_address=("193.54.2.211", 3306))
 
+        server.start()
 
+        try:
+            conn = mariadb.connect(
+                user="dashapp",
+                password="dashapp",
+                host="193.54.2.211",
+                port=3306,
+                database="rcckn"
+            )
 
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+        # Get Cursor
+        cur = conn.cursor()
+        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
+        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
+        #     'received_variablevalues')
 
+        a = "SELECT DISTINCT {} FROM received_variablevalues ".format(dbch)
+
+        cur.execute(a)
+        t = cur.fetchall()
+        m = []
+        for i in t:
+            m.append(i[0])
+        print('m2',m)
+        return [{'label': i, 'value': i} for i in m]
+    else : raise PreventUpdate
+
+@app.callback(Output('hiddendb2','children'),
+              [Input('dbvalname','value')],)
+def zz(f):
+    if f != None :
+        return f
+    else : raise PreventUpdate
+
+@app.callback(Output('dbvaldate','options'),
+              [Input('hiddendb1','children')],)
+
+def dbdate(dbnm):
+
+    if dbnm != [] or dbnm != None:
+        print('dbnm',dbnm)
+        server = SSHTunnelForwarder(
+            ("193.54.2.211", 22),
+            ssh_username='soudani',
+            ssh_password="univ484067152",
+            remote_bind_address=("193.54.2.211", 3306))
+
+        server.start()
+
+        try:
+            conn = mariadb.connect(
+                user="dashapp",
+                password="dashapp",
+                host="193.54.2.211",
+                port=3306,
+                database="rcckn"
+            )
+
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+        # Get Cursor
+        cur = conn.cursor()
+        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
+        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
+        #     'received_variablevalues')
+
+        a = "SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'".format(dbnm)
+
+        cur.execute(a)
+        t = cur.fetchall()
+        m = []
+        for i in t:
+            m.append(i[0])
+        print('m2',m)
+        return [{'label': i, 'value': i} for i in m]
+    else : raise PreventUpdate
 
 if __name__ == '__main__' :
     app.run_server(debug=True)
