@@ -123,6 +123,8 @@ page_1_layout = html.Div(
                                                         children=[]),
                                                html.Div(id='tab2hiddenValuey_axis', style={'display': 'None'},
                                                         children=[]),
+                                               html.Div(id='tab3hiddenValuey_axis', style={'display': 'None'},
+                                                                                                        children=[]),
                                                html.Div(id='hiddenTextHeader', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextNote', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextxaxis', children=[], style={'display': 'None'}),
@@ -153,6 +155,16 @@ page_1_layout = html.Div(
                                               html.Div(id = 'inputRightX_axishidden', children=[], style={'display': 'None'}),
                                               html.Div(id = 'valueSendRighthidden', children=[], style={'display': 'None'}),
                                               html.Div(id = 'checklistvaleurhidden', children=[], style={'display': 'None'}),
+                                              html.Div(dcc.Graph(id='graphhidden',
+                                                 config={},
+                                                 style={'display': 'None'},
+                                                 figure={
+                                                     'layout': {'legend': {'tracegroupgap': 0},
+
+                                                                }
+                                                 }
+
+                                                 ),),
 
                               ]),
                  ]),
@@ -378,7 +390,6 @@ def parse_contents(contents, filename, date):
 
 
 @app.callback([Output('datatablehidden', 'children'), Output('retrieve', 'children')],
-
               [Input('upload-data', 'contents'), Input("my-toggle-switch", "on"), ],
               [State('upload-data', 'filename'),
                State('upload-data', 'last_modified'),
@@ -573,12 +584,10 @@ def hiddendiv(val_dropdownLeft, children):
 
 
 @app.callback(
-
     Output("leftSideDropdown", "children"),
     [Input("showLeft", "n_clicks"),
      Input("clearLeft", "n_clicks"), ],
     [State("leftSideDropdownHidden", "children")],
-
 )
 # left side dropdown-checklist relation
 #########
@@ -634,7 +643,6 @@ def toggle_modal(n1, n2, is_open, children):
 
 
 @app.callback(
-
     [Output('rightSideDropdown', "children"), Output('checklistvaleurhidden', "children"),],
     [
         Input("showRight", "n_clicks"),
@@ -708,7 +716,6 @@ def edit_list2(ncr1, ncr2, valeur, children,hiddenchild):
 
 @app.callback(Output('tabs-content-classes', 'children'),
               [Input('tabs-with-classes', 'value')],
-
               )
 def render_content(tab):
     if tab == 'tab-1':
@@ -731,10 +738,11 @@ def render_content(tab):
 
 @app.callback(Output('tab1Data', 'children'),
               [Input("my-toggle-switch", "on"),
-               Input("leftSidedroptValue", "children")]
+               Input("leftSidedroptValue", "children")],
+              [State('tabs-with-classes', 'value')]
               )
-def LoadingDataTab1(on, dropdownhidden):
-    if on == 1:
+def LoadingDataTab1(on, dropdownhidden,tab):
+    if on == 1 and tab == 'tab-1':
         loadTab1 = html.Div([html.Div([html.Div([html.Div([dcc.Dropdown(id='firstChoosenValue',
                                                                         options=[{'label': i, 'value': i} for i in
                                                                                  dropdownhidden],
@@ -992,7 +1000,7 @@ def rightfrst(rightintfirst):
               )
 def rightscnd(rightintsecond):
     return rightintsecond
-##### bunla ugras
+##### bunla ugras shapeler ciktiktan sonra referance bilgileri cikmiyor
 @app.callback([Output("inputRightY_axishidden", "children"),Output("inputRightX_axishidden", "children"),
                ],
               [Input('valueSendRight','n_clicks')],
@@ -1011,14 +1019,14 @@ def Inputaxis(nclick,y_val,x_val, y_axis, x_axis):
 #               [Input('valueSendRight','n_clicks')])
 # def sendright(val):
 #     return val
-
+#
 # @app.callback(Output('checklistvaleurhidden', "children"),
 #               [Input('checklistValeur','value')])
 # def sendrightdrop(val):
 #     return val
 # for show graph and changement
 
-@app.callback([Output('graph', 'figure'),
+@app.callback([Output('graphhidden', 'figure'),
                Output('hiddenDifferance', 'children'), ],
               [Input("leftSideChecklistValueHidden", "children"),
                Input("radiographhidden", "children"),
@@ -1034,7 +1042,6 @@ def Inputaxis(nclick,y_val,x_val, y_axis, x_axis):
                Input('leftintegralsecondhidden', 'children'),
                Input('rightintegralfirsthidden', 'children'),
                Input('rightintegralsecondhidden', 'children'),
-
                Input('checklistvaleurhidden', "children"),
                Input('inputRightY_axishidden','children'),
                Input('inputRightX_axishidden','children'),
@@ -1083,6 +1090,11 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                                              fillcolor="PaleTurquoise",
                                               line_color="LightSeaGreen",
                                               )
+                            fig.add_annotation(x=x, y=y,
+                                               text="{} - {} référence".format(x,y),
+                                               showarrow=True,
+                                               yshift = 80
+                                               )
                 else : no_update
 
         for i_val in range(len(val)):
@@ -1301,25 +1313,25 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                             if ':' or '-' in dt[0]:
                                 for k in rangeshape:
                                     if k == rangeshape[0]:
-                                        pathline2 += 'M ' + str(dt[k]) + ', ' + str(minVal) + ' L' + str(
+                                        pathline2 += 'M ' + str(dt[k]) + ', ' + str(minValsecond) + ' L' + str(
                                             dt[k]) + ', ' + str(
                                             df[secondchoosen][k]) + ' '
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         pathline2 += ' L' + str(dt[k]) + ', ' + str(df[secondchoosen][k])
-                                pathline2 += ' L' + str(dt[k]) + ', ' + str(minVal)
+                                pathline2 += ' L' + str(dt[k]) + ', ' + str(minValsecond)
                                 pathline2 += ' Z'
                             else:
                                 for k in rangeshape:
 
                                     if k == rangeshape[0]:
-                                        pathline2 += 'M ' + str(int(dt[k])) + ', ' + str(minVal) + ' L' + str(
+                                        pathline2 += 'M ' + str(int(dt[k])) + ', ' + str(minValsecond) + ' L' + str(
                                             int(dt[k])) + ', ' + str(
                                             df[secondchoosen][k]) + ' '
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
-                                pathline2 += ' L' + str(int(dt[k])) + ', ' + str(minVal)
+                                pathline2 += ' L' + str(int(dt[k])) + ', ' + str(minValsecond)
                                 pathline2 += ' Z'
 
                             return [dict(
@@ -1335,26 +1347,26 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                             rangeshape = range(int(secondshape[1]), int(secondshape[0]))
                             for k in rangeshape:
                                 if k == rangeshape[0]:
-                                    pathline2 += 'M ' + str(dt[k]) + ', ' + str(minVal) + ' L' + str(
+                                    pathline2 += 'M ' + str(dt[k]) + ', ' + str(minValsecond) + ' L' + str(
                                         dt[k]) + ', ' + str(
                                         df[secondchoosen][k]) + ' '
 
                                 elif k != rangeshape[0] and k != rangeshape[-1]:
                                     pathline2 += ' L' + str(dt[k]) + ', ' + str(df[secondchoosen][k])
-                            pathline2 += ' L' + str(dt[k]) + ', ' + str(minVal)
+                            pathline2 += ' L' + str(dt[k]) + ', ' + str(minValsecond)
                             pathline2 += ' Z'
                         else:
                             rangeshape = range(int(secondshape[1]), int(secondshape[0]))
                             for k in rangeshape:
 
                                 if k == rangeshape[0]:
-                                    pathline2 += 'M ' + str(int(dt[k])) + ', ' + str(minVal) + ' L' + str(
+                                    pathline2 += 'M ' + str(int(dt[k])) + ', ' + str(minValsecond) + ' L' + str(
                                         int(dt[k])) + ', ' + str(
                                         df[secondchoosen][k]) + ' '
 
                                 elif k != rangeshape[0] and k != rangeshape[-1]:
                                     pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
-                            pathline2 += ' L' + str(int(dt[k])) + ', ' + str(minVal)
+                            pathline2 += ' L' + str(int(dt[k])) + ', ' + str(minValsecond)
                             pathline2 += ' Z'
 
                         return [dict(
@@ -1428,21 +1440,25 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
     else:
         return (no_update, no_update)
 
+@app.callback(Output('graph', 'figure'),
+              [Input("graphhidden", "figure")],)
+def aa (a):
+    return a
 
 @app.callback(Output('tab2Data', 'children'),
               [Input("my-toggle-switch", "on")],
-              [State('tabs-with-classes', 'value')])
-def LoadingDataTab2(on,tab):
-    if tab == 'tab-2':
-        if on == 1:
+              )
+def LoadingDataTab2(on):
 
-            data_list = ['CoAd', 'ComManCoP2', 'ComManCoP3P4P5', 'ComManPompeSec', 'CompteurEnergie', 'CoP2',
+    if on == 1:
+
+        data_list = ['CoAd', 'ComManCoP2', 'ComManCoP3P4P5', 'ComManPompeSec', 'CompteurEnergie', 'CoP2',
                          'CtempDepChauff',
                          'D1', 'D2', 'D3', 'D4', 'MarcheBruleur', 'Teg', 'SdeBasBouMelange', 'SdeBasHauMelange', 'TambN3',
                          'Tb1',
                          'Tb2', 'Tb3', 'Tb4', 'TdepPLC', 'Teb', 'Tec', 'Teev', 'TempminMaf', 'Text', 'Tsb', 'Tsc', 'Tsev']
 
-            loadlist = html.Div(children=[
+        loadlist = html.Div(children=[
                 html.Div([html.Div([html.Div([dcc.Dropdown(id='tabDropdownTop',
                                                            options=[{'label': i, 'value': i} for i in data_list],
                                                            multi=True,
@@ -1522,7 +1538,7 @@ def LoadingDataTab2(on,tab):
                           html.Div(id="tab2DashTable", children=[])]),
             ])
 
-            return loadlist
+        return loadlist
 
 
 # @app2.callback(Output('graph2','figure'),
@@ -1560,7 +1576,6 @@ def dropdownlistcontrol(retrieve):
               [State('textarea', 'value'), State('dropadd', 'value'),
                State('hiddenTextxaxis', 'children'), State('hiddenTextyaxis', 'children'),
                State('hiddenTextHeader', 'children'), State('hiddenTextNote', 'children')]
-
               )
 def detailedGraph(addtextclick, textarea, add, g1, g2, head, note):
     if add == None or g1 == None or g2 == None or head == None or note == None:
@@ -1615,7 +1630,7 @@ def detailedGraph2(radio, valx, valy, slideheight, slidewidth, g1, g2, head, not
                     title_text='' if g2 == [] else g2[-1],
                     title_standoff=25),
                 fig.update_layout(
-                    title_text=head[-1] if len(head) > 0 else "{}/{}".format(valy[j], valx[k]),
+                    title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx[k], valy[j]),
                     autosize=False,
                     width=slidewidth,
                     height=slideheight,
@@ -1803,7 +1818,6 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
                Input('leftIntegralSecond', 'value'),
                Input('firstChoosenValue', 'value'),
                ], [State('retrieve', 'children')]
-
               )
 def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
     if st1left == None or st1right == None or valuechoosenleft == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
@@ -2051,17 +2065,17 @@ def download_excel():
         cache_timeout=0
     )
 
+
 @app.callback(Output('Dbdesign', 'children'),
-             [Input('tabs-with-classes', 'value')],
+              [Input('tabs-with-classes', 'value')],
               )
 def DBcall(tab):
-    if tab == 'tab-3' :
-
-        datalist = html.Div(children = [html.Div(
+    if tab == 'tab-3':
+        datalist = html.Div(children=[html.Div(
             dcc.Dropdown(id='dbvalchoosen',
                          # options=[{'label': i, 'value': i}
                          #          for i in df.columns],
-                         multi=False,
+                         multi=True,
                          style={"cursor": "pointer"},
                          className='stockSelectorClass',
                          clearable=False,
@@ -2072,7 +2086,7 @@ def DBcall(tab):
                 dcc.Dropdown(id='dbvalname',
                              # options=[{'label': i, 'value': i}
                              #          for i in df.columns],
-                             multi=False,
+                             multi=True,
                              style={"cursor": "pointer"},
                              className='stockSelectorClass',
                              clearable=False,
@@ -2083,7 +2097,7 @@ def DBcall(tab):
                 dcc.Dropdown(id='dbvaldate',
                              # options=[{'label': i, 'value': i}
                              #          for i in df.columns],
-                             multi=False,
+                             multi=True,
                              style={"cursor": "pointer"},
                              className='stockSelectorClass',
                              clearable=False,
@@ -2091,95 +2105,70 @@ def DBcall(tab):
                              )
             ),
             dcc.Store(id='memory-output'),
-            html.Div(dcc.Graph(id = "getdbgraph")),
-            html.Div(id = "getdbtable"),
+            html.Div(dcc.Graph(id="getdbgraph",
+                               config={'displayModeBar': True,
+                                       'scrollZoom': True,
+                                       'modeBarButtonsToAdd': [
+                                           'drawline',
+                                           'drawrect',
+                                           'drawopenpath',
+                                           'select2d',
+                                           'eraseshape',
+                                       ]},
+                               style={'marginTop': 20},
+                               figure={
+                                   'layout': {'legend': {'tracegroupgap': 0},
+
+                                              }
+                               }
+
+                               ), ),
+            html.Div(dash_table.DataTable(id="getdbtable",
+                                          editable=True,
+                                          page_size=50,
+                                          style_table={'height': '500px', 'overflowY': 'auto', 'width': '98%'},
+                                          style_cell={
+                                              'overflow': 'hidden',
+                                              'textOverflow': 'ellipsis',
+                                              'maxWidth': 0,
+                                              'fontSize': '1rem',
+                                              'TextAlign': 'center',
+                                          },
+                                          fixed_rows={'headers': True},
+
+                                          # style_cell_conditional=[
+                                          # {'if': {'column_id': 'date'},
+                                          #  'width': '15%'}
+
+                                          style_header={
+                                              'backgroundColor': 'rgb(230, 230, 230)',
+                                              'fontWeight': 'bold'
+                                          },
+                                          filter_action="native",
+                                          sort_action="native",
+                                          sort_mode="multi",
+                                          column_selectable="single",
+                                          # row_selectable="multi",
+                                          # row_deletable=True,
+                                          selected_columns=[],
+                                          selected_rows=[],
+                                          page_action="native",
+                                          page_current=0,
+                                          export_format='xlsx',
+                                          export_headers='display',
+                                          merge_duplicate_headers=True)),
             html.Div(id="hiddendb1"),
-            html.Div(id="hiddendb2")
+            html.Div(id="hiddendb2"),
+            html.Div(id="hiddendb3")
         ])
         return datalist
 
-# @app.callback(Output('memory-output', 'data'),
-#                 [Input('dbvalname', 'value')],
-# )
-# def filter_db(val_selected,activate,deactivate):
-#     if activate >0:
-#         server = SSHTunnelForwarder(
-#             ("193.54.2.211", 22),
-#             ssh_username='soudani',
-#             ssh_password="univ484067152",
-#             remote_bind_address=("193.54.2.211", 3306))
-#
-#         server.start()
-#
-#         try:
-#             conn = mariadb.connect(
-#                 user="dashapp",
-#                 password="dashapp",
-#                 host="193.54.2.211",
-#                 port=3306,
-#                 database="rcckn"
-#             )
-#
-#         except mariadb.Error as e:
-#             print(f"Error connecting to MariaDB Platform: {e}")
-#             sys.exit(1)
-#         #
-#         # Get Cursor
-#         cur = conn.cursor()
-#         # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-#         # a = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format('received_variablevalues')
-#         a = "SELECT * FROM received_variablevalues "
-#         cur.execute(a)
-#         t = cur.fetchall()
-#         data = t
-#         df = pd.DataFrame(data)
-#         df.to_csv('aa.csv')
-#
-#     if deactivate >0 :
-#         sys.exit(0)
-#         server.stop()
 
-
-#
-#     if
-#     server = SSHTunnelForwarder(
-#             ("193.54.2.211", 22),
-#             ssh_username='soudani',
-#             ssh_password="univ484067152",
-#             remote_bind_address=("193.54.2.211", 3306))
-#
-#     server.start()
-#
-#     try:
-#         conn = mariadb.connect(
-#                 user="dashapp",
-#                 password="dashapp",
-#                 host="193.54.2.211",
-#                 port=3306,
-#                 database="rcckn"
-#             )
-#
-#     except mariadb.Error as e:
-#             print(f"Error connecting to MariaDB Platform: {e}")
-#             sys.exit(1)
-# #
-#         # Get Cursor
-#     cur = conn.cursor()
-#         # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-#         # a = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format('received_variablevalues')
-#     a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
-#     cur.execute(a)
-#     t = cur.fetchall()
-#     data = t
-#     df = pd.DataFrame(data)
-#     df.to_csv('aa.csv')
-#
-#
-@app.callback(Output('dbvalchoosen','options'),
-             [Input('activatedb', 'n_clicks')],
-             )
+@app.callback(Output('dbvalchoosen', 'options'),
+              [Input('activatedb', 'n_clicks')],
+              )
 def connectiondb(button):
-    if button>0:
+    if button > 0:
         server = SSHTunnelForwarder(
             ("193.54.2.211", 22),
             ssh_username='soudani',
@@ -2203,7 +2192,8 @@ def connectiondb(button):
         # Get Cursor
         cur = conn.cursor()
         # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format('received_variablevalues')
+        b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
+            'received_variablevalues')
         # a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
 
         cur.execute(b)
@@ -2215,25 +2205,28 @@ def connectiondb(button):
             m.append(i[0])
         print(m)
 
-
-        return [{'label': i, 'value': i} for i in m if i != 'ID' and i != 'VARIABLE_STR_VALUE' and i != 'PROCESSED' and i != 'TIMED_OUT' and i != 'UNREFERENCED'
+        return [{'label': i, 'value': i} for i in m if
+                i != 'ID' and i != 'VARIABLE_STR_VALUE' and i != 'PROCESSED' and i != 'TIMED_OUT' and i != 'UNREFERENCED'
                 and i != 'converted_num_value' and i != 'REMOTE_ID' and i != 'REMOTE_TIMESTAMP' and i != 'REMOTE_MESSAGE_ID']
 
-    else : raise PreventUpdate
+    else:
+        raise PreventUpdate
 
-@app.callback(Output('hiddendb1','children'),
-              [Input('dbvalchoosen','value')],)
+
+@app.callback(Output('hiddendb1', 'children'),
+              [Input('dbvalchoosen', 'value')], )
 def zz(f):
-    if f != None :
+    if f != None:
         return f
-    else : raise PreventUpdate
-@app.callback(Output('dbvalname','options'),
-              [Input('hiddendb1','children')],)
+    else:
+        raise PreventUpdate
 
+
+@app.callback(Output('dbvalname', 'options'),
+              [Input('hiddendb1', 'children')], )
 def dbname(dbch):
-
     if dbch != [] or dbch != None:
-        print('dbch',dbch)
+        print('dbch', dbch)
         server = SSHTunnelForwarder(
             ("193.54.2.211", 22),
             ssh_username='soudani',
@@ -2260,31 +2253,30 @@ def dbname(dbch):
         # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
         #     'received_variablevalues')
 
-        a = "SELECT DISTINCT {} FROM received_variablevalues ".format(dbch)
-
-        cur.execute(a)
+        cur.execute("SELECT DISTINCT {} FROM received_variablevalues ".format(dbch[0]))
         t = cur.fetchall()
         m = []
         for i in t:
             m.append(i[0])
-        print('m2',m)
+        print('m2', m)
         return [{'label': i, 'value': i} for i in m]
-    else : raise PreventUpdate
+    else:
+        raise PreventUpdate
 
-@app.callback(Output('hiddendb2','children'),
-              [Input('dbvalname','value')],)
-def zz(f):
-    if f != None :
-        return f
-    else : raise PreventUpdate
 
-@app.callback(Output('dbvaldate','options'),
-              [Input('hiddendb1','children')],)
+# @app.callback(Output('hiddendb2','children'),
+#               [Input('dbvalname','value')],)
+# def zz(f):
+#     if f != None :
+#         return f
+#     else : raise PreventUpdate
 
-def dbdate(dbnm):
-
-    if dbnm != [] or dbnm != None:
-        print('dbnm',dbnm)
+@app.callback(Output('memory-output', 'data'),
+              [Input('dbvalname', 'value')], )
+def kk(val):
+    if val == None:
+        raise PreventUpdate
+    else:
         server = SSHTunnelForwarder(
             ("193.54.2.211", 22),
             ssh_username='soudani',
@@ -2307,20 +2299,97 @@ def dbdate(dbnm):
             sys.exit(1)
         # Get Cursor
         cur = conn.cursor()
-        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
+        cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[0]))
+        # # b = "SELECT val FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
         #     'received_variablevalues')
 
-        a = "SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'".format(dbnm)
+        # a = "SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'".format(dbdt)
 
-        cur.execute(a)
         t = cur.fetchall()
-        m = []
-        for i in t:
-            m.append(i[0])
-        print('m2',m)
-        return [{'label': i, 'value': i} for i in m]
-    else : raise PreventUpdate
+
+        return t
+
+
+@app.callback(Output('hiddendb2', 'children'),
+              [Input('memory-output', 'data'),
+               Input('tab3hiddenValuey_axis', 'children'),
+               ])
+def vv(data, val):
+    if data == [] or data == None:
+        raise PreventUpdate
+    df = pd.DataFrame(data)
+    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                  'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                  'CONVERTED_NUM_VALUE']
+    df.REMOTE_TIMESTAMP = df.REMOTE_TIMESTAMP.apply(pd.to_datetime)
+    df["day"] = df.REMOTE_TIMESTAMP.dt.day
+    df["month"] = df.REMOTE_TIMESTAMP.dt.month
+    df["year"] = df.REMOTE_TIMESTAMP.dt.year
+    a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+    a = list(set(a))
+    b = pd.to_datetime(a)
+    b = sorted(b)
+
+    return b
+
+
+@app.callback(Output('dbvaldate', 'options'),
+              [Input('hiddendb2', 'children')])
+def xx(f):
+    if f == [] or f == None:
+        raise PreventUpdate
+    else:
+        return [{'label': i[:10], 'value': i} for i in f]
+    # else : raise PreventUpdate
+
+
+@app.callback([Output('getdbtable', 'data'), Output('getdbtable', 'columns')],
+              [Input('memory-output', 'data')])
+def on_data_set_table(data):
+    if data is None:
+        raise PreventUpdate
+    df = pd.DataFrame(data)
+    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
+                  'REMOTE_TIMESTAMP',
+                  'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+
+    x = df.to_dict('record')
+    return x, [{'name': i, 'id': i} for i in df.columns]
+
+
+@app.callback(Output('tab3hiddenValuey_axis', 'children'),
+              [Input('dbvalname', 'value')],
+
+              )
+def dbdropdown(x):
+    if x == []:
+        raise PreventUpdate
+    return x
+
+
+@app.callback(Output('getdbgraph', 'figure'),
+              [Input('memory-output', 'data'),
+               Input('tab3hiddenValuey_axis', 'children'),
+               Input('dbvaldate', 'value')
+               ])
+def on_data_set_graph(data, valy, time):
+    if data is None or valy == [] or time == None:
+        raise PreventUpdate
+    print("time", time)
+    df = pd.DataFrame(data)
+    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
+                  'REMOTE_TIMESTAMP',
+                  'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+    fig = go.Figure()
+    for j in range(len(valy)):
+        print(valy[j])
+        dff = df[df['VARIABLE_NAME'] == valy[j]]
+        a = dff['VARIABLE_NUM_VALUE']
+        print("df['REMOTE_TIMESTAMP']", df['REMOTE_TIMESTAMP'])
+        dff2 = df[(df['REMOTE_TIMESTAMP'][0] >= time[0])]
+        b = dff2['REMOTE_TIMESTAMP']
+        fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(b, a)))
+        return fig
 
 if __name__ == '__main__' :
     app.run_server(debug=True)
