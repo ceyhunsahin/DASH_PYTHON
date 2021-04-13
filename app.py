@@ -2071,17 +2071,18 @@ def download_excel():
               )
 def DBcall(tab):
     if tab == 'tab-3':
-        datalist = html.Div(children=[html.Div(
-            dcc.Dropdown(id='dbvalchoosen',
-                         # options=[{'label': i, 'value': i}
-                         #          for i in df.columns],
-                         multi=True,
-                         style={"cursor": "pointer"},
-                         className='stockSelectorClass',
-                         clearable=False,
-                         placeholder='Select your parameters...',
-                         )
-        ),
+        datalist = html.Div(children=[
+            # html.Div(
+        #     dcc.Dropdown(id='dbvalchoosen',
+        #                  # options=[{'label': i, 'value': i}
+        #                  #          for i in df.columns],
+        #                  multi=True,
+        #                  style={"cursor": "pointer"},
+        #                  className='stockSelectorClass',
+        #                  clearable=False,
+        #                  placeholder='Select your parameters...',
+        #                  )
+        # ),
             html.Div(
                 dcc.Dropdown(id='dbvalname',
                              # options=[{'label': i, 'value': i}
@@ -2223,10 +2224,9 @@ def zz(f):
 
 
 @app.callback(Output('dbvalname', 'options'),
-              [Input('hiddendb1', 'children')], )
-def dbname(dbch):
-    if dbch != [] or dbch != None:
-        print('dbch', dbch)
+              [Input('activatedb', 'n_clicks')], )
+def dbname(button):
+    if button >0 :
         server = SSHTunnelForwarder(
             ("193.54.2.211", 22),
             ssh_username='soudani',
@@ -2253,12 +2253,11 @@ def dbname(dbch):
         # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
         #     'received_variablevalues')
 
-        cur.execute("SELECT DISTINCT {} FROM received_variablevalues ".format(dbch[0]))
+        cur.execute("SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues ")
         t = cur.fetchall()
         m = []
         for i in t:
             m.append(i[0])
-        print('m2', m)
         return [{'label': i, 'value': i} for i in m]
     else:
         raise PreventUpdate
@@ -2299,15 +2298,12 @@ def kk(val):
             sys.exit(1)
         # Get Cursor
         cur = conn.cursor()
-        cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[0]))
-        # # b = "SELECT val FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-        #     'received_variablevalues')
+        if len(val)>0 :
+            cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[0]))
+            t = cur.fetchall()
 
-        # a = "SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'".format(dbdt)
-
-        t = cur.fetchall()
-
-        return t
+            return t
+        else : return no_update
 
 
 @app.callback(Output('hiddendb2', 'children'),
@@ -2358,38 +2354,50 @@ def on_data_set_table(data):
 
 
 @app.callback(Output('tab3hiddenValuey_axis', 'children'),
-              [Input('dbvalname', 'value')],
+              [Input('dbvalname', 'value')],)
 
-              )
 def dbdropdown(x):
-    if x == []:
+    if x == [] or x ==None:
         raise PreventUpdate
     return x
 
-
 @app.callback(Output('getdbgraph', 'figure'),
               [Input('memory-output', 'data'),
-               Input('tab3hiddenValuey_axis', 'children'),
+               Input('dbvalname', 'value'),
                Input('dbvaldate', 'value')
                ])
-def on_data_set_graph(data, valy, time):
-    if data is None or valy == [] or time == None:
+def on_data_set_graph(data, valy, valdat):
+    if data is None or valy == [] or valdat == None :
         raise PreventUpdate
-    print("time", time)
+    print('yyyyyyyyyyyyyyyyyyyeni',valy)
     df = pd.DataFrame(data)
     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
-                  'REMOTE_TIMESTAMP',
-                  'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+                  'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
     fig = go.Figure()
     for j in range(len(valy)):
-        print(valy[j])
-        dff = df[df['VARIABLE_NAME'] == valy[j]]
-        a = dff['VARIABLE_NUM_VALUE']
-        print("df['REMOTE_TIMESTAMP']", df['REMOTE_TIMESTAMP'])
-        dff2 = df[(df['REMOTE_TIMESTAMP'][0] >= time[0])]
-        b = dff2['REMOTE_TIMESTAMP']
+        print('valy[j]', valy[j])
+        a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
+        print('aaaaaaaaaaaaaaa',a)
+        m = []
+        for i in df['REMOTE_TIMESTAMP']:
+            if i[:10] == valdat[0][:10] :
+                m.append(i)
+        b = m
         fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(b, a)))
-        return fig
+        fig.update_layout(
+            autosize=False,
+            width=1100,
+            height=600,
+            margin=dict(
+                l=50,
+                r=50,
+                b=50,
+                t=50,
+                pad=4
+            ),
+            uirevision=valy[j], ),
+    return fig
+
 
 if __name__ == '__main__' :
     app.run_server(debug=True)
