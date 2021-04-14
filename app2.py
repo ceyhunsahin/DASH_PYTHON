@@ -1878,20 +1878,6 @@ def exportdata(s, on):
 
 
 
-# def exportdata(s,on):
-#     if on==1:
-#         exportdatalist.append(s)
-#
-#         print('exportdatalist',exportdatalist)
-#         wb = Workbook()
-#         ws = wb.active
-#         ws.title = "{}".format('ceyhun')
-#         sheet1 = wb.add_sheet("Sheet 1")
-#         a = 0
-#         for i in exportdatalist[2:]:
-#             sheet1.write(1,0,i)
-#         wb.save("Bureau/workbook.xls")
-
 
 
 if __name__ == '__main__' :
