@@ -123,12 +123,19 @@ page_1_layout = html.Div(
                                                         children=[]),
                                                html.Div(id='tab2hiddenValuey_axis', style={'display': 'None'},
                                                         children=[]),
+                                             html.Div(id='tab4hiddenValuex_axis', style={'display': 'None'},
+                                                        children=[]),
+
                                                html.Div(id='tab3hiddenValuey_axis', style={'display': 'None'},
                                                                                                         children=[]),
                                                html.Div(id='hiddenTextHeader', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextNote', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextxaxis', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextyaxis', children=[], style={'display': 'None'}),
+                                             html.Div(id='hiddenTextHeader4', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenTextNote4', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenTextxaxis4', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenTextyaxis4', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenShapeVal', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenShapeDate', children=[],style={'display': 'None'}), ], ),
                                                   html.Div(id='hiddenDifferance', children=[], style={'display': 'None'}),
@@ -211,7 +218,7 @@ page_1_layout = html.Div(
                                              label='Tab for one option',
                                              value='tab-4',
                                              className='custom-tab',
-                                             style={'visibility': 'hidden'},
+                                             # style={'visibility': 'hidden'},
                                              selected_className='custom-tab--selected'
                                          ),
                                          dcc.Tab(
@@ -731,6 +738,10 @@ def render_content(tab):
             html.Div(id='tab3Data', children = [html.Button('Database Activate', id = 'activatedb', n_clicks = 0),
                                                 html.Button('Database Deactivate', id='deactivatedb', n_clicks=0),
                                                 html.Div(id = 'Dbdesign')])
+        ])
+    if tab == 'tab-4':
+        return html.Div([
+            html.Div(id='tab4Data')
         ])
     else:
         pass
@@ -1540,7 +1551,89 @@ def LoadingDataTab2(on):
 
         return loadlist
 
+@app.callback(Output('tab4Data', 'children'),
+              [Input("my-toggle-switch", "on")],
+              )
+def LoadingDataTab4(on):
 
+    if on == 1:
+
+        data_list = []
+
+        loadlist = html.Div(children=[
+                html.Div([html.Div([html.Div([dcc.Dropdown(id='tabDropdownTop4',
+                                                           options=[{'label': i, 'value': i} for i in data_list],
+                                                           multi=True,
+                                                           style={"cursor": "pointer"},
+                                                           className='stockSelectorClass2',
+                                                           clearable=True,
+                                                           placeholder='Select your y-axis value...',
+                                                           ),
+                                               ], className="ab"),
+                                    html.Div(dcc.RadioItems(id="radiograph4",
+                                                            options=[
+                                                                {'label': 'Point', 'value': 'markers'},
+                                                                {'label': 'Line', 'value': 'lines'},
+                                                                {'label': 'Line + Point', 'value': 'lines+markers'}],
+                                                            value='markers',
+                                                            labelClassName='groupgraph',
+                                                            labelStyle={'margin': '10px', },
+                                                            inputStyle={'margin': '10px', }
+                                                            ), ), ], className="ac"),
+                          html.Div([dcc.Dropdown(id="dropadd4",
+                                                 options=[
+                                                     {'label': 'Note', 'value': 'note'},
+                                                     {'label': 'Header', 'value': 'header'},
+                                                     {'label': 'x-axis', 'value': 'x_axis'},
+                                                     {'label': 'y-axis', 'value': 'y_axis'},
+
+                                                 ],
+                                                 value='header',
+                                                 ),
+                                    dcc.Textarea(
+                                        id='textarea4',
+                                        value='',
+                                        style={'width': '15rem', 'marginTop': '0.5rem'},
+                                        autoFocus='Saisir',
+                                    ),
+                                    ], className="aa"),
+
+                          html.Button('addText', id='addText4', n_clicks=0, style={'marginTop': '1.5rem'}),
+
+                          ], className="tabDesign", ),
+
+                html.Div([dcc.Graph(id='graph4', config={'displayModeBar': True,
+                                                         'scrollZoom': True,
+                                                         'modeBarButtonsToAdd': [
+                                                             'drawopenpath',
+                                                             'drawcircle',
+                                                             'eraseshape',
+                                                             'select2d',
+                                                         ]},
+                                    figure={
+                                        'layout': {'legend': {'tracegroupgap': 0},
+
+                                                   }
+                                    }
+                                    ),
+                          dcc.Slider(id="sliderHeight4",
+                                     max=2100,
+                                     min=400,
+                                     value=500,
+                                     step=100,
+                                     vertical=True,
+                                     updatemode='drag')], className='abc'),
+
+                html.Div([dcc.Slider(id="sliderWidth4",
+                                     max=2000,
+                                     min=600,
+                                     value=950,
+                                     step=100,
+                                     updatemode='drag'),
+                          html.Div(id="tab2DashTable4", children=[])]),
+            ])
+
+        return loadlist
 # @app2.callback(Output('graph2','figure'),
 #               [Input("showTab", "n_clicks"),Input('textarea', 'value')],
 #               State('tabDropdownTop', 'value'),
@@ -1552,14 +1645,21 @@ def LoadingDataTab2(on):
               [Input('tabDropdownTop', 'value'),
                Input('tabDropdownDown', 'value')],
               )
-def contractdropdown(x, y, ):
+def contractdropdown(x, y):
     if x == [] or y == []:
         raise PreventUpdate
 
     return x, y
 
+@app.callback(Output('tab4hiddenValuex_axis', 'children'),
+              [Input('tabDropdownTop4', 'value')],
+              )
+def contractdropdown4(x):
+    if x == []:
+        raise PreventUpdate
 
-@app.callback([Output("tabDropdownTop", "options"), Output("tabDropdownDown", "options")],
+    return x
+@app.callback(Output("tabDropdownTop", "options"),
               [Input("retrieve", "children")])
 def dropdownlistcontrol(retrieve):
     if len(retrieve) > 0:
@@ -1568,6 +1668,15 @@ def dropdownlistcontrol(retrieve):
         return (dff, dff)
     else:
         return (no_update, no_update)
+@app.callback(Output("tabDropdownTop4", "options"),
+              [Input("retrieve", "children")])
+def dropdownlistcontrol(retrieve):
+    if len(retrieve) > 0:
+        df = pd.read_excel('appending.xlsx')
+        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('TG')==1 ]
+        return dff
+    else:
+        return no_update
 
 
 @app.callback([Output('hiddenTextxaxis', 'children'), Output('hiddenTextyaxis', 'children'),
@@ -1578,6 +1687,35 @@ def dropdownlistcontrol(retrieve):
                State('hiddenTextHeader', 'children'), State('hiddenTextNote', 'children')]
               )
 def detailedGraph(addtextclick, textarea, add, g1, g2, head, note):
+    if add == None or g1 == None or g2 == None or head == None or note == None:
+        raise PreventUpdate
+
+    if addtextclick > 0:
+        if add == 'x_axis':
+            g1.append(textarea)
+
+        if add == 'y_axis':
+            g2.append(textarea)
+
+        if add == 'header':
+            head.append(textarea)
+
+        if add == 'note':
+            note.append(textarea)
+        textarea = ''
+        return g1, g2, head, note
+    else:
+        return (no_update, no_update, no_update, no_update)
+
+
+@app.callback([Output('hiddenTextxaxis4', 'children'), Output('hiddenTextyaxis4', 'children'),
+               Output('hiddenTextHeader4', 'children'), Output('hiddenTextNote4', 'children')],
+              [Input('addText4', 'n_clicks')],
+              [State('textarea4', 'value'), State('dropadd4', 'value'),
+               State('hiddenTextxaxis4', 'children'), State('hiddenTextyaxis4', 'children'),
+               State('hiddenTextHeader4', 'children'), State('hiddenTextNote4', 'children')]
+              )
+def detailedGraph4(addtextclick, textarea, add, g1, g2, head, note):
     if add == None or g1 == None or g2 == None or head == None or note == None:
         raise PreventUpdate
 
@@ -1647,6 +1785,68 @@ def detailedGraph2(radio, valx, valy, slideheight, slidewidth, g1, g2, head, not
                                    x=0, y=0.7, showarrow=False)
 
         return fig
+
+
+@app.callback(Output('graph4', 'figure'),
+              [Input('radiograph4', 'value'),
+               Input('tab4hiddenValuex_axis', 'children'),
+               Input('sliderHeight4', 'value'), Input('sliderWidth4', 'value'),
+               Input('hiddenTextxaxis4', 'children'), Input('hiddenTextyaxis4', 'children'),
+               Input('hiddenTextHeader4', 'children'), Input('hiddenTextNote4', 'children')],
+              [State('retrieve', 'children')]
+              )
+def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note, retrieve):
+    if valx == [] or valx == None or g1 == None or g2 == None or head == None or note == None:
+        raise PreventUpdate
+    if len(retrieve) > 0:
+        df = pd.read_excel('appending.xlsx')
+        fig = go.Figure()
+        valeur = ''
+        for j in range(len(valx)):
+            valeur = valx[j]
+            if valeur[-2].isdigit()==1:
+                print('ceyhun')
+                m = valeur[-2:]
+                m = 'T' + m
+                b = df[valx[j]]
+                a = df[m]
+                fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
+            elif valeur[-1].isdigit()==1:
+                print('said')
+                m = valeur[-1]
+                m = 'T' + m
+                b = df[valx[j]]
+                a = df[m]
+                fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
+
+            fig.update_xaxes(
+                    tickangle=90,
+                    title_text='' if g1 == [] else g1[-1],
+                    title_font={"size": 20},
+                    title_standoff=25),
+
+            fig.update_yaxes(
+                    title_text='' if g2 == [] else g2[-1],
+                    title_standoff=25),
+            fig.update_layout(
+                    title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx[j], m),
+                    autosize=False,
+                    width=slidewidth,
+                    height=slideheight,
+                    margin=dict(
+                        l=50,
+                        r=50,
+                        b=50,
+                        t=50,
+                        pad=4
+                    ),
+                    uirevision=valx[j], ),
+            fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+                                   xref="paper", yref="paper",
+                                   x=0, y=0.7, showarrow=False)
+
+        return fig
+
 
 
 @app.callback(
