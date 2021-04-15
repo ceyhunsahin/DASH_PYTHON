@@ -113,11 +113,17 @@ page_1_layout = html.Div(
                                                html.Div(id='pointLeftSecond', children=[], style={'display': 'None'}),
                                                html.Div(id='pointRightFirst', children=[], style={'display': 'None'}),
                                                html.Div(id='pointRightSecond', children=[], style={'display': 'None'}),
+                                               html.Div(id='pointLeftFirstTab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='pointLeftSecondTab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='pointRightFirstTab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='pointRightSecondTab4', children=[], style={'display': 'None'}),
                                                html.Div(id='leftSideChecklistValue', children=[],
                                                         style={'display': 'None'}),
                                                html.Div(id='leftSidedroptValue', children=[],
                                                         style={'display': 'None'}),
                                                html.Div(id='leftSideChecklistValueHidden', children=[],
+                                                        style={'display': 'None'}),
+                                               html.Div(id='leftSideChecklistValueHiddenTab4', children=[],
                                                         style={'display': 'None'}),
                                                html.Div(id='tab2hiddenValuex_axis', style={'display': 'None'},
                                                         children=[]),
@@ -144,6 +150,14 @@ page_1_layout = html.Div(
                                                   html.Div(id='radiographhidden', children=[], style={'display': 'None'}),
                                                   html.Div(id='sliderHeightTab1hidden', children=[], style={'display': 'None'}),
                                                   html.Div(id='sliderWidthTab1hidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='hiddenShapeValtab4', children=[], style={'display': 'None'}),
+                                                  html.Div(id='hiddenShapeDatetab4', children=[], style={'display': 'None'}),
+                                                 html.Div(id='hiddenDifferancetab4', children=[], style={'display': 'None'}),
+                                                 html.Div(id='retrievetab4', children=[], style={'display': 'None'}),
+                                                 html.Div(id='datatablehiddentab4', children=[], style={'display': 'None'}),
+                                                 html.Div(id='radiographhiddentab4', children=[], style={'display': 'None'}),
+                                                 html.Div(id='sliderHeightTab1hiddentab4', children=[], style={'display': 'None'}),
+                                                 html.Div(id='sliderWidthTab1hiddentab4', children=[], style={'display': 'None'}),
                                                   html.Div(id='minimumValueGraphhiddenfirst', children=[], style={'display': 'None'}),
                                                html.Div(id='minimumValueGraphhiddensecond', children=[], style={'display': 'None'}),
                                                   html.Div(id='firstchoosenvalhidden', children=[], style={'display': 'None'}),
@@ -153,6 +167,13 @@ page_1_layout = html.Div(
                                                   html.Div(id='rightintegralfirsthidden', children=[], style={'display': 'None'}),
                                                   html.Div(id='rightintegralsecondhidden', children=[], style={'display': 'None'}),
                                                   html.Div(id='tableinteractivehidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='firstchoosenvalhiddentab4', children=[], style={'display': 'None'}),
+                                                  html.Div(id='secondchoosenvalhiddentab4', children=[], style={'display': 'None'}),
+                                                  html.Div(id='leftintegralfirsthiddentab4', children=[], style={'display': 'None'}),
+                                                  html.Div(id='leftintegralsecondhiddentab4', children=[], style={'display': 'None'}),
+                                                  html.Div(id='rightintegralfirsthiddentab4', children=[], style={'display': 'None'}),
+                                                  html.Div(id='rightintegralsecondhiddentab4', children=[], style={'display': 'None'}),
+                                                  html.Div(id='tableinteractivehiddentab4', children=[], style={'display': 'None'}),
                                                   html.Div(id='writeexcelhidden', children=[], style={'display': 'None'}),
                                                   html.Div(id='hiddenrecord1', children=[], style={'display': 'None'}),
                                                   html.Div(id='hiddenrecord2', children=[], style={'display': 'None'}),
@@ -162,6 +183,7 @@ page_1_layout = html.Div(
                                               html.Div(id = 'inputRightX_axishidden', children=[], style={'display': 'None'}),
                                               html.Div(id = 'valueSendRighthidden', children=[], style={'display': 'None'}),
                                               html.Div(id = 'checklistvaleurhidden', children=[], style={'display': 'None'}),
+                                                 html.Div(id = 'output_s', children=[], style={'display': 'None'}),
                                               html.Div(dcc.Graph(id='graphhidden',
                                                  config={},
                                                  style={'display': 'None'},
@@ -171,7 +193,18 @@ page_1_layout = html.Div(
                                                                 }
                                                  }
 
-                                                 ),),
+                                                 ),)
+                                  # html.Div(dcc.Graph(id='graphhidden',
+                                  #                    config={},
+                                  #                    style={'display': 'None'},
+                                  #                    figure={
+                                  #                        'layout': {'legend': {'tracegroupgap': 0},
+                                  #
+                                  #                                   }
+                                  #                    }
+                                  #
+                                  #                    ), )
+                                  ,
 
                               ]),
                  ]),
@@ -935,6 +968,18 @@ def res(val, hiddenval):
     print('hiddenval', hiddenval)
     return hiddenval
 
+# @app.callback(Output("leftSideChecklistValueHiddenTab4", "children"),
+#               [Input('choosenChecklistLeft', 'value')],
+#               [State("leftSideChecklistValueHiddenTab4", "children")]
+#               )
+# def res(val, hiddenval):
+#     if val == None:
+#         raise PreventUpdate
+#     hiddenval = val
+#     print('valllllllllll', val)
+#     print('hiddenval', hiddenval)
+#     return hiddenval
+
 
 @app.callback(Output("radiographhidden", "children"),
               [Input("radiograph", "value")],
@@ -942,6 +987,12 @@ def res(val, hiddenval):
 def radio(radiograph):
     return radiograph
 
+
+@app.callback(Output("radiographhiddentab4", "children"),
+              [Input("radiograph4", "value")],
+              )
+def radiotab4(radiograph):
+    return radiograph
 
 @app.callback(Output("sliderHeightTab1hidden", "children"),
               [Input("sliderHeightTab1", "value")],
@@ -954,6 +1005,19 @@ def tabheight(height):
               [Input("sliderWidthTab1", "value")],
               )
 def tabwidth(width):
+    return width
+
+@app.callback(Output("sliderHeightTab1hiddentab4", "children"),
+              [Input("sliderHeightTab4", "value")],
+              )
+def tabheighttab4(height):
+    return height
+
+
+@app.callback(Output("sliderWidthTab1hiddenTab4", "children"),
+              [Input("sliderWidthTab4", "value")],
+              )
+def tabwidthtab4(width):
     return width
 
 
@@ -977,6 +1041,16 @@ def firstchleft(firstchoosen, hiddenfirstchoosen):
     return hiddenfirstchoosen
 
 
+@app.callback(Output("firstchoosenvalhiddentab4", "children"),
+              [Input("firstChoosenValueTab4", "value")],
+              [State("firstchoosenvalhiddentab4", "children")]
+              )
+def firstchlefttab4(firstchoosen, hiddenfirstchoosen):
+    hiddenfirstchoosen.append(firstchoosen)
+    return hiddenfirstchoosen
+
+
+
 @app.callback(Output("secondchoosenvalhidden", "children"),
               [Input("secondChoosenValue", "value")],
               )
@@ -984,16 +1058,28 @@ def secondchleft(secondchoosen):
     print("secondchoosen", secondchoosen)
     return secondchoosen
 
+@app.callback(Output("secondchoosenvalhiddentab4", "children"),
+              [Input("secondChoosenValue", "value")],
+              )
+def secondchleft(secondchoosen):
+    print("secondchoosen", secondchoosen)
+    return secondchoosen
 
 @app.callback(Output("leftintegralfirsthidden", "children"),
-              [Input("leftIntegralFirst", "value")],
+              [Input("leftIntegralFirstTab4", "value")],
               )
-def firstchright(leftintfirst):
+def firstchrighttab4(leftintfirst):
     return leftintfirst
 
 
 @app.callback(Output("leftintegralsecondhidden", "children"),
               [Input("leftIntegralSecond", "value")],
+              )
+def secondchright(leftintsecond):
+    return leftintsecond
+
+@app.callback(Output("leftintegralsecondhiddentab4", "children"),
+              [Input("leftIntegralSecondTab4", "value")],
               )
 def secondchright(leftintsecond):
     return leftintsecond
@@ -1005,12 +1091,24 @@ def secondchright(leftintsecond):
 def rightfrst(rightintfirst):
     return rightintfirst
 
+@app.callback(Output("rightintegralfirsthiddentab4", "children"),
+              [Input("rightIntegralFirstTab4", "value")],
+              )
+def rightfrsttab4(rightintfirst):
+    return rightintfirst
 
 @app.callback(Output("rightintegralsecondhidden", "children"),
               [Input("rightIntegralSecond", "value")],
               )
 def rightscnd(rightintsecond):
     return rightintsecond
+
+@app.callback(Output("rightintegralsecondhiddentab4", "children"),
+              [Input("rightIntegralSecondTab4", "value")],
+              )
+def rightscndtab4(rightintsecond):
+    return rightintsecond
+
 ##### bunla ugras shapeler ciktiktan sonra referance bilgileri cikmiyor
 @app.callback([Output("inputRightY_axishidden", "children"),Output("inputRightX_axishidden", "children"),
                ],
@@ -1117,7 +1215,7 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                 x_axis = df['date']
             fig.add_trace(go.Scattergl(x=x_axis, y=y_axis, mode=radiograph, name=val[i_val]))
             color = {0: 'blue', 1: 'red', 2: 'green', 3: 'purple', 4: 'orange'}
-            if len(firstshape) == 2 and leftfirstval != firstshape[0] and leftfirstval != None:
+            if len(firstshape) == 2 and leftfirstval != firstshape[0]  and leftfirstval != []:
                 print('leffirstval', leftfirstval)
                 if leftfirstval.startswith('T') == 1:
                     del firstshape[0]
@@ -1129,7 +1227,7 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                     firstshape = sorted(firstshape)
                 elif leftfirstval != None:
                     del firstshape[0]
-            if len(firstshape) == 2 and leftsecondval != firstshape[1] and leftsecondval != None:
+            if len(firstshape) == 2 and leftsecondval != firstshape[1] and leftsecondval != None and leftsecondval != []:
                 if leftsecondval.startswith('T') == 1:
                     del firstshape[1]
                     firstshape.append(float(leftsecondval[2:]))
@@ -1141,7 +1239,7 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                 elif leftsecondval != None:
                     del firstshape[1]
 
-            if len(secondshape) == 2 and rightfirstval != secondshape[0] and rightfirstval != None:
+            if len(secondshape) == 2 and rightfirstval != secondshape[0] and rightfirstval != None and rightfirstval != []:
                 if rightfirstval.startswith('T') == 1:
                     del secondshape[0]
                     secondshape.append(float(rightfirstval[2:]))
@@ -1152,7 +1250,7 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                     secondshape = sorted(secondshape)
                 elif rightfirstval != None:
                     del secondshape[0]
-            if len(secondshape) == 2 and rightsecondval != secondshape[1] and rightsecondval != None:
+            if len(secondshape) == 2 and rightsecondval != secondshape[1] and rightsecondval != None and rightsecondval != [] :
                 if rightsecondval.startswith('T') == 1:
                     del secondshape[1]
                     secondshape.append(float(rightsecondval[2:]))
@@ -1557,10 +1655,11 @@ def LoadingDataTab2(on):
 def LoadingDataTab4(on):
 
     if on == 1:
+        df = pd.read_excel('appending.xlsx')
 
         data_list = []
 
-        loadlist = html.Div(children=[
+        loadlist = html.Div([html.Div([
                 html.Div([html.Div([html.Div([dcc.Dropdown(id='tabDropdownTop4',
                                                            options=[{'label': i, 'value': i} for i in data_list],
                                                            multi=True,
@@ -1601,8 +1700,109 @@ def LoadingDataTab4(on):
                           html.Button('addText', id='addText4', n_clicks=0, style={'marginTop': '1.5rem'}),
 
                           ], className="tabDesign", ),
+                    html.Div([html.Div([html.Div([dcc.Dropdown(id='firstChoosenValueTab4',
+                                                     options=[{'label': i, 'value': i} for i in
+                                                              df.columns],
+                                                     multi=False,
+                                                     style={"cursor": "pointer", 'width': '180px'},
+                                                     className='',
+                                                     clearable=True,
+                                                     placeholder='First Value...',
+                                                     ),
+                                        dbc.Input(id='leftIntegralFirstTab4',
+                                                  type="text",
+                                                  debounce=True,
+                                                  min=-10000, max=10000, step=1,
+                                                  bs_size="sm",
+                                                  style={'width': '7rem', "marginTop": "1.5rem"},
+                                                  autoFocus=True,
+                                                  placeholder="first point"),
+                                        dbc.Input(id='leftIntegralSecondTab4',
+                                                  type="text",
+                                                  debounce=True,
+                                                  min=-10000, max=10000, step=1,
+                                                  bs_size="sm",
+                                                  style={'width': '7rem', "marginTop": "1.5rem"},
+                                                  autoFocus=True,
+                                                  placeholder="second point"),
+                                        dbc.Input(id='leftIntegralTab4',
+                                                  type="text",
+                                                  min=-10000, max=10000, step=1,
+                                                  bs_size="sm",
+                                                  style={'width': '8rem', "marginTop": "1.5rem"},
+                                                  autoFocus=True,
+                                                  placeholder="total integration"),
+                                        ]), html.Div([html.Button("Save", id="write_excelTab4", n_clicks=0,
+                                                                  style={'fontSize': '1rem', 'width': '4rem', 'margin': '1rem'},
+                                                                  ),
+                                                      html.A(html.Button("Download Data", id='download_dataTab4',
+                                                                         n_clicks=0,
+                                                                         style={'fontSize': '1rem', 'width': '9rem',
+                                                                                'margin': '1rem'}, ),
+                                                             id='download_excelTab4',
+                                                             # # download="rawdata.csv",
+                                                             href="/download_excel/",
+                                                             # target="_blank"
+                                                             )
+                                                      ], className='ad')
 
-                html.Div([dcc.Graph(id='graph4', config={'displayModeBar': True,
+                              ]),
+                    html.Div([dbc.Checklist(
+                        id='operateurTab4',
+                        options=[{'label': i, 'value': i} for i in
+                                 ['Plus', 'Moins', 'Multiplie', 'Division']],
+                        value=[],
+                        labelStyle={"display": "Block"},
+                    ), ]),
+                    html.Div([dcc.Dropdown(id='secondChoosenValue',
+                                           options=[{'label': i, 'value': i} for i in
+                                                    df.columns],
+                                           multi=False,
+                                           style={"cursor": "pointer", 'width': '180px'},
+                                           className='',
+                                           clearable=True,
+                                           placeholder='Second Value...',
+                                           ),
+                              dbc.Input(id='rightIntegralFirstTab4',
+                                        type="text",
+                                        min=-10000, max=10000, step=1,
+                                        bs_size="sm",
+                                        style={'width': '7rem', "marginTop": "1.5rem"},
+                                        autoFocus=True,
+                                        placeholder="first point"),
+                              dbc.Input(id='rightIntegralSecondTab4',
+                                        type="text",
+                                        min=-10000, max=10000, step=1,
+                                        bs_size="sm",
+                                        style={'width': '7rem', "marginTop": "1.5rem"},
+                                        autoFocus=True,
+                                        placeholder="second point"),
+                              dbc.Input(id='rightIntegralTab4',
+                                        type="text",
+                                        min=-10000, max=10000, step=1,
+                                        bs_size="sm",
+                                        style={'width': '8rem', "marginTop": "1.5rem"},
+                                        autoFocus=True,
+                                        placeholder="total integration")]),
+                    html.Div([dbc.Input(id='operationTab4',
+                                        type="text",
+                                        min=-10000, max=10000, step=1,
+                                        bs_size="sm",
+                                        style={'width': '10rem', "marginTop": "2rem",
+                                               'height': '5rem', 'textAlign': 'center'},
+                                        autoFocus=True,
+                                        placeholder="result"),
+                              dbc.Input(id='intersectionTab4',
+                                        type="text",
+                                        min=-10000, max=10000, step=1,
+                                        bs_size="sm",
+                                        style={'width': '10rem', "marginTop": "2rem",
+                                               'height': '2rem', 'textAlign': 'center'},
+                                        autoFocus=True,
+                                        placeholder="Intersection")], className='aa')],
+                    className="abTab4"),
+
+            html.Div([dcc.Graph(id='graph4', config={'displayModeBar': True,
                                                          'scrollZoom': True,
                                                          'modeBarButtonsToAdd': [
                                                              'drawopenpath',
@@ -1616,22 +1816,22 @@ def LoadingDataTab4(on):
                                                    }
                                     }
                                     ),
-                          dcc.Slider(id="sliderHeight4",
+                          dcc.Slider(id="sliderHeightTab4",
                                      max=2100,
                                      min=400,
                                      value=500,
                                      step=100,
                                      vertical=True,
-                                     updatemode='drag')], className='abc'),
+                                     updatemode='drag')], className='abcTab4'),
 
-                html.Div([dcc.Slider(id="sliderWidth4",
+                html.Div([dcc.Slider(id="sliderWidthTab4",
                                      max=2000,
                                      min=600,
                                      value=950,
                                      step=100,
                                      updatemode='drag'),
-                          html.Div(id="tab2DashTable4", children=[])]),
-            ])
+                          html.Div(id="tab4DashTable", children=[])]),
+            ]),])
 
         return loadlist
 # @app2.callback(Output('graph2','figure'),
@@ -1659,7 +1859,7 @@ def contractdropdown4(x):
         raise PreventUpdate
 
     return x
-@app.callback(Output("tabDropdownTop", "options"),
+@app.callback([Output("tabDropdownTop", "options"), Output("tabDropdownDown", "options")],
               [Input("retrieve", "children")])
 def dropdownlistcontrol(retrieve):
     if len(retrieve) > 0:
@@ -1670,7 +1870,7 @@ def dropdownlistcontrol(retrieve):
         return (no_update, no_update)
 @app.callback(Output("tabDropdownTop4", "options"),
               [Input("retrieve", "children")])
-def dropdownlistcontrol(retrieve):
+def dropdownlistcontrolTab4(retrieve):
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('TG')==1 ]
@@ -1790,7 +1990,7 @@ def detailedGraph2(radio, valx, valy, slideheight, slidewidth, g1, g2, head, not
 @app.callback(Output('graph4', 'figure'),
               [Input('radiograph4', 'value'),
                Input('tab4hiddenValuex_axis', 'children'),
-               Input('sliderHeight4', 'value'), Input('sliderWidth4', 'value'),
+               Input('sliderHeightTab4', 'value'), Input('sliderWidthTab4', 'value'),
                Input('hiddenTextxaxis4', 'children'), Input('hiddenTextyaxis4', 'children'),
                Input('hiddenTextHeader4', 'children'), Input('hiddenTextNote4', 'children')],
               [State('retrieve', 'children')]
@@ -1906,10 +2106,105 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, retrieve):
         return (no_update, no_update)
 
 
+@app.callback(
+    Output('output_s', 'children'),
+    [Input('graph4', 'clickData'),]
+)
+def update_graph(clickData):
+    ctx = dash.callback_context
+    input_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    x_selected = ""
+    if input_id == 'graph4':
+        x_selected = clickData['points'][0]['x']
+        print("First: ", x_selected)
+        return x_selected
+@app.callback(
+    [Output('pointLeftFirstTab4', 'children'),
+     Output('pointLeftSecondTab4', 'children')],
+    [Input('output_s', 'children'),
+     Input('firstChoosenValueTab4', 'value'), ],
+    [
+     State('pointLeftFirstTab4', 'children'),
+     State('pointLeftSecondTab4', 'children'),
+     State('retrieve', 'children')]
+)
+def valintTab4(clickData4, firstchoosen,  leftchild, rightchild, retrieve):
+    if  clickData4 == None or clickData4 == [] or firstchoosen == None or retrieve == None or retrieve == []:
+        raise PreventUpdate
+
+    spaceList1 = []
+    zero = 0
+    spaceList2 = []
+    if len(retrieve) > 0:
+        df = pd.read_excel('appending.xlsx')
+        df['index'] = df.index
+        for i in range(len(value)):
+            spaceList1.append(zero)
+            zero += 1
+            spaceList2.append(value[i])
+        zippedval = [i for i in list(zip(spaceList1, spaceList2))]
+        # curvenumber = clickData4['points'][0]['curveNumber']
+        for k in zippedval:
+            if k[1] == firstchoosen:
+                if k[0] == curvenumber:
+                    x_val = clickData4
+                    if 'date' in df.columns:
+                        dff = df[df['date'] == x_val]
+                    else:
+                        a = ''
+                        for v in df.columns:
+                            if 'Temps' in v:
+                                a += v
+                                dff = df[df[v] == x_val]
+
+                    a = []
+                    a.append(dff[firstchoosen].index)
+                    for i in range(len(a)):
+                        for j in a:
+                            leftchild.append(j[i])
+                    if len(leftchild) > 2:
+                        leftchild.pop(0)
+                    return (leftchild, leftchild)
+                else:
+                    return (no_update, no_update)
+            # else : return(no_update,no_update)
+    else:
+        return (no_update, no_update)
+
+
 @app.callback([Output('leftIntegralFirst', 'value'), Output('leftIntegralSecond', 'value')],
               [Input('pointLeftFirst', 'children'), Input('pointLeftSecond', 'children')],
               [State('firstChoosenValue', 'value')], )
 def display_hover_data(leftchild, rightchild, firstchoosen):
+    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
+        raise PreventUpdate
+    minchild = 0
+    maxchild = 0
+    print(' firstChoosenValue silmek icin', firstchoosen)
+    if len(leftchild) == 2:
+        for i in range(len(leftchild)):
+            if leftchild[0] < leftchild[1]:
+                minchild = leftchild[0]
+                maxchild = leftchild[1]
+            else:
+                minchild = leftchild[1]
+                maxchild = leftchild[0]
+        print('minchild', minchild)
+        print('maxchild', maxchild)
+    else:
+        minchild = leftchild[0]
+        maxchild = leftchild[0]
+
+    if firstchoosen != '' and len(leftchild) == 2:
+        return ('T ' + str(minchild), 'T ' + str(maxchild))
+    else:
+        return (no_update, no_update)
+
+
+@app.callback([Output('leftIntegralFirstTab4', 'value'), Output('leftIntegralSecondTab4', 'value')],
+              [Input('pointLeftFirstTab4', 'children'), Input('pointLeftSecondTab4', 'children')],
+              [State('firstChoosenValueTab4', 'value')], )
+def display_hover_dataTab4(leftchild, rightchild, firstchoosen):
     if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
         raise PreventUpdate
     minchild = 0
@@ -1945,9 +2240,15 @@ def display_hover_data(leftchild, rightchild, firstchoosen):
      State('pointRightSecond', 'children'),
      State('retrieve', 'children')]
 )
-def valint2(clickData, secondchoosen, value, leftchild, rightchild, retrieve):
+def valintTab1_2(clickData, secondchoosen, value, leftchild, rightchild, retrieve):
     if value is [] or value is None or clickData == None or clickData == [] or secondchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
+    ctx = dash.callback_context
+    input_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if input_id == 'graph':
+        curvenumber = clickData['points'][0]['x']
+    print('curvenumber000',curvenumber)
     spaceList1 = []
     zero = 0
     spaceList2 = []
