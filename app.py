@@ -175,6 +175,7 @@ page_1_layout = html.Div(
                                                   html.Div(id='rightintegralsecondhiddentab4', children=[], style={'display': 'None'}),
                                                   html.Div(id='tableinteractivehiddentab4', children=[], style={'display': 'None'}),
                                                   html.Div(id='writeexcelhidden', children=[], style={'display': 'None'}),
+                                                  html.Div(id='writeexcelhiddenTab4', children=[], style={'display': 'None'}),
                                                   html.Div(id='hiddenrecord1', children=[], style={'display': 'None'}),
                                                   html.Div(id='hiddenrecord2', children=[], style={'display': 'None'}),
                                                   html.Div(id='hiddenrecord3', children=[], style={'display': 'None'}),
@@ -466,6 +467,15 @@ def retrieve2(retrieve):
     #     # if len(choosen)==0:
     return retrieve
     # else : return no_update
+
+@app.callback(Output('tab4DashTable', 'children'),
+              [Input('datatablehidden', 'children')],
+              )
+def retrieve4(retrieve):
+    #     # if len(choosen)==0:
+    return retrieve
+    # else : return no_update
+
 
 
 @app.callback(
@@ -1651,11 +1661,11 @@ def LoadingDataTab2(on):
 
 @app.callback(Output('tab4Data', 'children'),
               [Input("my-toggle-switch", "on")],
+
               )
 def LoadingDataTab4(on):
 
     if on == 1:
-        df = pd.read_excel('appending.xlsx')
 
         data_list = []
 
@@ -1702,7 +1712,7 @@ def LoadingDataTab4(on):
                           ], className="tabDesign", ),
                     html.Div([html.Div([html.Div([dcc.Dropdown(id='firstChoosenValueTab4',
                                                      options=[{'label': i, 'value': i} for i in
-                                                              df.columns],
+                                                              data_list],
                                                      multi=False,
                                                      style={"cursor": "pointer", 'width': '180px'},
                                                      className='',
@@ -1757,7 +1767,7 @@ def LoadingDataTab4(on):
                     html.Div([
                         dcc.Dropdown(id='secondChoosenValueTab4',
                                            options=[{'label': i, 'value': i} for i in
-                                                    df.columns],
+                                                    data_list],
                                            multi=False,
                                            style={"cursor": "pointer", 'width': '180px'},
                                            className='',
@@ -1882,6 +1892,25 @@ def dropdownlistcontrolTab4(retrieve):
     else:
         return no_update
 
+@app.callback(
+      Output('output_s', 'children'),
+     [Input('tabDropdownTop4', 'value')],)
+
+def container4 (val) :
+    print('valllllll', val)
+    return val
+
+@app.callback(
+      [Output('firstChoosenValueTab4', 'options'),
+       Output('secondChoosenValueTab4', 'options')],
+      [Input('output_s', 'children')],)
+
+def container4_2 (val) :
+    if val == None or val == []:
+        raise PreventUpdate
+
+    return [{'label' : i, 'value' : i} for i in val],[{'label' : i, 'value' : i} for i in val]
+
 
 @app.callback([Output('hiddenTextxaxis', 'children'), Output('hiddenTextyaxis', 'children'),
                Output('hiddenTextHeader', 'children'), Output('hiddenTextNote', 'children')],
@@ -1983,6 +2012,7 @@ def detailedGraph2(radio, valx, valy, slideheight, slidewidth, g1, g2, head, not
                         t=50,
                         pad=4
                     ),
+                    hovermode='x unified',
                     uirevision=valy[j], ),
                 fig.add_annotation(text=note[-1] if len(note) > 0 else '',
                                    xref="paper", yref="paper",
@@ -2044,6 +2074,7 @@ def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note, ret
                         t=50,
                         pad=4
                     ),
+                    hovermode='x unified',
                     uirevision=valx[j], ),
             fig.add_annotation(text=note[-1] if len(note) > 0 else '',
                                    xref="paper", yref="paper",
@@ -2060,7 +2091,8 @@ def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note, ret
     [State('leftSideChecklistValueHidden', 'children'),
      State('pointLeftFirst', 'children'),
      State('pointLeftSecond', 'children'),
-     State('retrieve', 'children'),]
+     State('retrieve', 'children'),
+     ]
 )
 def valint(clickData, firstchoosen, value, leftchild, rightchild, retrieve):
     if value is [] or value is None or clickData == None or clickData == [] or firstchoosen == None or retrieve == None or retrieve == []:
@@ -2083,6 +2115,7 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, retrieve):
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
+                    print('x_valfirst', x_val)
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
                     else:
@@ -2096,9 +2129,8 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, retrieve):
                     a.append(dff[firstchoosen].index)
                     for i in range(len(a)):
                         for j in a:
-                            print('leftchild1', leftchild)
                             leftchild.append(j[i])
-                            print('leftchild2', leftchild)
+
                     if len(leftchild) > 2:
                         leftchild.pop(0)
                         print('leftchild3', leftchild)
@@ -2109,13 +2141,7 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, retrieve):
     else:
         return (no_update, no_update)
 
-@app.callback(
-      Output('output_s', 'children'),
-     [Input('tabDropdownTop4', 'value')],)
 
-def container4 (val) :
-    print('valllllll', val)
-    return val
 
 @app.callback(
     [Output('pointLeftFirstTab4', 'children'),
@@ -2167,12 +2193,13 @@ def valintTab4(clickData4, firstchoosen,  leftchild, rightchild, retrieve, conta
                     for i in range(len(a)):
                         for j in a:
                             leftchild.append(j[i])
+
                     if len(leftchild) > 2:
                         leftchild.pop(0)
                     return (leftchild, leftchild)
                 else:
                     return (no_update, no_update)
-            # else : return(no_update,no_update)
+            else : return(no_update,no_update)
     else:
         return (no_update, no_update)
 
@@ -2243,18 +2270,11 @@ def display_hover_dataTab4(leftchild, rightchild, firstchoosen):
     [State('leftSideChecklistValueHidden', 'children'),
      State('pointRightFirst', 'children'),
      State('pointRightSecond', 'children'),
-     State('retrieve', 'children'),
-     ]
+     State('retrieve', 'children')]
 )
-def valintTab1_2(clickData, secondchoosen, value, leftchild, rightchild, retrieve):
+def valint2(clickData, secondchoosen, value, leftchild, rightchild, retrieve):
     if value is [] or value is None or clickData == None or clickData == [] or secondchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
-    ctx = dash.callback_context
-    input_id = ctx.triggered[0]['prop_id'].split('.')[0]
-
-    if input_id == 'graph':
-        curvenumber = clickData['points'][0]['x']
-    print('curvenumber000',curvenumber)
     spaceList1 = []
     zero = 0
     spaceList2 = []
@@ -2271,6 +2291,7 @@ def valintTab1_2(clickData, secondchoosen, value, leftchild, rightchild, retriev
             if k[1] == secondchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
+                    print('x_valsecondval', x_val)
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
                     else:
@@ -2279,64 +2300,6 @@ def valintTab1_2(clickData, secondchoosen, value, leftchild, rightchild, retriev
                             if 'Temps' in v:
                                 a += v
                                 dff = df[df[v] == x_val]
-                    a = []
-                    a.append(dff[secondchoosen].index)
-                    for i in range(len(a)):
-                        for j in a:
-                            leftchild.append(j[i])
-                    if len(leftchild) > 2:
-                        leftchild.pop(0)
-                    return (leftchild, leftchild)
-                else:
-                    return (no_update, no_update)
-            # else : return (no_update, no_update)
-    else:
-        return (no_update, no_update)
-
-
-@app.callback(
-    [Output('pointRightFirstTab4', 'children'),
-     Output('pointRightSecondTab4', 'children')],
-    [Input('graph4', 'clickData'),
-     Input('secondChoosenValueTab4', 'value')],
-    [
-     State('pointRightFirstTab4', 'children'),
-     State('pointRightSecondTab4', 'children'),
-     State('retrieve', 'children'),
-     State('output_s', 'children')]
-)
-def valintTab4_2(clickData, secondchoosen, leftchild, rightchild, retrieve,container):
-    if clickData == None or clickData == [] or secondchoosen == None or retrieve == None or retrieve == []:
-        raise PreventUpdate
-
-    spaceList1 = []
-    zero = 0
-    spaceList2 = []
-    if len(retrieve) > 0:
-        df = pd.read_excel('appending.xlsx')
-        df['index'] = df.index
-        for i in range(len(container)):
-            spaceList1.append(zero)
-            zero += 1
-            spaceList2.append(container[i])
-        zippedval = [i for i in list(zip(spaceList1, spaceList2))]
-        curvenumber = clickData['points'][0]['curveNumber']
-        for k in zippedval:
-            if k[1] == secondchoosen:
-                if k[0] == curvenumber:
-                    x_val = clickData['points'][0]['x']
-                    m = ''
-                    if secondchoosen[-2].isdigit() == 1:
-                        print('ceyhun')
-                        m = secondchoosen[-2:]
-                        m = 'T' + m
-
-                        dff = df[df[m] == x_val]
-                    elif secondchoosen[-1].isdigit() == 1:
-                        print('said')
-                        m = secondchoosen[-1]
-                        m = 'T' + m
-                        dff = df[df[m] == x_val]
                     a = []
                     a.append(dff[secondchoosen].index)
                     for i in range(len(a)):
@@ -2376,6 +2339,65 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
         return 'T ' + str(minchild), 'T ' + str(maxchild)
     else:
         return (no_update, no_update)
+
+@app.callback(
+    [Output('pointRightFirstTab4', 'children'),
+     Output('pointRightSecondTab4', 'children')],
+    [Input('graph4', 'clickData'),
+     Input('secondChoosenValueTab4', 'value')],
+    [
+     State('pointRightFirstTab4', 'children'),
+     State('pointRightSecondTab4', 'children'),
+     State('retrieve', 'children'),
+     State('output_s', 'children')]
+)
+def valintTab4_2(clickData, secondchoosen, leftchild, rightchild, retrieve,container):
+    if clickData == None or clickData == [] or secondchoosen == None or retrieve == None or retrieve == []:
+        raise PreventUpdate
+
+    spaceList1 = []
+    zero = 0
+    spaceList2 = []
+    if len(retrieve) > 0:
+        df = pd.read_excel('appending.xlsx')
+        df['index'] = df.index
+        for i in range(len(container)):
+            spaceList1.append(zero)
+            zero += 1
+            spaceList2.append(container[i])
+        zippedval = [i for i in list(zip(spaceList1, spaceList2))]
+        curvenumber = clickData['points'][0]['curveNumber']
+        for k in zippedval:
+            if k[1] == secondchoosen :
+                if k[0] == curvenumber:
+                    x_val = clickData['points'][0]['x']
+                    m = ''
+                    if secondchoosen[-2].isdigit() == 1:
+                        print('ceyhun')
+                        m = secondchoosen[-2:]
+                        m = 'T' + m
+
+                        dff = df[df[m] == x_val]
+                    elif secondchoosen[-1].isdigit() == 1:
+                        print('said')
+                        m = secondchoosen[-1]
+                        m = 'T' + m
+                        dff = df[df[m] == x_val]
+                    a = []
+                    a.append(dff[secondchoosen].index)
+                    for i in range(len(a)):
+                        for j in a:
+                            leftchild.append(j[i])
+
+                    if len(leftchild) > 2:
+                        leftchild.pop(0)
+                    return (leftchild, leftchild)
+                else:
+                    return (no_update, no_update)
+            # else : return (no_update, no_update)
+    else:
+        return (no_update, no_update)
+
 
 @app.callback(
     [Output('rightIntegralFirstTab4', 'value'), Output('rightIntegralSecondTab4', 'value')],
@@ -2638,8 +2660,7 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
         zz.append(a)
         zz.append(b)
         differance = []
-        if len(
-                retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
+        if len(retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
 
             df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
@@ -2678,16 +2699,23 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
               [State('intersectionTab4', 'value'), State('retrieve', 'children'),
                ]
               )
-def differanceCalculation(firstshape,secondshape, valuechoosenleft, valuechoosenright, leftfirst, rightfirst, diff, retrieve):
+def differanceCalculation4(firstshape,secondshape, valuechoosenleft, valuechoosenright, leftfirst, rightfirst, diff, retrieve):
     if retrieve == None or retrieve == []:
         raise PreventUpdate
     differance = []
     if len(firstshape) == 2 and len(secondshape) == 2:
+        print("superset e giriyo miyim", differance)
         a = int(firstshape[0])
         c = int(secondshape[0])
         b = int(firstshape[1])
         d = int(secondshape[1])
-        if len(set(range(a, b)).intersection(set(range(c, d)))) >= 1 or len(
+        if set(range(a, b)).issuperset(set(range(c, d))) == 1:
+            differance.append(c)
+            differance.append(d)
+        elif set(range(c, d)).issuperset(set(range(a, b))) == 1:
+            differance.append(a)
+            differance.append(b)
+        elif len(set(range(a, b)).intersection(set(range(c, d)))) >= 1 or len(
                 set(range(c, d)).intersection(set(range(a, b)))) >= 1:
             if a <= c:
                 if len(differance) == 2:
@@ -2709,17 +2737,8 @@ def differanceCalculation(firstshape,secondshape, valuechoosenleft, valuechoosen
                     differance.pop(0)
                     differance.append(d)
                 differance.append(d)
-            if set(range(a, b)).issuperset(set(range(c, d))) == 1:
-                differance.append(c)
-                differance.append(d)
-            if set(range(c, d)).issuperset(set(range(a, b))) == 1:
-                differance.append(a)
-                differance.append(b)
 
-        else:
-            differance = [0, 0]
-
-    # (len(hiddendif)>=2 and len(valuechoosenright)==1) or (len(hiddendif)>=2 and len(valuechoosenleft)==1) or
+    print("superset miyim",differance)
     if (len(differance) >= 2):
         a = 0
         b = 0
@@ -2736,8 +2755,7 @@ def differanceCalculation(firstshape,secondshape, valuechoosenleft, valuechoosen
         zz.append(a)
         zz.append(b)
         differancelast = []
-        if len(
-                retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
+        if len(retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
 
             df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
@@ -2766,6 +2784,7 @@ def differanceCalculation(firstshape,secondshape, valuechoosenleft, valuechoosen
         else:
             return ['intersection']
 
+
 @app.callback(Output('writeexcelhidden', 'children'),
               [Input('write_excel', 'n_clicks')],
               [State('firstChoosenValue', 'value'),
@@ -2792,14 +2811,42 @@ def write_excel(nc, a, b, c, d, e, f, g, h, i, j):
         print('x1', x)
 
         if x != None : return x
+@app.callback(Output('writeexcelhiddenTab4', 'children'),
+              [Input('write_excelTab4', 'n_clicks')],
+              [State('firstChoosenValueTab4', 'value'),
+               State('leftIntegralFirstTab4', 'value'),
+               State('leftIntegralSecondTab4', 'value'),
+               State('leftIntegralTab4', 'value'),
+               State('secondChoosenValueTab4', 'value'),
+               State('rightIntegralFirstTab4', 'value'),
+               State('rightIntegralSecondTab4', 'value'),
+               State('rightIntegralTab4', 'value'),
+               State('operationTab4', 'value'),
+               State('intersectionTab4', 'value'),
+               ],
+              )
+def write_excelTab4(nc, a, b, c, d, e, f, g, h, i, j):
+    if nc > 0:
+        now = datetime.datetime.now()
+        print("jjjjjjjjjjjjjjjjjjjjjjjjj",j)
+        if i == [] :
+            i= None
+        if j == ['intersection']:
+            j = None
+        x = (now, a, b, c, d, e, f, g, h, i, j)
+        print('x1', x)
 
+        if x != None : return x
 @app.callback(Output('hiddenrecord3', 'children'),
-              [Input('writeexcelhidden', 'children')],
+              [Input('writeexcelhidden', 'children'),Input('writeexcelhiddenTab4', 'children')],
                    )
-def pasfunc(hiddenvalchild):
-    if hiddenvalchild == None:
+def pasfunc(hiddenvalchild,hiddenvalchild4):
+    if hiddenvalchild == None and hiddenvalchild4 == None:
         raise PreventUpdate
-    return hiddenvalchild
+    if hiddenvalchild != None :
+        return hiddenvalchild
+    if hiddenvalchild4 != None :
+        return hiddenvalchild4
 
 @app.callback(Output('hiddenrecord4', 'children'),
                   [Input('hiddenrecord3', 'children')],
@@ -2848,6 +2895,17 @@ def download_excel():
         as_attachment=True,
         cache_timeout=0
     )
+
+
+
+# @app.callback(Output('hiddenrecord3', 'children'),
+#               [Input('writeexcelhiddenTab4', 'children')],
+#                    )
+# def pasfunc(hiddenvalchild):
+#     if hiddenvalchild == None:
+#         raise PreventUpdate
+#     return hiddenvalchild
+
 
 
 # @app.callback(Output('Dbdesign', 'children'),
@@ -3227,6 +3285,7 @@ def download_excel():
 #                     t=50,
 #                     pad=4
 #                 ),
+# hovermode='x unified',
 #                 uirevision=j, ),
 #         return fig
 #     else :
