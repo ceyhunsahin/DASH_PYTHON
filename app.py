@@ -1754,7 +1754,8 @@ def LoadingDataTab4(on):
                         value=[],
                         labelStyle={"display": "Block"},
                     ), ]),
-                    html.Div([dcc.Dropdown(id='secondChoosenValue',
+                    html.Div([
+                        dcc.Dropdown(id='secondChoosenValueTab4',
                                            options=[{'label': i, 'value': i} for i in
                                                     df.columns],
                                            multi=False,
@@ -1783,7 +1784,8 @@ def LoadingDataTab4(on):
                                         bs_size="sm",
                                         style={'width': '8rem', "marginTop": "1.5rem"},
                                         autoFocus=True,
-                                        placeholder="total integration")]),
+                                        placeholder="total integration")
+                              ]),
                     html.Div([dbc.Input(id='operationTab4',
                                         type="text",
                                         min=-10000, max=10000, step=1,
@@ -1799,7 +1801,8 @@ def LoadingDataTab4(on):
                                         style={'width': '10rem', "marginTop": "2rem",
                                                'height': '2rem', 'textAlign': 'center'},
                                         autoFocus=True,
-                                        placeholder="Intersection")], className='aa')],
+                                        placeholder="Intersection")], className='aa')
+                              ],
                     className="abTab4"),
 
             html.Div([dcc.Graph(id='graph4', config={'displayModeBar': True,
@@ -1834,6 +1837,7 @@ def LoadingDataTab4(on):
             ]),])
 
         return loadlist
+    else : no_update
 # @app2.callback(Output('graph2','figure'),
 #               [Input("showTab", "n_clicks"),Input('textarea', 'value')],
 #               State('tabDropdownTop', 'value'),
@@ -2048,7 +2052,6 @@ def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note, ret
         return fig
 
 
-
 @app.callback(
     [Output('pointLeftFirst', 'children'),
      Output('pointLeftSecond', 'children')],
@@ -2057,12 +2060,13 @@ def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note, ret
     [State('leftSideChecklistValueHidden', 'children'),
      State('pointLeftFirst', 'children'),
      State('pointLeftSecond', 'children'),
-     State('retrieve', 'children')]
+     State('retrieve', 'children'),]
 )
 def valint(clickData, firstchoosen, value, leftchild, rightchild, retrieve):
     if value is [] or value is None or clickData == None or clickData == [] or firstchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
     print('firstchoosen', firstchoosen)
+    print("clickDataaaaaaaaaa",clickData)
     spaceList1 = []
     zero = 0
     spaceList2 = []
@@ -2105,30 +2109,27 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, retrieve):
     else:
         return (no_update, no_update)
 
-
 @app.callback(
-    Output('output_s', 'children'),
-    [Input('graph4', 'clickData'),]
-)
-def update_graph(clickData):
-    ctx = dash.callback_context
-    input_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    x_selected = ""
-    if input_id == 'graph4':
-        x_selected = clickData['points'][0]['x']
-        print("First: ", x_selected)
-        return x_selected
+      Output('output_s', 'children'),
+     [Input('tabDropdownTop4', 'value')],)
+
+def container4 (val) :
+    print('valllllll', val)
+    return val
+
 @app.callback(
     [Output('pointLeftFirstTab4', 'children'),
      Output('pointLeftSecondTab4', 'children')],
-    [Input('output_s', 'children'),
+    [Input('graph4', 'clickData'),
      Input('firstChoosenValueTab4', 'value'), ],
     [
      State('pointLeftFirstTab4', 'children'),
      State('pointLeftSecondTab4', 'children'),
-     State('retrieve', 'children')]
+     State('retrieve', 'children'),
+        State('output_s', 'children')
+    ]
 )
-def valintTab4(clickData4, firstchoosen,  leftchild, rightchild, retrieve):
+def valintTab4(clickData4, firstchoosen,  leftchild, rightchild, retrieve, container):
     if  clickData4 == None or clickData4 == [] or firstchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
 
@@ -2138,24 +2139,28 @@ def valintTab4(clickData4, firstchoosen,  leftchild, rightchild, retrieve):
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
         df['index'] = df.index
-        for i in range(len(value)):
+        for i in range(len(container)):
             spaceList1.append(zero)
             zero += 1
-            spaceList2.append(value[i])
+            spaceList2.append(container[i])
         zippedval = [i for i in list(zip(spaceList1, spaceList2))]
-        # curvenumber = clickData4['points'][0]['curveNumber']
+        curvenumber = clickData4['points'][0]['curveNumber']
         for k in zippedval:
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
-                    x_val = clickData4
-                    if 'date' in df.columns:
-                        dff = df[df['date'] == x_val]
-                    else:
-                        a = ''
-                        for v in df.columns:
-                            if 'Temps' in v:
-                                a += v
-                                dff = df[df[v] == x_val]
+                    x_val = clickData4['points'][0]['x']
+                    m = ''
+                    if firstchoosen[-2].isdigit() == 1:
+                        print('ceyhun')
+                        m = firstchoosen[-2:]
+                        m = 'T' + m
+
+                        dff = df[df[m] == x_val]
+                    elif firstchoosen[-1].isdigit() == 1:
+                        print('said')
+                        m = firstchoosen[-1]
+                        m = 'T' + m
+                        dff = df[df[m] == x_val]
 
                     a = []
                     a.append(dff[firstchoosen].index)
@@ -2238,7 +2243,8 @@ def display_hover_dataTab4(leftchild, rightchild, firstchoosen):
     [State('leftSideChecklistValueHidden', 'children'),
      State('pointRightFirst', 'children'),
      State('pointRightSecond', 'children'),
-     State('retrieve', 'children')]
+     State('retrieve', 'children'),
+     ]
 )
 def valintTab1_2(clickData, secondchoosen, value, leftchild, rightchild, retrieve):
     if value is [] or value is None or clickData == None or clickData == [] or secondchoosen == None or retrieve == None or retrieve == []:
@@ -2289,6 +2295,64 @@ def valintTab1_2(clickData, secondchoosen, value, leftchild, rightchild, retriev
 
 
 @app.callback(
+    [Output('pointRightFirstTab4', 'children'),
+     Output('pointRightSecondTab4', 'children')],
+    [Input('graph4', 'clickData'),
+     Input('secondChoosenValueTab4', 'value')],
+    [
+     State('pointRightFirstTab4', 'children'),
+     State('pointRightSecondTab4', 'children'),
+     State('retrieve', 'children'),
+     State('output_s', 'children')]
+)
+def valintTab4_2(clickData, secondchoosen, leftchild, rightchild, retrieve,container):
+    if clickData == None or clickData == [] or secondchoosen == None or retrieve == None or retrieve == []:
+        raise PreventUpdate
+
+    spaceList1 = []
+    zero = 0
+    spaceList2 = []
+    if len(retrieve) > 0:
+        df = pd.read_excel('appending.xlsx')
+        df['index'] = df.index
+        for i in range(len(container)):
+            spaceList1.append(zero)
+            zero += 1
+            spaceList2.append(container[i])
+        zippedval = [i for i in list(zip(spaceList1, spaceList2))]
+        curvenumber = clickData['points'][0]['curveNumber']
+        for k in zippedval:
+            if k[1] == secondchoosen:
+                if k[0] == curvenumber:
+                    x_val = clickData['points'][0]['x']
+                    m = ''
+                    if secondchoosen[-2].isdigit() == 1:
+                        print('ceyhun')
+                        m = secondchoosen[-2:]
+                        m = 'T' + m
+
+                        dff = df[df[m] == x_val]
+                    elif secondchoosen[-1].isdigit() == 1:
+                        print('said')
+                        m = secondchoosen[-1]
+                        m = 'T' + m
+                        dff = df[df[m] == x_val]
+                    a = []
+                    a.append(dff[secondchoosen].index)
+                    for i in range(len(a)):
+                        for j in a:
+                            leftchild.append(j[i])
+                    if len(leftchild) > 2:
+                        leftchild.pop(0)
+                    return (leftchild, leftchild)
+                else:
+                    return (no_update, no_update)
+            # else : return (no_update, no_update)
+    else:
+        return (no_update, no_update)
+
+
+@app.callback(
     [Output('rightIntegralFirst', 'value'), Output('rightIntegralSecond', 'value')],
     [Input('pointRightFirst', 'children'), Input('pointRightSecond', 'children')],
     [State('secondChoosenValue', 'value')], )
@@ -2313,6 +2377,30 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
     else:
         return (no_update, no_update)
 
+@app.callback(
+    [Output('rightIntegralFirstTab4', 'value'), Output('rightIntegralSecondTab4', 'value')],
+    [Input('pointRightFirstTab4', 'children'), Input('pointRightSecondTab4', 'children')],
+    [State('secondChoosenValueTab4', 'value')], )
+def display_hover_data4(leftchild1, rightchild1, secondchoosen):
+    if leftchild1 == None or rightchild1 == None or leftchild1 == [] or rightchild1 == [] or secondchoosen == None:
+        raise PreventUpdate
+    if len(leftchild1) == 2:
+        for i in range(len(leftchild1)):
+            if leftchild1[0] < leftchild1[1]:
+                minchild = leftchild1[0]
+                maxchild = leftchild1[1]
+            else:
+                minchild = leftchild1[1]
+                maxchild = leftchild1[0]
+    else:
+        minchild = leftchild1[0]
+        maxchild = leftchild1[0]
+    print('secondminchild', minchild)
+    print('secondmaxchild', maxchild)
+    if secondchoosen != '' and len(leftchild1) == 2:
+        return 'T ' + str(minchild), 'T ' + str(maxchild)
+    else:
+        return (no_update, no_update)
 
 @app.callback(Output('leftIntegral', 'value'),
               [Input('leftIntegralFirst', 'value'),
@@ -2357,6 +2445,48 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
             return 'total integration'
     # return no_update
 
+@app.callback(Output('leftIntegralTab4', 'value'),
+              [Input('leftIntegralFirstTab4', 'value'),
+               Input('leftIntegralSecondTab4', 'value'),
+               Input('firstChoosenValueTab4', 'value'),
+               ], [State('retrieve', 'children')]
+              )
+def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
+    if st1left == None or st1right == None or valuechoosenleft == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
+        raise PreventUpdate
+    if st1left.startswith('T') == 1 and st1right.startswith('T') == 1:
+        st1left = st1left[2:]
+        st1right = st1right[2:]
+    elif st1left.startswith('T') == 1 and st1right.isnumeric() == 1:
+        st1left = st1left[2:]
+        st1right = st1right
+    elif st1left.isnumeric() == 1 and st1right.isnumeric() == 1:
+        st1left = st1left
+        st1right = st1right
+    elif st1left.isnumeric() == 1 and st1right.startswith('T') == 1:
+        st1left = st1left
+        st1right = st1right[2:]
+    if len(retrieve) > 0:
+        print('valuechoosenleft', valuechoosenleft)
+        print('st1left', type(valuechoosenleft))
+        print('st1right', st1right)
+        if st1left != '' and st1right != '':
+            df = pd.read_excel('appending.xlsx')
+            df['index'] = df.index
+            df = df.reindex(columns=sorted(df.columns, reverse=True))
+            dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
+                      (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
+            c = dff1[valuechoosenleft]
+            area1 = abs(trapz(c, dx=1))
+
+            return area1
+        elif (st1left == '' and st1right != '') or (st1left != '' and st1right == ''):
+            return 'total integration'
+        elif (st1left == '' and st1right == '') and valuechoosenleft != '':
+            return 'total integration'
+        elif st1left != '' and st1right != '' and valuechoosenleft == '':
+            return 'total integration'
+    # return no_update
 
 @app.callback(Output('rightIntegral', 'value'),
               [Input('rightIntegralFirst', 'value'),
@@ -2397,7 +2527,45 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
             return 'total integration'
         elif st2left != '' and st2right != '' and valuechoosenright == '':
             return 'total integration'
-
+@app.callback(Output('rightIntegralTab4', 'value'),
+              [Input('rightIntegralFirstTab4', 'value'),
+               Input('rightIntegralSecondTab4', 'value'),
+               Input('secondChoosenValueTab4', 'value'),
+               ], [State('retrieve', 'children')]
+              )
+def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
+    print('retrieve', retrieve)
+    if st2left == None or st2right == None or valuechoosenright == None or valuechoosenright == [] or retrieve == None or retrieve == []:
+        raise PreventUpdate
+    if st2left.startswith('T') == 1 and st2right.startswith('T') == 1:
+        st2left = st2left[2:]
+        st2right = st2right[2:]
+    elif st2left.startswith('T') == 1 and st2right.isnumeric() == 1:
+        st2left = st2left[2:]
+        st2right = st2right
+    elif st2left.isnumeric() == 1 and st2right.isnumeric() == 1:
+        st2left = st2left
+        st2right = st2right
+    elif st2left.isnumeric() == 1 and st2right.startswith('T') == 1:
+        st2left = st2left
+        st2right = st2right[2:]
+    if len(retrieve) > 0:
+        if st2left != '' and st2right != '':
+            df = pd.read_excel('appending.xlsx')
+            df['index'] = df.index
+            df = df.reindex(columns=sorted(df.columns, reverse=True))
+            dff2 = df[
+                (df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
+                (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
+            f = dff2[valuechoosenright]
+            area2 = abs(trapz(f, dx=1))
+            return area2
+        elif (st2left == '' and st2right != '') or (st2left != '' and st2right == ''):
+            return 'total integration'
+        elif (st2left == '' and st2right == '') and valuechoosenright != '':
+            return 'total integration'
+        elif st2left != '' and st2right != '' and valuechoosenright == '':
+            return 'total integration'
 
 @app.callback(Output('operation', 'value'),
               [Input('leftIntegral', 'value'),
@@ -2418,6 +2586,24 @@ def differanceintegration(value1, value2, ops):
     elif ops == []:
         return []
 
+@app.callback(Output('operationTab4', 'value'),
+              [Input('leftIntegralTab4', 'value'),
+               Input('rightIntegralTab4', 'value'),
+               Input('operateurTab4', 'value')],
+              )
+def differanceintegrationTab4(value1, value2, ops):
+    if value1 == None or value2 == None:
+        raise PreventUpdate
+    if ops == ['Plus']:
+        return float(value1 + value2)
+    elif ops == ['Moins']:
+        return float(value1 - value2)
+    elif ops == ['Multiplie']:
+        return float(value1 * value2)
+    elif ops == ['Division']:
+        return float(value1 / value2)
+    elif ops == []:
+        return []
 
 @app.callback(Output('intersection', 'value'),
               [Input('hiddenDifferance', 'children'),
@@ -2482,6 +2668,103 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
         else:
             return ['intersection']
 
+@app.callback(Output('intersectionTab4', 'value'),
+              [Input('pointLeftFirstTab4', 'children'),
+               Input('pointRightFirstTab4', 'children'),
+               Input('firstChoosenValueTab4', 'value'),
+               Input('secondChoosenValueTab4', 'value'),
+               Input('leftIntegralFirstTab4', 'value'),
+               Input('rightIntegralFirstTab4', 'value'), ],
+              [State('intersectionTab4', 'value'), State('retrieve', 'children'),
+               ]
+              )
+def differanceCalculation(firstshape,secondshape, valuechoosenleft, valuechoosenright, leftfirst, rightfirst, diff, retrieve):
+    if retrieve == None or retrieve == []:
+        raise PreventUpdate
+    differance = []
+    if len(firstshape) == 2 and len(secondshape) == 2:
+        a = int(firstshape[0])
+        c = int(secondshape[0])
+        b = int(firstshape[1])
+        d = int(secondshape[1])
+        if len(set(range(a, b)).intersection(set(range(c, d)))) >= 1 or len(
+                set(range(c, d)).intersection(set(range(a, b)))) >= 1:
+            if a <= c:
+                if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(b)
+                differance.append(b)
+            if a >= c:
+                if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(a)
+                differance.append(a)
+            if b <= d:
+                if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(c)
+                differance.append(c)
+            if b >= d:
+                if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(d)
+                differance.append(d)
+            if set(range(a, b)).issuperset(set(range(c, d))) == 1:
+                differance.append(c)
+                differance.append(d)
+            if set(range(c, d)).issuperset(set(range(a, b))) == 1:
+                differance.append(a)
+                differance.append(b)
+
+        else:
+            differance = [0, 0]
+
+    # (len(hiddendif)>=2 and len(valuechoosenright)==1) or (len(hiddendif)>=2 and len(valuechoosenleft)==1) or
+    if (len(differance) >= 2):
+        a = 0
+        b = 0
+        for i in range(len(differance)):
+            if differance[0] < differance[1]:
+                a = differance[0]
+                b = differance[1]
+            else:
+                a = differance[1]
+                b = differance[0]
+        print('a', a)
+        print('b', b)
+        zz = []
+        zz.append(a)
+        zz.append(b)
+        differancelast = []
+        if len(
+                retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
+
+            df = pd.read_excel('appending.xlsx')
+            df['index'] = df.index
+            df = df.reindex(columns=sorted(df.columns, reverse=True))
+            dff = df[(df[valuechoosenright].index >= float(a)) & (df[valuechoosenright].index <= float(b)) |
+                     (df[valuechoosenright].index >= float(b)) & (df[valuechoosenright].index <= float(a))]
+            l = dff[valuechoosenright]
+
+            dff2 = df[(df[valuechoosenleft].index >= float(a)) & (df[valuechoosenleft].index <= float(b)) |
+                      (df[valuechoosenleft].index >= float(b)) & (df[valuechoosenleft].index <= float(a))]
+            r = dff2[valuechoosenleft]
+            tt = []
+            yy = []
+            for i in l:
+                tt.append(i)
+            for i in r:
+                yy.append(i)
+            for i in range(len(tt)):
+                if tt[i] <= yy[i]:
+                    differancelast.append(tt[i])
+                if yy[i] < tt[i]:
+                    differancelast.append(yy[i])
+            print('differance', differancelast)
+            diff = (abs(trapz(differancelast, dx=1)))
+            return diff
+        else:
+            return ['intersection']
 
 @app.callback(Output('writeexcelhidden', 'children'),
               [Input('write_excel', 'n_clicks')],
