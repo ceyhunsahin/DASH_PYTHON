@@ -129,7 +129,7 @@ page_1_layout = html.Div(
                                                         children=[]),
                                                html.Div(id='tab2hiddenValuey_axis', style={'display': 'None'},
                                                         children=[]),
-                                             html.Div(id='tab4hiddenValuex_axis', style={'display': 'None'},
+                                               html.Div(id='tab4hiddenValuex_axis', style={'display': 'None'},
                                                         children=[]),
 
                                                html.Div(id='tab3hiddenValuey_axis', style={'display': 'None'},
@@ -138,54 +138,60 @@ page_1_layout = html.Div(
                                                html.Div(id='hiddenTextNote', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextxaxis', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextyaxis', children=[], style={'display': 'None'}),
-                                             html.Div(id='hiddenTextHeader4', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenTextHeader4', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextNote4', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextxaxis4', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextyaxis4', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenShapeVal', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenShapeDate', children=[],style={'display': 'None'}), ], ),
-                                                  html.Div(id='hiddenDifferance', children=[], style={'display': 'None'}),
-                                                  html.Div(id='retrieve', children=[], style={'display': 'None'}),
-                                                  html.Div(id='datatablehidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='radiographhidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='sliderHeightTab1hidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='sliderWidthTab1hidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='hiddenShapeValtab4', children=[], style={'display': 'None'}),
-                                                  html.Div(id='hiddenShapeDatetab4', children=[], style={'display': 'None'}),
-                                                 html.Div(id='hiddenDifferancetab4', children=[], style={'display': 'None'}),
-                                                 html.Div(id='retrievetab4', children=[], style={'display': 'None'}),
-                                                 html.Div(id='datatablehiddentab4', children=[], style={'display': 'None'}),
-                                                 html.Div(id='radiographhiddentab4', children=[], style={'display': 'None'}),
-                                                 html.Div(id='sliderHeightTab1hiddentab4', children=[], style={'display': 'None'}),
-                                                 html.Div(id='sliderWidthTab1hiddentab4', children=[], style={'display': 'None'}),
-                                                  html.Div(id='minimumValueGraphhiddenfirst', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenDifferance', children=[], style={'display': 'None'}),
+                                               html.Div(id='retrieve', children=[], style={'display': 'None'}),
+                                               html.Div(id='datatablehidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='radiographhidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='sliderHeightTab1hidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='sliderWidthTab1hidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenShapeValtab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenShapeDatetab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenDifferancetab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='retrievetab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='datatablehiddentab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='radiographhiddentab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='sliderHeightTab1hiddentab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='sliderWidthTab1hiddentab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='minimumValueGraphhiddenfirst', children=[], style={'display': 'None'}),
                                                html.Div(id='minimumValueGraphhiddensecond', children=[], style={'display': 'None'}),
-                                                  html.Div(id='firstchoosenvalhidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='secondchoosenvalhidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='leftintegralfirsthidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='leftintegralsecondhidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='rightintegralfirsthidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='rightintegralsecondhidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='tableinteractivehidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='firstchoosenvalhiddentab4', children=[], style={'display': 'None'}),
-                                                  html.Div(id='secondchoosenvalhiddentab4', children=[], style={'display': 'None'}),
-                                                  html.Div(id='leftintegralfirsthiddentab4', children=[], style={'display': 'None'}),
-                                                  html.Div(id='leftintegralsecondhiddentab4', children=[], style={'display': 'None'}),
-                                                  html.Div(id='rightintegralfirsthiddentab4', children=[], style={'display': 'None'}),
-                                                  html.Div(id='rightintegralsecondhiddentab4', children=[], style={'display': 'None'}),
-                                                  html.Div(id='tableinteractivehiddentab4', children=[], style={'display': 'None'}),
-                                                  html.Div(id='writeexcelhidden', children=[], style={'display': 'None'}),
-                                                  html.Div(id='writeexcelhiddenTab4', children=[], style={'display': 'None'}),
-                                                  html.Div(id='hiddenrecord1', children=[], style={'display': 'None'}),
-                                                  html.Div(id='hiddenrecord2', children=[], style={'display': 'None'}),
-                                                  html.Div(id='hiddenrecord3', children=[], style={'display': 'None'}),
-                                                  html.Div(id='hiddenrecord4', children=[], style={'display': 'None'}),
-                                              html.Div(id = 'inputRightY_axishidden', children=[], style={'display': 'None'}),
-                                              html.Div(id = 'inputRightX_axishidden', children=[], style={'display': 'None'}),
-                                              html.Div(id = 'valueSendRighthidden', children=[], style={'display': 'None'}),
-                                              html.Div(id = 'checklistvaleurhidden', children=[], style={'display': 'None'}),
-                                                 html.Div(id = 'output_s', children=[], style={'display': 'None'}),
-                                              html.Div(dcc.Graph(id='graphhidden',
+                                               html.Div(id='firstchoosenvalhidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='secondchoosenvalhidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='leftintegralfirsthidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='leftintegralsecondhidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='rightintegralfirsthidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='rightintegralsecondhidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='tableinteractivehidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='firstchoosenvalhiddentab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='secondchoosenvalhiddentab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='leftintegralfirsthiddentab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='leftintegralsecondhiddentab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='rightintegralfirsthiddentab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='rightintegralsecondhiddentab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='tableinteractivehiddentab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='writeexcelhidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='writeexcelhiddenTab4', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenrecord1', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenrecord2', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenrecord3', children=[], style={'display': 'None'}),
+                                               html.Div(id='hiddenrecord4', children=[], style={'display': 'None'}),
+                                               html.Div(id = 'inputRightY_axishidden', children=[], style={'display': 'None'}),
+                                               html.Div(id = 'inputRightX_axishidden', children=[], style={'display': 'None'}),
+                                               html.Div(id = 'valueSendRighthidden', children=[], style={'display': 'None'}),
+                                               html.Div(id = 'checklistvaleurhidden', children=[], style={'display': 'None'}),
+                                               html.Div(id = 'shiftaxisdrophidden', children=[], style={'display': 'None'}),
+                                               html.Div(id = 'shift_x_axishidden', children=[], style={'display': 'None'}),
+                                               html.Div(id = 'shift_y_axishidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='shiftaxisdroptab4hidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='shift_x_axistab4hidden', children=[], style={'display': 'None'}),
+                                               html.Div(id='shift_y_axistab4hidden', children=[], style={'display': 'None'}),
+                                               html.Div(id = 'output_s', children=[], style={'display': 'None'}),
+                                               html.Div(dcc.Graph(id='graphhidden',
                                                  config={},
                                                  style={'display': 'None'},
                                                  figure={
@@ -1174,6 +1180,26 @@ def Inputaxis(nclick,y_val,x_val, y_axis, x_axis):
 #     return val
 # for show graph and changement
 
+@app.callback(Output('shiftaxisdrophidden', 'children'),
+              [Input('shiftaxisdrop', 'value')],)
+
+def relay(val):
+    return val
+
+@app.callback(Output('shift_x_axishidden', 'children'),
+              [Input('shift_x_axis', 'value')],)
+
+def relay2(val):
+    return val
+
+@app.callback(Output('shift_y_axishidden', 'children'),
+              [Input('shift_y_axis', 'value')],)
+
+def relay3(val):
+    return val
+
+
+
 @app.callback(Output('shiftaxis', 'style'),
               [Input('shiftaxisdrop','value')])
 
@@ -1201,9 +1227,9 @@ def shiftingaxes(val):
                Input('checklistvaleurhidden', "children"),
                Input('inputRightY_axishidden','children'),
                Input('inputRightX_axishidden','children'),
-               Input('shiftaxisdrop', 'value'),
-               Input('shift_x_axis','value'),
-               Input('shift_y_axis','value'),
+               Input('shiftaxisdrophidden', 'children'),
+               Input('shift_x_axishidden','children'),
+               Input('shift_y_axishidden','children'),
                ],
               [
                State('hiddenDifferance', 'children'),
@@ -1883,6 +1909,35 @@ def LoadingDataTab4(on):
                               ],style = {'display' : 'None'},
                     className="abTab4"),
 
+            html.Div([dcc.Dropdown(id='shiftaxisdroptab4',
+                                   options=[{'label': i, 'value': i} for i in
+                                            data_list],
+                                   multi=False,
+                                   style={"cursor": "pointer", 'width': '180px', 'margin': '1rem'},
+                                   className='',
+                                   clearable=True,
+                                   placeholder='Choose Value...',
+                                   ),
+                      html.Div(id='shiftaxistab4',
+                               children=[
+                                   dbc.Input(id='shift_x_axistab4',
+                                             type="number",
+                                             min=-100000, max=100000, step=1,
+                                             bs_size="sm",
+                                             value=0,
+                                             style={'width': '7rem', },
+                                             placeholder="Shift X axis..."),
+                                   dbc.Input(id='shift_y_axistab4',
+                                             type="number",
+                                             min=-100000, max=100000, step=1,
+                                             bs_size="sm",
+                                             value=0,
+                                             style={'width': '7rem', },
+                                             placeholder="Shift Y axis..."), ], className='abcd',
+                               style={'display': 'None'})
+
+                      ], className='abcd'),
+
             html.Div([dcc.Graph(id='graph4', config={'displayModeBar': True,
                                                          'scrollZoom': True,
                                                          'modeBarButtonsToAdd': [
@@ -1965,12 +2020,23 @@ def dropdownlistcontrolTab4(retrieve):
         return no_update
 
 @app.callback(
-      Output('output_s', 'children'),
+     Output('output_s', 'children'),
      [Input('tabDropdownTop4', 'value')],)
 
 def container4 (val) :
     print('valllllll', val)
     return val
+
+
+@app.callback(
+      Output('shiftaxisdroptab4', 'options'),
+     [Input('tabDropdownTop4', 'value')],)
+
+def container5 (val) :
+    if val ==None :
+        raise PreventUpdate
+    print('valllllll', val)
+    return [{'label': i, 'value': i} for i in val]
 
 @app.callback(
       [Output('firstChoosenValueTab4', 'options'),
@@ -2093,15 +2159,49 @@ def detailedGraph2(radio, valx, valy, slideheight, slidewidth, g1, g2, head, not
         return fig
 
 
+@app.callback(Output('shiftaxistab4', 'style'),
+              [Input('shiftaxisdroptab4','value')])
+
+def shiftingaxestab4(val):
+    print("valaaaa", val)
+    if val == None :
+        return {'display': 'None'}
+    return {'visibility': 'visible', 'marginTop' : '2rem'}
+
+
+@app.callback(Output('shiftaxisdroptab4hidden', 'children'),
+              [Input('shiftaxisdroptab4', 'value')],)
+
+def relay4(val):
+    return val
+
+@app.callback(Output('shift_x_axistab4hidden', 'children'),
+              [Input('shift_x_axistab4', 'value')],)
+
+def relay5(val):
+    return val
+
+@app.callback(Output('shift_y_axistab4hidden', 'children'),
+              [Input('shift_y_axistab4', 'value')],)
+
+def relay6(val):
+    return val
+
 @app.callback(Output('graph4', 'figure'),
               [Input('radiograph4', 'value'),
                Input('tab4hiddenValuex_axis', 'children'),
-               Input('sliderHeightTab4', 'value'), Input('sliderWidthTab4', 'value'),
-               Input('hiddenTextxaxis4', 'children'), Input('hiddenTextyaxis4', 'children'),
-               Input('hiddenTextHeader4', 'children'), Input('hiddenTextNote4', 'children')],
+               Input('sliderHeightTab4', 'value'),
+               Input('sliderWidthTab4', 'value'),
+               Input('hiddenTextxaxis4', 'children'),
+               Input('hiddenTextyaxis4', 'children'),
+               Input('hiddenTextHeader4', 'children'),
+               Input('hiddenTextNote4', 'children'),
+               Input('shiftaxisdroptab4hidden', 'children'),
+               Input('shift_x_axistab4hidden', 'children'),
+               Input('shift_y_axistab4hidden', 'children')],
               [State('retrieve', 'children')]
               )
-def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note, retrieve):
+def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note,axisdrop,shift_x,shift_y, retrieve):
     if valx == [] or valx == None or g1 == None or g2 == None or head == None or note == None:
         raise PreventUpdate
     if len(retrieve) > 0:
@@ -2111,18 +2211,51 @@ def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note, ret
         for j in range(len(valx)):
             valeur = valx[j]
             if valeur[-2].isdigit()==1:
-                print('ceyhun')
                 m = valeur[-2:]
                 m = 'T' + m
                 b = df[valx[j]]
                 a = df[m]
+                if axisdrop == valx[j]:
+                    p = []
+                    c = []
+                    for i in df[m]:
+                        if shift_x == None:
+                            raise PreventUpdate
+                        else:
+                            i += float(shift_x)
+                            p.append(i)
+                            a = p
+                    for i in df[axisdrop]:
+                        if shift_y == None:
+                            raise PreventUpdate
+                        else:
+                            i += float(shift_y)
+                            c.append(i)
+                            b = c
                 fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
             elif valeur[-1].isdigit()==1:
-                print('said')
                 m = valeur[-1]
                 m = 'T' + m
                 b = df[valx[j]]
                 a = df[m]
+                print('valxxxxx', valx)
+                if axisdrop == valx[j] :
+                    p = []
+                    c = []
+                    for i in df[m]:
+                        if shift_x == None:
+                            raise PreventUpdate
+                        else:
+                            i += float(shift_x)
+                            p.append(i)
+                            a = p
+                    for i in df[axisdrop]:
+                        if shift_y == None:
+                            raise PreventUpdate
+                        else:
+                            i += float(shift_y)
+                            c.append(i)
+                            b = c
                 fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
 
             fig.update_xaxes(
@@ -2163,10 +2296,11 @@ def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note, ret
     [State('leftSideChecklistValueHidden', 'children'),
      State('pointLeftFirst', 'children'),
      State('pointLeftSecond', 'children'),
+     State('shift_x_axis', 'value'),
      State('retrieve', 'children'),
      ]
 )
-def valint(clickData, firstchoosen, value, leftchild, rightchild, retrieve):
+def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retrieve):
     if value is [] or value is None or clickData == None or clickData == [] or firstchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
     print('firstchoosen', firstchoosen)
@@ -2196,6 +2330,9 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, retrieve):
                             if 'Temps' in v:
                                 a += v
                                 dff = df[df[v] == x_val]
+                                if shift_x != 0:
+                                    x_val -= shift_x
+                                    dff = df[df[v] == x_val]
 
                     a = []
                     a.append(dff[firstchoosen].index)
@@ -2224,10 +2361,11 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, retrieve):
      State('pointLeftFirstTab4', 'children'),
      State('pointLeftSecondTab4', 'children'),
      State('retrieve', 'children'),
+     State('shift_x_axistab4', 'value'),
         State('output_s', 'children')
     ]
 )
-def valintTab4(clickData4, firstchoosen,  leftchild, rightchild, retrieve, container):
+def valintTab4(clickData4, firstchoosen,  leftchild, rightchild, retrieve,shift_x, container):
     if  clickData4 == None or clickData4 == [] or firstchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
 
@@ -2252,13 +2390,18 @@ def valintTab4(clickData4, firstchoosen,  leftchild, rightchild, retrieve, conta
                         print('ceyhun')
                         m = firstchoosen[-2:]
                         m = 'T' + m
-
                         dff = df[df[m] == x_val]
+                        # if shift_x != 0:
+                        #     x_val -= shift_x
+                        #     dff = df[df[m] == x_val]
                     elif firstchoosen[-1].isdigit() == 1:
                         print('said')
                         m = firstchoosen[-1]
                         m = 'T' + m
                         dff = df[df[m] == x_val]
+                        # if shift_x != 0:
+                        #     x_val -= shift_x
+                        #     dff = df[df[m] == x_val]
 
                     a = []
                     a.append(dff[firstchoosen].index)
@@ -2364,9 +2507,6 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, ret
             if k[1] == secondchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
-
-
-                    print('x_valsecondval', x_val)
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
                     else:
@@ -2427,9 +2567,10 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
      State('pointRightFirstTab4', 'children'),
      State('pointRightSecondTab4', 'children'),
      State('retrieve', 'children'),
-     State('output_s', 'children')]
+     State('output_s', 'children'),
+     State('shift_x_axistab4', 'value'),]
 )
-def valintTab4_2(clickData, secondchoosen, leftchild, rightchild, retrieve,container):
+def valintTab4_2(clickData, secondchoosen, leftchild, rightchild, retrieve,container,shift_x):
     if clickData == None or clickData == [] or secondchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
 
@@ -2454,13 +2595,18 @@ def valintTab4_2(clickData, secondchoosen, leftchild, rightchild, retrieve,conta
                         print('ceyhun')
                         m = secondchoosen[-2:]
                         m = 'T' + m
-
                         dff = df[df[m] == x_val]
+                        if shift_x != 0:
+                            x_val -= shift_x
+                            dff = df[df[m] == x_val]
                     elif secondchoosen[-1].isdigit() == 1:
                         print('said')
                         m = secondchoosen[-1]
                         m = 'T' + m
                         dff = df[df[m] == x_val]
+                        if shift_x != 0:
+                            x_val -= shift_x
+                            dff = df[df[m] == x_val]
                     a = []
                     a.append(dff[secondchoosen].index)
                     for i in range(len(a)):
