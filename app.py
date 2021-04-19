@@ -1690,7 +1690,7 @@ def LoadingDataTab4(on):
                                                             inputStyle={'margin': '10px', }
                                                             ),
                                               dbc.Checklist(id="calculintegraltab4",
-                                                             options=[{'label': 'Calcul Integral', 'value': 'calcultab4'},]
+                                                             options=[{'label': "Calculate Integral", 'value': 'calcultab4'},]
                                                                       ,
                                                              value='',
                                                              labelClassName='groupgraph',
