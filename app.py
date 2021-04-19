@@ -1679,7 +1679,7 @@ def LoadingDataTab4(on):
                                                            placeholder='Select your y-axis value...',
                                                            ),
                                                ], className="ab"),
-                                    html.Div(dcc.RadioItems(id="radiograph4",
+                                    html.Div([dcc.RadioItems(id="radiograph4",
                                                             options=[
                                                                 {'label': 'Point', 'value': 'markers'},
                                                                 {'label': 'Line', 'value': 'lines'},
@@ -1688,7 +1688,16 @@ def LoadingDataTab4(on):
                                                             labelClassName='groupgraph',
                                                             labelStyle={'margin': '10px', },
                                                             inputStyle={'margin': '10px', }
-                                                            ), ), ], className="ac"),
+                                                            ),
+                                              dbc.Checklist(id="calculintegraltab4",
+                                                             options=[{'label': 'Calcul Integral', 'value': 'calcultab4'},]
+                                                                      ,
+                                                             value='',
+                                                             labelClassName='groupgraph',
+                                                             labelStyle={'margin': '10px', },
+                                                             inputStyle={'margin': '10px', }),
+                                              ]), ], className="ac"),
+
                           html.Div([dcc.Dropdown(id="dropadd4",
                                                  options=[
                                                      {'label': 'Note', 'value': 'note'},
@@ -1710,7 +1719,8 @@ def LoadingDataTab4(on):
                           html.Button('addText', id='addText4', n_clicks=0, style={'marginTop': '1.5rem'}),
 
                           ], className="tabDesign", ),
-                    html.Div([html.Div([html.Div([dcc.Dropdown(id='firstChoosenValueTab4',
+                    html.Div(id = 'tab4check', children =
+                                        [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValueTab4',
                                                      options=[{'label': i, 'value': i} for i in
                                                               data_list],
                                                      multi=False,
@@ -1812,7 +1822,7 @@ def LoadingDataTab4(on):
                                                'height': '2rem', 'textAlign': 'center'},
                                         autoFocus=True,
                                         placeholder="Intersection")], className='aa')
-                              ],
+                              ],style = {'display' : 'None'},
                     className="abTab4"),
 
             html.Div([dcc.Graph(id='graph4', config={'displayModeBar': True,
@@ -1848,13 +1858,17 @@ def LoadingDataTab4(on):
 
         return loadlist
     else : no_update
-# @app2.callback(Output('graph2','figure'),
-#               [Input("showTab", "n_clicks"),Input('textarea', 'value')],
-#               State('tabDropdownTop', 'value'),
-#               State('tabDropdownDown', 'value')
-#               )
-# def detailedGraph(n_clicks,x, val1, val2):
-#     df = pd.read_excel("aa.xlsx")
+@app.callback(Output('tab4check','style'),
+              [Input("calculintegraltab4", "value")],
+              )
+def showintegral(show):
+    print('show',show)
+    if show == ['calcultab4'] :
+        return {'visiblity' : 'visible'}
+    return {'display': 'None'}
+
+
+
 @app.callback([Output('tab2hiddenValuex_axis', 'children'), Output('tab2hiddenValuey_axis', 'children')],
               [Input('tabDropdownTop', 'value'),
                Input('tabDropdownDown', 'value')],
@@ -2012,7 +2026,7 @@ def detailedGraph2(radio, valx, valy, slideheight, slidewidth, g1, g2, head, not
                         t=50,
                         pad=4
                     ),
-                    hovermode='x unified',
+                    # hovermode='x unified',
                     uirevision=valy[j], ),
                 fig.add_annotation(text=note[-1] if len(note) > 0 else '',
                                    xref="paper", yref="paper",
@@ -2074,7 +2088,7 @@ def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note, ret
                         t=50,
                         pad=4
                     ),
-                    hovermode='x unified',
+                    # hovermode='x unified',
                     uirevision=valx[j], ),
             fig.add_annotation(text=note[-1] if len(note) > 0 else '',
                                    xref="paper", yref="paper",
@@ -2656,9 +2670,6 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
                 b = hiddendif[0]
         print('a', a)
         print('b', b)
-        zz = []
-        zz.append(a)
-        zz.append(b)
         differance = []
         if len(retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
 
@@ -2710,13 +2721,16 @@ def differanceCalculation4(firstshape,secondshape, valuechoosenleft, valuechoose
         b = int(firstshape[1])
         d = int(secondshape[1])
         if set(range(a, b)).issuperset(set(range(c, d))) == 1:
+            print("superset miyim", differance)
             differance.append(c)
             differance.append(d)
         elif set(range(c, d)).issuperset(set(range(a, b))) == 1:
+            print("superset miyim", differance)
             differance.append(a)
             differance.append(b)
         elif len(set(range(a, b)).intersection(set(range(c, d)))) >= 1 or len(
                 set(range(c, d)).intersection(set(range(a, b)))) >= 1:
+            print("superset degil miyim", differance)
             if a <= c:
                 if len(differance) == 2:
                     differance.pop(0)
@@ -2737,35 +2751,22 @@ def differanceCalculation4(firstshape,secondshape, valuechoosenleft, valuechoose
                     differance.pop(0)
                     differance.append(d)
                 differance.append(d)
-
-    print("superset miyim",differance)
-    if (len(differance) >= 2):
-        a = 0
-        b = 0
-        for i in range(len(differance)):
-            if differance[0] < differance[1]:
-                a = differance[0]
-                b = differance[1]
-            else:
-                a = differance[1]
-                b = differance[0]
-        print('a', a)
-        print('b', b)
-        zz = []
-        zz.append(a)
-        zz.append(b)
+        else:
+            return ['intersection']
+        print("diff",differance )
         differancelast = []
         if len(retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
-
+            first = differance[0]
+            second = differance[1]
             df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
-            dff = df[(df[valuechoosenright].index >= float(a)) & (df[valuechoosenright].index <= float(b)) |
-                     (df[valuechoosenright].index >= float(b)) & (df[valuechoosenright].index <= float(a))]
+            dff = df[(df[valuechoosenright].index >= float(first)) & (df[valuechoosenright].index <= float(second)) |
+                     (df[valuechoosenright].index >= float(second)) & (df[valuechoosenright].index <= float(first))]
             l = dff[valuechoosenright]
 
-            dff2 = df[(df[valuechoosenleft].index >= float(a)) & (df[valuechoosenleft].index <= float(b)) |
-                      (df[valuechoosenleft].index >= float(b)) & (df[valuechoosenleft].index <= float(a))]
+            dff2 = df[(df[valuechoosenleft].index >= float(first)) & (df[valuechoosenleft].index <= float(second)) |
+                      (df[valuechoosenleft].index >= float(second)) & (df[valuechoosenleft].index <= float(first))]
             r = dff2[valuechoosenleft]
             tt = []
             yy = []
@@ -2781,8 +2782,6 @@ def differanceCalculation4(firstshape,secondshape, valuechoosenleft, valuechoose
             print('differance', differancelast)
             diff = (abs(trapz(differancelast, dx=1)))
             return diff
-        else:
-            return ['intersection']
 
 
 @app.callback(Output('writeexcelhidden', 'children'),
