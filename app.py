@@ -378,7 +378,7 @@ def parse_contents(contents, filename, date):
         dash_table.DataTable(
             id='datatable-interactivity',
             data=df.to_dict('records'),
-            columns=[{'name': i, 'id': i, "deletable": True, "selectable": True} for i in df.columns],
+            columns=[{'name': i, 'id': i, "deletable": True, "selectable": True} for i in df.columns if i[1:].isdigit() != 1 ],
             editable=True,
             page_size=50,
             style_table={'height': '500px', 'overflowY': 'auto', 'width': '98%'},
@@ -398,7 +398,7 @@ def parse_contents(contents, filename, date):
             ],
             style_cell_conditional=[
                 {
-                    'if': {'column_id': c},
+                    'if': {'column_id': c} ,
                     'textAlign': 'center',
                     'width': '8%'}
 
@@ -924,6 +924,35 @@ def LoadingDataTab1(on, dropdownhidden,tab):
                                                  style={'width': '7rem', "marginTop": "1rem", 'marginLeft' : '0.5rem'},
                                                  placeholder="Minimum Value of Graph for Second..."),
 
+
+                                       ], className='abcd'),
+
+                             html.Div([dcc.Dropdown(id='shiftaxisdrop',
+                                                    options=[{'label': i, 'value': i} for i in
+                                                             dropdownhidden],
+                                                    multi=False,
+                                                    style={"cursor": "pointer", 'width': '180px', 'margin' : '1rem'},
+                                                    className='',
+                                                    clearable=True,
+                                                    placeholder='Choose Value...',
+                                                    ),
+                                       html.Div(id = 'shiftaxis',
+                                                 children = [
+                                            dbc.Input(id='shift_x_axis',
+                                                 type="number",
+                                                 min=-100000, max=100000, step=1,
+                                                 bs_size="sm",
+                                                 value=0,
+                                                 style={'width': '7rem',},
+                                                 placeholder="Shift X axis..."),
+                                            dbc.Input(id='shift_y_axis',
+                                                 type="number",
+                                                 min=-100000, max=100000, step=1,
+                                                 bs_size="sm",
+                                                 value=0,
+                                                 style={'width': '7rem',},
+                                                 placeholder="Shift Y axis..."),],className='abcd',style= {'display':'None'})
+
                                        ], className='abcd'),
 
                              html.Div([dcc.Graph(id='graph',
@@ -1145,6 +1174,14 @@ def Inputaxis(nclick,y_val,x_val, y_axis, x_axis):
 #     return val
 # for show graph and changement
 
+@app.callback(Output('shiftaxis', 'style'),
+              [Input('shiftaxisdrop','value')])
+
+def shiftingaxes(val):
+    print("valaaaa", val)
+    if val == None :
+        return {'display': 'None'}
+    return {'visibility': 'visible', 'marginTop' : '2rem'}
 @app.callback([Output('graphhidden', 'figure'),
                Output('hiddenDifferance', 'children'), ],
               [Input("leftSideChecklistValueHidden", "children"),
@@ -1164,6 +1201,9 @@ def Inputaxis(nclick,y_val,x_val, y_axis, x_axis):
                Input('checklistvaleurhidden', "children"),
                Input('inputRightY_axishidden','children'),
                Input('inputRightX_axishidden','children'),
+               Input('shiftaxisdrop', 'value'),
+               Input('shift_x_axis','value'),
+               Input('shift_y_axis','value'),
                ],
               [
                State('hiddenDifferance', 'children'),
@@ -1172,7 +1212,8 @@ def Inputaxis(nclick,y_val,x_val, y_axis, x_axis):
               )
 def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
          minValfirst,minValsecond, firstchoosen, secondchoosen, leftfirstval, leftsecondval,
-         rightfirstval, rightsecondval, rightsidedrop, right_y_axis,right_x_axis,differance, retrieve):
+         rightfirstval, rightsecondval, rightsidedrop, right_y_axis,right_x_axis,
+         axis,shift_x, shift_y, differance, retrieve):
     if retrieve == None or retrieve == [] :
         raise PreventUpdate
     if len(retrieve) > 0 :
@@ -1186,7 +1227,7 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                     baseval += col
                     dt = df[baseval]
         else:
-            df_shape = pd.read_excel('appending.xlsx')
+            df_shape = df.copy()
             df_shape['newindex'] = df_shape.index
             df_shape.index = df_shape['date']
             dt = ["{}-{:02.0f}-{:02.0f}_{:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day, d.hour, d.minute,
@@ -1217,10 +1258,27 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                 else : no_update
 
         for i_val in range(len(val)):
-
-            y_axis = df[val[i_val]]
+            if axis == val[i_val]:
+                j = []
+                for i in df[axis]:
+                    if shift_y == None:
+                        raise PreventUpdate
+                    else:
+                        i += float(shift_y)
+                        j.append(i)
+                        y_axis = j
+            else : y_axis = df[val[i_val]]
             if 'date' not in df.columns:
                 x_axis = df[baseval]
+                if axis == val[i_val]:
+                    j = []
+                    for i in df[baseval]:
+                        if shift_x == None:
+                            raise PreventUpdate
+                        else :
+                            i += float(shift_x)
+                            j.append(i)
+                            x_axis = j
             else:
                 x_axis = df['date']
             fig.add_trace(go.Scattergl(x=x_axis, y=y_axis, mode=radiograph, name=val[i_val]))
@@ -2284,9 +2342,10 @@ def display_hover_dataTab4(leftchild, rightchild, firstchoosen):
     [State('leftSideChecklistValueHidden', 'children'),
      State('pointRightFirst', 'children'),
      State('pointRightSecond', 'children'),
+     State('shift_x_axis', 'value'),
      State('retrieve', 'children')]
 )
-def valint2(clickData, secondchoosen, value, leftchild, rightchild, retrieve):
+def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, retrieve):
     if value is [] or value is None or clickData == None or clickData == [] or secondchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
     spaceList1 = []
@@ -2305,6 +2364,8 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, retrieve):
             if k[1] == secondchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
+
+
                     print('x_valsecondval', x_val)
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
@@ -2314,6 +2375,9 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, retrieve):
                             if 'Temps' in v:
                                 a += v
                                 dff = df[df[v] == x_val]
+                                if shift_x != 0:
+                                    x_val -= shift_x
+                                    dff = df[df[v] == x_val]
                     a = []
                     a.append(dff[secondchoosen].index)
                     for i in range(len(a)):
