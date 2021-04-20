@@ -25,15 +25,21 @@ import mariadb
 # import pywintypes
 # pywintypes.datetime = pywintypes.TimeType
 
+def find_data_file(filename):
+    if getattr(sys, 'frozen', False):
+        # The application is frozen
+        datadir = os.path.dirname(sys.executable)
+    else:
+        # The application is not frozen
+        # Change this bit to match where you store your data files:
+        datadir = os.path.dirname(__file__)
 
+    return os.path.join(datadir, filename)
 
 # Initialize the app
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP],assets_folder=find_data_file('assets/'))
 server = app.server
 app.config.suppress_callback_exceptions = True
-
-
-
 
 # connect OPC
 
@@ -2109,15 +2115,21 @@ def detailedGraph4(addtextclick, textarea, add, g1, g2, head, note):
 
 @app.callback(Output('graph2', 'figure'),
               [Input('radiograph2', 'value'),
-               Input('tab2hiddenValuex_axis', 'children'), Input('tab2hiddenValuey_axis', 'children'),
-               Input('sliderHeight', 'value'), Input('sliderWidth', 'value'),
-               Input('hiddenTextxaxis', 'children'), Input('hiddenTextyaxis', 'children'),
-               Input('hiddenTextHeader', 'children'), Input('hiddenTextNote', 'children')],
+               Input('tab2hiddenValuex_axis', 'children'),
+               Input('tab2hiddenValuey_axis', 'children'),
+               Input('sliderHeight', 'value'),
+               Input('sliderWidth', 'value'),
+               Input('hiddenTextxaxis', 'children'),
+               Input('hiddenTextyaxis', 'children'),
+               Input('hiddenTextHeader', 'children'),
+               Input('hiddenTextNote', 'children')],
               [State('retrieve', 'children')]
               )
 def detailedGraph2(radio, valx, valy, slideheight, slidewidth, g1, g2, head, note, retrieve):
     if valx == [] or valy == [] or valx == None or valy == None or g1 == None or g2 == None or head == None or note == None:
         raise PreventUpdate
+    print('valx',valx)
+    print('valx', valy)
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
         fig = go.Figure()
@@ -3523,4 +3535,4 @@ hovermode='x unified',
 
 
 if __name__ == '__main__' :
-    app.run_server(debug=True)
+    app.run_server(debug = True, port=8049)
