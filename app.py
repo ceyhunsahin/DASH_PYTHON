@@ -135,6 +135,10 @@ page_1_layout = html.Div(
                                                         children=[]),
                                                html.Div(id='tab2hiddenValuey_axis', style={'display': 'None'},
                                                         children=[]),
+                                               html.Div(id='tab4hiddenValuex_axissecond', style={'display': 'None'},
+                                                        children=[]),
+                                               html.Div(id='tab4hiddenValuey_axissecond', style={'display': 'None'},
+                                                        children=[]),
                                                html.Div(id='tab4hiddenValuex_axis', style={'display': 'None'},
                                                         children=[]),
 
@@ -197,6 +201,7 @@ page_1_layout = html.Div(
                                                html.Div(id='shift_x_axistab4hidden', children=[], style={'display': 'None'}),
                                                html.Div(id='shift_y_axistab4hidden', children=[], style={'display': 'None'}),
                                                html.Div(id = 'output_s', children=[], style={'display': 'None'}),
+                                               html.Div(id='radiographtab4hidden', children=[], style={'display': 'None'}),
                                                html.Div(dcc.Graph(id='graphhidden',
                                                  config={},
                                                  style={'display': 'None'},
@@ -1759,7 +1764,18 @@ def LoadingDataTab4(on):
         data_list = []
 
         loadlist = html.Div([html.Div([
-                html.Div([html.Div([html.Div([dcc.Dropdown(id='tabDropdownTop4',
+                html.Div([html.Div([html.Div([
+                    dcc.RadioItems(id="radiographtab4",
+                                   options=[
+                                       {'label': 'Standart', 'value': 'Standart'},
+                                       {'label': 'Choose Values', 'value': 'choosevalue'},
+                                     ],
+                                   value='',
+                                   labelClassName='groupgraph',
+                                   labelStyle={'margin': '10px', },
+                                   inputStyle={'margin': '10px', }
+                                   ),
+                    dcc.Dropdown(id='tabDropdownTop4',
                                                            options=[{'label': i, 'value': i} for i in data_list],
                                                            multi=True,
                                                            style={"cursor": "pointer"},
@@ -1768,6 +1784,22 @@ def LoadingDataTab4(on):
                                                            placeholder='Select your y-axis value...',
                                                            ),
                                                ], className="ab"),
+                                    html.Div([dcc.Dropdown(id='tabDropdownTopTab4',
+                                                  options=[{'label': i, 'value': i} for i in data_list],
+                                                  multi=True,
+                                                  style={"cursor": "pointer"},
+                                                  className='stockSelectorClass2',
+                                                  clearable=True,
+                                                  placeholder='Select your y-axis value...',
+                                                  ),
+                                     dcc.Dropdown(id='tabDropdownDownTab4',
+                                                  options=[{'label': i, 'value': i} for i in data_list],
+                                                  multi=True,
+                                                  style={"cursor": "pointer"},
+                                                  className='stockSelectorClass2',
+                                                  clearable=True,
+                                                  placeholder='Select your x-axis value...',
+                                                  ), ], className = "ab"),
                                     html.Div([dcc.RadioItems(id="radiograph4",
                                                             options=[
                                                                 {'label': 'Point', 'value': 'markers'},
@@ -2001,10 +2033,10 @@ def contractdropdown(x, y):
               [Input('tabDropdownTop4', 'value')],
               )
 def contractdropdown4(x):
-    if x == []:
+    if x == None :
         raise PreventUpdate
-
     return x
+
 @app.callback([Output("tabDropdownTop", "options"), Output("tabDropdownDown", "options")],
               [Input("retrieve", "children")])
 def dropdownlistcontrol(retrieve):
@@ -2014,9 +2046,31 @@ def dropdownlistcontrol(retrieve):
         return (dff, dff)
     else:
         return (no_update, no_update)
+@app.callback([Output("tabDropdownTopTab4", "options"), Output("tabDropdownDownTab4", "options")],
+              [Input("retrieve", "children")])
+def dropdownlistcontrolTab4Second(retrieve):
+    if len(retrieve) > 0:
+        df = pd.read_excel('appending.xlsx')
+        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un')!=1 and i != 'index' and i != 'date']
+        return (dff, dff)
+    else:
+        return (no_update, no_update)
+
+@app.callback([Output('tab4hiddenValuex_axissecond', 'children'),
+               Output('tab4hiddenValuey_axissecond', 'children')],
+              [Input('tabDropdownTopTab4', 'value'),
+               Input('tabDropdownDownTab4', 'value')],
+              # [State('')]
+              )
+def contractdropdown(x, y):
+    if x == None or y == None:
+        raise PreventUpdate
+
+    return x, y
+
 @app.callback(Output("tabDropdownTop4", "options"),
               [Input("retrieve", "children")])
-def dropdownlistcontrolTab4(retrieve):
+def dropdownlistcontrolTab4First(retrieve):
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('TG')==1 ]
@@ -2029,7 +2083,6 @@ def dropdownlistcontrolTab4(retrieve):
      [Input('tabDropdownTop4', 'value')],)
 
 def container4 (val) :
-    print('valllllll', val)
     return val
 
 
@@ -2196,7 +2249,14 @@ def relay5(val):
               [Input('shift_y_axistab4', 'value')],)
 
 def relay6(val):
-    return val
+    return
+
+@app.callback(Output('radiographtab4hidden', 'children'),
+              [Input('radiographtab4', 'value')],)
+
+def relay7(valradio):
+    print("valradio", valradio)
+    return valradio
 
 @app.callback(Output('graph4', 'figure'),
               [Input('radiograph4', 'value'),
@@ -2297,7 +2357,6 @@ def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note,axis
                                    x=0, y=0.7, showarrow=False)
 
         return fig
-
 
 @app.callback(
     [Output('pointLeftFirst', 'children'),
@@ -3535,4 +3594,4 @@ hovermode='x unified',
 
 
 if __name__ == '__main__' :
-    app.run_server(debug = True, port=8049)
+    app.run_server(debug = True)
