@@ -1047,6 +1047,8 @@ def radio(radiograph):
               [Input("radiograph4", "value")],
               )
 def radiotab4(radiograph):
+    if radiograph == None:
+        raise PreventUpdate
     return radiograph
 
 @app.callback(Output("sliderHeightTab1hidden", "children"),
@@ -1761,7 +1763,7 @@ def LoadingDataTab4(on):
 
     if on == 1:
 
-        data_list = []
+        data_list = ['Choose your value firstly']
 
         loadlist = html.Div([html.Div([
                 html.Div([html.Div([html.Div([
@@ -1770,7 +1772,7 @@ def LoadingDataTab4(on):
                                        {'label': 'Standart', 'value': 'Standart'},
                                        {'label': 'Choose Values', 'value': 'choosevalue'},
                                      ],
-                                   value='',
+                                   # value='choosevalue',
                                    labelClassName='groupgraph',
                                    labelStyle={'margin': '10px', },
                                    inputStyle={'margin': '10px', }
@@ -1948,7 +1950,7 @@ def LoadingDataTab4(on):
 
             html.Div([dcc.Dropdown(id='shiftaxisdroptab4',
                                    options=[{'label': i, 'value': i} for i in
-                                            data_list],
+                                            []],
                                    multi=False,
                                    style={"cursor": "pointer", 'width': '180px', 'margin': '1rem'},
                                    className='',
@@ -2029,13 +2031,7 @@ def contractdropdown(x, y):
 
     return x, y
 
-@app.callback(Output('tab4hiddenValuex_axis', 'children'),
-              [Input('tabDropdownTop4', 'value')],
-              )
-def contractdropdown4(x):
-    if x == None :
-        raise PreventUpdate
-    return x
+
 
 @app.callback([Output("tabDropdownTop", "options"), Output("tabDropdownDown", "options")],
               [Input("retrieve", "children")])
@@ -2056,17 +2052,48 @@ def dropdownlistcontrolTab4Second(retrieve):
     else:
         return (no_update, no_update)
 
-@app.callback([Output('tab4hiddenValuex_axissecond', 'children'),
-               Output('tab4hiddenValuey_axissecond', 'children')],
-              [Input('tabDropdownTopTab4', 'value'),
-               Input('tabDropdownDownTab4', 'value')],
-              # [State('')]
+@app.callback(Output('tab4hiddenValuex_axis', 'children'),
+              [Input('tabDropdownTop4', 'value'),
+              Input('radiographtab4', 'value')],
+
               )
-def contractdropdown(x, y):
-    if x == None or y == None:
+def contractdropdown4(x,radio):
+    if x == None or radio == None :
+        raise PreventUpdate
+    if radio == 'Standart':
+        return x
+    else : return []
+
+
+@app.callback([Output('tab4hiddenValuex_axissecond', 'children'),
+               Output('tab4hiddenValuey_axissecond', 'children'),],
+              [Input('tabDropdownTopTab4', 'value'),
+               Input('tabDropdownDownTab4', 'value'),
+               Input('radiographtab4', 'value')]
+              )
+def contractdropdown2(valxsecond,valysecond,radio):
+    if valxsecond == None or valysecond == None or radio == None :
         raise PreventUpdate
 
-    return x, y
+    if radio == 'choosevalue' :
+        return valxsecond, valysecond
+    else : return [],[]
+
+# @app.callback([Output('tabDropdownTop4', 'value'),
+#                Output('tabDropdownTopTab4', 'value'),
+#                Output('tabDropdownDownTab4', 'value'),],
+#                [Input('radiographtab4', 'value'),
+#                Input('tabDropdownTop4', 'value'),
+#                Input('tabDropdownTopTab4', 'value'),
+#                Input('tabDropdownDownTab4', 'value'),]
+#               )
+# def clearvalue(radio,val1, val2, val3):
+#     if radio == None or val1 == None or val2==None or val3==None :
+#         raise PreventUpdate
+#
+#     if radio == 'choosevalue' :
+#         return [],val2,val3
+#     else : val1, [],[]
 
 @app.callback(Output("tabDropdownTop4", "options"),
               [Input("retrieve", "children")])
@@ -2086,15 +2113,29 @@ def container4 (val) :
     return val
 
 
+# @app.callback(
+#       Output('shiftaxisdroptab4', 'options'),
+#      [Input('tabDropdownTop4', 'value'),
+#       Input('tabDropdownTopTab4', 'value'),
+#       Input('radiographtab4', 'value')],)
+#
+# def container5 (val1, val2, radio) :
+#     if  val1 == None and val2 == None or radio == None:
+#         raise PreventUpdate
+#     if radio == 'Standart':
+#         if val1 != None and val2 == None :
+#             return [{'label': i, 'value': i} for i in val1]
+#     if radio == 'choosevalue':
+#         if val1 == None and val2 != None :
+#             return [{'label': i, 'value': i} for i in val2]
+
 @app.callback(
       Output('shiftaxisdroptab4', 'options'),
      [Input('tabDropdownTop4', 'value')],)
-
-def container5 (val) :
-    if val ==None :
-        raise PreventUpdate
-    print('valllllll', val)
-    return [{'label': i, 'value': i} for i in val]
+def container5 (val1) :
+    if  val1 == None :
+        raise  PreventUpdate
+    return [{'label': i, 'value': i} for i in val1]
 
 @app.callback(
       [Output('firstChoosenValueTab4', 'options'),
@@ -2249,18 +2290,23 @@ def relay5(val):
               [Input('shift_y_axistab4', 'value')],)
 
 def relay6(val):
-    return
+    return val
 
 @app.callback(Output('radiographtab4hidden', 'children'),
               [Input('radiographtab4', 'value')],)
 
 def relay7(valradio):
+    if valradio == None :
+        raise PreventUpdate
     print("valradio", valradio)
     return valradio
 
 @app.callback(Output('graph4', 'figure'),
               [Input('radiograph4', 'value'),
+               Input('radiographtab4hidden', 'children'),
                Input('tab4hiddenValuex_axis', 'children'),
+               Input('tab4hiddenValuex_axissecond', 'children'),
+               Input('tab4hiddenValuey_axissecond', 'children'),
                Input('sliderHeightTab4', 'value'),
                Input('sliderWidthTab4', 'value'),
                Input('hiddenTextxaxis4', 'children'),
@@ -2272,92 +2318,138 @@ def relay7(valradio):
                Input('shift_y_axistab4hidden', 'children')],
               [State('retrieve', 'children')]
               )
-def detailedGraph4(radio, valx, slideheight, slidewidth, g1, g2, head, note,axisdrop,shift_x,shift_y, retrieve):
-    if valx == [] or valx == None or g1 == None or g2 == None or head == None or note == None:
+def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, slidewidth, g1, g2, head, note,axisdrop,shift_x,shift_y, retrieve):
+    if g1 == None or g2 == None or head == None or note == None or radioval == [] :
         raise PreventUpdate
-    if len(retrieve) > 0:
-        df = pd.read_excel('appending.xlsx')
-        fig = go.Figure()
-        valeur = ''
-        for j in range(len(valx)):
-            valeur = valx[j]
-            if valeur[-2].isdigit()==1:
-                m = valeur[-2:]
-                m = 'T' + m
-                b = df[valx[j]]
-                a = df[m]
-                if axisdrop == valx[j]:
-                    p = []
-                    c = []
-                    for i in df[m]:
-                        if shift_x == None:
-                            raise PreventUpdate
-                        else:
-                            i += float(shift_x)
-                            p.append(i)
-                            a = p
-                    for i in df[axisdrop]:
-                        if shift_y == None:
-                            raise PreventUpdate
-                        else:
-                            i += float(shift_y)
-                            c.append(i)
-                            b = c
-                fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
-            elif valeur[-1].isdigit()==1:
-                m = valeur[-1]
-                m = 'T' + m
-                b = df[valx[j]]
-                a = df[m]
-                print('valxxxxx', valx)
-                if axisdrop == valx[j] :
-                    p = []
-                    c = []
-                    for i in df[m]:
-                        if shift_x == None:
-                            raise PreventUpdate
-                        else:
-                            i += float(shift_x)
-                            p.append(i)
-                            a = p
-                    for i in df[axisdrop]:
-                        if shift_y == None:
-                            raise PreventUpdate
-                        else:
-                            i += float(shift_y)
-                            c.append(i)
-                            b = c
-                fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
+    print('radioval', radioval)
+    print('valxgraph', valx)
+    print('valxgraph', valxsecond)
+    print('valxgraph', valysecond)
+    if radioval != None :
+        if len(retrieve) > 0 :
+            df = pd.read_excel('appending.xlsx')
+            fig = go.Figure()
+            if len(valx)>0 and len(valxsecond) ==0 and len(valysecond)==0:
+                valeur = ''
+                for j in range(len(valx)):
+                    valeur = valx[j]
+                    if valeur[-2].isdigit()==1:
+                        m = valeur[-2:]
+                        m = 'T' + m
+                        b = df[valx[j]]
+                        a = df[m]
+                        if axisdrop == valx[j]:
+                            p = []
+                            c = []
+                            for i in df[m]:
+                                if shift_x == None:
+                                    raise PreventUpdate
+                                else:
+                                    i += float(shift_x)
+                                    p.append(i)
+                                    a = p
+                            for i in df[axisdrop]:
+                                if shift_y == None:
+                                    raise PreventUpdate
+                                else:
+                                    i += float(shift_y)
+                                    c.append(i)
+                                    b = c
+                        fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
+                    elif valeur[-1].isdigit()==1:
+                        m = valeur[-1]
+                        m = 'T' + m
+                        b = df[valx[j]]
+                        a = df[m]
+                        print('valxxxxx', valx)
+                        if axisdrop == valx[j] :
+                            p = []
+                            c = []
+                            for i in df[m]:
+                                if shift_x == None:
+                                    raise PreventUpdate
+                                else:
+                                    i += float(shift_x)
+                                    p.append(i)
+                                    a = p
+                            for i in df[axisdrop]:
+                                if shift_y == None:
+                                    raise PreventUpdate
+                                else:
+                                    i += float(shift_y)
+                                    c.append(i)
+                                    b = c
+                        fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
 
-            fig.update_xaxes(
-                    tickangle=90,
-                    title_text='' if g1 == [] else g1[-1],
-                    title_font={"size": 20},
-                    title_standoff=25),
+                    fig.update_xaxes(
+                            tickangle=90,
+                            title_text='' if g1 == [] else g1[-1],
+                            title_font={"size": 20},
+                            title_standoff=25),
 
-            fig.update_yaxes(
-                    title_text='' if g2 == [] else g2[-1],
-                    title_standoff=25),
-            fig.update_layout(
-                    title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx[j], m),
-                    autosize=False,
-                    width=slidewidth,
-                    height=slideheight,
-                    margin=dict(
-                        l=50,
-                        r=50,
-                        b=50,
-                        t=50,
-                        pad=4
-                    ),
-                    # hovermode='x unified',
-                    uirevision=valx[j], ),
-            fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                   xref="paper", yref="paper",
-                                   x=0, y=0.7, showarrow=False)
+                    fig.update_yaxes(
+                            title_text='' if g2 == [] else g2[-1],
+                            title_standoff=25),
+                    fig.update_layout(
+                            title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx[j], m),
+                            autosize=False,
+                            width=slidewidth,
+                            height=slideheight,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=50,
+                                t=50,
+                                pad=4
+                            ),
+                            # hovermode='x unified',
+                            uirevision=valx[j], ),
+                    fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+                                           xref="paper", yref="paper",
+                                           x=0, y=0.7, showarrow=False)
 
-        return fig
+                return fig
 
+            if len(valx) == 0 and len(valxsecond) > 0 and len(valysecond) > 0:
+                lst = []
+                for j in zip(valysecond,valxsecond):
+                    lst.append(j)
+                for i in range(len(lst)):
+                    a = df[lst[i][0]]
+                    b = df[lst[i][1]]
+                    fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(lst[i][1], lst[i][0])))
+
+                    fig.update_xaxes(
+                            tickangle=90,
+                            title_text='' if g1 == [] else g1[-1],
+                            title_font={"size": 20},
+                            title_standoff=25),
+
+                    fig.update_yaxes(
+                            title_text='' if g2 == [] else g2[-1],
+                            title_standoff=25),
+                    fig.update_layout(
+                            title_text=head[-1] if len(head) > 0 else "{}/{}".format(lst[i][1], lst[i][0]),
+                            autosize=False,
+                            width=slidewidth,
+                            height=slideheight,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=50,
+                                t=50,
+                                pad=4
+                            ),
+                            # hovermode='x unified',
+                            uirevision=lst[i][1], ),
+                    fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+                                           xref="paper", yref="paper",
+                                           x=0, y=0.7, showarrow=False)
+
+                return fig
+            else: return no_update
+        else:
+            return no_update
 @app.callback(
     [Output('pointLeftFirst', 'children'),
      Output('pointLeftSecond', 'children')],
