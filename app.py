@@ -2042,6 +2042,8 @@ def dropdownlistcontrol(retrieve):
         return (dff, dff)
     else:
         return (no_update, no_update)
+
+
 @app.callback([Output("tabDropdownTopTab4", "options"), Output("tabDropdownDownTab4", "options")],
               [Input("retrieve", "children")])
 def dropdownlistcontrolTab4Second(retrieve):
@@ -2079,21 +2081,6 @@ def contractdropdown2(valxsecond,valysecond,radio):
         return valxsecond, valysecond
     else : return [],[]
 
-# @app.callback([Output('tabDropdownTop4', 'value'),
-#                Output('tabDropdownTopTab4', 'value'),
-#                Output('tabDropdownDownTab4', 'value'),],
-#                [Input('radiographtab4', 'value'),
-#                Input('tabDropdownTop4', 'value'),
-#                Input('tabDropdownTopTab4', 'value'),
-#                Input('tabDropdownDownTab4', 'value'),]
-#               )
-# def clearvalue(radio,val1, val2, val3):
-#     if radio == None or val1 == None or val2==None or val3==None :
-#         raise PreventUpdate
-#
-#     if radio == 'choosevalue' :
-#         return [],val2,val3
-#     else : val1, [],[]
 
 @app.callback(Output("tabDropdownTop4", "options"),
               [Input("retrieve", "children")])
@@ -2107,35 +2094,47 @@ def dropdownlistcontrolTab4First(retrieve):
 
 @app.callback(
      Output('output_s', 'children'),
-     [Input('tabDropdownTop4', 'value')],)
+    [Input('tabDropdownTop4', 'value'),
+     Input('tabDropdownTopTab4', 'value'),
+     Input('radiographtab4', 'value')], )
 
-def container4 (val) :
-    return val
+def container4(val1, val2, radio):
+    if val1 == None and val2 == None or radio == None:
+        raise PreventUpdate
+    if radio == 'Standart':
+        if val1 != None:
+            a = val1
 
-
-# @app.callback(
-#       Output('shiftaxisdroptab4', 'options'),
-#      [Input('tabDropdownTop4', 'value'),
-#       Input('tabDropdownTopTab4', 'value'),
-#       Input('radiographtab4', 'value')],)
-#
-# def container5 (val1, val2, radio) :
-#     if  val1 == None and val2 == None or radio == None:
-#         raise PreventUpdate
-#     if radio == 'Standart':
-#         if val1 != None and val2 == None :
-#             return [{'label': i, 'value': i} for i in val1]
-#     if radio == 'choosevalue':
-#         if val1 == None and val2 != None :
-#             return [{'label': i, 'value': i} for i in val2]
+    if radio == 'choosevalue':
+        if val2 != None:
+            a = val2
+    return a
 
 @app.callback(
       Output('shiftaxisdroptab4', 'options'),
-     [Input('tabDropdownTop4', 'value')],)
-def container5 (val1) :
-    if  val1 == None :
-        raise  PreventUpdate
-    return [{'label': i, 'value': i} for i in val1]
+     [Input('tabDropdownTop4', 'value'),
+      Input('tabDropdownTopTab4', 'value'),
+      Input('radiographtab4', 'value')],)
+
+def container5 (val1, val2, radio) :
+    if  val1 == None and val2 == None or radio == None:
+        raise PreventUpdate
+    a = []
+    if radio == 'Standart':
+        if val1 != None :
+            a = val1
+
+    if radio == 'choosevalue':
+        if val2 != None :
+            a = val2
+    return [{'label': i, 'value': i} for i in a]
+# @app.callback(
+#       Output('shiftaxisdroptab4', 'options'),
+#      [Input('tabDropdownTop4', 'value')],)
+# def container5 (val1) :
+#     if  val1 == None :
+#         raise  PreventUpdate
+#     return [{'label': i, 'value': i} for i in val1]
 
 @app.callback(
       [Output('firstChoosenValueTab4', 'options'),
@@ -2278,18 +2277,21 @@ def shiftingaxestab4(val):
               [Input('shiftaxisdroptab4', 'value')],)
 
 def relay4(val):
+    print('shiftaxisdroptab4',val)
     return val
 
 @app.callback(Output('shift_x_axistab4hidden', 'children'),
               [Input('shift_x_axistab4', 'value')],)
 
 def relay5(val):
+    print('shift_x_axistab4', val)
     return val
 
 @app.callback(Output('shift_y_axistab4hidden', 'children'),
               [Input('shift_y_axistab4', 'value')],)
 
 def relay6(val):
+    print('shift_y_axistab4', val)
     return val
 
 @app.callback(Output('radiographtab4hidden', 'children'),
@@ -2417,7 +2419,25 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
                 for i in range(len(lst)):
                     a = df[lst[i][0]]
                     b = df[lst[i][1]]
-                    fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(lst[i][1], lst[i][0])))
+                    if axisdrop == lst[i][1]:
+                        p = []
+                        c = []
+                        for i in df[lst[i][0]]:
+                            if shift_x == None:
+                                raise PreventUpdate
+                            else:
+                                i += float(shift_x)
+                                p.append(i)
+                                a = p
+                        for i in df[axisdrop]:
+                            if shift_y == None:
+                                raise PreventUpdate
+                            else:
+                                i += float(shift_y)
+                                c.append(i)
+                                b = c
+
+                    fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valxsecond[0], valysecond[0]) ))
 
                     fig.update_xaxes(
                             tickangle=90,
@@ -2429,7 +2449,7 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
                             title_text='' if g2 == [] else g2[-1],
                             title_standoff=25),
                     fig.update_layout(
-                            title_text=head[-1] if len(head) > 0 else "{}/{}".format(lst[i][1], lst[i][0]),
+                            title_text=head[-1] if len(head) > 0 else "{}/{}".format(valxsecond[0], valysecond[0]),
                             autosize=False,
                             width=slidewidth,
                             height=slideheight,
@@ -2441,7 +2461,7 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
                                 pad=4
                             ),
                             # hovermode='x unified',
-                            uirevision=lst[i][1], ),
+                            uirevision=valysecond[0], ),
                     fig.add_annotation(text=note[-1] if len(note) > 0 else '',
                                            xref="paper", yref="paper",
                                            x=0, y=0.7, showarrow=False)
@@ -2518,7 +2538,8 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
     [Output('pointLeftFirstTab4', 'children'),
      Output('pointLeftSecondTab4', 'children')],
     [Input('graph4', 'clickData'),
-     Input('firstChoosenValueTab4', 'value'), ],
+     Input('firstChoosenValueTab4', 'value'),
+     Input('shiftaxisdroptab4hidden', 'children')],
     [
      State('pointLeftFirstTab4', 'children'),
      State('pointLeftSecondTab4', 'children'),
@@ -2527,10 +2548,10 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
         State('output_s', 'children')
     ]
 )
-def valintTab4(clickData4, firstchoosen,  leftchild, rightchild, retrieve,shift_x, container):
+def valintTab4(clickData4, firstchoosen,axisdrop,  leftchild, rightchild, retrieve,shift_x, container):
     if  clickData4 == None or clickData4 == [] or firstchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
-
+    print('container', container)
     spaceList1 = []
     zero = 0
     spaceList2 = []
@@ -2553,17 +2574,23 @@ def valintTab4(clickData4, firstchoosen,  leftchild, rightchild, retrieve,shift_
                         m = firstchoosen[-2:]
                         m = 'T' + m
                         dff = df[df[m] == x_val]
-                        # if shift_x != 0:
-                        #     x_val -= shift_x
-                        #     dff = df[df[m] == x_val]
+                        print('dfffffffffffffffff',df)
+                        if firstchoosen == axisdrop:
+                            if shift_x != 0:
+                                x_val -= shift_x
+                                dff = df[df[m] == x_val]
+
                     elif firstchoosen[-1].isdigit() == 1:
                         print('said')
                         m = firstchoosen[-1]
                         m = 'T' + m
                         dff = df[df[m] == x_val]
-                        # if shift_x != 0:
-                        #     x_val -= shift_x
-                        #     dff = df[df[m] == x_val]
+                        if firstchoosen == axisdrop:
+                            if shift_x != 0:
+                                x_val -= shift_x
+                                dff = df[df[m] == x_val]
+
+                    else : (no_update, no_update)
 
                     a = []
                     a.append(dff[firstchoosen].index)
@@ -2574,11 +2601,9 @@ def valintTab4(clickData4, firstchoosen,  leftchild, rightchild, retrieve,shift_
                     if len(leftchild) > 2:
                         leftchild.pop(0)
                     return (leftchild, leftchild)
-                else:
-                    return (no_update, no_update)
-            else : return(no_update,no_update)
-    else:
-        return (no_update, no_update)
+                else:  (no_update, no_update)
+            else : (no_update,no_update)
+    else: (no_update, no_update)
 
 
 @app.callback([Output('leftIntegralFirst', 'value'), Output('leftIntegralSecond', 'value')],
@@ -2724,7 +2749,8 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
     [Output('pointRightFirstTab4', 'children'),
      Output('pointRightSecondTab4', 'children')],
     [Input('graph4', 'clickData'),
-     Input('secondChoosenValueTab4', 'value')],
+     Input('secondChoosenValueTab4', 'value'),
+     Input('shiftaxisdroptab4hidden', 'children')],
     [
      State('pointRightFirstTab4', 'children'),
      State('pointRightSecondTab4', 'children'),
@@ -2732,7 +2758,9 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
      State('output_s', 'children'),
      State('shift_x_axistab4', 'value'),]
 )
-def valintTab4_2(clickData, secondchoosen, leftchild, rightchild, retrieve,container,shift_x):
+
+
+def valintTab4_2(clickData, secondchoosen, axisdrop, leftchild, rightchild, retrieve,container,shift_x):
     if clickData == None or clickData == [] or secondchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
 
@@ -2749,7 +2777,7 @@ def valintTab4_2(clickData, secondchoosen, leftchild, rightchild, retrieve,conta
         zippedval = [i for i in list(zip(spaceList1, spaceList2))]
         curvenumber = clickData['points'][0]['curveNumber']
         for k in zippedval:
-            if k[1] == secondchoosen :
+            if k[1] == secondchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
                     m = ''
@@ -2758,17 +2786,24 @@ def valintTab4_2(clickData, secondchoosen, leftchild, rightchild, retrieve,conta
                         m = secondchoosen[-2:]
                         m = 'T' + m
                         dff = df[df[m] == x_val]
-                        if shift_x != 0:
-                            x_val -= shift_x
-                            dff = df[df[m] == x_val]
+                        print('dfffffffffffffffff',df)
+                        if secondchoosen == axisdrop:
+                            if shift_x != 0:
+                                x_val -= shift_x
+                                dff = df[df[m] == x_val]
+
                     elif secondchoosen[-1].isdigit() == 1:
                         print('said')
                         m = secondchoosen[-1]
                         m = 'T' + m
                         dff = df[df[m] == x_val]
-                        if shift_x != 0:
-                            x_val -= shift_x
-                            dff = df[df[m] == x_val]
+                        if secondchoosen == axisdrop:
+                            if shift_x != 0:
+                                x_val -= shift_x
+                                dff = df[df[m] == x_val]
+
+                    else : (no_update, no_update)
+
                     a = []
                     a.append(dff[secondchoosen].index)
                     for i in range(len(a)):
@@ -2778,11 +2813,9 @@ def valintTab4_2(clickData, secondchoosen, leftchild, rightchild, retrieve,conta
                     if len(leftchild) > 2:
                         leftchild.pop(0)
                     return (leftchild, leftchild)
-                else:
-                    return (no_update, no_update)
-            # else : return (no_update, no_update)
-    else:
-        return (no_update, no_update)
+                else:  (no_update, no_update)
+            else : (no_update,no_update)
+    else: (no_update, no_update)
 
 
 @app.callback(
