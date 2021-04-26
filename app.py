@@ -4,6 +4,7 @@ import os
 import base64
 import datetime
 import time
+import json
 import io
 import dash
 import dash_bootstrap_components as dbc
@@ -115,6 +116,7 @@ page_1_layout = html.Div(
                                                             html.Button('File', id='file_save', n_clicks=0, ),
                                                             html.Button('Database', id='db_save', n_clicks=0, ),
                                                         ]),
+                                               html.Div(dcc.Store(id = 'datastore')),
                                                html.Div(id='pointLeftFirst', children=[], style={'display': 'None'}),
                                                html.Div(id='pointLeftSecond', children=[], style={'display': 'None'}),
                                                html.Div(id='pointRightFirst', children=[], style={'display': 'None'}),
@@ -383,6 +385,7 @@ def parse_contents(contents, filename, date):
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             print(df)
             df.to_excel("appending.xlsx")
+            df.to_excel("rawinfo.xlsx")
     except Exception as e:
         print(e)
         return html.Div([
@@ -465,14 +468,17 @@ def update_output(list_of_contents, on, list_of_names, list_of_dates, retrieve, 
 
         return content, retrieve
     else:
-        return (no_update, no_update)
+        return (no_update,no_update)
 
 
 @app.callback(Output('output-data-upload', 'children'),
               [Input('datatablehidden', 'children')],
               )
 def retrieve(retrieve):
+    if retrieve == None :
+        raise PreventUpdate
     #     # if len(choosen)==0:
+
     return retrieve
     # else : return no_update
 
@@ -1972,12 +1978,16 @@ def LoadingDataTab4(on):
                                              bs_size="sm",
                                              value=0,
                                              style={'width': '7rem', },
-                                             placeholder="Shift Y axis..."), ], className='abcd',
+                                             placeholder="Shift Y axis..."),
+                                   dbc.Button("Ok", id="tab4send", outline=True, n_clicks=0, color="primary",
+                                              className="mr-2"),
+                               ], className='abcd',
                                style={'display': 'None'})
 
                       ], className='abcd'),
 
-            html.Div([dcc.Graph(id='graph4', config={'displayModeBar': True,
+            html.Div([dcc.Store(id = 'tab4datastore'),
+                       dcc.Graph(id='graph4', config={'displayModeBar': True,
                                                          'scrollZoom': True,
                                                          'modeBarButtonsToAdd': [
                                                              'drawopenpath',
@@ -2316,12 +2326,15 @@ def relay7(valradio):
                Input('hiddenTextyaxis4', 'children'),
                Input('hiddenTextHeader4', 'children'),
                Input('hiddenTextNote4', 'children'),
-               Input('shiftaxisdroptab4hidden', 'children'),
-               Input('shift_x_axistab4hidden', 'children'),
-               Input('shift_y_axistab4hidden', 'children')],
-              [State('retrieve', 'children')]
+               Input('tab4send','n_clicks'),
+               ],
+              [State('shiftaxisdroptab4hidden', 'children'),
+               State('shift_x_axistab4hidden', 'children'),
+               State('shift_y_axistab4hidden', 'children'),
+               State('retrieve', 'children'),
+               ]
               )
-def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, slidewidth, g1, g2, head, note,axisdrop,shift_x,shift_y, retrieve):
+def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, slidewidth, g1, g2, head, note,nclick,axisdrop,shift_x,shift_y, retrieve):
     if g1 == None or g2 == None or head == None or note == None or radioval == [] :
         raise PreventUpdate
     print('radioval', radioval)
@@ -2330,9 +2343,10 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
     print('valxgraph', valysecond)
     if radioval != None :
         if len(retrieve) > 0 :
-            df = pd.read_excel('appending.xlsx')
+            df = pd.read_excel("appending.xlsx")
+            print('dfdfdfdfdfdfd', df)
             fig = go.Figure()
-            if len(valx)>0 and len(valxsecond) ==0 and len(valysecond)==0:
+            if len(valx)>0 and radioval == 'Standart':
                 valeur = ''
                 a,b = [],[]
                 for j in range(len(valx)):
@@ -2342,49 +2356,62 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
                         m = 'T' + m
                         b = df[valx[j]]
                         a = df[m]
+                        print('valxxxxx', valx)
+                        if nclick > 0:
+                            if axisdrop == valx[j] :
+                                p = []
+                                c = []
+                                for i in df[m]:
+                                    if shift_x == None:
+                                        raise PreventUpdate
+                                    else:
+                                        i += float(shift_x)
+                                        p.append(i)
+                                df[m] = pd.DataFrame(p)
+                                b = df[m]
+                                df.to_excel("appending.xlsx")
+                                for i in df[axisdrop]:
+                                    if shift_y == None:
+                                        raise PreventUpdate
+                                    else:
+                                        i += float(shift_y)
+                                        c.append(i)
+                                df[axisdrop] = pd.DataFrame(c)
+
+                                b = df[axisdrop]
+                                df.to_excel("appending.xlsx")
                         fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
-                        if axisdrop == valx[j]:
-                            p = []
-                            c = []
-                            for i in df[m]:
-                                if shift_x == None:
-                                    raise PreventUpdate
-                                else:
-                                    i += float(shift_x)
-                                    p.append(i)
-                                    a = p
-                            for i in df[axisdrop]:
-                                if shift_y == None:
-                                    raise PreventUpdate
-                                else:
-                                    i += float(shift_y)
-                                    c.append(i)
-                                    b = c
-                            fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
                     elif valeur[-1].isdigit()==1:
                         m = valeur[-1]
                         m = 'T' + m
                         b = df[valx[j]]
                         a = df[m]
                         print('valxxxxx', valx)
-                        if axisdrop == valx[j] :
-                            p = []
-                            c = []
-                            for i in df[m]:
-                                if shift_x == None:
-                                    raise PreventUpdate
-                                else:
-                                    i += float(shift_x)
-                                    p.append(i)
-                                    a = p
-                            for i in df[axisdrop]:
-                                if shift_y == None:
-                                    raise PreventUpdate
-                                else:
-                                    i += float(shift_y)
-                                    c.append(i)
-                                    b = c
-                            fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
+                        if nclick > 0:
+                            if axisdrop == valx[j] :
+                                p = []
+                                c = []
+                                for i in df[m]:
+                                    if shift_x == None:
+                                        raise PreventUpdate
+                                    else:
+                                        i += float(shift_x)
+                                        p.append(i)
+                                df[m] = pd.DataFrame(p)
+                                b = df[m]
+                                df.to_excel("appending.xlsx")
+                                for i in df[axisdrop]:
+                                    if shift_y == None:
+                                        raise PreventUpdate
+                                    else:
+                                        i += float(shift_y)
+                                        c.append(i)
+                                df[axisdrop] = pd.DataFrame(c)
+
+                                b = df[axisdrop]
+                                df.to_excel("appending.xlsx")
+
+                        fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
 
                     fig.update_xaxes(
                             tickangle=90,
@@ -2407,7 +2434,7 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
                                 t=50,
                                 pad=4
                             ),
-                            hovermode='x unified',
+                            # hovermode='x unified',
                             uirevision=valx[j], ),
                     fig.add_annotation(text=note[-1] if len(note) > 0 else '',
                                            xref="paper", yref="paper",
@@ -2415,61 +2442,73 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
 
                 return fig
 
-            if len(valx) == 0 and len(valxsecond) > 0 and len(valysecond) > 0:
+            if radioval == 'choosevalue' and len(valxsecond) > 0 and len(valysecond) > 0:
                 lst = []
                 for j in zip(valysecond,valxsecond):
                     lst.append(j)
                 s = -1
+                m = ''
                 for i in range(len(lst)):
+                    if  lst[i][0][-2].isdigit()==1:
+                        m = lst[i][0][-2]
+                        m = 'T' + m
+                    elif lst[i][0][-1].isdigit()==1:
+                        m = lst[i][0][-1]
+                        m = 'T' + m
                     s+=1
                     a = df[lst[i][0]]
                     b = df[lst[i][1]]
-                    if axisdrop == lst[i][1]:
-                        p = []
-                        c = []
-                        for i in df[lst[i][0]]:
-                            if shift_x == None:
-                                raise PreventUpdate
-                            else:
-                                i += float(shift_x)
-                                p.append(i)
-                                a = p
-                        for i in df[axisdrop]:
-                            if shift_y == None:
-                                raise PreventUpdate
-                            else:
-                                i += float(shift_y)
-                                c.append(i)
-                                b = c
+                    if nclick > 0:
+                        if axisdrop == lst[i][1]:
+                            p = []
+                            c = []
+                            for i in df[lst[i][0]]:
+                                if shift_x == None:
+                                    raise PreventUpdate
+                                else:
+                                    i += float(shift_x)
+                                    p.append(i)
+                            df[m] = pd.DataFrame(p)
+                            b = df[m]
+                            df.to_excel("appending.xlsx")
+                            for i in df[axisdrop]:
+                                if shift_y == None:
+                                    raise PreventUpdate
+                                else:
+                                    i += float(shift_y)
+                                    c.append(i)
+                            df[axisdrop] = pd.DataFrame(c)
+                            b = df[axisdrop]
+                            df.to_excel("appending.xlsx")
 
-                    fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valxsecond[s], valysecond[s]) ))
+                    fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valxsecond[s], valysecond[s])))
 
-                fig.update_xaxes(
-                            tickangle=90,
-                            title_text='' if g1 == [] else g1[-1],
-                            title_font={"size": 20},
-                            title_standoff=25),
+                    fig.update_xaxes(
+                                tickangle=90,
+                                title_text='' if g1 == [] else g1[-1],
+                                title_font={"size": 20},
+                                title_standoff=25),
 
-                fig.update_yaxes(
-                            title_text='' if g2 == [] else g2[-1],
-                            title_standoff=25),
-                fig.update_layout(
-                            title_text=head[-1] if len(head) > 0 else "{}/{}".format(valxsecond[0], valysecond[0]),
-                            autosize=False,
-                            width=slidewidth,
-                            height=slideheight,
-                            margin=dict(
-                                l=50,
-                                r=50,
-                                b=50,
-                                t=50,
-                                pad=4
-                            ),
-                            # hovermode='x unified',
-                            uirevision=valysecond[0], ),
-                fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                           xref="paper", yref="paper",
-                                           x=0, y=0.7, showarrow=False)
+                    fig.update_yaxes(
+                                title_text='' if g2 == [] else g2[-1],
+                                title_standoff=25),
+                    fig.update_layout(
+                                title_text=head[-1] if len(head) > 0 else "{}/{}".format(valxsecond[0], valysecond[0]),
+                                autosize=False,
+                                width=slidewidth,
+                                height=slideheight,
+                                margin=dict(
+                                    l=50,
+                                    r=50,
+                                    b=50,
+                                    t=50,
+                                    pad=4
+                                ),
+                                # hovermode='x unified',
+                                uirevision=valysecond[0], ),
+                    fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+                                               xref="paper", yref="paper",
+                                               x=0, y=0.7, showarrow=False)
 
                 return fig
             else: return no_update
@@ -2589,7 +2628,7 @@ def valintTab4(clickData4, firstchoosen, axisdrop,  leftchild, rightchild, retri
     zero = 0
     spaceList2 = []
     if len(retrieve) > 0:
-        df = pd.read_excel('appending.xlsx')
+        df = pd.read_excel('rawinfo.xlsx')
         df['index'] = df.index
         for i in range(len(container)):
             spaceList1.append(zero)
@@ -2600,9 +2639,7 @@ def valintTab4(clickData4, firstchoosen, axisdrop,  leftchild, rightchild, retri
         for k in zippedval:
             print('k[1]', k[1])
             if k[1] == firstchoosen:
-
                 if k[0] == curvenumber :
-
                     if firstchoosen[-2].isdigit() == 1:
                         x_val = clickData4['points'][0]['x']
                         print('xxxxxvallllll', x_val)
@@ -2623,6 +2660,7 @@ def valintTab4(clickData4, firstchoosen, axisdrop,  leftchild, rightchild, retri
                                 if len(leftchild) > 2:
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
+                            else : no_update
                         if firstchoosen != axisdrop:
                             dff = df[df[m] == x_val]
                             print('dfffffffffffffffff2 digit witohut shifting', df)
@@ -2660,6 +2698,7 @@ def valintTab4(clickData4, firstchoosen, axisdrop,  leftchild, rightchild, retri
                                 if len(leftchild) > 2:
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
+                            else: no_update
                         if firstchoosen != axisdrop:
                             dff = df[df[m] == x_val]
                             print('dfffffffffffffffff2 digit witohut shifting', df)
@@ -2678,7 +2717,7 @@ def valintTab4(clickData4, firstchoosen, axisdrop,  leftchild, rightchild, retri
 
                     else:
                         (no_update, no_update)
-                else:  raise PreventUpdate
+                else:  (no_update, no_update)
             else : ([no_update,no_update])
     else: (no_update, no_update)
 
@@ -2716,7 +2755,7 @@ def display_hover_dataTab4(leftchild1, rightchild, firstchoosen):
      State('retrieve', 'children')]
 )
 def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, retrieve):
-    if value is [] or value is None or clickData == None or clickData == [] or secondchoosen == None or retrieve == None or retrieve == []:
+    if value is [] or value is None or clickData == None or secondchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
 
     spaceList1 = []
@@ -2804,14 +2843,14 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
 
 
 def valintTab4_2(clickData, secondchoosen, axisdrop, leftchild, rightchild, retrieve,container,shift_x):
-    if clickData == None or clickData == [] or secondchoosen == None or retrieve == None or retrieve == []:
+    if clickData == None  or secondchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
 
     spaceList1 = []
     zero = 0
     spaceList2 = []
     if len(retrieve) > 0:
-        df = pd.read_excel('appending.xlsx')
+        df = pd.read_excel('rawinfo.xlsx')
         df['index'] = df.index
         for i in range(len(container)):
             spaceList1.append(zero)
@@ -2822,9 +2861,7 @@ def valintTab4_2(clickData, secondchoosen, axisdrop, leftchild, rightchild, retr
         for k in zippedval:
             print('k[1]', k[1])
             if k[1] == secondchoosen:
-
                 if k[0] == curvenumber:
-
                     if secondchoosen[-2].isdigit() == 1:
                         x_val = clickData['points'][0]['x']
                         print('xxxxxvallllll', x_val)
@@ -2845,6 +2882,8 @@ def valintTab4_2(clickData, secondchoosen, axisdrop, leftchild, rightchild, retr
                                 if len(leftchild) > 2:
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
+                            else:
+                                no_update
                         if secondchoosen != axisdrop:
                             dff = df[df[m] == x_val]
                             print('dfffffffffffffffff2 digit witohut shifting', df)
@@ -2882,6 +2921,8 @@ def valintTab4_2(clickData, secondchoosen, axisdrop, leftchild, rightchild, retr
                                 if len(leftchild) > 2:
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
+                            else:
+                                no_update
                         if secondchoosen != axisdrop:
                             dff = df[df[m] == x_val]
                             print('dfffffffffffffffff2 digit witohut shifting', df)
@@ -2895,18 +2936,16 @@ def valintTab4_2(clickData, secondchoosen, axisdrop, leftchild, rightchild, retr
                             if len(leftchild) > 2:
                                 leftchild.pop(0)
                             return (leftchild, leftchild)
-
                         else:
                             (no_update, no_update)
-                    if secondchoosen == None :
-                        return '',''
 
                     else:
                         (no_update, no_update)
                 else:
-                    raise PreventUpdate
+                    (no_update, no_update)
             else:
-                ([no_update, no_update])
+                (no_update, no_update)
+
     else:
         (no_update, no_update)
 
@@ -2958,7 +2997,7 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
         print('st1left', type(valuechoosenleft))
         print('st1right', st1right)
         if st1left != '' and st1right != '':
-            df = pd.read_excel('appending.xlsx')
+            df = pd.read_excel('rawinfo.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
@@ -3001,7 +3040,7 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
         print('st1left', type(valuechoosenleft))
         print('st1right', st1right)
         if st1left != '' and st1right != '':
-            df = pd.read_excel('appending.xlsx')
+            df = pd.read_excel('rawinfo.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
@@ -3042,7 +3081,7 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
         st2right = st2right[2:]
     if len(retrieve) > 0:
         if st2left != '' and st2right != '':
-            df = pd.read_excel('appending.xlsx')
+            df = pd.read_excel('rawinfo.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff2 = df[
@@ -3081,7 +3120,7 @@ def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
         st2right = st2right[2:]
     if len(retrieve) > 0:
         if st2left != '' and st2right != '':
-            df = pd.read_excel('appending.xlsx')
+            df = pd.read_excel('rawinfo.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff2 = df[
@@ -3167,7 +3206,7 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
         differance = []
         if len(retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
 
-            df = pd.read_excel('appending.xlsx')
+            df = pd.read_excel('rawinfo.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff = df[(df[valuechoosenright].index >= float(a)) & (df[valuechoosenright].index <= float(b)) |
@@ -3247,12 +3286,11 @@ def differanceCalculation4(firstshape,secondshape, valuechoosenleft, valuechoose
                 differance.append(d)
         else:
             return ['intersection']
-        print("diff",differance )
         differancelast = []
         if len(retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
             first = differance[0]
             second = differance[1]
-            df = pd.read_excel('appending.xlsx')
+            df = pd.read_excel('rawinfo.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff = df[(df[valuechoosenright].index >= float(first)) & (df[valuechoosenright].index <= float(second)) |
