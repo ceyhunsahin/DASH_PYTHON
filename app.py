@@ -2457,18 +2457,12 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
                     elif lst[i][0][-1].isdigit()==1:
                         m = lst[i][0][-1]
                         m = 'T' + m
-
+                    print('lst',lst)
                     s+=1
 
 
                     a = df[lst[i][0]]
                     b = df[lst[i][1]]
-                    # print('aaaaaaaaaaaaa',a)
-                    # print('bbbbbbbbbbbbb', b)
-                    # df[m] = df[m].dropna()
-                    # df[lst[i][1]] = df[lst[i][1]].dropna()
-                    # print('ttttttttttttttttttt',df[m])
-                    # print('ttttttttttttttttttt', df[lst[i][1]])
                     if nclick > 0:
                         if axisdrop == lst[i][1]:
                             p = []
@@ -2621,7 +2615,10 @@ def display_hover_data(leftchild, rightchild, firstchoosen):
      Output('pointLeftSecondTab4', 'children')],
     [Input('graph4', 'clickData'),
      Input('firstChoosenValueTab4', 'value'),
-     Input('shiftaxisdroptab4hidden', 'children')], # describe variable of shift
+     Input('shiftaxisdroptab4hidden', 'children'),
+     Input('tab4hiddenValuey_axissecond', 'children'),
+     Input('tab4hiddenValuex_axissecond', 'children'),
+     ], # describe variable of shift
     [
      State('pointLeftFirstTab4', 'children'),
      State('pointLeftSecondTab4', 'children'),
@@ -2630,11 +2627,13 @@ def display_hover_data(leftchild, rightchild, firstchoosen):
      State('output_s', 'children') # it takes values of tabdropdowntop and topdropdowntoptab4
     ]
 )
-def valintTab4(clickData4, firstchoosen, axisdrop,  leftchild, rightchild, retrieve,shift_x, container):
+def valintTab4(clickData4, firstchoosen, axisdrop, valysecond,valxsecond,  leftchild, rightchild, retrieve,shift_x, container):
     if  clickData4 == None or clickData4 == [] or firstchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
     print('container', container)
     print('shift_x', shift_x)
+    print('valxsecond', valxsecond)
+    print('valysecond', valysecond)
     spaceList1 = []
     zero = 0
     spaceList2 = []
@@ -2650,121 +2649,93 @@ def valintTab4(clickData4, firstchoosen, axisdrop,  leftchild, rightchild, retri
         zippedval = [i for i in list(zip(spaceList1, spaceList2))]
         curvenumber = clickData4['points'][0]['curveNumber']
         for k in zippedval:
-            print('k[1]', k[1])
             if k[1] == firstchoosen :
-                if k[0] == curvenumber and firstchoosen[-1].isdigit() == 1 :
-                    m = firstchoosen[-1:]
-                    m = 'T' + m
-                    x_val = clickData4['points'][0]['x']
-                    print('xxxxxvallllll', x_val)
-                    dff = df[df[m] == x_val]
-                    a = []
-                    a.append(dff[firstchoosen].index)
-                    for i in range(len(a)):
-                        for j in a:
-                            leftchild.append(j[i])
-                            print('leftchild', leftchild)
+                if k[0] == curvenumber:
+                    if firstchoosen[-1].isdigit() == 1 :
+                        if valxsecond != None:
+                            t = valysecond.index(firstchoosen)
+                            m = valxsecond[t]
+                            x_val = clickData4['points'][0]['x']
+                            print('xxxxxvallllll None lu', x_val)
+                            dff = df[df[m] == x_val]
+                            print('dfdfffffffff None lu',dff)
+                            print('df[m] None lu', df[m])
+                            a = []
+                            a.append(dff[firstchoosen].index)
+                            print('dff[firstchoosen] None lu', dff[firstchoosen])
+                            print('aaaindex None lu', a)
+                            for i in range(len(a)):
+                                for j in a:
+                                    leftchild.append(j[i])
+                                    print('leftchild', leftchild)
 
-                    if len(leftchild) > 2:
-                        leftchild.pop(0)
-                    return (leftchild, leftchild)
-                elif k[0] == curvenumber and firstchoosen[-2].isdigit() == 1 :
-                    m = firstchoosen[-2:]
-                    m = 'T' + m
-                    x_val = clickData4['points'][0]['x']
-                    print('xxxxxvallllll', x_val)
-                    dff = df[df[m] == x_val]
-                    a = []
-                    a.append(dff[firstchoosen].index)
-                    for i in range(len(a)):
-                        for j in a:
-                            leftchild.append(j[i])
-                            print('leftchild', leftchild)
+                            if len(leftchild) > 2:
+                                leftchild.pop(0)
+                            return (leftchild, leftchild)
+                        else :
+                            m = firstchoosen[-1:]
+                            m = 'T' + m
+                            x_val = clickData4['points'][0]['x']
+                            print('xxxxxvallllll  duzzzzz', x_val)
+                            dff = df[df[m] == x_val]
+                            print('dfdfffffffff duzzzzz', dff)
+                            print('df[m] duzzzzz', df[m])
+                            a = []
+                            a.append(dff[firstchoosen].index)
+                            print('dff[firstchoosen] duzzzzz', dff[firstchoosen])
+                            print('aaaindex duzzzzz', a)
+                            for i in range(len(a)):
+                                for j in a:
+                                    leftchild.append(j[i])
+                                    print('leftchild', leftchild)
 
-                    if len(leftchild) > 2:
-                        leftchild.pop(0)
-                    return (leftchild, leftchild)
+                            if len(leftchild) > 2:
+                                leftchild.pop(0)
+                            return (leftchild, leftchild)
+                    elif firstchoosen[-2].isdigit() == 1 :
+                        if valxsecond != None:
+                            t = valysecond.index(firstchoosen)
+                            m = valxsecond[t]
+                            x_val = clickData4['points'][0]['x']
+                            print('xxxxxvallllll', x_val)
+                            dff = df[df[m] == x_val]
+                            a = []
+                            a.append(dff[firstchoosen].index)
+                            for i in range(len(a)):
+                                for j in a:
+                                    leftchild.append(j[i])
+                                    print('leftchild', leftchild)
 
-                    # if firstchoosen[-2].isdigit() == 1:
-                    #     x_val = clickData4['points'][0]['x']
-                    #     print('xxxxxvallllll', x_val)
-                    #     m = firstchoosen[-2:]
-                    #     m = 'T' + m
-                    # a = []
-                    # dff = df[df[m] == x_val]
-                    # a.append(dff[firstchoosen].index)
-                    # for i in range(len(a)):
-                    #     for j in a:
-                    #         leftchild.append(j[i])
-                    #         print('leftchild', leftchild)
-                    #
-                    # if len(leftchild) > 2:
-                    #     leftchild.pop(0)
-                    # return (leftchild, leftchild)
+                            if len(leftchild) > 2:
+                                leftchild.pop(0)
+                            return (leftchild, leftchild)
+                        else :
+                            m = firstchoosen[-2:]
+                            m = 'T' + m
+                            x_val = clickData4['points'][0]['x']
+                            print('xxxxxvallllll', x_val)
+                            dff = df[df[m] == x_val]
+                            print('dfdfffffffff', dff)
+                            print('df[m]', df[m])
+                            a = []
+                            a.append(dff[firstchoosen].index)
+                            print('dff[firstchoosen]', dff[firstchoosen])
+                            print('aaaindex', a)
+                            for i in range(len(a)):
+                                for j in a:
+                                    leftchild.append(j[i])
+                                    print('leftchild', leftchild)
 
-                        # if firstchoosen == axisdrop:
-                        #     if shift_x != 0:
-                        #         x_val -= shift_x
-                        #         dff = df[df[m] == x_val]
-                        #         a = []
-                        #         a.append(dff[firstchoosen].index)
-                        #         for i in range(len(a)):
-                        #             for j in a:
-                        #                 leftchild.append(j[i])
-                        #                 print('leftchild', leftchild)
-                        #
-                        #         if len(leftchild) > 2:
-                        #             leftchild.pop(0)
-                        #         return (leftchild, leftchild)
-                        # if firstchoosen != axisdrop:
-                        #     dff = df[df[m] == x_val]
-                        #     a = []
-                        #     a.append(dff[firstchoosen].index)
-                        #     for i in range(len(a)):
-                        #         for j in a:
-                        #             leftchild.append(j[i])
-                        #             print('leftchild', leftchild)
-                        #
-                        #     if len(leftchild) > 2:
-                        #         leftchild.pop(0)
-                        #     return (leftchild, leftchild)
-                        # else:
-                        #     (no_update, no_update)
+                            if len(leftchild) > 2:
+                                leftchild.pop(0)
+                            return (leftchild, leftchild)
 
-                    # if firstchoosen[-1].isdigit() == 1:
-
-
-                        # if firstchoosen == axisdrop:
-                        #     if shift_x != 0:
-                        #         x_val -= shift_x
-                        #         dff = df[df[m] == x_val]
-                        #         print('dfffffffffffffffff2digit after shifting', df)
-                        #         a = []
-                        #         a.append(dff[firstchoosen].index)
-                        #         for i in range(len(a)):
-                        #             for j in a:
-                        #                 leftchild.append(j[i])
-                        #                 print('leftchild', leftchild)
-                        #
-                        #         if len(leftchild) > 2:
-                        #             leftchild.pop(0)
-                        #         return (leftchild, leftchild)
-                        #     else: no_update
-                        # if firstchoosen != axisdrop:
-                        #     dff = df[df[m] == x_val]
-                        #     print('dfffffffffffffffff2 digit witohut shifting', df)
-                        #     a = []
-                        #     a.append(dff[firstchoosen].index)
-                        #     for i in range(len(a)):
-                        #         for j in a:
-                        #             leftchild.append(j[i])
-                        #             print('leftchild', leftchild)
-                        #
-                        #     if len(leftchild) > 2:
-                        #         leftchild.pop(0)
-                        #     return (leftchild, leftchild)
+                    else:
+                        return (no_update, no_update)
                 else:
                     return (no_update, no_update)
+            # else:
+            #     return (no_update, no_update)
 
     else:
         return (no_update, no_update)
@@ -2844,7 +2815,7 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, ret
                     return (leftchild, leftchild)
                 else:
                     return (no_update, no_update)
-            # else : return (no_update, no_update)
+            else : return (no_update, no_update)
     else:
         return (no_update, no_update)
 
@@ -2881,7 +2852,10 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
      Output('pointRightSecondTab4', 'children')],
     [Input('graph4', 'clickData'),
      Input('secondChoosenValueTab4', 'value'),
-     Input('shiftaxisdroptab4hidden', 'children')],
+     Input('shiftaxisdroptab4hidden', 'children'),
+     Input('tab4hiddenValuey_axissecond', 'children'),
+     Input('tab4hiddenValuex_axissecond', 'children'),
+     ],
     [
      State('pointRightFirstTab4', 'children'),
      State('pointRightSecondTab4', 'children'),
@@ -2891,7 +2865,7 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
 )
 
 
-def valintTab4_2(clickData, secondchoosen, axisdrop, leftchild, rightchild, retrieve,container,shift_x):
+def valintTab4_2(clickData, secondchoosen, axisdrop,valysecond, valxsecond, leftchild, rightchild, retrieve,container,shift_x):
     if clickData == None or container is [] or container is None or secondchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
 
@@ -2910,129 +2884,79 @@ def valintTab4_2(clickData, secondchoosen, axisdrop, leftchild, rightchild, retr
         for k in zippedval:
             print('k[1]', k[1])
             if k[1] == secondchoosen:
-                if k[0] == curvenumber and secondchoosen[-1].isdigit() == 1:
-                    m = secondchoosen[-1:]
-                    m = 'T' + m
-                    x_val = clickData['points'][0]['x']
-                    print('xxxxxvallllll', x_val)
-                    dff = df[df[m] == x_val]
-                    a = []
-                    a.append(dff[secondchoosen].index)
-                    for i in range(len(a)):
-                        for j in a:
-                            leftchild.append(j[i])
-                            print('leftchild', leftchild)
+                if k[0] == curvenumber:
+                    if secondchoosen[-1].isdigit() == 1:
+                        if valxsecond != None:
+                            t = valysecond.index(secondchoosen)
+                            m = valxsecond[t]
+                            x_val = clickData['points'][0]['x']
+                            print('secondchoosen df[m]', df[m])
+                            dff = df[df[m] == x_val]
+                            a = []
+                            a.append(dff[secondchoosen].index)
+                            print('secondchoosen aaaaaaaa', a)
+                            for i in range(len(a)):
+                                for j in a:
+                                    leftchild.append(j[i])
+                                    print('leftchild', leftchild)
 
-                    if len(leftchild) > 2:
-                        leftchild.pop(0)
-                    return (leftchild, leftchild)
-                elif k[0] == curvenumber and secondchoosen[-2].isdigit() == 1:
-                    m = secondchoosen[-2:]
-                    m = 'T' + m
-                    x_val = clickData['points'][0]['x']
-                    print('xxxxxvallllll', x_val)
-                    dff = df[df[m] == x_val]
-                    a = []
-                    a.append(dff[secondchoosen].index)
-                    for i in range(len(a)):
-                        for j in a:
-                            leftchild.append(j[i])
-                            print('leftchild', leftchild)
+                            if len(leftchild) > 2:
+                                leftchild.pop(0)
+                            return (leftchild, leftchild)
+                        else:
+                            m = secondchoosen[-1:]
+                            m = 'T' + m
+                            x_val = clickData4['points'][0]['x']
+                            dff = df[df[m] == x_val]
+                            a = []
+                            a.append(dff[secondchoosen].index)
+                            for i in range(len(a)):
+                                for j in a:
+                                    leftchild.append(j[i])
+                                    print('leftchild', leftchild)
+                            if len(leftchild) > 2:
+                                leftchild.pop(0)
+                            return (leftchild, leftchild)
+                    elif secondchoosen[-2].isdigit() == 1:
+                        if valxsecond != None:
+                            t = valysecond.index(secondchoosen)
+                            m = valxsecond[t]
+                            x_val = clickData['points'][0]['x']
+                            print('xxxxxvallllll', x_val)
+                            dff = df[df[m] == x_val]
+                            a = []
+                            a.append(dff[secondchoosen].index)
+                            for i in range(len(a)):
+                                for j in a:
+                                    leftchild.append(j[i])
+                                    print('leftchild', leftchild)
 
-                    if len(leftchild) > 2:
-                        leftchild.pop(0)
-                    return (leftchild, leftchild)
-                    # a = []
-                        # a.append(dff[secondchoosen].index)
-                        # for i in range(len(a)):
-                        #     for j in a:
-                        #         leftchild.append(j[i])
-                        #         print('leftchild', leftchild)
-                        #
-                        # if len(leftchild) > 2:
-                        #     leftchild.pop(0)
-                        # return (leftchild, leftchild)
-                        #
-                        # if secondchoosen == axisdrop:
-                        #     if shift_x != 0:
-                        #         x_val -= shift_x
-                        #         dff = df[df[m] == x_val]
-                        #         a = []
-                        #         a.append(dff[secondchoosen].index)
-                        #         for i in range(len(a)):
-                        #             for j in a:
-                        #                 leftchild.append(j[i])
-                        #                 print('leftchild', leftchild)
-                        #
-                        #         if len(leftchild) > 2:
-                        #             leftchild.pop(0)
-                        #         return (leftchild, leftchild)
-                        #     else:
-                        #         no_update
-                        # if secondchoosen != axisdrop:
-                        #     dff = df[df[m] == x_val]
-                        #     a = []
-                        #     a.append(dff[secondchoosen].index)
-                        #     for i in range(len(a)):
-                        #         for j in a:
-                        #             leftchild.append(j[i])
-                        #             print('leftchild', leftchild)
-                        #
-                        #     if len(leftchild) > 2:
-                        #         leftchild.pop(0)
-                        #     return (leftchild, leftchild)
-                        # else:
-                        #     (no_update, no_update)
-
-                    # if secondchoosen != None and secondchoosen[-1].isdigit() == 1:
-                    #     m = secondchoosen[-1:]
-                    #     m = 'T' + m
-                    #     x_val = clickData['points'][0]['x']
-                    #     print('xxxxxvallllll', x_val)
-                    #     dff = df[df[m] == x_val]
-                    #     a = []
-                    #     a.append(dff[secondchoosen].index)
-                    #     for i in range(len(a)):
-                    #         for j in a:
-                    #             leftchild.append(j[i])
-                    #             print('leftchild', leftchild)
-                    #
-                    #     if len(leftchild) > 2:
-                    #         leftchild.pop(0)
-                    #     return (leftchild, leftchild)
-                        # if secondchoosen == axisdrop:
-                        #     if shift_x != 0:
-                        #         x_val -= shift_x
-                        #         a = []
-                        #         a.append(dff[secondchoosen].index)
-                        #         for i in range(len(a)):
-                        #             for j in a:
-                        #                 leftchild.append(j[i])
-                        #                 print('leftchild', leftchild)
-                        #
-                        #         if len(leftchild) > 2:
-                        #             leftchild.pop(0)
-                        #         return (leftchild, leftchild)
-                        #     else:
-                        #         no_update
-                        # if secondchoosen != axisdrop:
-                        #     dff = df[df[m] == x_val]
-                        #     a = []
-                        #     a.append(dff[secondchoosen].index)
-                        #     for i in range(len(a)):
-                        #         for j in a:
-                        #             leftchild.append(j[i])
-                        #             print('leftchild', leftchild)
-                        #
-                        #     if len(leftchild) > 2:
-                        #         leftchild.pop(0)
-                        #     return (leftchild, leftchild)
+                            if len(leftchild) > 2:
+                                leftchild.pop(0)
+                            return (leftchild, leftchild)
+                        else:
+                            m = secondchoosen[-2:]
+                            m = 'T' + m
+                            x_val = clickData4['points'][0]['x']
+                            dff = df[df[m] == x_val]
+                            a = []
+                            a.append(dff[secondchoosen].index)
+                            for i in range(len(a)):
+                                for j in a:
+                                    leftchild.append(j[i])
+                                    print('leftchild', leftchild)
+                            if len(leftchild) > 2:
+                                leftchild.pop(0)
+                            return (leftchild, leftchild)
+                    else:
+                        return (no_update, no_update)
 
                 else:
                     return (no_update, no_update)
+            # else:
+            #     return (no_update, no_update)
 
-    else:
-        return (no_update, no_update)
+    else: return (no_update, no_update)
 
 
 
