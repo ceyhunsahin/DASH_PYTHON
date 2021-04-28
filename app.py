@@ -477,28 +477,19 @@ def update_output(list_of_contents, on, list_of_names, list_of_dates, retrieve, 
 def retrieve(retrieve):
     if retrieve == None :
         raise PreventUpdate
-    #     # if len(choosen)==0:
-
     return retrieve
-    # else : return no_update
-
 
 @app.callback(Output('tab2DashTable', 'children'),
               [Input('datatablehidden', 'children')],
               )
 def retrieve2(retrieve):
-    #     # if len(choosen)==0:
     return retrieve
-    # else : return no_update
 
 @app.callback(Output('tab4DashTable', 'children'),
               [Input('datatablehidden', 'children')],
               )
 def retrieve4(retrieve):
-    #     # if len(choosen)==0:
     return retrieve
-    # else : return no_update
-
 
 
 @app.callback(
@@ -2357,7 +2348,6 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
                         m = 'T' + m
                         b = df[valx[j]]
                         a = df[m]
-                        print('valxxxxx', valx)
                         if nclick > 0:
                             if axisdrop == valx[j] :
                                 p = []
@@ -2385,9 +2375,10 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
                     elif valeur[-1].isdigit()==1:
                         m = valeur[-1]
                         m = 'T' + m
+                        print('mmmmmmmmmmmmmmm',m)
                         b = df[valx[j]]
                         a = df[m]
-                        print('valxxxxx', valx)
+                        print('valeur digit 1 ', valeur)
                         if nclick > 0:
                             if axisdrop == valx[j] :
                                 p = []
@@ -2399,7 +2390,7 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
                                         i += float(shift_x)
                                         p.append(i)
                                 df[m] = pd.DataFrame(p)
-                                b = df[m]
+                                a = df[m]
                                 df.to_excel("appending.xlsx")
                                 for i in df[axisdrop]:
                                     if shift_y == None:
@@ -2474,7 +2465,7 @@ def detailedGraph4(radio,radioval, valx,valxsecond, valysecond, slideheight, sli
                                     i += float(shift_x)
                                     p.append(i)
                             df[m] = pd.DataFrame(p)
-                            b = df[m]
+                            a = df[m]
                             df.to_excel("appending.xlsx")
                             for i in df[axisdrop]:
                                 if shift_y == None:
@@ -2652,9 +2643,9 @@ def valintTab4(clickData4, firstchoosen, axisdrop, valysecond,valxsecond,  leftc
             if k[1] == firstchoosen :
                 if k[0] == curvenumber:
                     if firstchoosen[-1].isdigit() == 1 :
-                        if valxsecond != None:
-                            t = valysecond.index(firstchoosen)
-                            m = valxsecond[t]
+                        if valxsecond != []:
+                            t = valxsecond.index(firstchoosen)
+                            m = valysecond[t]
                             x_val = clickData4['points'][0]['x']
                             print('xxxxxvallllll None lu', x_val)
                             dff = df[df[m] == x_val]
@@ -2693,9 +2684,9 @@ def valintTab4(clickData4, firstchoosen, axisdrop, valysecond,valxsecond,  leftc
                                 leftchild.pop(0)
                             return (leftchild, leftchild)
                     elif firstchoosen[-2].isdigit() == 1 :
-                        if valxsecond != None:
-                            t = valysecond.index(firstchoosen)
-                            m = valxsecond[t]
+                        if valxsecond != []:
+                            t = valxsecond.index(firstchoosen)
+                            m = valysecond[t]
                             x_val = clickData4['points'][0]['x']
                             print('xxxxxvallllll', x_val)
                             dff = df[df[m] == x_val]
@@ -2886,9 +2877,9 @@ def valintTab4_2(clickData, secondchoosen, axisdrop,valysecond, valxsecond, left
             if k[1] == secondchoosen:
                 if k[0] == curvenumber:
                     if secondchoosen[-1].isdigit() == 1:
-                        if valxsecond != None:
-                            t = valysecond.index(secondchoosen)
-                            m = valxsecond[t]
+                        if valxsecond != []:
+                            t = valxsecond.index(secondchoosen)
+                            m = valysecond[t]
                             x_val = clickData['points'][0]['x']
                             print('secondchoosen df[m]', df[m])
                             dff = df[df[m] == x_val]
@@ -2906,7 +2897,7 @@ def valintTab4_2(clickData, secondchoosen, axisdrop,valysecond, valxsecond, left
                         else:
                             m = secondchoosen[-1:]
                             m = 'T' + m
-                            x_val = clickData4['points'][0]['x']
+                            x_val = clickData['points'][0]['x']
                             dff = df[df[m] == x_val]
                             a = []
                             a.append(dff[secondchoosen].index)
@@ -2918,9 +2909,9 @@ def valintTab4_2(clickData, secondchoosen, axisdrop,valysecond, valxsecond, left
                                 leftchild.pop(0)
                             return (leftchild, leftchild)
                     elif secondchoosen[-2].isdigit() == 1:
-                        if valxsecond != None:
-                            t = valysecond.index(secondchoosen)
-                            m = valxsecond[t]
+                        if valxsecond != []:
+                            t = valxsecond.index(secondchoosen)
+                            m = valysecond[t]
                             x_val = clickData['points'][0]['x']
                             print('xxxxxvallllll', x_val)
                             dff = df[df[m] == x_val]
@@ -2937,7 +2928,7 @@ def valintTab4_2(clickData, secondchoosen, axisdrop,valysecond, valxsecond, left
                         else:
                             m = secondchoosen[-2:]
                             m = 'T' + m
-                            x_val = clickData4['points'][0]['x']
+                            x_val = clickData['points'][0]['x']
                             dff = df[df[m] == x_val]
                             a = []
                             a.append(dff[secondchoosen].index)
