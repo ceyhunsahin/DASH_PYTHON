@@ -1,18 +1,18 @@
+
 from setuptools import find_packages
 from cx_Freeze import setup, Executable
-
 
 options = {
     'build_exe': {
         'includes': [
-            'cx_Logging', 'idna','idna.idnadata',
+            'cx_Logging', 'idna',
         ],
         'packages': [
             'asyncio', 'flask', 'jinja2', 'dash', 'plotly', 'waitress'
         ],
         'excludes': ['tkinter'],
         'include_files': [
-          'assets/tabs.css', 'assets/style.css']
+          'assets/', 'assets/style.css']
     }
 }
 
@@ -21,13 +21,11 @@ executables = [
                base='console',
                targetName='DashApp.exe')
 ]
-
 setup(
     name='dashApp',
     packages=find_packages(),
-    version='0.0.1',
-    description='rig',
+    version='1.0.0',
+    description='MyApp',
     executables=executables,
     options=options
 )
-

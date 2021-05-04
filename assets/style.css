@@ -120,6 +120,14 @@
     margin : 10px
 
 }
+.abTab4_1{
+    display: flex;
+    flex-direction : row;
+    justify-content:space-between;
+    width : 100%;
+    margin : 10px
+
+}
 .abc{ 
     display: flex;
     flex-direction : row;
@@ -257,6 +265,15 @@
     font: bold 18px Roboto, sans-serif;
     padding: 6px 7px;
     cursor: pointer;
+    display : flex;
+    flex-direction: column;
+
+  }
+  .groupgraph2 {
+    font: bold 18px Roboto, sans-serif;
+    padding: 6px 7px;
+    cursor: pointer;
+
   }
 .knobs_design {
     display : flex;
