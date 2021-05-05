@@ -1,4 +1,6 @@
- 
+ * {
+  box-sizing: border-box;
+}
 .indexpage {
     width : 100%;
     height : 100%;
@@ -82,9 +84,16 @@
     display: flex;
     flex-direction : column;
     justify-content: center;
-   
-    
 }
+
+.aatab4{
+    display: flex;
+    flex-direction : column;
+    justify-content: center;
+    margin : 1rem;
+}
+
+
 .ac{
     display: flex;
     flex-direction : column;
@@ -110,13 +119,22 @@
     display: flex;
     flex-direction : row;
     justify-content:space-around;
+}
+.abtab4{
+    display: flex;
+    flex-direction : row;
+background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,182,244,1) 0%, rgba(18,116,231,1) 90.1% );
+    box-sizing: border-box;
+
+    border-radius: 0.5rem;
+
 
 }
 .abTab4{
     display: flex;
     flex-direction : row;
     justify-content:space-between;
-    width : 90%;
+    width : 60%;
     margin : 10px
 
 }
@@ -265,8 +283,8 @@
     font: bold 18px Roboto, sans-serif;
     padding: 6px 7px;
     cursor: pointer;
-    display : flex;
-    flex-direction: column;
+
+
 
   }
   .groupgraph2 {
@@ -395,6 +413,17 @@
         width : 90%;
         margin-bottom: 2rem;
     
+    }
+
+.tabDesigntab4 {
+        display : flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+        width : 90%;
+        margin-bottom: 2rem;
+
     }
 .stockSelectorClass2{
         margin-top : 15px;

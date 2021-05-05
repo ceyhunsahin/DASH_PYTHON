@@ -929,6 +929,7 @@ def LoadingDataTab1(on, dropdownhidden,tab):
                                                  placeholder="Minimum Value of Graph for Second..."),
 
 
+
                                        ], className='abcd'),
 
                              html.Div([dcc.Dropdown(id='shiftaxisdrop',
@@ -940,6 +941,8 @@ def LoadingDataTab1(on, dropdownhidden,tab):
                                                     clearable=True,
                                                     placeholder='Choose Value...',
                                                     ),
+                                       dbc.Button("Check", id="valuechange", n_clicks=0,
+                                                  color="warning", style = {'height':'2.5em', 'margin' : '1.8rem'} ),
                                        html.Div(id = 'shiftaxis',
                                                  children = [
                                             dbc.Input(id='shift_x_axis',
@@ -1001,6 +1004,7 @@ def LoadingDataTab1(on, dropdownhidden,tab):
                              ])
 
         return loadTab1
+
 
 
 # bunu bi duzeltmeye calisacam
@@ -1221,22 +1225,19 @@ def shiftingaxes(val):
                Output('hiddenDifferance', 'children'), ],
               [Input("leftSideChecklistValueHidden", "children"),
                Input("radiographhidden", "children"),
-               Input('pointLeftFirst', 'children'),
-               Input('pointRightFirst', 'children'),
+
                Input("sliderHeightTab1hidden", "children"),
                Input("sliderWidthTab1hidden", "children"),
                Input('minimumValueGraphhiddenfirst', 'children'),
                Input('minimumValueGraphhiddensecond', 'children'),
                Input('firstchoosenvalhidden', 'children'),
                Input('secondchoosenvalhidden', 'children'),
-               Input('leftintegralfirsthidden', 'children'),
-               Input('leftintegralsecondhidden', 'children'),
-               Input('rightintegralfirsthidden', 'children'),
-               Input('rightintegralsecondhidden', 'children'),
+
                Input('checklistvaleurhidden', "children"),
                Input('inputRightY_axishidden','children'),
                Input('inputRightX_axishidden','children'),
                Input('tab1sendhidden','children'),
+               Input('valuechange', 'n_clicks')
 
                ],
               [State('shiftaxisdrophidden', 'children'),
@@ -1244,12 +1245,18 @@ def shiftingaxes(val):
                State('shift_y_axishidden','children'),
                State('hiddenDifferance', 'children'),
                State('retrieve', 'children'),
+               State('leftintegralfirsthidden', 'children'),
+               State('leftintegralsecondhidden', 'children'),
+               State('rightintegralfirsthidden', 'children'),
+               State('rightintegralsecondhidden', 'children'),
+               State('pointLeftFirst', 'children'),
+               State('pointRightFirst', 'children'),
                ]
               )
-def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
-         minValfirst,minValsecond, firstchoosen, secondchoosen, leftfirstval, leftsecondval,
-         rightfirstval, rightsecondval, rightsidedrop, right_y_axis,right_x_axis,
-         nclick,axis,shift_x, shift_y, differance, retrieve):
+def res2(val, radiograph,  sliderheight, sliderwidth,
+         minValfirst,minValsecond, firstchoosen, secondchoosen,  rightsidedrop, right_y_axis,right_x_axis,
+         nclick,nc, axis,shift_x, shift_y, differance, retrieve, leftfirstval, leftsecondval,
+         rightfirstval, rightsecondval,firstshape, secondshape,):
     if retrieve == None or retrieve == [] :
         raise PreventUpdate
     if len(retrieve) > 0 :
@@ -1315,8 +1322,8 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                             else :
                                 i += float(shift_x)
                                 p.append(i)
-                        df[baseval] = pd.DataFrame(p)
-                        x_axis = df[baseval]
+                        df['New x-axis'] = pd.DataFrame(p)
+                        x_axis = df['New x-axis']
                         df.to_excel("appending.xlsx")
                     else:
                         x_axis = df['date']
@@ -1373,7 +1380,6 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
             if len(firstshape) == 2 and firstchoosen == None:
                 del firstshape[1]
 
-            # else : return(no_update)
             def controlShape():
                 pathline = ''
                 pathline2 = ''
@@ -1385,15 +1391,17 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                             if ':' or '-' in dt[0]:
                                 for k in rangeshape:
                                     if k == rangeshape[0]:
+                                        print('111111111')
                                         pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(
-                                            dt[k]) + ', ' + str(
-                                            df[firstchoosen[-1]][k]) + ' '
+                                            dt[k]) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         pathline += ' L' + str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k])
                                 pathline += ' L' + str(dt[k]) + ', ' + str(minValfirst)
                                 pathline += ' Z'
+                                print('2222222')
                             else:
+                                print('333333')
                                 for k in rangeshape:
                                     if k == rangeshape[0]:
                                         pathline += 'M ' + str(int(dt[k])) + ', ' + str(minValfirst) + ' L' + str(
@@ -1453,12 +1461,13 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                         if int(firstshape[1]) > int(firstshape[0]):
                             pathline = ''
                             rangeshape = range(int(firstshape[0]), int(firstshape[1]))
+                            print('rangeshape', rangeshape)
                             if ':' or '-' in dt[0]:
                                 for k in rangeshape:
                                     if k == rangeshape[0]:
+                                        print('vsdfsfssdfsdfdfs2')
                                         pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(
-                                            dt[k]) + ', ' + str(
-                                            df[firstchoosen[-1]][k]) + ' '
+                                            dt[k]) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         pathline += ' L' + str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k])
@@ -1468,6 +1477,7 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                                 for k in rangeshape:
 
                                     if k == rangeshape[0]:
+                                        print('vsdfsfssdfsdfdfs2')
                                         pathline += 'M ' + str(int(dt[k])) + ', ' + str(minValfirst) + ' L' + str(
                                             int(dt[k])) + ', ' + str(
                                             df[firstchoosen[-1]][k]) + ' '
@@ -1592,8 +1602,9 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
                             opacity=0.8,
                             line_color="#8896BF",
                         )]
-
-            a = controlShape()
+            a = []
+            if nc > 0 :
+                a = controlShape()
             fig.update_layout(
                 autosize=False,
                 width=sliderwidth,
@@ -1657,100 +1668,100 @@ def res2(val, radiograph, firstshape, secondshape, sliderheight, sliderwidth,
 def aa (a):
     return a
 
-@app.callback(Output('tab2Data', 'children'),
-              [Input("my-toggle-switch", "on")],
-              )
-def LoadingDataTab2(on):
-
-    if on == 1:
-
-        data_list = ['CoAd', 'ComManCoP2', 'ComManCoP3P4P5', 'ComManPompeSec', 'CompteurEnergie', 'CoP2',
-                         'CtempDepChauff',
-                         'D1', 'D2', 'D3', 'D4', 'MarcheBruleur', 'Teg', 'SdeBasBouMelange', 'SdeBasHauMelange', 'TambN3',
-                         'Tb1',
-                         'Tb2', 'Tb3', 'Tb4', 'TdepPLC', 'Teb', 'Tec', 'Teev', 'TempminMaf', 'Text', 'Tsb', 'Tsc', 'Tsev']
-
-        loadlist = html.Div(children=[
-                html.Div([html.Div([html.Div([dcc.Dropdown(id='tabDropdownTop',
-                                                           options=[{'label': i, 'value': i} for i in data_list],
-                                                           multi=True,
-                                                           style={"cursor": "pointer"},
-                                                           className='stockSelectorClass2',
-                                                           clearable=True,
-                                                           placeholder='Select your y-axis value...',
-                                                           ),
-                                              dcc.Dropdown(id='tabDropdownDown',
-                                                           options=[{'label': i, 'value': i} for i in data_list],
-                                                           multi=True,
-                                                           style={"cursor": "pointer"},
-                                                           className='stockSelectorClass2',
-                                                           clearable=True,
-                                                           placeholder='Select your x-axis value...',
-                                                           ), ], className="ab"),
-                                    html.Div(dcc.RadioItems(id="radiograph2",
-                                                            options=[
-                                                                {'label': 'Point', 'value': 'markers'},
-                                                                {'label': 'Line', 'value': 'lines'},
-                                                                {'label': 'Line + Point', 'value': 'lines+markers'}],
-                                                            value='markers',
-                                                            labelClassName='groupgraph2',
-                                                            labelStyle={'margin': '10px', },
-                                                            inputStyle={'margin': '10px', }
-                                                            ), ), ], className="ac"),
-                          html.Div([dcc.Dropdown(id="dropadd",
-                                                 options=[
-                                                     {'label': 'Note', 'value': 'note'},
-                                                     {'label': 'Header', 'value': 'header'},
-                                                     {'label': 'x-axis', 'value': 'x_axis'},
-                                                     {'label': 'y-axis', 'value': 'y_axis'},
-
-                                                 ],
-                                                 value='header',
-                                                 ),
-                                    dcc.Textarea(
-                                        id='textarea',
-                                        value='',
-                                        style={'width': '15rem', 'marginTop': '0.5rem'},
-                                        autoFocus='Saisir',
-                                    ),
-                                    ], className="aa"),
-
-                          html.Button('addText', id='addText', n_clicks=0, style={'marginTop': '1.5rem'}),
-
-                          ], className="tabDesign", ),
-
-                html.Div([dcc.Graph(id='graph2', config={'displayModeBar': True,
-                                                         'scrollZoom': True,
-                                                         'modeBarButtonsToAdd': [
-                                                             'drawopenpath',
-                                                             'drawcircle',
-                                                             'eraseshape',
-                                                             'select2d',
-                                                         ]},
-                                    figure={
-                                        'layout': {'legend': {'tracegroupgap': 0},
-
-                                                   }
-                                    }
-                                    ),
-                          dcc.Slider(id="sliderHeight",
-                                     max=2100,
-                                     min=400,
-                                     value=500,
-                                     step=100,
-                                     vertical=True,
-                                     updatemode='drag')], className='abc'),
-
-                html.Div([dcc.Slider(id="sliderWidth",
-                                     max=2000,
-                                     min=600,
-                                     value=950,
-                                     step=100,
-                                     updatemode='drag'),
-                          html.Div(id="tab2DashTable", children=[])]),
-            ])
-
-        return loadlist
+# @app.callback(Output('tab2Data', 'children'),
+#               [Input("my-toggle-switch", "on")],
+#               )
+# def LoadingDataTab2(on):
+#
+#     if on == 1:
+#
+#         data_list = ['CoAd', 'ComManCoP2', 'ComManCoP3P4P5', 'ComManPompeSec', 'CompteurEnergie', 'CoP2',
+#                          'CtempDepChauff',
+#                          'D1', 'D2', 'D3', 'D4', 'MarcheBruleur', 'Teg', 'SdeBasBouMelange', 'SdeBasHauMelange', 'TambN3',
+#                          'Tb1',
+#                          'Tb2', 'Tb3', 'Tb4', 'TdepPLC', 'Teb', 'Tec', 'Teev', 'TempminMaf', 'Text', 'Tsb', 'Tsc', 'Tsev']
+#
+#         loadlist = html.Div(children=[
+#                 html.Div([html.Div([html.Div([dcc.Dropdown(id='tabDropdownTop',
+#                                                            options=[{'label': i, 'value': i} for i in data_list],
+#                                                            multi=True,
+#                                                            style={"cursor": "pointer"},
+#                                                            className='stockSelectorClass2',
+#                                                            clearable=True,
+#                                                            placeholder='Select your y-axis value...',
+#                                                            ),
+#                                               dcc.Dropdown(id='tabDropdownDown',
+#                                                            options=[{'label': i, 'value': i} for i in data_list],
+#                                                            multi=True,
+#                                                            style={"cursor": "pointer"},
+#                                                            className='stockSelectorClass2',
+#                                                            clearable=True,
+#                                                            placeholder='Select your x-axis value...',
+#                                                            ), ], className="ab"),
+#                                     html.Div(dcc.RadioItems(id="radiograph2",
+#                                                             options=[
+#                                                                 {'label': 'Point', 'value': 'markers'},
+#                                                                 {'label': 'Line', 'value': 'lines'},
+#                                                                 {'label': 'Line + Point', 'value': 'lines+markers'}],
+#                                                             value='markers',
+#                                                             labelClassName='groupgraph2',
+#                                                             labelStyle={'margin': '10px', },
+#                                                             inputStyle={'margin': '10px', }
+#                                                             ), ), ], className="ac"),
+#                           html.Div([dcc.Dropdown(id="dropadd",
+#                                                  options=[
+#                                                      {'label': 'Note', 'value': 'note'},
+#                                                      {'label': 'Header', 'value': 'header'},
+#                                                      {'label': 'x-axis', 'value': 'x_axis'},
+#                                                      {'label': 'y-axis', 'value': 'y_axis'},
+#
+#                                                  ],
+#                                                  value='header',
+#                                                  ),
+#                                     dcc.Textarea(
+#                                         id='textarea',
+#                                         value='',
+#                                         style={'width': '15rem', 'marginTop': '0.5rem'},
+#                                         autoFocus='Saisir',
+#                                     ),
+#                                     ], className="aa"),
+#
+#                           html.Button('addText', id='addText', n_clicks=0, style={'marginTop': '1.5rem'}),
+#
+#                           ], className="tabDesign", ),
+#
+#                 html.Div([dcc.Graph(id='graph2', config={'displayModeBar': True,
+#                                                          'scrollZoom': True,
+#                                                          'modeBarButtonsToAdd': [
+#                                                              'drawopenpath',
+#                                                              'drawcircle',
+#                                                              'eraseshape',
+#                                                              'select2d',
+#                                                          ]},
+#                                     figure={
+#                                         'layout': {'legend': {'tracegroupgap': 0},
+#
+#                                                    }
+#                                     }
+#                                     ),
+#                           dcc.Slider(id="sliderHeight",
+#                                      max=2100,
+#                                      min=400,
+#                                      value=500,
+#                                      step=100,
+#                                      vertical=True,
+#                                      updatemode='drag')], className='abc'),
+#
+#                 html.Div([dcc.Slider(id="sliderWidth",
+#                                      max=2000,
+#                                      min=600,
+#                                      value=950,
+#                                      step=100,
+#                                      updatemode='drag'),
+#                           html.Div(id="tab2DashTable", children=[])]),
+#             ])
+#
+#         return loadlist
 
 @app.callback(Output('tab4Data', 'children'),
               [Input("my-toggle-switch", "on")],
@@ -1768,48 +1779,68 @@ def LoadingDataTab4(on,tab):
                     dcc.RadioItems(id="radiographtab4",
                                    options=[
                                        {'label': 'Standart', 'value': 'Standart'},
+                                       {'label': 'X - Y illimité', 'value': 'optionlibre'},
                                        {'label': 'Choose Values', 'value': 'choosevalue'},
                                      ],
                                    # value='choosevalue',
                                    labelClassName='groupgraph',
                                    labelStyle={'margin': '10px', },
+                                   inputStyle={'margin': '10px',}
+                                   ),
+
+                    dcc.RadioItems(id="radiograph4",
+                                   options=[
+                                       {'label': 'Point', 'value': 'markers'},
+                                       {'label': 'Line', 'value': 'lines'},
+                                       {'label': 'Line + Point', 'value': 'lines+markers'}],
+                                   value='markers',
+                                   labelClassName='groupgraph2',
+                                   labelStyle={'margin': '10px', },
                                    inputStyle={'margin': '10px', }
                                    ),
-                    dcc.Dropdown(id='tabDropdownTop4',
+                ], className="abtab4"),
+                                    html.Div([dcc.Dropdown(id='tabDropdownTop4',
                                                            options=[{'label': i, 'value': i} for i in data_list],
                                                            multi=True,
-                                                           style={"cursor": "pointer"},
+                                                           style={"cursor": "pointer", 'display' : 'None'},
                                                            className='stockSelectorClass2',
                                                            clearable=True,
                                                            placeholder='Select your y-axis value...',
                                                            ),
-                                               ], className="ab"),
-                                    html.Div([dcc.Dropdown(id='tabDropdownTopTab4',
+                                              dcc.Dropdown(id='tabDropdownTopTab4',
                                                   options=[{'label': i, 'value': i} for i in data_list],
                                                   multi=True,
-                                                  style={"cursor": "pointer"},
+                                                  style={"cursor": "pointer", 'display' : 'None'},
                                                   className='stockSelectorClass2',
                                                   clearable=True,
                                                   placeholder='Select your y-axis value...',
                                                   ),
-                                     dcc.Dropdown(id='tabDropdownDownTab4',
+                                    dcc.Dropdown(id='tabDropdownDownTab4',
                                                   options=[{'label': i, 'value': i} for i in data_list],
                                                   multi=True,
-                                                  style={"cursor": "pointer"},
+                                                  style={"cursor": "pointer",'display' : 'None'},
                                                   className='stockSelectorClass2',
                                                   clearable=True,
                                                   placeholder='Select your x-axis value...',
-                                                  ), ], className = "ab"),
-                                    html.Div([dcc.RadioItems(id="radiograph4",
-                                                            options=[
-                                                                {'label': 'Point', 'value': 'markers'},
-                                                                {'label': 'Line', 'value': 'lines'},
-                                                                {'label': 'Line + Point', 'value': 'lines+markers'}],
-                                                            value='markers',
-                                                            labelClassName='groupgraph2',
-                                                            labelStyle={'margin': '10px', },
-                                                            inputStyle={'margin': '10px', }
-                                                            ),
+                                                  ),
+                                    dcc.Dropdown(id='tabDropdownTop',
+                                                           options=[{'label': i, 'value': i} for i in data_list],
+                                                           multi=True,
+                                                           style={"cursor": "pointer", 'display' : 'None'},
+                                                           className='stockSelectorClass2',
+                                                           clearable=True,
+                                                           placeholder='Select your y-axis value...',
+                                                           ),
+                                    dcc.Dropdown(id='tabDropdownDown',
+                                                           options=[{'label': i, 'value': i} for i in data_list],
+                                                           multi=True,
+                                                           style={"cursor": "pointer", 'display' : 'None'},
+                                                           className='stockSelectorClass2',
+                                                           clearable=True,
+                                                           placeholder='Select your x-axis value...',
+                                                           ),
+                                              ], className = "ab"),
+                                    html.Div([
                                               dbc.Checklist(id="calculintegraltab4",
                                                              options=[{'label': "Calculate Integral", 'value': 'calcultab4'},]
                                                                       ,
@@ -1835,11 +1866,11 @@ def LoadingDataTab4(on,tab):
                                         style={'width': '15rem', 'marginTop': '0.5rem'},
                                         autoFocus='Saisir',
                                     ),
-                                    ], className="aa"),
+                                    ], className="aatab4"),
 
-                          html.Button('addText', id='addText4', n_clicks=0, style={'marginTop': '1.5rem'}),
+                          html.Button('Add Text', id='addText4', n_clicks=0, style={'marginTop': '1.5rem', 'marginLeft' : '2rem'}),
 
-                          ], className="tabDesign", ),
+                          ], className="tabDesigntab4", ),
                     html.Div(id = 'tab4check', children =
                                         [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValueTab4',
                                                      options=[{'label': i, 'value': i} for i in
@@ -1955,6 +1986,9 @@ def LoadingDataTab4(on,tab):
                                    clearable=True,
                                    placeholder='Choose Value...',
                                    ),
+                                   dbc.Button("Check", id="valuechangetab4", n_clicks=0,
+                                   color="warning",
+                                   style={'height': '2.5em', 'margin': '1.8rem'}),
                       html.Div(id='shiftaxistab4',
                                children=[
                                    dbc.Input(id='shift_x_axistab4',
@@ -2033,7 +2067,7 @@ def tab4enlarger(tab) :
               )
 def showintegral(show):
     if show == ['calcultab4'] :
-        return {'visiblity' : 'visible'}
+        return {'visibility' : 'visible'}
     return {'display': 'None'}
 
 
@@ -2071,6 +2105,26 @@ def dropdownlistcontrolTab4Second(retrieve):
     else:
         return (no_update, no_update)
 
+@app.callback([Output('tabDropdownTop4', 'style'),
+               Output('tabDropdownTopTab4', 'style'),
+               Output('tabDropdownDownTab4', 'style'),
+               Output('tabDropdownTop', 'style'),
+               Output('tabDropdownDown', 'style')
+               ],
+              [Input('radiographtab4', 'value')],)
+
+def chooseradio(radio) :
+    if radio == None :
+        raise PreventUpdate
+    if radio == 'Standart' :
+        return {'visibility': 'visible'}, {'display': 'None'},{'display': 'None'}, {'display': 'None'},{'display': 'None'}
+    if radio == 'choosevalue' :
+        return {'display': 'None'},{'visibility': 'visible'},{'visibility': 'visible'},{'display': 'None'},{'display': 'None'}
+    if radio == 'optionlibre' :
+        return {'visibility': 'visible'}, {'visibility': 'visible'},{'display': 'None'},{'display': 'None'},{'display': 'None'}
+
+
+
 @app.callback(Output('tab4hiddenValuex_axis', 'children'),
               [Input('tabDropdownTop4', 'value'),
               Input('radiographtab4', 'value')],
@@ -2080,12 +2134,14 @@ def contractdropdown4(x,radio):
     if x == None or radio == None :
         raise PreventUpdate
     if radio == 'Standart':
+        print('xxxx',x)
         return x
     else : return []
 
 
 @app.callback([Output('tab4hiddenValuex_axissecond', 'children'),
-               Output('tab4hiddenValuey_axissecond', 'children'),],
+               Output('tab4hiddenValuey_axissecond', 'children'),
+               ],
               [Input('tabDropdownTopTab4', 'value'),
                Input('tabDropdownDownTab4', 'value'),
                Input('radiographtab4', 'value')]
@@ -2104,7 +2160,7 @@ def contractdropdown2(valxsecond,valysecond,radio):
 def dropdownlistcontrolTab4First(retrieve):
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
-        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('TG')==1 ]
+        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('TG')==1 or i[-2:] != 'ts']
         return dff
     else:
         return no_update
@@ -2217,59 +2273,59 @@ def detailedGraph4(addtextclick, textarea, add, g1, g2, head, note):
         return (no_update, no_update, no_update, no_update)
 
 
-@app.callback(Output('graph2', 'figure'),
-              [Input('radiograph2', 'value'),
-               Input('tab2hiddenValuex_axis', 'children'),
-               Input('tab2hiddenValuey_axis', 'children'),
-               Input('sliderHeight', 'value'),
-               Input('sliderWidth', 'value'),
-               Input('hiddenTextxaxis', 'children'),
-               Input('hiddenTextyaxis', 'children'),
-               Input('hiddenTextHeader', 'children'),
-               Input('hiddenTextNote', 'children')],
-              [State('retrieve', 'children')]
-              )
-def detailedGraph2(radio, valx, valy, slideheight, slidewidth, g1, g2, head, note, retrieve):
-    if valx == [] or valy == [] or valx == None or valy == None or g1 == None or g2 == None or head == None or note == None:
-        raise PreventUpdate
-    if len(retrieve) > 0:
-        df = pd.read_excel('appending.xlsx')
-        fig = go.Figure()
-
-        for j in range(len(valy)):
-            for k in range(len(valx)):
-                a = df[valy[j]]
-                b = df[valx[k]]
-                fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valy[j], valx[k])))
-
-                fig.update_xaxes(
-                    tickangle=90,
-                    title_text='' if g1 == [] else g1[-1],
-                    title_font={"size": 20},
-                    title_standoff=25),
-
-                fig.update_yaxes(
-                    title_text='' if g2 == [] else g2[-1],
-                    title_standoff=25),
-                fig.update_layout(
-                    title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx[k], valy[j]),
-                    autosize=False,
-                    width=slidewidth,
-                    height=slideheight,
-                    margin=dict(
-                        l=50,
-                        r=50,
-                        b=50,
-                        t=50,
-                        pad=4
-                    ),
-                    # hovermode='x unified',
-                    uirevision=valy[j], ),
-                fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                   xref="paper", yref="paper",
-                                   x=0, y=0.7, showarrow=False)
-
-        return fig
+# @app.callback(Output('graph2', 'figure'),
+#               [Input('radiograph2', 'value'),
+#                Input('tab2hiddenValuex_axis', 'children'),
+#                Input('tab2hiddenValuey_axis', 'children'),
+#                Input('sliderHeight', 'value'),
+#                Input('sliderWidth', 'value'),
+#                Input('hiddenTextxaxis', 'children'),
+#                Input('hiddenTextyaxis', 'children'),
+#                Input('hiddenTextHeader', 'children'),
+#                Input('hiddenTextNote', 'children')],
+#               [State('retrieve', 'children')]
+#               )
+# def detailedGraph2(radio, valx, valy, slideheight, slidewidth, g1, g2, head, note, retrieve):
+#     if valx == [] or valy == [] or valx == None or valy == None or g1 == None or g2 == None or head == None or note == None:
+#         raise PreventUpdate
+#     if len(retrieve) > 0:
+#         df = pd.read_excel('appending.xlsx')
+#         fig = go.Figure()
+#
+#         for j in range(len(valy)):
+#             for k in range(len(valx)):
+#                 a = df[valy[j]]
+#                 b = df[valx[k]]
+#                 fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valy[j], valx[k])))
+#
+#                 fig.update_xaxes(
+#                     tickangle=90,
+#                     title_text='' if g1 == [] else g1[-1],
+#                     title_font={"size": 20},
+#                     title_standoff=25),
+#
+#                 fig.update_yaxes(
+#                     title_text='' if g2 == [] else g2[-1],
+#                     title_standoff=25),
+#                 fig.update_layout(
+#                     title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx[k], valy[j]),
+#                     autosize=False,
+#                     width=slidewidth,
+#                     height=slideheight,
+#                     margin=dict(
+#                         l=50,
+#                         r=50,
+#                         b=50,
+#                         t=50,
+#                         pad=4
+#                     ),
+#                     # hovermode='x unified',
+#                     uirevision=valy[j], ),
+#                 fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+#                                    xref="paper", yref="paper",
+#                                    x=0, y=0.7, showarrow=False)
+#
+#         return fig
 
 
 @app.callback(Output('shiftaxistab4', 'style'),
@@ -2310,8 +2366,6 @@ def relay7(valradio):
 
 @app.callback(Output('graph4', 'figure'),
               [Input('radiograph4', 'value'),
-               Input('pointLeftFirstTab4', 'children'),
-               Input('pointRightFirstTab4', 'children'),
                Input('radiographtab4hidden', 'children'),
                Input('tab4hiddenValuex_axis', 'children'),
                Input('tab4hiddenValuex_axissecond', 'children'),
@@ -2325,22 +2379,27 @@ def relay7(valradio):
                Input('tab4send','n_clicks'),
                Input('firstChoosenValueTab4', 'value'),
                Input('secondChoosenValueTab4', 'value'),
-               Input('leftIntegralFirstTab4', 'value'),
-               Input('leftIntegralSecondTab4', 'value'),
-               Input('rightIntegralFirstTab4', 'value'),
-               Input('rightIntegralSecondTab4', 'value'),
+               Input('valuechangetab4', 'n_clicks'),
+               Input('tab2hiddenValuex_axis', 'children'),
+               Input('tab2hiddenValuey_axis', 'children'),
                ],
               [State('shiftaxisdroptab4hidden', 'children'),
                State('shift_x_axistab4hidden', 'children'),
                State('shift_y_axistab4hidden', 'children'),
                State('retrieve', 'children'),
+               State('pointLeftFirstTab4', 'children'),
+               State('pointRightFirstTab4', 'children'),
+               State('leftIntegralFirstTab4', 'value'),
+               State('leftIntegralSecondTab4', 'value'),
+               State('rightIntegralFirstTab4', 'value'),
+               State('rightIntegralSecondTab4', 'value'),
                ]
               )
-def detailedGraph4(radio,firstshape, secondshape, radioval, valx,valxsecond, valysecond,
-                   slideheight, slidewidth, g1, g2,head, note,nclick,firstchoosen, secondchoosen,
-                   leftfirstval, leftsecondval, rightfirstval, rightsecondval,
-                   axisdrop,shift_x,shift_y, retrieve):
-    if g1 == None or g2 == None or head == None or note == None or radioval == [] :
+def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
+                   slideheight, slidewidth, g1, g2,head, note,nclick,firstchoosen, secondchoosen,nc,
+                   valx2, valy2,axisdrop,shift_x,shift_y, retrieve, firstshape, secondshape,
+                   leftfirstval, leftsecondval, rightfirstval, rightsecondval,):
+    if g1 == None or g2 == None or head == None or note == None or radioval == []  :
         raise PreventUpdate
     print('firstchoosen', firstchoosen)
     if radioval != None :
@@ -2403,6 +2462,326 @@ def detailedGraph4(radio,firstshape, secondshape, radioval, valx,valxsecond, val
                 del firstshape[1]
             print('firstshape',firstshape)
             print('secondshape', secondshape)
+            print('radioval', radioval)
+            print('valx2', valx2)
+            print('valy2', valy2)
+            if radioval == 'optionlibre' and len(valx2) > 0 and len(valy2) > 0:
+                lst = []
+                for j in zip(valy2, valx2):
+                    lst.append(j)
+                s = -1
+                m = ''
+                for i in range(len(lst)):
+                    if lst[i][0][-2].isdigit() == 1:
+                        m = lst[i][0][-2]
+                        m = 'T' + m
+                    elif lst[i][0][-1].isdigit() == 1:
+                        m = lst[i][0][-1]
+                        m = 'T' + m
+                    s += 1
+                    a = df[lst[i][0]]
+                    b = df[lst[i][1]]
+                    if nclick > 0:
+                        if axisdrop == lst[i][1]:
+                            p = []
+                            c = []
+                            for t in df[lst[i][0]]:
+                                if shift_x == None:
+                                    raise PreventUpdate
+                                else:
+                                    t += float(shift_x)
+                                    p.append(t)
+                            df[lst[i][0]] = pd.DataFrame(p)
+                            a = df[lst[i][0]]
+                            df.to_excel("appending.xlsx")
+                            for y in df[axisdrop]:
+                                if shift_y == None:
+                                    raise PreventUpdate
+                                else:
+                                    y += float(shift_y)
+                                    c.append(y)
+                            c.append(axisdrop)
+                            df[axisdrop] = pd.DataFrame(c)
+                            b = df[axisdrop]
+                            df.to_excel("appending.xlsx")
+
+                    fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valxsecond[s], valysecond[s])))
+
+                    def controlShape():
+                        pathline = ''
+                        pathline2 = ''
+                        minValfirst = 0
+                        minValsecond = 0
+                        if firstchoosen != None and secondchoosen != None:
+                            if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:
+                                if int(firstshape[1]) > int(firstshape[0]):
+                                    pathline = ''
+                                    rangeshape = range(int(firstshape[0]), int(firstshape[1]))
+                                    if ':' or '-' in df[lst[i][0]][0]:
+                                        for k in rangeshape:
+                                            if k == rangeshape[0]:
+                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    minValfirst) + ' L' + str(
+                                                    df[lst[i][0]][k]) + ', ' + str(
+                                                    df[firstchoosen][k]) + ' '
+
+                                            elif k != rangeshape[0] and k != rangeshape[-1]:
+                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    df[firstchoosen][k])
+                                        pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst)
+                                        pathline += ' Z'
+                                    else:
+                                        for k in rangeshape:
+                                            if k == rangeshape[0]:
+                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    minValfirst) + ' L' + str(
+                                                    int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[firstchoosen][k]) + ' '
+
+                                            elif k != rangeshape[0] and k != rangeshape[-1]:
+                                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[firstchoosen][k])
+                                        pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValfirst)
+                                        pathline += ' Z'
+
+                            if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
+                                if int(secondshape[1]) > int(secondshape[0]):
+                                    rangeshape = range(int(secondshape[0]), int(secondshape[1]))
+                                    if ':' or '-' in df[lst[i][0]][0]:
+                                        for k in rangeshape:
+                                            if k == rangeshape[0]:
+                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    minValsecond) + ' L' + str(
+                                                    df[lst[i][0]][k]) + ', ' + str(
+                                                    df[secondchoosen][k]) + ' '
+
+                                            elif k != rangeshape[0] and k != rangeshape[-1]:
+                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    df[secondchoosen][k])
+                                        pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
+                                        pathline2 += ' Z'
+                                    else:
+                                        for k in rangeshape:
+
+                                            if k == rangeshape[0]:
+                                                pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    minValsecond) + ' L' + str(
+                                                    int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[secondchoosen][k]) + ' '
+
+                                            elif k != rangeshape[0] and k != rangeshape[-1]:
+                                                pathline2 += ' L' + str(int(a[k])) + ', ' + str(df[secondchoosen][k])
+                                        pathline2 += ' L' + str(int(a[k])) + ', ' + str(minValsecond)
+                                        pathline2 += ' Z'
+
+                            return [dict(
+                                type="path",
+                                path=pathline,
+                                layer='below',
+                                fillcolor="#5083C7",
+                                opacity=0.8,
+                                line_color="#8896BF",
+                            ), dict(
+                                type="path",
+                                path=pathline2,
+                                layer='below',
+                                fillcolor="#B0384A",
+                                opacity=0.8,
+                                line_color="#B36873",
+                            )]
+
+                        if firstchoosen != None and secondchoosen == None:
+                            if len(firstshape) == 2:
+                                if int(firstshape[1]) > int(firstshape[0]):
+                                    pathline = ''
+                                    rangeshape = range(int(firstshape[0]), int(firstshape[1]))
+                                    if ':' or '-' in df[lst[i][0]][0]:
+                                        for k in rangeshape:
+                                            if k == rangeshape[0]:
+                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    minValfirst) + ' L' + str(
+                                                    df[lst[i][0]][k]) + ', ' + str(
+                                                    df[firstchoosen][k]) + ' '
+
+                                            elif k != rangeshape[0] and k != rangeshape[-1]:
+                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    df[firstchoosen][k])
+                                        pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst)
+                                        pathline += ' Z'
+                                    else:
+                                        for k in rangeshape:
+
+                                            if k == rangeshape[0]:
+                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    minValfirst) + ' L' + str(
+                                                    int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[firstchoosen][k]) + ' '
+
+                                            elif k != rangeshape[0] and k != rangeshape[-1]:
+                                                pathline += ' L' + str(int(a[k])) + ', ' + str(df[firstchoosen][k])
+                                        pathline += ' L' + str(int(a[k])) + ', ' + str(minValfirst)
+                                        pathline += ' Z'
+
+                                    return [dict(
+                                        type="path",
+                                        path=pathline,
+                                        layer='below',
+                                        fillcolor="#5083C7",
+                                        opacity=0.8,
+                                        line_color="#8896BF",
+                                    )]
+
+                                if int(firstshape[0]) > int(firstshape[1]):
+                                    rangeshape = range(int(firstshape[1]), int(firstshape[0]))
+                                    if ':' or '-' in df[lst[i][0]][0]:
+                                        for k in rangeshape:
+                                            if k == rangeshape[0]:
+                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    minValsecond) + ' L' + str(
+                                                    df[lst[i][0]][k]) + ', ' + str(
+                                                    df[firstchoosen][k]) + ' '
+
+                                            elif k != rangeshape[0] and k != rangeshape[-1]:
+                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    df[firstchoosen][k])
+                                        pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
+                                        pathline += ' Z'
+                                    else:
+                                        for k in rangeshape:
+
+                                            if k == rangeshape[0]:
+                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    minValsecond) + ' L' + str(
+                                                    int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[firstchoosen][k]) + ' '
+
+                                            elif k != rangeshape[0] and k != rangeshape[-1]:
+                                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[firstchoosen][k])
+                                        pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
+                                        pathline += ' Z'
+
+                                    return [dict(
+                                        type="path",
+                                        path=pathline,
+                                        layer='below',
+                                        fillcolor="#5083C7",
+                                        opacity=0.8,
+                                        line_color="#8896BF",
+                                    )]
+
+                        if secondchoosen != None and firstchoosen == None:
+                            if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
+                                if int(secondshape[1]) > int(secondshape[0]):
+                                    rangeshape = range(int(secondshape[0]), int(secondshape[1]))
+                                    if ':' or '-' in df[lst[i][0]][0]:
+                                        for k in rangeshape:
+                                            if k == rangeshape[0]:
+                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    minValsecond) + ' L' + str(
+                                                    df[lst[i][0]][k]) + ', ' + str(
+                                                    df[secondchoosen][k]) + ' '
+
+                                            elif k != rangeshape[0] and k != rangeshape[-1]:
+                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    df[secondchoosen][k])
+                                        pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
+                                        pathline2 += ' Z'
+                                    else:
+                                        for k in rangeshape:
+
+                                            if k == rangeshape[0]:
+                                                pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    minValsecond) + ' L' + str(
+                                                    int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[secondchoosen][k]) + ' '
+
+                                            elif k != rangeshape[0] and k != rangeshape[-1]:
+                                                pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[secondchoosen][k])
+                                        pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
+                                        pathline2 += ' Z'
+
+                                    return [dict(
+                                        type="path",
+                                        path=pathline2,
+                                        layer='below',
+                                        fillcolor="#5083C7",
+                                        opacity=0.8,
+                                        line_color="#8896BF",
+                                    )]
+
+                                if int(secondshape[0]) > int(secondshape[1]):
+                                    rangeshape = range(int(secondshape[1]), int(secondshape[0]))
+                                    for k in rangeshape:
+                                        if k == rangeshape[0]:
+                                            pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                minValsecond) + ' L' + str(
+                                                df[lst[i][0]][k]) + ', ' + str(
+                                                df[secondchoosen][k]) + ' '
+
+                                        elif k != rangeshape[0] and k != rangeshape[-1]:
+                                            pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
+                                    pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
+                                    pathline2 += ' Z'
+                                else:
+                                    rangeshape = range(int(secondshape[1]), int(secondshape[0]))
+                                    for k in rangeshape:
+
+                                        if k == rangeshape[0]:
+                                            pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                minValsecond) + ' L' + str(
+                                                int(df[lst[i][0]][k])) + ', ' + str(
+                                                df[secondchoosen][k]) + ' '
+
+                                        elif k != rangeshape[0] and k != rangeshape[-1]:
+                                            pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                df[secondchoosen][k])
+                                    pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
+                                    pathline2 += ' Z'
+
+                                return [dict(
+                                    type="path",
+                                    path=pathline2,
+                                    layer='below',
+                                    fillcolor="#5083C7",
+                                    opacity=0.8,
+                                    line_color="#8896BF",
+                                )]
+
+                    a = []
+                    if nc > 0:
+                        a = controlShape()
+                    fig.update_xaxes(
+                        tickangle=90,
+                        title_text='' if g1 == [] else g1[-1],
+                        title_font={"size": 20},
+                        title_standoff=25),
+
+                    fig.update_yaxes(
+                        title_text='' if g2 == [] else g2[-1],
+                        title_standoff=25),
+                    fig.update_layout(
+                        title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx2[0], valy2[0]),
+                        autosize=True,
+                        width=slidewidth,
+                        shapes=a,
+                        height=slideheight,
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=50,
+                            t=50,
+                            pad=4
+                        ),
+                        # hovermode='x unified',
+                        uirevision=valy2[0], ),
+                    fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+                                       xref="paper", yref="paper",
+                                       x=0, y=0.7, showarrow=False)
+
+                return fig
+
             if len(valx)>0 and radioval == 'Standart':
                 valeur = ''
                 a,b = [],[]
@@ -2465,6 +2844,37 @@ def detailedGraph4(radio,firstshape, secondshape, radioval, valx,valxsecond, val
 
                                 b = df[axisdrop]
                                 df.to_excel("appending.xlsx")
+                        fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
+                    else :
+                        m = valeur[:2]
+                        for s in df.columns :
+                            if s.startswith(m) and s.endswith('ts') :
+                                m = s
+                        b = df[valx[j]]
+                        a = df[m]
+                        if nclick > 0:
+                            if axisdrop == valx[j]:
+                                p = []
+                                c = []
+                                for i in df[m]:
+                                    if shift_x == None:
+                                        raise PreventUpdate
+                                    else:
+                                        i += float(shift_x)
+                                        p.append(i)
+                                df[m] = pd.DataFrame(p)
+                                a = df[m]
+                                df.to_excel("appending.xlsx")
+                                for i in df[axisdrop]:
+                                    if shift_y == None:
+                                        raise PreventUpdate
+                                    else:
+                                        i += float(shift_y)
+                                        c.append(i)
+                                df[axisdrop] = pd.DataFrame(c)
+
+                                b = df[axisdrop]
+                                df.to_excel("appending.xlsx")
 
                         fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valx[j], m)))
 
@@ -2479,12 +2889,12 @@ def detailedGraph4(radio,firstshape, secondshape, radioval, valx,valxsecond, val
                                 if int(firstshape[1]) > int(firstshape[0]):
                                     pathline = ''
                                     rangeshape = range(int(firstshape[0]), int(firstshape[1]))
+                                    print('a[0]', a[0])
                                     if ':' or '-' in a[0]:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline += 'M ' + str(a[k]) + ', ' + str(minValfirst) + ' L' + str(
-                                                    a[k]) + ', ' + str(
-                                                    df[firstchoosen][k]) + ' '
+                                                pathline += 'M ' + str(a[k]) + ', ' + str(minValfirst) + ' L' + \
+                                                            str(a[k]) + ', ' + str(df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
                                                 pathline += ' L' + str(a[k]) + ', ' + str(df[firstchoosen][k])
@@ -2493,10 +2903,8 @@ def detailedGraph4(radio,firstshape, secondshape, radioval, valx,valxsecond, val
                                     else:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline += 'M ' + str(int(a[k])) + ', ' + str(
-                                                    minValfirst) + ' L' + str(
-                                                    int(a[k])) + ', ' + str(
-                                                    df[firstchoosen][k]) + ' '
+                                                pathline += 'M ' + str(int(a[k])) + ', ' + str(minValfirst) + ' L' + \
+                                                            str(int(a[k])) + ', ' + str(df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
                                                 pathline += ' L' + str(int(a[k])) + ', ' + str(df[firstchoosen][k])
@@ -2506,12 +2914,12 @@ def detailedGraph4(radio,firstshape, secondshape, radioval, valx,valxsecond, val
                             if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
                                 if int(secondshape[1]) > int(secondshape[0]):
                                     rangeshape = range(int(secondshape[0]), int(secondshape[1]))
+                                    print('a[0]22222', a[0])
                                     if ':' or '-' in a[0]:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(a[k]) + ', ' + str(minValsecond) + ' L' + str(
-                                                    a[k]) + ', ' + str(
-                                                    df[secondchoosen][k]) + ' '
+                                                pathline2 += 'M ' + str(a[k]) + ', ' + str(minValsecond) + ' L' + \
+                                                             str(a[k]) + ', ' + str(df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
                                                 pathline2 += ' L' + str(a[k]) + ', ' + str(df[secondchoosen][k])
@@ -2521,10 +2929,8 @@ def detailedGraph4(radio,firstshape, secondshape, radioval, valx,valxsecond, val
                                         for k in rangeshape:
 
                                             if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(int(a[k])) + ', ' + str(
-                                                    minValsecond) + ' L' + str(
-                                                    int(a[k])) + ', ' + str(
-                                                    df[secondchoosen][k]) + ' '
+                                                pathline2 += 'M ' + str(int(a[k])) + ', ' + str(minValsecond) + ' L' + str(int(a[k])) + ', ' + \
+                                                             + str(df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
                                                 pathline2 += ' L' + str(int(a[k])) + ', ' + str(df[secondchoosen][k])
@@ -2552,7 +2958,7 @@ def detailedGraph4(radio,firstshape, secondshape, radioval, valx,valxsecond, val
                                 if int(firstshape[1]) > int(firstshape[0]):
                                     pathline = ''
                                     rangeshape = range(int(firstshape[0]), int(firstshape[1]))
-                                    if ':' or '-' in dt[0]:
+                                    if ':' or '-' in a[0]:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
                                                 pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(
@@ -2694,9 +3100,9 @@ def detailedGraph4(radio,firstshape, secondshape, radioval, valx,valxsecond, val
                                     opacity=0.8,
                                     line_color="#8896BF",
                                 )]
-
-                    a = controlShape()
-                    print('aaaaaaa', a)
+                    a = []
+                    if nc >0 :
+                        a = controlShape()
                     fig.update_xaxes(
                                 tickangle=90,
                                 title_text='' if g1 == [] else g1[-1],
@@ -2996,7 +3402,9 @@ def detailedGraph4(radio,firstshape, secondshape, radioval, valx,valxsecond, val
                                     line_color="#8896BF",
                                 )]
 
-                    a = controlShape()
+                    a = []
+                    if nc > 0:
+                        a = controlShape()
                     fig.update_xaxes(
                                 tickangle=90,
                                 title_text='' if g1 == [] else g1[-1],
@@ -3083,11 +3491,15 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
 
                     if len(leftchild) > 2:
                         leftchild.pop(0)
+                    print('left2', leftchild)
                     return (leftchild, leftchild)
                 else:
                     return (no_update, no_update)
             # else : return(no_update,no_update)
     else:return (no_update, no_update)
+
+    # return left
+
 
 @app.callback([Output('leftIntegralFirst', 'value'), Output('leftIntegralSecond', 'value')],
               [Input('pointLeftFirst', 'children'), Input('pointLeftSecond', 'children')],
@@ -3512,8 +3924,11 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
+            if 'Temps' in df.columns :
+                dff1 = dff1.groupby('Temps').mean()
+            print(dff1)
             c = dff1[valuechoosenleft]
-            area1 = abs(trapz(c, dx=1))
+            area1 = abs(trapz((abs(c)), dx=1))
 
             return area1
         elif (st1left == '' and st1right != '') or (st1left != '' and st1right == ''):
@@ -3553,7 +3968,7 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
             dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
             c = dff1[valuechoosenleft]
-            area1 = abs(trapz(c, dx=1))
+            area1 = abs(trapz(abs(c), dx=1))
 
             return area1
         elif (st1left == '' and st1right != '') or (st1left != '' and st1right == ''):
@@ -3594,7 +4009,7 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
                 (df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
                 (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
             f = dff2[valuechoosenright]
-            area2 = abs(trapz(f, dx=1))
+            area2 = abs(trapz(abs(f), dx=1))
             return area2
         elif (st2left == '' and st2right != '') or (st2left != '' and st2right == ''):
             return 'total integration'
@@ -3632,7 +4047,7 @@ def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
                 (df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
                 (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
             f = dff2[valuechoosenright]
-            area2 = abs(trapz(f, dx=1))
+            area2 = abs(trapz(abs(f), dx=1))
             return area2
         elif (st2left == '' and st2right != '') or (st2left != '' and st2right == ''):
             return 'total integration'
