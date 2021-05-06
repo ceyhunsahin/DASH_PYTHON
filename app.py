@@ -479,11 +479,11 @@ def retrieve(retrieve):
         raise PreventUpdate
     return retrieve
 
-@app.callback(Output('tab2DashTable', 'children'),
-              [Input('datatablehidden', 'children')],
-              )
-def retrieve2(retrieve):
-    return retrieve
+# @app.callback(Output('tab2DashTable', 'children'),
+#               [Input('datatablehidden', 'children')],
+#               )
+# def retrieve2(retrieve):
+#     return retrieve
 
 @app.callback(Output('tab4DashTable', 'children'),
               [Input('datatablehidden', 'children')],
@@ -2072,16 +2072,14 @@ def showintegral(show):
 
 
 
-@app.callback([Output('tab2hiddenValuex_axis', 'children'), Output('tab2hiddenValuey_axis', 'children')],
-              [Input('tabDropdownTop', 'value'),
-               Input('tabDropdownDown', 'value')],
+@app.callback([Output('tab2hiddenValuex_axis', 'children'),Output('tab2hiddenValuey_axis', 'children')],
+              [Input('tabDropdownTop', 'value'),Input('tabDropdownDown', 'value')],
               )
-def contractdropdown(x, y):
-    if x == [] or y == []:
+def contractdropdown(x,y):
+    if x == [] or x == None or y == None or y == []:
         raise PreventUpdate
 
-    return x, y
-
+    return x,y
 
 
 @app.callback([Output("tabDropdownTop", "options"), Output("tabDropdownDown", "options")],
@@ -2121,14 +2119,13 @@ def chooseradio(radio) :
     if radio == 'choosevalue' :
         return {'display': 'None'},{'visibility': 'visible'},{'visibility': 'visible'},{'display': 'None'},{'display': 'None'}
     if radio == 'optionlibre' :
-        return {'visibility': 'visible'}, {'visibility': 'visible'},{'display': 'None'},{'display': 'None'},{'display': 'None'}
+        return {'display': 'None'}, {'display': 'None'},{'display': 'None'},{'visibility': 'visible'},{'visibility': 'visible'},
 
 
 
 @app.callback(Output('tab4hiddenValuex_axis', 'children'),
               [Input('tabDropdownTop4', 'value'),
               Input('radiographtab4', 'value')],
-
               )
 def contractdropdown4(x,radio):
     if x == None or radio == None :
@@ -2146,12 +2143,13 @@ def contractdropdown4(x,radio):
                Input('tabDropdownDownTab4', 'value'),
                Input('radiographtab4', 'value')]
               )
-def contractdropdown2(valxsecond,valysecond,radio):
-    if valxsecond == None or valysecond == None or radio == None :
+def contractdropdown2(valxsecond,valysecond, radio):
+    if valxsecond == None or valysecond == None  or radio == None :
         raise PreventUpdate
 
     if radio == 'choosevalue' :
         return valxsecond, valysecond
+
     else : return [],[]
 
 
@@ -2169,10 +2167,11 @@ def dropdownlistcontrolTab4First(retrieve):
      Output('output_s', 'children'),
     [Input('tabDropdownTop4', 'value'),
      Input('tabDropdownTopTab4', 'value'),
+     Input('tabDropdownTop', 'value'),
      Input('radiographtab4', 'value')], )
 
-def container4(val1, val2, radio):
-    if val1 == None and val2 == None or radio == None:
+def container4(val1, val2, val3, radio):
+    if val1 == None and val2 == None and val3 == None or radio == None:
         raise PreventUpdate
     a = ''
     if radio == 'Standart':
@@ -2182,17 +2181,24 @@ def container4(val1, val2, radio):
     if radio == 'choosevalue':
         if val2 != None:
             a = val2
+
+    if radio == 'optionlibre':
+        if val3 != None:
+            a = val3
     return a
+
 
 @app.callback(
       Output('shiftaxisdroptab4', 'options'),
      [Input('tabDropdownTop4', 'value'),
       Input('tabDropdownTopTab4', 'value'),
+      Input('tabDropdownTop', 'value'),
       Input('radiographtab4', 'value')],)
 
-def container5 (val1, val2, radio) :
-    if  val1 == None and val2 == None or radio == None:
+def container5 (val1, val2, val3, radio) :
+    if val1 == None and val2 == None and val3 == None or radio == None:
         raise PreventUpdate
+
     a = []
     if radio == 'Standart':
         if val1 != None :
@@ -2201,6 +2207,11 @@ def container5 (val1, val2, radio) :
     if radio == 'choosevalue':
         if val2 != None :
             a = val2
+
+
+    if radio == 'optionlibre':
+        if val3 != None:
+            a = val3
     return [{'label': i, 'value': i} for i in a]
 
 @app.callback(
@@ -2397,9 +2408,9 @@ def relay7(valradio):
               )
 def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                    slideheight, slidewidth, g1, g2,head, note,nclick,firstchoosen, secondchoosen,nc,
-                   valx2, valy2,axisdrop,shift_x,shift_y, retrieve, firstshape, secondshape,
+                   valx2, valy2, axisdrop,shift_x,shift_y, retrieve, firstshape, secondshape,
                    leftfirstval, leftsecondval, rightfirstval, rightsecondval,):
-    if g1 == None or g2 == None or head == None or note == None or radioval == []  :
+    if g1 == None or g2 == None or head == None or note == None or radioval == []:
         raise PreventUpdate
     print('firstchoosen', firstchoosen)
     if radioval != None :
@@ -2463,9 +2474,7 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
             print('firstshape',firstshape)
             print('secondshape', secondshape)
             print('radioval', radioval)
-            print('valx2', valx2)
-            print('valy2', valy2)
-            if radioval == 'optionlibre' and len(valx2) > 0 and len(valy2) > 0:
+            if radioval == 'optionlibre' and valx2 != None and valy2 != None:
                 lst = []
                 for j in zip(valy2, valx2):
                     lst.append(j)
@@ -2504,8 +2513,11 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                             df[axisdrop] = pd.DataFrame(c)
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
-
-                    fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valxsecond[s], valysecond[s])))
+                    for j in range(len(valy2)):
+                        for k in range(len(valx2)):
+                            a = df[valy2[j]]
+                            b = df[valx2[k]]
+                            fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valy2[j], valx2[k])))
 
                     def controlShape():
                         pathline = ''
@@ -3537,10 +3549,13 @@ def display_hover_data(leftchild, rightchild, firstchoosen):
     [Output('pointLeftFirstTab4', 'children'),
      Output('pointLeftSecondTab4', 'children')],
     [Input('graph4', 'clickData'),
+     Input('radiographtab4hidden', 'children'),
      Input('firstChoosenValueTab4', 'value'),
      Input('shiftaxisdroptab4hidden', 'children'),
      Input('tab4hiddenValuey_axissecond', 'children'),
      Input('tab4hiddenValuex_axissecond', 'children'),
+     Input('tab2hiddenValuey_axis', 'children'),
+     Input('tab2hiddenValuex_axis', 'children'),
      ], # describe variable of shift
     [
      State('pointLeftFirstTab4', 'children'),
@@ -3550,7 +3565,7 @@ def display_hover_data(leftchild, rightchild, firstchoosen):
      State('output_s', 'children') # it takes values of tabdropdowntop and topdropdowntoptab4
     ]
 )
-def valintTab4(clickData4, firstchoosen, axisdrop, valysecond,valxsecond,  leftchild, rightchild, retrieve,shift_x, container):
+def valintTab4(clickData4, radioval, firstchoosen, axisdrop, valysecond,valxsecond, valy,valx, leftchild, rightchild, retrieve,shift_x, container):
     if  clickData4 == None or clickData4 == [] or firstchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
     spaceList1 = []
@@ -3569,100 +3584,130 @@ def valintTab4(clickData4, firstchoosen, axisdrop, valysecond,valxsecond,  leftc
         for k in zippedval:
             if k[1] == firstchoosen :
                 if k[0] == curvenumber:
-                    if firstchoosen[-1].isdigit() == 1 :
-                        if valxsecond != []:
+                    if radioval == 'choosevalue':
+                        if firstchoosen[-1].isdigit() == 1 :
+                            if valxsecond != []:
+                                t = valxsecond.index(firstchoosen)
+                                m = valysecond[t]
+                                x_val = clickData4['points'][0]['x']
+                                print("xvalllllllll", x_val)
+                                dff = df[df[m] == x_val]
+                                a = []
+                                a.append(dff[firstchoosen].index)
+                                for i in range(len(a)):
+                                    for j in a:
+                                        leftchild.append(j[i])
+
+                                if len(leftchild) > 2:
+                                    leftchild.pop(0)
+                                return (leftchild, leftchild)
+                            else :
+                                m = firstchoosen[-1:]
+                                m = 'T' + m
+                                x_val = clickData4['points'][0]['x']
+                                print("xvalllllllll", x_val)
+                                dff = df[df[m] == x_val]
+                                a = []
+                                a.append(dff[firstchoosen].index)
+                                for i in range(len(a)):
+                                    for j in a:
+                                        leftchild.append(j[i])
+
+                                if len(leftchild) > 2:
+                                    leftchild.pop(0)
+                                return (leftchild, leftchild)
+                        elif firstchoosen[-2].isdigit() == 1 :
+                            if valxsecond != []:
+                                t = valxsecond.index(firstchoosen)
+                                m = valysecond[t]
+                                x_val = clickData4['points'][0]['x']
+                                print("xvalllllllll", x_val)
+                                dff = df[df[m] == x_val]
+                                a = []
+                                a.append(dff[firstchoosen].index)
+                                for i in range(len(a)):
+                                    for j in a:
+                                        leftchild.append(j[i])
+
+                                if len(leftchild) > 2:
+                                    leftchild.pop(0)
+                                return (leftchild, leftchild)
+                            else :
+                                m = firstchoosen[-2:]
+                                m = 'T' + m
+                                x_val = clickData4['points'][0]['x']
+                                dff = df[df[m] == x_val]
+                                a = []
+                                a.append(dff[firstchoosen].index)
+                                for i in range(len(a)):
+                                    for j in a:
+                                        leftchild.append(j[i])
+                                if len(leftchild) > 2:
+                                    leftchild.pop(0)
+                                return (leftchild, leftchild)
+                        else:
                             t = valxsecond.index(firstchoosen)
                             m = valysecond[t]
                             x_val = clickData4['points'][0]['x']
-                            print("xvalllllllll", x_val)
+                            print('x_val left', x_val)
                             dff = df[df[m] == x_val]
+                            print('dffffffleft', dff)
                             a = []
                             a.append(dff[firstchoosen].index)
+                            print('aaaaaaaleft', a)
                             for i in range(len(a)):
                                 for j in a:
                                     leftchild.append(j[i])
+                                    print("leftchild1left", leftchild)
 
                             if len(leftchild) > 2:
                                 leftchild.pop(0)
-                            return (leftchild, leftchild)
-                        else :
-                            m = firstchoosen[-1:]
-                            m = 'T' + m
-                            x_val = clickData4['points'][0]['x']
-                            print("xvalllllllll", x_val)
-                            dff = df[df[m] == x_val]
-                            a = []
-                            a.append(dff[firstchoosen].index)
-                            for i in range(len(a)):
-                                for j in a:
-                                    leftchild.append(j[i])
-
-                            if len(leftchild) > 2:
-                                leftchild.pop(0)
-                            return (leftchild, leftchild)
-                    elif firstchoosen[-2].isdigit() == 1 :
-                        if valxsecond != []:
-                            t = valxsecond.index(firstchoosen)
-                            m = valysecond[t]
-                            x_val = clickData4['points'][0]['x']
-                            print("xvalllllllll", x_val)
-                            dff = df[df[m] == x_val]
-                            a = []
-                            a.append(dff[firstchoosen].index)
-                            for i in range(len(a)):
-                                for j in a:
-                                    leftchild.append(j[i])
-
-                            if len(leftchild) > 2:
-                                leftchild.pop(0)
-                            return (leftchild, leftchild)
-                        else :
-                            m = firstchoosen[-2:]
-                            m = 'T' + m
-                            x_val = clickData4['points'][0]['x']
-                            dff = df[df[m] == x_val]
-                            a = []
-                            a.append(dff[firstchoosen].index)
-                            for i in range(len(a)):
-                                for j in a:
-                                    leftchild.append(j[i])
-                            if len(leftchild) > 2:
-                                leftchild.pop(0)
+                            print("leftchild2left", leftchild)
                             return (leftchild, leftchild)
 
-                    else:
-                        t = valxsecond.index(firstchoosen)
-                        m = valysecond[t]
+                    elif radioval == 'optionlibre':
+                        print('valxxsxhshxshxsh, ', valx)
+                        print('df', df)
+                        t = valx.index(firstchoosen)
+                        m = valy[t]
                         x_val = clickData4['points'][0]['x']
-                        print("xvalllllllllson", x_val)
+                        print('x_val left', x_val)
                         dff = df[df[m] == x_val]
+                        print('df[m]', df[m])
+                        print('dffffffleft', dff)
                         a = []
-                        a.append(dff[firstchoosen].index)
+                        a.append(dff[valx].index)
+                        print('aaaaaaaleft', a)
                         for i in range(len(a)):
                             for j in a:
                                 leftchild.append(j[i])
-                                print("leftchild1", leftchild)
+                                print("leftchild1dsdsd", leftchild)
 
                         if len(leftchild) > 2:
                             leftchild.pop(0)
-                        print("leftchild2", leftchild)
+                        print("leftchild2sdsds", leftchild)
                         return (leftchild, leftchild)
+
+
+                    else:
+                        return (no_update, no_update)
                 else:
                     return (no_update, no_update)
-            # else:
-            #     return (no_update, no_update)
 
     else:
         return (no_update, no_update)
 
 
 
-@app.callback([Output('leftIntegralFirstTab4', 'value'), Output('leftIntegralSecondTab4', 'value')],
-              [Input('pointLeftFirstTab4', 'children'), Input('pointLeftSecondTab4', 'children'),
-              Input('firstChoosenValueTab4', 'value')],)
+@app.callback([Output('leftIntegralFirstTab4', 'value'),
+               Output('leftIntegralSecondTab4', 'value')],
+              [Input('pointLeftFirstTab4', 'children'),
+               Input('pointLeftSecondTab4', 'children'),
+               Input('firstChoosenValueTab4', 'value'),],)
 def display_hover_dataTab4(leftchild1, rightchild, firstchoosen):
     if leftchild1 == None or firstchoosen==None or rightchild == None or leftchild1 == [] or rightchild == []:
         raise PreventUpdate
+
 
     if firstchoosen != '' and len(leftchild1) == 2:
         for i in range(len(leftchild1)):
@@ -3765,10 +3810,13 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
     [Output('pointRightFirstTab4', 'children'),
      Output('pointRightSecondTab4', 'children')],
     [Input('graph4', 'clickData'),
+     Input('radiographtab4hidden', 'children'),
      Input('secondChoosenValueTab4', 'value'),
      Input('shiftaxisdroptab4hidden', 'children'),
      Input('tab4hiddenValuey_axissecond', 'children'),
      Input('tab4hiddenValuex_axissecond', 'children'),
+     Input('tab2hiddenValuey_axis', 'children'),
+     Input('tab2hiddenValuex_axis', 'children'),
      ],
     [
      State('pointRightFirstTab4', 'children'),
@@ -3779,8 +3827,8 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
 )
 
 
-def valintTab4_2(clickData, secondchoosen, axisdrop,valysecond, valxsecond, leftchild, rightchild, retrieve,container,shift_x):
-    if clickData == None or container is [] or container is None or secondchoosen == None or retrieve == None or retrieve == []:
+def valintTab4_2(clickData, radioval, secondchoosen, axisdrop,valysecond, valxsecond, valy, valx, leftchild, rightchild, retrieve,container,shift_x):
+    if clickData == None or container is [] or container is None or secondchoosen == None or secondchoosen == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
 
     spaceList1 = []
@@ -3798,8 +3846,62 @@ def valintTab4_2(clickData, secondchoosen, axisdrop,valysecond, valxsecond, left
         for k in zippedval:
             if k[1] == secondchoosen:
                 if k[0] == curvenumber:
-                    if secondchoosen[-1].isdigit() == 1:
-                        if valxsecond != []:
+                    if radioval == "choosevalue":
+                        if secondchoosen[-1].isdigit() == 1:
+                            if valxsecond != []:
+                                t = valxsecond.index(secondchoosen)
+                                m = valysecond[t]
+                                x_val = clickData['points'][0]['x']
+                                dff = df[df[m] == x_val]
+                                a = []
+                                a.append(dff[secondchoosen].index)
+                                for i in range(len(a)):
+                                    for j in a:
+                                        leftchild.append(j[i])
+                                if len(leftchild) > 2:
+                                    leftchild.pop(0)
+                                return (leftchild, leftchild)
+                            else:
+                                m = secondchoosen[-1:]
+                                m = 'T' + m
+                                x_val = clickData['points'][0]['x']
+                                dff = df[df[m] == x_val]
+                                a = []
+                                a.append(dff[secondchoosen].index)
+                                for i in range(len(a)):
+                                    for j in a:
+                                        leftchild.append(j[i])
+                                if len(leftchild) > 2:
+                                    leftchild.pop(0)
+                                return (leftchild, leftchild)
+                        elif secondchoosen[-2].isdigit() == 1:
+                            if valxsecond != []:
+                                t = valxsecond.index(secondchoosen)
+                                m = valysecond[t]
+                                x_val = clickData['points'][0]['x']
+                                dff = df[df[m] == x_val]
+                                a = []
+                                a.append(dff[secondchoosen].index)
+                                for i in range(len(a)):
+                                    for j in a:
+                                        leftchild.append(j[i])
+                                if len(leftchild) > 2:
+                                    leftchild.pop(0)
+                                return (leftchild, leftchild)
+                            else:
+                                m = secondchoosen[-2:]
+                                m = 'T' + m
+                                x_val = clickData['points'][0]['x']
+                                dff = df[df[m] == x_val]
+                                a = []
+                                a.append(dff[secondchoosen].index)
+                                for i in range(len(a)):
+                                    for j in a:
+                                        leftchild.append(j[i])
+                                if len(leftchild) > 2:
+                                    leftchild.pop(0)
+                                return (leftchild, leftchild)
+                        else:
                             t = valxsecond.index(secondchoosen)
                             m = valysecond[t]
                             x_val = clickData['points'][0]['x']
@@ -3809,56 +3911,20 @@ def valintTab4_2(clickData, secondchoosen, axisdrop,valysecond, valxsecond, left
                             for i in range(len(a)):
                                 for j in a:
                                     leftchild.append(j[i])
+
                             if len(leftchild) > 2:
                                 leftchild.pop(0)
                             return (leftchild, leftchild)
-                        else:
-                            m = secondchoosen[-1:]
-                            m = 'T' + m
-                            x_val = clickData['points'][0]['x']
-                            dff = df[df[m] == x_val]
-                            a = []
-                            a.append(dff[secondchoosen].index)
-                            for i in range(len(a)):
-                                for j in a:
-                                    leftchild.append(j[i])
-                            if len(leftchild) > 2:
-                                leftchild.pop(0)
-                            return (leftchild, leftchild)
-                    elif secondchoosen[-2].isdigit() == 1:
-                        if valxsecond != []:
-                            t = valxsecond.index(secondchoosen)
-                            m = valysecond[t]
-                            x_val = clickData['points'][0]['x']
-                            dff = df[df[m] == x_val]
-                            a = []
-                            a.append(dff[secondchoosen].index)
-                            for i in range(len(a)):
-                                for j in a:
-                                    leftchild.append(j[i])
-                            if len(leftchild) > 2:
-                                leftchild.pop(0)
-                            return (leftchild, leftchild)
-                        else:
-                            m = secondchoosen[-2:]
-                            m = 'T' + m
-                            x_val = clickData['points'][0]['x']
-                            dff = df[df[m] == x_val]
-                            a = []
-                            a.append(dff[secondchoosen].index)
-                            for i in range(len(a)):
-                                for j in a:
-                                    leftchild.append(j[i])
-                            if len(leftchild) > 2:
-                                leftchild.pop(0)
-                            return (leftchild, leftchild)
-                    else:
-                        t = valxsecond.index(secondchoosen)
-                        m = valysecond[t]
+                    elif radioval == 'optionlibre':
+                        print('valxxxxxx', valx)
+                        t = valx.index(secondchoosen)
+                        m = valy[0]
+                        print('mmmmmmmmmmmt', m)
                         x_val = clickData['points'][0]['x']
                         dff = df[df[m] == x_val]
                         a = []
                         a.append(dff[secondchoosen].index)
+                        print('aaaaaaaa', a)
                         for i in range(len(a)):
                             for j in a:
                                 leftchild.append(j[i])
@@ -3867,6 +3933,8 @@ def valintTab4_2(clickData, secondchoosen, axisdrop,valysecond, valxsecond, left
                             leftchild.pop(0)
                         return (leftchild, leftchild)
 
+                    else:
+                        return (no_update, no_update)
                 else:
                     return (no_update, no_update)
             # else:
