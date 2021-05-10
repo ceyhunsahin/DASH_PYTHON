@@ -1298,6 +1298,7 @@ def res2(val, radiograph,  sliderheight, sliderwidth,
 
         for i_val in range(len(val)):
             y_axis = df[val[i_val]]
+            print('y_axis>============>', y_axis)
             if 'date' not in df.columns:
                 x_axis = df[baseval]
             else : x_axis = df['date']
@@ -2319,60 +2320,6 @@ def detailedGraph4(addtextclick, textarea, add, g1, g2, head, note):
         return (no_update, no_update, no_update, no_update)
 
 
-# @app.callback(Output('graph2', 'figure'),
-#               [Input('radiograph2', 'value'),
-#                Input('tab2hiddenValuex_axis', 'children'),
-#                Input('tab2hiddenValuey_axis', 'children'),
-#                Input('sliderHeight', 'value'),
-#                Input('sliderWidth', 'value'),
-#                Input('hiddenTextxaxis', 'children'),
-#                Input('hiddenTextyaxis', 'children'),
-#                Input('hiddenTextHeader', 'children'),
-#                Input('hiddenTextNote', 'children')],
-#               [State('retrieve', 'children')]
-#               )
-# def detailedGraph2(radio, valx, valy, slideheight, slidewidth, g1, g2, head, note, retrieve):
-#     if valx == [] or valy == [] or valx == None or valy == None or g1 == None or g2 == None or head == None or note == None:
-#         raise PreventUpdate
-#     if len(retrieve) > 0:
-#         df = pd.read_excel('appending.xlsx')
-#         fig = go.Figure()
-#
-#         for j in range(len(valy)):
-#             for k in range(len(valx)):
-#                 a = df[valy[j]]
-#                 b = df[valx[k]]
-#                 fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valy[j], valx[k])))
-#
-#                 fig.update_xaxes(
-#                     tickangle=90,
-#                     title_text='' if g1 == [] else g1[-1],
-#                     title_font={"size": 20},
-#                     title_standoff=25),
-#
-#                 fig.update_yaxes(
-#                     title_text='' if g2 == [] else g2[-1],
-#                     title_standoff=25),
-#                 fig.update_layout(
-#                     title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx[k], valy[j]),
-#                     autosize=False,
-#                     width=slidewidth,
-#                     height=slideheight,
-#                     margin=dict(
-#                         l=50,
-#                         r=50,
-#                         b=50,
-#                         t=50,
-#                         pad=4
-#                     ),
-#                     # hovermode='x unified',
-#                     uirevision=valy[j], ),
-#                 fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-#                                    xref="paper", yref="paper",
-#                                    x=0, y=0.7, showarrow=False)
-#
-#         return fig
-
 
 @app.callback(Output('shiftaxistab4', 'style'),
               [Input('shiftaxisdroptab4','value')])
@@ -2569,27 +2516,21 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     if ':' or '-' in df[lst[i][0]][0]:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
-                                                    minValfirst) + ' L' + str(
-                                                    df[lst[i][0]][k]) + ', ' + str(
-                                                    df[firstchoosen][k]) + ' '
+                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst) + ' L' + \
+                                                            str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
-                                                    df[firstchoosen][k])
+                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k])
                                         pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst)
                                         pathline += ' Z'
                                     else:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                    minValfirst) + ' L' + str(
-                                                    int(df[lst[i][0]][k])) + ', ' + str(
-                                                    df[firstchoosen][k]) + ' '
+                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValfirst) + ' L' +\
+                                                            str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                    df[firstchoosen][k])
+                                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k])
                                         pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValfirst)
                                         pathline += ' Z'
 
@@ -2599,24 +2540,19 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     if ':' or '-' in df[lst[i][0]][0]:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
-                                                    minValsecond) + ' L' + str(
-                                                    df[lst[i][0]][k]) + ', ' + str(
-                                                    df[secondchoosen][k]) + ' '
+                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond) + ' L' +\
+                                                             str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
-                                                    df[secondchoosen][k])
+                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
                                         pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
                                         pathline2 += ' Z'
                                     else:
                                         for k in rangeshape:
 
                                             if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                    minValsecond) + ' L' + str(
-                                                    int(df[lst[i][0]][k])) + ', ' + str(
-                                                    df[secondchoosen][k]) + ' '
+                                                pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond) + ' L' +\
+                                                             str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
                                                 pathline2 += ' L' + str(int(a[k])) + ', ' + str(df[secondchoosen][k])
@@ -2647,14 +2583,11 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     if ':' or '-' in df[lst[i][0]][0]:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
-                                                    minValfirst) + ' L' + str(
-                                                    df[lst[i][0]][k]) + ', ' + str(
-                                                    df[firstchoosen][k]) + ' '
+                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst) + ' L' +\
+                                                            str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
-                                                    df[firstchoosen][k])
+                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k])
                                         pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst)
                                         pathline += ' Z'
                                     else:
@@ -2699,14 +2632,11 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                         for k in rangeshape:
 
                                             if k == rangeshape[0]:
-                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                    minValsecond) + ' L' + str(
-                                                    int(df[lst[i][0]][k])) + ', ' + str(
-                                                    df[firstchoosen][k]) + ' '
+                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond) + ' L' + \
+                                                            str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                    df[firstchoosen][k])
+                                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k])
                                         pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
                                         pathline += ' Z'
 
@@ -2726,28 +2656,22 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     if ':' or '-' in df[lst[i][0]][0]:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
-                                                    minValsecond) + ' L' + str(
-                                                    df[lst[i][0]][k]) + ', ' + str(
-                                                    df[secondchoosen][k]) + ' '
+                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond) + ' L' +\
+                                                             str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
-                                                    df[secondchoosen][k])
+                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
                                         pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
                                         pathline2 += ' Z'
                                     else:
                                         for k in rangeshape:
 
                                             if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                    minValsecond) + ' L' + str(
-                                                    int(df[lst[i][0]][k])) + ', ' + str(
-                                                    df[secondchoosen][k]) + ' '
+                                                pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond) + ' L' +\
+                                                             str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                    df[secondchoosen][k])
+                                                pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k])
                                         pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
                                         pathline2 += ' Z'
 
@@ -2778,14 +2702,11 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     for k in rangeshape:
 
                                         if k == rangeshape[0]:
-                                            pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                minValsecond) + ' L' + str(
-                                                int(df[lst[i][0]][k])) + ', ' + str(
-                                                df[secondchoosen][k]) + ' '
+                                            pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond) + ' L' + \
+                                                         str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k]) + ' '
 
                                         elif k != rangeshape[0] and k != rangeshape[-1]:
-                                            pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                df[secondchoosen][k])
+                                            pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k])
                                     pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
                                     pathline2 += ' Z'
 
@@ -2797,7 +2718,7 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     opacity=0.8,
                                     line_color="#8896BF",
                                 )]
-
+                        else: return no_update
                     a = []
                     if nc > 0:
                         a = controlShape()
@@ -3187,6 +3108,7 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                 lst = []
                 for j in zip(valysecond,valxsecond):
                     lst.append(j)
+                print('lst',lst)
                 s = -1
                 m = ''
                 for i in range(len(lst)):
@@ -3230,34 +3152,41 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                         pathline2 = ''
                         minValfirst = 0
                         minValsecond = 0
-                        if firstchoosen != None and secondchoosen != None:
+                        val = 0
+                        if firstchoosen != None and secondchoosen != None :
                             if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:
                                 if int(firstshape[1]) > int(firstshape[0]):
                                     pathline = ''
                                     rangeshape = range(int(firstshape[0]), int(firstshape[1]))
+                                    print('df[lst[i][0]][0]', df[lst[i][0]][0])
                                     if ':' or '-' in df[lst[i][0]][0]:
+                                        print('burda miyim1')
                                         for k in rangeshape:
-                                            if k == rangeshape[0]:
-                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst) + ' L' + str(
-                                                    df[lst[i][0]][k]) + ', ' + str(
-                                                    df[firstchoosen][k]) + ' '
+                                            if k == rangeshape[0] :
+                                                if lst[i][1] == firstchoosen:
+                                                    val = i
+                                                print('df[lst[i][0]][k]',df[lst[i][0]][k])
+                                                pathline += 'M ' + str(int(df[lst[val][0]][k])) + ', ' + str(minValsecond) + ' L' + \
+                                                            str(int(df[lst[val][0]][k])) + ', ' + str(df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k])
-                                        pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst)
+                                                if lst[i][1] == firstchoosen:
+                                                    val = i
+                                                pathline += ' L' + str(int(df[lst[val][0]][k])) + ', ' + str(df[firstchoosen][k])
+                                        pathline += ' L' + str(int(df[lst[val][0]][k])) + ', ' + str(minValsecond)
                                         pathline += ' Z'
                                     else:
+                                        print('yoksa burda miyim')
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                    minValfirst) + ' L' + str(
-                                                    int(df[lst[i][0]][k])) + ', ' + str(
-                                                    df[firstchoosen][k]) + ' '
+                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValfirst) + ' L' + \
+                                                            str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
                                                 pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k])
                                         pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValfirst)
                                         pathline += ' Z'
+                                    print('pathline ==========>', pathline)
 
                             if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
                                 if int(secondshape[1]) > int(secondshape[0]):
@@ -3265,28 +3194,34 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     if ':' or '-' in df[lst[i][0]][0]:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond) + ' L' + str(
-                                                    df[lst[i][0]][k]) + ', ' + str(
-                                                    df[secondchoosen][k]) + ' '
+                                                if lst[i][1] == secondchoosen:
+                                                    val = i
+                                                print('df[lst[i][0]][k] 2. kisim', df[lst[i][0]])
+                                                pathline2 += 'M ' + str(df[lst[val][0]][k]) + ', ' + str(minValsecond) + ' L' + \
+                                                             str(df[lst[val][0]][k]) + ', ' + str(df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
-                                        pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
+                                                if lst[i][1] ==  secondchoosen:
+                                                    val = i
+                                                pathline2 += ' L' + str(df[lst[val][0]][k]) + ', ' + str(df[secondchoosen][k])
+                                        pathline2 += ' L' + str(df[lst[val][0]][k]) + ', ' + str(minValsecond)
                                         pathline2 += ' Z'
                                     else:
                                         for k in rangeshape:
 
                                             if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                    minValsecond) + ' L' + str(
-                                                    int(df[lst[i][0]][k])) + ', ' + str(
-                                                    df[secondchoosen][k]) + ' '
+                                                if lst[i][1] ==  secondchoosen:
+                                                    val = i
+                                                pathline2 += 'M ' + str(int(df[lst[val][0]][k])) + ', ' + str(minValsecond) + ' L' + \
+                                                             str(int(df[lst[val][0]][k])) + ', ' + str(df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(int(a[k])) + ', ' + str(df[secondchoosen][k])
-                                        pathline2 += ' L' + str(int(a[k])) + ', ' + str(minValsecond)
+                                                if lst[i][1] ==  secondchoosen:
+                                                    val = i
+                                                pathline2 += ' L' + str(int(df[lst[val][0]][k])) + ', ' + str(df[secondchoosen][k])
+                                        pathline2 += ' L' + str(int(df[lst[val][0]][k])) + ', ' + str(minValsecond)
                                         pathline2 += ' Z'
-
+                                    print('pathline222 ==========>', pathline2)
                             return [dict(
                                 type="path",
                                 path=pathline,
@@ -3450,7 +3385,6 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     opacity=0.8,
                                     line_color="#8896BF",
                                 )]
-
                     a = []
                     if nc > 0:
                         a = controlShape()
@@ -3716,6 +3650,17 @@ def valintTab4(clickData4, radioval, firstchoosen, axisdrop, valysecond,valxseco
                             dff = df[df[m] == x_val]
                             print('df[m]', df[m])
                             print('dffffffleft', dff)
+                            # if 'date' in df.columns:
+                            #     dff = df[df['date'] == x_val]
+                            # else:
+                            #     a = ''
+                            #     for v in df.columns:
+                            #         if 'Temps' in v:
+                            #             a += v
+                            #             dff = df[df[v] == x_val]
+                            #             if shift_x != 0:
+                            #                 x_val -= shift_x
+                            #                 dff = df[df[v] == x_val]
                             a = []
                             a.append(dff[valx].index)
                             print('aaaaaaaleft', a)
@@ -4050,9 +3995,8 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
-            if 'Temps' in df.columns :
-                dff1 = dff1.groupby('Temps').mean()
-            print(dff1)
+            # if 'Temps' in df.columns :
+            #     dff1 = dff1.groupby('Temps').mean()
             c = dff1[valuechoosenleft]
             area1 = abs(trapz((abs(c)), dx=1))
 
@@ -4093,6 +4037,8 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
+            # if 'Temps' in df.columns :
+            #     dff1 = dff1.groupby('Temps').mean()
             c = dff1[valuechoosenleft]
             area1 = abs(trapz(abs(c), dx=1))
 
@@ -4131,9 +4077,10 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
             df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
-            dff2 = df[
-                (df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
-                (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
+            dff2 = df[(df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
+                      (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
+            # if 'Temps' in df.columns :
+            #     dff2 = dff2.groupby('Temps').mean()
             f = dff2[valuechoosenright]
             area2 = abs(trapz(abs(f), dx=1))
             return area2
@@ -4172,6 +4119,8 @@ def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
             dff2 = df[
                 (df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
                 (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
+            # if 'Temps' in df.columns :
+            #     dff2 = dff2.groupby('Temps').mean()
             f = dff2[valuechoosenright]
             area2 = abs(trapz(abs(f), dx=1))
             return area2
