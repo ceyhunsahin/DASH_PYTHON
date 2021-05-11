@@ -425,6 +425,14 @@ background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,
         margin-bottom: 2rem;
 
     }
+.ipSide {
+        display : flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+        width : 90%;
+    }
 .stockSelectorClass2{
         margin-top : 15px;
         color: black;
