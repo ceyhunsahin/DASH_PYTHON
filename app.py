@@ -783,28 +783,9 @@ def render_content(tab):
         ])
     if tab == 'tab-3':
         return html.Div([
-            html.Div(id='tab3Data', children = [html.Div([dbc.Button("Database Activate", id="activatedb",  n_clicks=0,
-                                                           color="success", size = 'lg',
-                                                           ),
-                                                dbc.Input(id='db_Ip',
-                                                          type="text",
-                                                          debounce=True,
-                                                          min=-10000, max=10000, step=1,
-                                                          bs_size="mr",
-                                                          style={'width': '11rem', "marginTop": "1.5rem"},
-                                                          autoFocus=True,
-                                                          placeholder="Enter your IP number ..."),
-                                                dbc.Input(id='db_name',
-                                                          type="text",
-                                                          debounce=True,
-                                                          min=-10000, max=10000, step=1,
-                                                          bs_size="mr",
-                                                          style={'width': '11rem', "marginTop": "1.5rem"},
-                                                          autoFocus=True,
-                                                          placeholder="Enter your DB name...")
-                                                          ],className="ipSide"),
-                                                html.Div(id = 'Dbdesign')])
-        ])
+            html.Div(id='tab3Data', children = []),
+            html.Div(id = 'Dbdesign')])
+
     if tab == 'tab-4':
         return html.Div([
             html.Div(id='tab4Data')
@@ -960,8 +941,10 @@ def LoadingDataTab1(on, dropdownhidden,tab):
                                                     clearable=True,
                                                     placeholder='Choose Value...',
                                                     ),
-                                       dbc.Button("Check", id="valuechange", n_clicks=0,
+                                       dbc.Button("See Surface", id="valuechange", n_clicks=0,
                                                   color="warning", style = {'height':'2.5em', 'margin' : '1.8rem'} ),
+                                       dbc.Button("Clean Surface", id="cleanshape", n_clicks=0,
+                                                  color="danger", style={'height': '2.5em', 'margin': '1.8rem'}),
                                        html.Div(id = 'shiftaxis',
                                                  children = [
                                             dbc.Input(id='shift_x_axis',
@@ -1256,7 +1239,8 @@ def shiftingaxes(val):
                Input('inputRightY_axishidden','children'),
                Input('inputRightX_axishidden','children'),
                Input('tab1sendhidden','children'),
-               Input('valuechange', 'n_clicks')
+               Input('valuechange', 'n_clicks'),
+               Input('cleanshape', 'n_clicks'),
 
                ],
               [State('shiftaxisdrophidden', 'children'),
@@ -1274,7 +1258,7 @@ def shiftingaxes(val):
               )
 def res2(val, radiograph,  sliderheight, sliderwidth,
          minValfirst,minValsecond, firstchoosen, secondchoosen,  rightsidedrop, right_y_axis,right_x_axis,
-         nclick,nc, axis,shift_x, shift_y, differance, retrieve, leftfirstval, leftsecondval,
+         nclick,nc, cleanclick, axis,shift_x, shift_y, differance, retrieve, leftfirstval, leftsecondval,
          rightfirstval, rightsecondval,firstshape, secondshape,):
     if retrieve == None or retrieve == [] :
         raise PreventUpdate
@@ -1629,7 +1613,7 @@ def res2(val, radiograph,  sliderheight, sliderwidth,
                 autosize=False,
                 width=sliderwidth,
                 height=sliderheight,
-                shapes=a,
+                shapes=a if nc > cleanclick else [],
                 margin=dict(
                     l=50,
                     r=50,
@@ -1638,8 +1622,6 @@ def res2(val, radiograph,  sliderheight, sliderwidth,
                     pad=4
                 ),
                 paper_bgcolor="LightSteelBlue",
-
-
             )
 
             if len(firstshape) == 2 and len(secondshape) == 2:
@@ -2005,9 +1987,11 @@ def LoadingDataTab4(on,tab):
                                    clearable=True,
                                    placeholder='Choose Value...',
                                    ),
-                                   dbc.Button("Check", id="valuechangetab4", n_clicks=0,
+                                   dbc.Button("See Surface", id="valuechangetab4", n_clicks=0,
                                    color="warning",
                                    style={'height': '2.5em', 'margin': '1.8rem'}),
+                                   dbc.Button("Clean Surface", id="cleanshapetab4", n_clicks=0,
+                                                color="danger", style={'height': '2.5em', 'margin': '1.8rem'}),
                       html.Div(id='shiftaxistab4',
                                children=[
                                    dbc.Input(id='shift_x_axistab4',
@@ -2367,6 +2351,7 @@ def relay7(valradio):
                Input('valuechangetab4', 'n_clicks'),
                Input('tab2hiddenValuex_axis', 'children'),
                Input('tab2hiddenValuey_axis', 'children'),
+               Input('cleanshapetab4', 'n_clicks'),
                ],
               [State('shiftaxisdroptab4hidden', 'children'),
                State('shift_x_axistab4hidden', 'children'),
@@ -2382,7 +2367,7 @@ def relay7(valradio):
               )
 def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                    slideheight, slidewidth, g1, g2,head, note,nclick,firstchoosen, secondchoosen,nc,
-                   valx2, valy2, axisdrop,shift_x,shift_y, retrieve, firstshape, secondshape,
+                   valx2, valy2, cleanclick, axisdrop,shift_x,shift_y, retrieve, firstshape, secondshape,
                    leftfirstval, leftsecondval, rightfirstval, rightsecondval,):
     if g1 == None or g2 == None or head == None or note == None or radioval == []:
         raise PreventUpdate
@@ -2393,6 +2378,228 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
             df.dropna(axis = 0, inplace = True)
             fig = go.Figure()
             print('firstshape ne olmali', firstshape)
+
+            def controlShape():
+                pathline = ''
+                pathline2 = ''
+                minValfirst = 0
+                minValsecond = 0
+                if firstchoosen != None and secondchoosen != None:
+                    if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:
+                        if int(firstshape[1]) > int(firstshape[0]):
+                            pathline = ''
+                            rangeshape = range(int(firstshape[0]), int(firstshape[1]))
+                            if ':' or '-' in df[lst[i][0]][0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst) + ' L' + \
+                                                    str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k])
+                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst)
+                                pathline += ' Z'
+                            else:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValfirst) + ' L' + \
+                                                    str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k])
+                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValfirst)
+                                pathline += ' Z'
+
+                    if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
+                        if int(secondshape[1]) > int(secondshape[0]):
+                            rangeshape = range(int(secondshape[0]), int(secondshape[1]))
+                            if ':' or '-' in df[lst[i][0]][0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond) + ' L' + \
+                                                     str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
+                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
+                                pathline2 += ' Z'
+                            else:
+                                for k in rangeshape:
+
+                                    if k == rangeshape[0]:
+                                        pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                            minValsecond) + ' L' + \
+                                                     str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline2 += ' L' + str(int(a[k])) + ', ' + str(df[secondchoosen][k])
+                                pathline2 += ' L' + str(int(a[k])) + ', ' + str(minValsecond)
+                                pathline2 += ' Z'
+
+                    return [dict(
+                        type="path",
+                        path=pathline,
+                        layer='below',
+                        fillcolor="#5083C7",
+                        opacity=0.8,
+                        line_color="#8896BF",
+                    ), dict(
+                        type="path",
+                        path=pathline2,
+                        layer='below',
+                        fillcolor="#B0384A",
+                        opacity=0.8,
+                        line_color="#B36873",
+                    )]
+
+                if firstchoosen != None and secondchoosen == None:
+                    if len(firstshape) == 2:
+                        if int(firstshape[1]) > int(firstshape[0]):
+                            pathline = ''
+                            rangeshape = range(int(firstshape[0]), int(firstshape[1]))
+                            if ':' or '-' in df[lst[i][0]][0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst) + ' L' + \
+                                                    str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k])
+                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst)
+                                pathline += ' Z'
+                            else:
+                                for k in rangeshape:
+
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                            minValfirst) + ' L' + str(
+                                            int(df[lst[i][0]][k])) + ', ' + str(
+                                            df[firstchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(int(a[k])) + ', ' + str(df[firstchoosen][k])
+                                pathline += ' L' + str(int(a[k])) + ', ' + str(minValfirst)
+                                pathline += ' Z'
+
+                            return [dict(
+                                type="path",
+                                path=pathline,
+                                layer='below',
+                                fillcolor="#5083C7",
+                                opacity=0.8,
+                                line_color="#8896BF",
+                            )]
+
+                        if int(firstshape[0]) > int(firstshape[1]):
+                            rangeshape = range(int(firstshape[1]), int(firstshape[0]))
+                            if ':' or '-' in df[lst[i][0]][0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                            minValsecond) + ' L' + str(
+                                            df[lst[i][0]][k]) + ', ' + str(
+                                            df[firstchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
+                                            df[firstchoosen][k])
+                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
+                                pathline += ' Z'
+                            else:
+                                for k in rangeshape:
+
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                            minValsecond) + ' L' + \
+                                                    str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k])
+                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
+                                pathline += ' Z'
+
+                            return [dict(
+                                type="path",
+                                path=pathline,
+                                layer='below',
+                                fillcolor="#5083C7",
+                                opacity=0.8,
+                                line_color="#8896BF",
+                            )]
+
+                if secondchoosen != None and firstchoosen == None:
+                    if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
+                        if int(secondshape[1]) > int(secondshape[0]):
+                            rangeshape = range(int(secondshape[0]), int(secondshape[1]))
+                            if ':' or '-' in df[lst[i][0]][0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond) + ' L' + \
+                                                     str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
+                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
+                                pathline2 += ' Z'
+                            else:
+                                for k in rangeshape:
+
+                                    if k == rangeshape[0]:
+                                        pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                            minValsecond) + ' L' + \
+                                                     str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                            df[secondchoosen][k])
+                                pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
+                                pathline2 += ' Z'
+
+                            return [dict(
+                                type="path",
+                                path=pathline2,
+                                layer='below',
+                                fillcolor="#5083C7",
+                                opacity=0.8,
+                                line_color="#8896BF",
+                            )]
+
+                        if int(secondshape[0]) > int(secondshape[1]):
+                            rangeshape = range(int(secondshape[1]), int(secondshape[0]))
+                            for k in rangeshape:
+                                if k == rangeshape[0]:
+                                    pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                        minValsecond) + ' L' + str(
+                                        df[lst[i][0]][k]) + ', ' + str(
+                                        df[secondchoosen][k]) + ' '
+
+                                elif k != rangeshape[0] and k != rangeshape[-1]:
+                                    pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
+                            pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
+                            pathline2 += ' Z'
+                        else:
+                            rangeshape = range(int(secondshape[1]), int(secondshape[0]))
+                            for k in rangeshape:
+
+                                if k == rangeshape[0]:
+                                    pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond) + ' L' + \
+                                                 str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k]) + ' '
+
+                                elif k != rangeshape[0] and k != rangeshape[-1]:
+                                    pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k])
+                            pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
+                            pathline2 += ' Z'
+
+                        return [dict(
+                            type="path",
+                            path=pathline2,
+                            layer='below',
+                            fillcolor="#5083C7",
+                            opacity=0.8,
+                            line_color="#8896BF",
+                        )]
+                else:
+                    return no_update
             if len(firstshape) == 2 and leftfirstval != firstshape[0] and leftfirstval != []:
                 if leftfirstval.startswith('T') == 1:
                     del firstshape[0]
@@ -2449,6 +2656,7 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
             print('secondshape', secondshape)
             print('radioval', radioval)
             if radioval == 'optionlibre' and valx2 != None and valy2 != None:
+
                 lst = []
                 for j in zip(valy2, valx2):
                     lst.append(j)
@@ -2487,260 +2695,48 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                             df[axisdrop] = pd.DataFrame(c)
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
+                    print('valy2 neymis bakalim', valy2)
+                    print('valx2 neymis bakalim', valx2)
                     for j in range(len(valy2)):
                         for k in range(len(valx2)):
                             a = df[valy2[j]]
                             b = df[valx2[k]]
                             fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valy2[j], valx2[k])))
+                            a = []
+                            if nc > 0:
+                                a = controlShape()
+                            # if cleanclick > 0 :
+                            #     a = []
+                            fig.update_xaxes(
+                                tickangle=90,
+                                title_text='' if g1 == [] else g1[-1],
+                                title_font={"size": 20},
+                                title_standoff=25),
 
-                    def controlShape():
-                        pathline = ''
-                        pathline2 = ''
-                        minValfirst = 0
-                        minValsecond = 0
-                        if firstchoosen != None and secondchoosen != None:
-                            if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:
-                                if int(firstshape[1]) > int(firstshape[0]):
-                                    pathline = ''
-                                    rangeshape = range(int(firstshape[0]), int(firstshape[1]))
-                                    if ':' or '-' in df[lst[i][0]][0]:
-                                        for k in rangeshape:
-                                            if k == rangeshape[0]:
-                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst) + ' L' + \
-                                                            str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k]) + ' '
+                            fig.update_yaxes(
+                                title_text='' if g2 == [] else g2[-1],
+                                title_standoff=25),
+                            fig.update_layout(
+                                title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx2[0], valy2[0]),
+                                autosize=True,
+                                width=slidewidth,
 
-                                            elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k])
-                                        pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst)
-                                        pathline += ' Z'
-                                    else:
-                                        for k in rangeshape:
-                                            if k == rangeshape[0]:
-                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValfirst) + ' L' +\
-                                                            str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k]) + ' '
+                                shapes=a if (nc > cleanclick) else [],
+                                height=slideheight,
+                                margin=dict(
+                                        l=50,
+                                        r=50,
+                                        b=50,
+                                        t=50,
+                                        pad=4
+                                ),
+                                    # hovermode='x unified',
+                                uirevision=valy2[0], ),
+                            fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+                                                   xref="paper", yref="paper",
+                                                   x=0, y=0.7, showarrow=False)
 
-                                            elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k])
-                                        pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValfirst)
-                                        pathline += ' Z'
-
-                            if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
-                                if int(secondshape[1]) > int(secondshape[0]):
-                                    rangeshape = range(int(secondshape[0]), int(secondshape[1]))
-                                    if ':' or '-' in df[lst[i][0]][0]:
-                                        for k in rangeshape:
-                                            if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond) + ' L' +\
-                                                             str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k]) + ' '
-
-                                            elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
-                                        pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
-                                        pathline2 += ' Z'
-                                    else:
-                                        for k in rangeshape:
-
-                                            if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond) + ' L' +\
-                                                             str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k]) + ' '
-
-                                            elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(int(a[k])) + ', ' + str(df[secondchoosen][k])
-                                        pathline2 += ' L' + str(int(a[k])) + ', ' + str(minValsecond)
-                                        pathline2 += ' Z'
-
-                            return [dict(
-                                type="path",
-                                path=pathline,
-                                layer='below',
-                                fillcolor="#5083C7",
-                                opacity=0.8,
-                                line_color="#8896BF",
-                            ), dict(
-                                type="path",
-                                path=pathline2,
-                                layer='below',
-                                fillcolor="#B0384A",
-                                opacity=0.8,
-                                line_color="#B36873",
-                            )]
-
-                        if firstchoosen != None and secondchoosen == None:
-                            if len(firstshape) == 2:
-                                if int(firstshape[1]) > int(firstshape[0]):
-                                    pathline = ''
-                                    rangeshape = range(int(firstshape[0]), int(firstshape[1]))
-                                    if ':' or '-' in df[lst[i][0]][0]:
-                                        for k in rangeshape:
-                                            if k == rangeshape[0]:
-                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst) + ' L' +\
-                                                            str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k]) + ' '
-
-                                            elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k])
-                                        pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst)
-                                        pathline += ' Z'
-                                    else:
-                                        for k in rangeshape:
-
-                                            if k == rangeshape[0]:
-                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
-                                                    minValfirst) + ' L' + str(
-                                                    int(df[lst[i][0]][k])) + ', ' + str(
-                                                    df[firstchoosen][k]) + ' '
-
-                                            elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(int(a[k])) + ', ' + str(df[firstchoosen][k])
-                                        pathline += ' L' + str(int(a[k])) + ', ' + str(minValfirst)
-                                        pathline += ' Z'
-
-                                    return [dict(
-                                        type="path",
-                                        path=pathline,
-                                        layer='below',
-                                        fillcolor="#5083C7",
-                                        opacity=0.8,
-                                        line_color="#8896BF",
-                                    )]
-
-                                if int(firstshape[0]) > int(firstshape[1]):
-                                    rangeshape = range(int(firstshape[1]), int(firstshape[0]))
-                                    if ':' or '-' in df[lst[i][0]][0]:
-                                        for k in rangeshape:
-                                            if k == rangeshape[0]:
-                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
-                                                    minValsecond) + ' L' + str(
-                                                    df[lst[i][0]][k]) + ', ' + str(
-                                                    df[firstchoosen][k]) + ' '
-
-                                            elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
-                                                    df[firstchoosen][k])
-                                        pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
-                                        pathline += ' Z'
-                                    else:
-                                        for k in rangeshape:
-
-                                            if k == rangeshape[0]:
-                                                pathline += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond) + ' L' + \
-                                                            str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k]) + ' '
-
-                                            elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k])
-                                        pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
-                                        pathline += ' Z'
-
-                                    return [dict(
-                                        type="path",
-                                        path=pathline,
-                                        layer='below',
-                                        fillcolor="#5083C7",
-                                        opacity=0.8,
-                                        line_color="#8896BF",
-                                    )]
-
-                        if secondchoosen != None and firstchoosen == None:
-                            if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
-                                if int(secondshape[1]) > int(secondshape[0]):
-                                    rangeshape = range(int(secondshape[0]), int(secondshape[1]))
-                                    if ':' or '-' in df[lst[i][0]][0]:
-                                        for k in rangeshape:
-                                            if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond) + ' L' +\
-                                                             str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k]) + ' '
-
-                                            elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
-                                        pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
-                                        pathline2 += ' Z'
-                                    else:
-                                        for k in rangeshape:
-
-                                            if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond) + ' L' +\
-                                                             str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k]) + ' '
-
-                                            elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k])
-                                        pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
-                                        pathline2 += ' Z'
-
-                                    return [dict(
-                                        type="path",
-                                        path=pathline2,
-                                        layer='below',
-                                        fillcolor="#5083C7",
-                                        opacity=0.8,
-                                        line_color="#8896BF",
-                                    )]
-
-                                if int(secondshape[0]) > int(secondshape[1]):
-                                    rangeshape = range(int(secondshape[1]), int(secondshape[0]))
-                                    for k in rangeshape:
-                                        if k == rangeshape[0]:
-                                            pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
-                                                minValsecond) + ' L' + str(
-                                                df[lst[i][0]][k]) + ', ' + str(
-                                                df[secondchoosen][k]) + ' '
-
-                                        elif k != rangeshape[0] and k != rangeshape[-1]:
-                                            pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
-                                    pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
-                                    pathline2 += ' Z'
-                                else:
-                                    rangeshape = range(int(secondshape[1]), int(secondshape[0]))
-                                    for k in rangeshape:
-
-                                        if k == rangeshape[0]:
-                                            pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond) + ' L' + \
-                                                         str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k]) + ' '
-
-                                        elif k != rangeshape[0] and k != rangeshape[-1]:
-                                            pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k])
-                                    pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
-                                    pathline2 += ' Z'
-
-                                return [dict(
-                                    type="path",
-                                    path=pathline2,
-                                    layer='below',
-                                    fillcolor="#5083C7",
-                                    opacity=0.8,
-                                    line_color="#8896BF",
-                                )]
-                        else: return no_update
-                    a = []
-                    if nc > 0:
-                        a = controlShape()
-                    fig.update_xaxes(
-                        tickangle=90,
-                        title_text='' if g1 == [] else g1[-1],
-                        title_font={"size": 20},
-                        title_standoff=25),
-
-                    fig.update_yaxes(
-                        title_text='' if g2 == [] else g2[-1],
-                        title_standoff=25),
-                    fig.update_layout(
-                        title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx2[0], valy2[0]),
-                        autosize=True,
-                        width=slidewidth,
-                        shapes=a,
-                        height=slideheight,
-                        margin=dict(
-                            l=50,
-                            r=50,
-                            b=50,
-                            t=50,
-                            pad=4
-                        ),
-                        # hovermode='x unified',
-                        uirevision=valy2[0], ),
-                    fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                       xref="paper", yref="paper",
-                                       x=0, y=0.7, showarrow=False)
-
-                return fig
+                    return fig
 
             if radioval == 'choosevalue' and len(valxsecond) > 0 and len(valysecond) > 0:
                 lst = []
@@ -2782,12 +2778,7 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                             df[axisdrop] = pd.DataFrame(c)
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
-                    # if s == 0 :
-                    #     fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valxsecond[s], valysecond[s]),
-                    #                          ))
-                    # else :
-                    #     fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valxsecond[s], valysecond[s]),
-                    #                          yaxis='y2'))
+
                     fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valxsecond[s], valysecond[s])))
                     def controlShape():
                         pathline = ''
@@ -3030,22 +3021,12 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                     fig.update_yaxes(
                                 title_text='' if g2 == [] else g2[-1],
                                 title_standoff=25),
-                    # m = 1
-                    # for i in lst :
-                    #     m+=1
-                    #     if len(lst) == 1 :
-                    #         fig.update_shapes(yref='y'),
-                    #     if len(lst) > 1 :
-                    #         fig.update_shapes(yref='y{}'.format(m))
-
-
-
                     fig.update_shapes(yref = 'y' ),
                     fig.update_layout(
                                 title_text=head[-1] if len(head) > 0 else "{}/{}".format(valxsecond[0], valysecond[0]),
                                 autosize=True,
                                 width=slidewidth,
-                                shapes=a,
+                                shapes=a if (nc > cleanclick) else [],
                                 height=slideheight,
                                 margin=dict(
                                     l=50,
@@ -4076,40 +4057,57 @@ def download_excel():
               )
 def DBcall(tab):
     if tab == 'tab-3':
-        datalist = html.Div(children=[
-            html.Div([html.Div(
-            dcc.Dropdown(id='dbvalchoosen',
-                         # options=[{'label': i, 'value': i}
-                         #          for i in df.columns],
-                         multi=False,
-                         style={"cursor": "pointer"},
-                         className='stockSelectorClass2',
-                         clearable=True,
-                         placeholder='Select sent or received ...',
-                         )
-        ),
-            html.Div(
-                dcc.Dropdown(id='dbvalname',
-                             # options=[{'label': i, 'value': i}
-                             #          for i in df.columns],
-                             multi=True,
-                             style={"cursor": "pointer"},
-                             className='stockSelectorClass2',
-                             clearable=True,
-                             placeholder='Select your parameters...',
-                             )
-            ),
-            html.Div(
-                dcc.Dropdown(id='dbvaldate',
-                             # options=[{'label': i, 'value': i}
-                             #          for i in df.columns],
-                             multi=True,
-                             style={"cursor": "pointer"},
-                             className='stockSelectorClass2',
-                             clearable=False,
-                             placeholder='Select your parameters...',
-                             )
-            ),], className='aa'),
+        datalist =  html.Div([html.Div([html.Div([dbc.Button("Database Activate", id="activatedb",  n_clicks=0,
+                                                           color="success", size = 'lg',
+                                                           ),
+                                                dbc.Input(id='db_Ip',
+                                                          type="text",
+                                                          debounce=True,
+                                                          min=-10000, max=10000, step=1,
+                                                          bs_size="mr",
+                                                          style={'width': '11rem', "marginTop": "1.5rem"},
+                                                          autoFocus=True,
+                                                          placeholder="Enter your IP number ..."),
+                                                dbc.Input(id='db_name',
+                                                          type="text",
+                                                          debounce=True,
+                                                          min=-10000, max=10000, step=1,
+                                                          bs_size="mr",
+                                                          style={'width': '11rem', "marginTop": "1.5rem"},
+                                                          autoFocus=True,
+                                                          placeholder="Enter your DB name...")
+                                                          ],className="aadb"),
+                              html.Div([
+                    dcc.Dropdown(id='dbvalchoosen',
+                                 # options=[{'label': i, 'value': i}
+                                 #          for i in df.columns],
+                                 multi=False,
+                                 style={"cursor": "pointer",'marginTop' :'5px'},
+                                 className='stockSelectorClass3',
+                                 clearable=True,
+                                 placeholder='Select sent or received ...',
+
+                                ),
+
+                    dcc.Dropdown(id='dbvalname',
+                                 # options=[{'label': i, 'value': i}
+                                 #          for i in df.columns],
+                                 multi=True,
+                                 style={"cursor": "pointer",'marginTop' :'13px'},
+                                 className='stockSelectorClass3',
+                                 clearable=True,
+                                 placeholder='Select your parameters...',
+                                 ),
+
+                    dcc.Dropdown(id='dbvaldate',
+                                 # options=[{'label': i, 'value': i}
+                                 #          for i in df.columns],
+                                 multi=True,
+                                 style={"cursor": "pointer",'marginTop' :'13px'},
+                                 className='stockSelectorClass3',
+                                 clearable=False,
+                                 placeholder='Select your parameters...',
+                                 ),], className='aadb'),], className = 'abcdb'),
             dcc.Store(id='memory-output'),
             html.Div(dcc.Graph(id="getdbgraph",
                                config={'displayModeBar': True,
