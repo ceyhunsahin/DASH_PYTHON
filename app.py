@@ -4120,11 +4120,11 @@ def DBcall(tab):
                                            'eraseshape',
                                        ]},
                                style={'marginTop': 20},
-                               figure={
-                                   'layout': {'legend': {'tracegroupgap': 0},
-
-                                              }
-                               }
+                               # figure={
+                               #     'layout': {'legend': {'tracegroupgap': 0},
+                               #
+                               #                }
+                               # }
 
                                ), ),
             html.Div(dash_table.DataTable(id="getdbtable",
@@ -4176,49 +4176,49 @@ def DBcall(tab):
 def connectiondb(button,ipval,db_name):
     if ipval == None and db_name == None:
         raise PreventUpdate
-    if ipval == '':
-        if button > 0:
 
-            server = SSHTunnelForwarder(
+    if button > 0:
+
+        server = SSHTunnelForwarder(
                 ("193.54.2.211", 22),
                 ssh_username='soudani',
                 ssh_password="univ484067152",
                 remote_bind_address=("193.54.2.211", 3306))
 
-            server.start()
+        server.start()
 
-            try:
-                conn = mariadb.connect(
+        try:
+            conn = mariadb.connect(
                     user="dashapp",
                     password="dashapp",
                     host="193.54.2.211",
                     port=3306,
                     database="rcckn"
-                )
+            )
 
-            except mariadb.Error as e:
-                print(f"Error connecting to MariaDB Platform: {e}")
-                sys.exit(1)
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
             # Get Cursor
-            cur = conn.cursor()
+        cur = conn.cursor()
             # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-            b = "select table_name from information_schema.tables where TABLE_SCHEMA='rcckn'"
+        b = "select table_name from information_schema.tables where TABLE_SCHEMA='rcckn'"
             # a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
 
-            cur.execute(b)
-            t = cur.fetchall()
-            df = pd.DataFrame(t)
-            print(df)
-            m = []
-            for i in t:
-                m.append(i[0])
+        cur.execute(b)
+        t = cur.fetchall()
+        df = pd.DataFrame(t)
+        m = []
+        for i in t:
+            m.append(i[0])
 
-            return [{'label': i, 'value': i} for i in m if
-                    i != 'app_variablerequest' and i != 'send_controlvalues' and i != 'received_ack' and i != 'send_vw_variablerequestdestination' and i != 'flyway_schema_history'
-                    and i != 'app_vw_messaging_followup' and i != 'received_variablerequest' and i != 'received_controlvalues' and i != 'app_system_properties'
-                    and i != 'tbl_sites' and i != 'tbl_inventory' and i != 'send_messages' and i != 'send_variablevaluesmessage']
-        else:
-            return no_update
+        return [{'label': i, 'value': i} for i in m if i != 'app_variablerequest' and i != 'send_controlvalues' and
+                i != 'received_ack' and i != 'send_vw_variablerequestdestination' and i != 'flyway_schema_history'
+                and i != 'app_vw_messaging_followup' and i != 'received_variablerequest' and i != 'received_controlvalues'
+                and i != 'app_system_properties' and i != 'tbl_sites' and i != 'tbl_inventory' and i != 'send_messages'
+                and i != 'send_variablevaluesmessage']
+    else:
+        return no_update
     # if ipval != '':
     #     if button > 0:
     #
@@ -4260,7 +4260,7 @@ def connectiondb(button,ipval,db_name):
     #                 i != 'app_variablerequest' and i != 'send_controlvalues' and i != 'received_ack' and i != 'send_vw_variablerequestdestination' and i != 'flyway_schema_history'
     #                 and i != 'app_vw_messaging_followup' and i != 'received_variablerequest' and i != 'received_controlvalues' and i != 'app_system_properties'
     #                 and i != 'tbl_sites' and i != 'tbl_inventory' and i != 'send_messages' and i != 'send_variablevaluesmessage']
-    else: return no_update
+    # else: return no_update
 
 
 @app.callback(Output('dbvalname', 'options'),
@@ -4311,11 +4311,13 @@ def dbname(dbch):
 #     else : raise PreventUpdate
 
 @app.callback(Output('memory-output', 'data'),
-              [Input('dbvalname', 'value')], )
-def pp(val):
+              [Input('dbvalname', 'value')],
+              State('dbvalchoosen', 'value'))
+def pp(val, stateval):
     if val == None:
         raise PreventUpdate
     else:
+        print('valllllllllllll',stateval)
         server = SSHTunnelForwarder(
             ("193.54.2.211", 22),
             ssh_username='soudani',
@@ -4338,10 +4340,15 @@ def pp(val):
             sys.exit(1)
         # Get Cursor
         cur = conn.cursor()
-        if len(val)>0 :
-            cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[0]))
-            t = cur.fetchall()
-
+        if stateval == 'received_variablevalues':
+            if len(val) > 0 :
+                cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[0]))
+                t = cur.fetchall()
+                return t
+        if stateval == 'send_variablevalues':
+            if len(val) > 0:
+                cur.execute("SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[0]))
+                t = cur.fetchall()
             return t
         else : return no_update
 
@@ -4354,7 +4361,9 @@ def vv(data, dbch):
     if data == [] or data == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
+    print('burda 1 ')
     if dbch == 'received_variablevalues':
+        print('burda 2 ')
         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
                   'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
                   'CONVERTED_NUM_VALUE']
@@ -4367,7 +4376,8 @@ def vv(data, dbch):
         b = pd.to_datetime(a)
         b = sorted(b)
 
-    elif dbch == "send_variablevalues" :
+    if dbch == "send_variablevalues" :
+        print('burda 3 ')
         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                        'PROCESSED', 'TIMED_OUT','UNREFERENCED']
         df.TIMESTAMP = df.TIMESTAMP.apply(pd.to_datetime)
@@ -4378,6 +4388,7 @@ def vv(data, dbch):
         a = list(set(a))
         b = pd.to_datetime(a)
         b = sorted(b)
+
     return b
 
 
@@ -4468,7 +4479,7 @@ def on_data_set_graph(data, valy, valdat,dbch):
                     t=50,
                     pad=4
                 ),
-hovermode='x unified',
+            hovermode='x unified',
                 uirevision=j, ),
         return fig
     else :
