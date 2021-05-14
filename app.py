@@ -4163,7 +4163,7 @@ def DBcall(tab):
                                           merge_duplicate_headers=True)),
             html.Div(id="hiddendb1"),
             html.Div(id="hiddendb2", style = {'display':'None'}),
-            html.Div(id="hiddendb3")
+            html.Div(id="hiddendb3", children = [])
         ])
         return datalist
 
@@ -4312,8 +4312,8 @@ def dbname(dbch):
 
 @app.callback(Output('memory-output', 'data'),
               [Input('dbvalname', 'value')],
-              State('dbvalchoosen', 'value'))
-def pp(val, stateval):
+              [State('dbvalchoosen', 'value'),State('hiddendb3', 'children')])
+def pp(val, stateval,x):
     if val == None:
         raise PreventUpdate
     else:
@@ -4342,26 +4342,42 @@ def pp(val, stateval):
         cur = conn.cursor()
         if stateval == 'received_variablevalues':
             if len(val) > 0 :
-                cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[0]))
-                t = cur.fetchall()
+
+                for i in val :
+                    cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(i))
+                    t = cur.fetchall()
+                    print(' cur.fetchall()', t)
+                    x.append(t)
+
+                df = pd.DataFrame(x)
+                print('xxxxxxxx', df)
                 return t
         if stateval == 'send_variablevalues':
             if len(val) > 0:
-                cur.execute("SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[0]))
-                t = cur.fetchall()
-            return t
+                for i in val:
+                    cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(i))
+                    t = cur.fetchall()
+                return t
         else : return no_update
 
 
 @app.callback(Output('hiddendb2', 'children'),
               [Input('memory-output', 'data'),
-               Input('dbvalchoosen', 'value')] )
+               Input('dbvalchoosen', 'value')],
+              [State('memory-output', 'data')])
 
-def vv(data, dbch):
+def vv(data, dbch,x):
     if data == [] or data == None:
         raise PreventUpdate
-    df = pd.DataFrame(data)
-    print('burda 1 ')
+    x.append(data)
+    if len(x) == 0 :
+        df = pd.DataFrame(x[0])
+        df.to_csv('ceyhun.csv')
+    else :
+        for i in x :
+            df = pd.DataFrame(i)
+            df.to_csv('ceyhun.csv')
+    print('burda 1 ',df)
     if dbch == 'received_variablevalues':
         print('burda 2 ')
         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
@@ -4375,6 +4391,7 @@ def vv(data, dbch):
         a = list(set(a))
         b = pd.to_datetime(a)
         b = sorted(b)
+        return b
 
     if dbch == "send_variablevalues" :
         print('burda 3 ')
@@ -4388,8 +4405,9 @@ def vv(data, dbch):
         a = list(set(a))
         b = pd.to_datetime(a)
         b = sorted(b)
+        return b
 
-    return b
+    else : return []
 
 
 @app.callback(Output('dbvaldate', 'options'),
@@ -4397,6 +4415,7 @@ def vv(data, dbch):
 def xx(f):
     if f == [] or f == None:
         raise PreventUpdate
+
     else:
         return [{'label': i[:10], 'value': i} for i in f]
     # else : raise PreventUpdate
@@ -4506,7 +4525,6 @@ def on_data_set_graph(data, valy, valdat,dbch):
                 ),
                 uirevision=j, ),
         return fig
-
 
 if __name__ == '__main__' :
     # app.run_server(debug = True)
