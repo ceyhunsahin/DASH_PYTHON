@@ -3639,10 +3639,10 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
-            if 'Temps' in df.columns :
-                dff1 = dff1.groupby('Temps').mean()
-            if 'Temps s' in df.columns:
-                dff1 = dff1.groupby('Temps s').mean()
+            for i in df.columns :
+                if i.startswith('Temps') :
+                    dff1 = dff1.groupby(i).mean()
+
             c = dff1[valuechoosenleft]
             area1 = abs(trapz((abs(c)), dx=1))
 
@@ -3683,11 +3683,9 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
-            if 'Temps' in df.columns :
-                dff1 = dff1.groupby('Temps').mean()
-
-            if 'Temps s' in df.columns :
-                dff1 = dff1.groupby('Temps s').mean()
+            for i in df.columns :
+                if i.startswith('Temps') :
+                    dff1 = dff1.groupby(i).mean()
             c = dff1[valuechoosenleft]
             area1 = abs(trapz(abs(c), dx=1))
 
@@ -3728,11 +3726,9 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff2 = df[(df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
                       (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
-            if 'Temps' in df.columns :
-                dff2 = dff2.groupby('Temps').mean()
-
-            if 'Temps s' in df.columns:
-                dff2 = dff2.groupby('Temps s').mean()
+            for i in df.columns :
+                if i.startswith('Temps') :
+                    dff2 = dff2.groupby(i).mean()
 
             f = dff2[valuechoosenright]
             area2 = abs(trapz(abs(f), dx=1))
@@ -3772,11 +3768,9 @@ def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
             dff2 = df[
                 (df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
                 (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
-            if 'Temps' in df.columns :
-                dff2 = dff2.groupby('Temps').mean()
-
-            if 'Temps s' in df.columns:
-                dff2 = dff2.groupby('Temps s').mean()
+            for i in df.columns :
+                if i.startswith('Temps') :
+                    dff2 = dff2.groupby(i).mean()
             f = dff2[valuechoosenright]
             area2 = abs(trapz(abs(f), dx=1))
             return area2
@@ -4417,12 +4411,14 @@ def xx(f):
 
 
 @app.callback([Output('getdbtable', 'data'),
-               Output('getdbtable', 'columns')],
+               Output('getdbtable', 'columns'),
+               Output('hiddendb3', 'children')],
               [Input('memory-output', 'data'),
                Input('dbvaldate', 'value'),
                Input('dbvalname', 'value'),
-               Input('dbvalchoosen', 'value')] )
-def on_data_set_table(data,valdat,valname,dbch):
+               Input('dbvalchoosen', 'value')],
+              [State('hiddendb3', 'children')])
+def on_data_set_table(data,valdat,valname,dbch,xhidden):
     if data is None or valdat == [] or valname == [] or valdat == None or valname == None:
         raise PreventUpdate
     a = []
@@ -4439,7 +4435,7 @@ def on_data_set_table(data,valdat,valname,dbch):
             b = pd.Series(a)
             x = df[(df['VARIABLE_NAME']==valname[0]) & (df['REMOTE_TIMESTAMP'].isin(b))].to_dict('record')
 
-            return x , [{'name': i, 'id': i} for i in df.columns]
+            return x , [{'name': i, 'id': i} for i in df.columns],xhidden
         if dbch == 'send_variablevalues':
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                           'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
@@ -4450,12 +4446,19 @@ def on_data_set_table(data,valdat,valname,dbch):
                     a.append(i)
 
             b = pd.Series(a)
-            if len(valname)> 0 :
-                for k in range(len(valname)):
-                    x = df[(df['VARIABLE_NAME'] == valname[k]) & (df['TIMESTAMP'].isin(b))].to_dict('record')
-                    print('xxxxxxxxx',x)
+            if len(valname) == 1 :
+                x = df[(df['VARIABLE_NAME'] == valname[0]) & (df['TIMESTAMP'].isin(b))].to_dict('record')
 
-            return x, [{'name': i, 'id': i} for i in df.columns]
+                return x, [{'name': i, 'id': i} for i in df.columns],xhidden
+
+            if len(valname)>1:
+                print('vallllname', valname)
+                for j in range(len(valname)) :
+                    x = df[(df['VARIABLE_NAME'] == valname[j]) & (df['TIMESTAMP'].isin(b))].to_dict('record')
+                    xhidden.append(x)
+
+                return xhidden[1], [{'name': i, 'id': i} for i in df.columns],xhidden[0]
+
 
 # @app.callback(Output('tab3hiddenValuey_axis', 'children'),
 #               [Input('dbvalname', 'value')],)
