@@ -3641,6 +3641,8 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
             if 'Temps' in df.columns :
                 dff1 = dff1.groupby('Temps').mean()
+            if 'Temps s' in df.columns:
+                dff1 = dff1.groupby('Temps s').mean()
             c = dff1[valuechoosenleft]
             area1 = abs(trapz((abs(c)), dx=1))
 
@@ -3683,6 +3685,9 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
             if 'Temps' in df.columns :
                 dff1 = dff1.groupby('Temps').mean()
+
+            if 'Temps s' in df.columns :
+                dff1 = dff1.groupby('Temps s').mean()
             c = dff1[valuechoosenleft]
             area1 = abs(trapz(abs(c), dx=1))
 
@@ -3725,6 +3730,10 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
                       (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
             if 'Temps' in df.columns :
                 dff2 = dff2.groupby('Temps').mean()
+
+            if 'Temps s' in df.columns:
+                dff2 = dff2.groupby('Temps s').mean()
+
             f = dff2[valuechoosenright]
             area2 = abs(trapz(abs(f), dx=1))
             return area2
@@ -3765,6 +3774,9 @@ def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
                 (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
             if 'Temps' in df.columns :
                 dff2 = dff2.groupby('Temps').mean()
+
+            if 'Temps s' in df.columns:
+                dff2 = dff2.groupby('Temps s').mean()
             f = dff2[valuechoosenright]
             area2 = abs(trapz(abs(f), dx=1))
             return area2
@@ -4211,7 +4223,7 @@ def connectiondb(button,ipval,db_name):
         m = []
         for i in t:
             m.append(i[0])
-
+        print(m)
         return [{'label': i, 'value': i} for i in m if i != 'app_variablerequest' and i != 'send_controlvalues' and
                 i != 'received_ack' and i != 'send_vw_variablerequestdestination' and i != 'flyway_schema_history'
                 and i != 'app_vw_messaging_followup' and i != 'received_variablerequest' and i != 'received_controlvalues'
@@ -4295,9 +4307,10 @@ def dbname(dbch):
 
         cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
         t = cur.fetchall()
+        print('tttttttttt',t)
         m = []
         for i in t:
-            m.append(i[0])
+            m.append(i[0]) # all variable as tuple, got name with [0]
         return [{'label': i, 'value': i} for i in m]
     else:
         raise PreventUpdate
@@ -4311,13 +4324,14 @@ def dbname(dbch):
 #     else : raise PreventUpdate
 
 @app.callback(Output('memory-output', 'data'),
-              [Input('dbvalname', 'value')],
-              [State('dbvalchoosen', 'value'),State('hiddendb3', 'children')])
-def pp(val, stateval,x):
+              [Input('dbvalname', 'value'),
+               Input('dbvalchoosen', 'value')], )
+def pp(val,dbch):
     if val == None:
         raise PreventUpdate
+
     else:
-        print('valllllllllllll',stateval)
+        print('val', val)
         server = SSHTunnelForwarder(
             ("193.54.2.211", 22),
             ssh_username='soudani',
@@ -4340,22 +4354,16 @@ def pp(val, stateval,x):
             sys.exit(1)
         # Get Cursor
         cur = conn.cursor()
-        if stateval == 'received_variablevalues':
-            if len(val) > 0 :
-
-                for i in val :
-                    cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(i))
+        if dbch == 'received_variablevalues' :
+            if len(val)>0 :
+                for i in range(len(val)):
+                    cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[i])) # spread every variable
                     t = cur.fetchall()
-                    print(' cur.fetchall()', t)
-                    x.append(t)
-
-                df = pd.DataFrame(x)
-                print('xxxxxxxx', df)
                 return t
-        if stateval == 'send_variablevalues':
-            if len(val) > 0:
-                for i in val:
-                    cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(i))
+        if dbch == 'send_variablevalues' :
+            if len(val)>0 :
+                for i in range(len(val)):
+                    cur.execute("SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[i])) # spread every variable
                     t = cur.fetchall()
                 return t
         else : return no_update
@@ -4363,23 +4371,14 @@ def pp(val, stateval,x):
 
 @app.callback(Output('hiddendb2', 'children'),
               [Input('memory-output', 'data'),
-               Input('dbvalchoosen', 'value')],
-              [State('memory-output', 'data')])
+               Input('dbvalchoosen', 'value')] )
 
-def vv(data, dbch,x):
+def vv(data, dbch):
     if data == [] or data == None:
         raise PreventUpdate
-    x.append(data)
-    if len(x) == 0 :
-        df = pd.DataFrame(x[0])
-        df.to_csv('ceyhun.csv')
-    else :
-        for i in x :
-            df = pd.DataFrame(i)
-            df.to_csv('ceyhun.csv')
-    print('burda 1 ',df)
+    df = pd.DataFrame(data)
+    print('dbch', dbch)
     if dbch == 'received_variablevalues':
-        print('burda 2 ')
         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
                   'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
                   'CONVERTED_NUM_VALUE']
@@ -4391,10 +4390,9 @@ def vv(data, dbch,x):
         a = list(set(a))
         b = pd.to_datetime(a)
         b = sorted(b)
-        return b
 
-    if dbch == "send_variablevalues" :
-        print('burda 3 ')
+    elif dbch == "send_variablevalues" :
+        print('buraya giriyor mu')
         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                        'PROCESSED', 'TIMED_OUT','UNREFERENCED']
         df.TIMESTAMP = df.TIMESTAMP.apply(pd.to_datetime)
@@ -4405,9 +4403,7 @@ def vv(data, dbch,x):
         a = list(set(a))
         b = pd.to_datetime(a)
         b = sorted(b)
-        return b
-
-    else : return []
+    return b
 
 
 @app.callback(Output('dbvaldate', 'options'),
@@ -4415,15 +4411,17 @@ def vv(data, dbch,x):
 def xx(f):
     if f == [] or f == None:
         raise PreventUpdate
-
     else:
         return [{'label': i[:10], 'value': i} for i in f]
     # else : raise PreventUpdate
 
 
-@app.callback([Output('getdbtable', 'data'), Output('getdbtable', 'columns')],
-              [Input('memory-output', 'data'),Input('dbvaldate', 'value'),Input('dbvalname', 'value'),
-              Input('dbvalchoosen', 'value')] )
+@app.callback([Output('getdbtable', 'data'),
+               Output('getdbtable', 'columns')],
+              [Input('memory-output', 'data'),
+               Input('dbvaldate', 'value'),
+               Input('dbvalname', 'value'),
+               Input('dbvalchoosen', 'value')] )
 def on_data_set_table(data,valdat,valname,dbch):
     if data is None or valdat == [] or valname == [] or valdat == None or valname == None:
         raise PreventUpdate
@@ -4442,7 +4440,7 @@ def on_data_set_table(data,valdat,valname,dbch):
             x = df[(df['VARIABLE_NAME']==valname[0]) & (df['REMOTE_TIMESTAMP'].isin(b))].to_dict('record')
 
             return x , [{'name': i, 'id': i} for i in df.columns]
-        else :
+        if dbch == 'send_variablevalues':
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                           'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
 
@@ -4452,8 +4450,10 @@ def on_data_set_table(data,valdat,valname,dbch):
                     a.append(i)
 
             b = pd.Series(a)
-
-            x = df[(df['VARIABLE_NAME'] == valname[0]) & (df['TIMESTAMP'].isin(b))].to_dict('record')
+            if len(valname)> 0 :
+                for k in range(len(valname)):
+                    x = df[(df['VARIABLE_NAME'] == valname[k]) & (df['TIMESTAMP'].isin(b))].to_dict('record')
+                    print('xxxxxxxxx',x)
 
             return x, [{'name': i, 'id': i} for i in df.columns]
 
@@ -4498,7 +4498,7 @@ def on_data_set_graph(data, valy, valdat,dbch):
                     t=50,
                     pad=4
                 ),
-            hovermode='x unified',
+hovermode='x unified',
                 uirevision=j, ),
         return fig
     else :
