@@ -560,7 +560,13 @@ def opcLoadingData(on):
                                                                          html.Div(id='leftSideDropdownHidden',
                                                                                   children=[],
                                                                                   style={'display': 'None'}),
-                                                                         html.Div(id='leftSideDropdown', children=[]),
+                                                                         # html.Div(id='leftSideDropdown', children=[]),
+                                                                         html.Div([dbc.Checklist(
+                                                                             id='choosenChecklistLeft',
+                                                                             options=[{'label': i, 'value': i} for i in []],
+                                                                             value=[],
+                                                                             labelStyle={'display': 'Block'},
+                                                                         ), ], style={"marginTop": "8px","marginLeft": "8px", 'visibility': 'hidden'}),
                                                                          html.Div(
                                                                              [
 
@@ -629,60 +635,96 @@ def dropdownlistcontrol(retrieve):
         return no_update
 
 
-@app.callback(
-    [Output("leftSideDropdownHidden", "children"), Output("leftSidedroptValue", "children")],
-    [Input("dropdownLeft", "value")],
-    [State("leftSideDropdownHidden", "children")]
-)
-def hiddendiv(val_dropdownLeft, children):
-    if val_dropdownLeft == None or val_dropdownLeft == '':
-        raise PreventUpdate
-    a = []
-    a.append(val_dropdownLeft)
-    for i in a:
-        if i not in children:
-            children.append(val_dropdownLeft)
-    return children, children
+# @app.callback(
+#     [Output("leftSideDropdownHidden", "children"),
+#      Output("leftSidedroptValue", "children")],
+#     [Input("dropdownLeft", "value"),],
+#     [State("leftSideDropdownHidden", "children")]
+# )
+# def hiddendiv(val_dropdownLeft, children):
+#     if val_dropdownLeft == None or val_dropdownLeft == '':
+#         raise PreventUpdate
+#     a = []
+#     a.append(val_dropdownLeft)
+#     for i in a:
+#         if i not in children:
+#             children.append(val_dropdownLeft)
+#     return children, children
+#
 
-
 @app.callback(
-    Output("leftSideDropdown", "children"),
+    [Output('choosenChecklistLeft', 'options'),
+     Output('choosenChecklistLeft', 'style'),
+     Output('choosenChecklistLeft', 'value'),
+     Output("leftSideDropdownHidden", "children"),
+     Output("leftSidedroptValue", "children")],
     [Input("showLeft", "n_clicks"),
-     Input("clearLeft", "n_clicks"), ],
-    [State("leftSideDropdownHidden", "children")],
+     Input("clearLeft", "n_clicks"),
+     Input("dropdownLeft", "value"),],
+    [State("leftSideDropdownHidden", "children"),
+     State('choosenChecklistLeft', 'value')],
 )
 # left side dropdown-checklist relation
 #########
 
-def displayLeftDropdown(n_clicks1, n_clicks2, valeur):
-    # q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-    new_checklist = []
-    if len(valeur) == 0:
+def displayLeftDropdown(n_clicks1,nc2, dropval, valeur, value):
+    print('valeur 0', valeur)
+    print('dropval 0', dropval)
+    a = []
+    a.append(dropval)
+    print('aaaaaaa', a)
+    for i in a:
+        if i not in valeur:
+            valeur.append(dropval)
+    print('valeur 1', valeur)
+    if valeur == [] :
+        raise PreventUpdate
+    if dropval == None :
         raise PreventUpdate
     # val = list(filter(lambda x: val.count(x)==1, val))
-    if n_clicks1 > 0:
+    q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
+    print('dropval', dropval)
+    print('qi',q1)
+    if q1 == 'dropdownLeft' :
         a = []
-        a.append(valeur)
+        a.append(dropval)
+        print('aaaaaaa', a)
+        for i in a:
+            if i not in valeur:
+                valeur.append(dropval)
+        print('valeur 1', valeur)
 
-        new_checklist += html.Div([dbc.Checklist(
-            id='choosenChecklistLeft',
-            options=[{'label': i, 'value': i} for i in valeur if i in a[0]],
-            value=[],
-            labelStyle={"display": "Block"},
-        ), ], style={"marginTop": "10px"})
-    if n_clicks2 > 0:
-        for i in range(n_clicks2):
-            if valeur != []:
-                valeur.pop(-1)
+    if q1 == 'showLeft' :
 
-    new_checklist = html.Div([dbc.Checklist(
-        id='choosenChecklistLeft',
-        options=[{'label': i, 'value': i} for i in valeur],
-        value=[],
-        labelClassName='value_design', labelCheckedStyle={"color": "red"},
+        # if valeur == [] :
+        return [{'label': i, 'value': i} for i in valeur] , {'visibility' : 'visible'} , [], valeur,valeur
 
-    ), ], style={"marginLeft": "30px"})
-    return new_checklist
+    if q1 == 'clearLeft'  :
+        print('nclick ne oldu', nc2)
+        print('valueee', value)
+        for k in range(len(value)) :
+            valeur.remove(value[k])
+        print('valeurrrrrrr 2  ', valeur)
+        return [{'label': i, 'value': i} for i in valeur] , {'visibility' : 'visible'}, [], valeur, valeur
+    else : no_update , no_update,no_update , no_update,no_update
+# @app.callback(
+#     Output("choosenChecklistLeft", "options"),
+#     [Input("clearLeft", "n_clicks"),
+#      Input("choosenChecklistLeft", "value"),],
+#     [State("leftSideDropdownHidden", "children"),]
+# )
+# # left side dropdown-checklist relation
+# #########
+#
+# def displayLeftDropdown2(n_click,value, options):
+#     # q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
+#     # if value == [] or options == [] :
+#     #     raise PreventUpdate
+#     if n_click > 0:
+#         print(options)
+#         print(value)
+
+
 
 
 @app.callback(
@@ -1014,12 +1056,13 @@ def LoadingDataTab1(on, dropdownhidden,tab):
 
 # bunu bi duzeltmeye calisacam
 @app.callback(Output("leftSideChecklistValueHidden", "children"),
-              [Input('choosenChecklistLeft', 'value')],
+              [Input('choosenChecklistLeft', 'value'),],
               [State("leftSideChecklistValueHidden", "children")]
               )
 def res(val, hiddenval):
     if val == None:
         raise PreventUpdate
+    print('val',val)
     hiddenval = val
     return hiddenval
 
@@ -1228,7 +1271,7 @@ def shiftingaxes(val):
     return {'visibility': 'visible', 'marginTop' : '2rem'}
 @app.callback([Output('graphhidden', 'figure'),
                Output('hiddenDifferance', 'children'), ],
-              [Input("leftSideChecklistValueHidden", "children"),
+              [Input("choosenChecklistLeft", "value"),
                Input("radiographhidden", "children"),
 
                Input("sliderHeightTab1hidden", "children"),
@@ -1266,6 +1309,7 @@ def res2(val, radiograph,  sliderheight, sliderwidth,
     if retrieve == None or retrieve == [] :
         raise PreventUpdate
     if len(retrieve) > 0 :
+        print('grapval', val)
         df = pd.read_excel('appending.xlsx')
         df['index'] = df.index
         df = df.reindex(columns=sorted(df.columns, reverse=True))
@@ -1304,7 +1348,6 @@ def res2(val, radiograph,  sliderheight, sliderwidth,
 
         for i_val in range(len(val)):
             y_axis = df[val[i_val]]
-            print('y_axis>============>', y_axis)
             if 'date' not in df.columns:
                 x_axis = df[baseval]
             else : x_axis = df['date']
