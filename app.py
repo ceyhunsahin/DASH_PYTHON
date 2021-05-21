@@ -988,19 +988,21 @@ def LoadingDataTab1(on, dropdownhidden,tab):
                                                  }
 
                                                  ),
-                                       dcc.Slider(id="sliderHeightTab1",
+                                       html.Div(daq.Slider(id="sliderHeightTab1",
                                                   max=2100,
                                                   min=400,
                                                   value=530,
                                                   step=100,
+                                                  size = 400,
                                                   vertical=True,
-                                                  updatemode='drag')], className='abc'),
+                                                  updatemode='drag'), style={'margin' : '20px'})], className='abcdb'),
 
-                             html.Div([dcc.Slider(id="sliderWidthTab1",
+                             html.Div([daq.Slider(id="sliderWidthTab1",
                                                   max=2000,
                                                   min=600,
                                                   value=1000,
                                                   step=100,
+                                                  size = 750,
                                                   updatemode='drag'),
                                        html.Div(id='output-data-upload', children=[])]),
 
@@ -2031,19 +2033,21 @@ def LoadingDataTab4(on,tab):
                                                    }
                                     }
                                     ),
-                          dcc.Slider(id="sliderHeightTab4",
+                          html.Div(daq.Slider(id="sliderHeightTab4",
                                      max=2100,
                                      min=400,
                                      value=800,
                                      step=100,
+                                     size=400,
                                      vertical=True,
-                                     updatemode='drag')], className='abcTab4'),
+                                     updatemode='drag'), style = {'margin' : '10px'})], className='abcTab4'),
 
-                html.Div([dcc.Slider(id="sliderWidthTab4",
+                html.Div([daq.Slider(id="sliderWidthTab4",
                                      max=2000,
                                      min=600,
                                      value=1500,
                                      step=100,
+                                     size = 750,
                                      updatemode='drag'),
                           html.Div(id="tab4DashTable", children=[])
                           ]),
@@ -4116,7 +4120,7 @@ def DBcall(tab):
                                  placeholder='Select your parameters...',
                                  ),], className='aadb'),], className = 'abcdb'),
             dcc.Store(id='memory-output'),
-            html.Div(dcc.Graph(id="getdbgraph",
+                html.Div([html.Div(dcc.Graph(id="getdbgraph",
                                config={'displayModeBar': True,
                                        'scrollZoom': True,
                                        'modeBarButtonsToAdd': [
@@ -4126,14 +4130,30 @@ def DBcall(tab):
                                            'select2d',
                                            'eraseshape',
                                        ]},
-                               style={'marginTop': 20},
-                               # figure={
-                               #     'layout': {'legend': {'tracegroupgap': 0},
-                               #
-                               #                }
-                               # }
+                               style={'marginTop': 20,},
+                               figure={
+                                   'layout': {'legend': {'tracegroupgap': 0},
+
+                                              }
+                               }
 
                                ), ),
+                          html.Div(daq.Slider(id="sliderHeightdb",
+                                     max=2100,
+                                     min=400,
+                                     value=530,
+                                     step=100,
+                                     size=400,
+                                     vertical=True,
+                                     updatemode='drag'), style= {'margin' : '20px'})], className='abcdb'),
+                          html.Div([daq.Slider(id="sliderWidthdb",
+                                                 max=2000,
+                                                 min=600,
+                                                 value=1000,
+                                                 step=100,
+                                                 size = 750,
+                                                 updatemode='drag'),
+                  html.Div(id='output-data-upload', children=[])]),
             html.Div(dash_table.DataTable(id="getdbtable",
                                           editable=True,
                                           page_size=50,
@@ -4307,7 +4327,7 @@ def dbname(dbch):
             df = pd.DataFrame(t)
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                           'PROCESSED', 'TIMED_OUT','UNREFERENCED']
-            df.to_csv('ceyhun.csv')
+            df.to_csv('lermab.csv')
         if dbch == 'received_variablevalues':
             cur.execute("SELECT * FROM received_variablevalues ")
             t = cur.fetchall()
@@ -4315,14 +4335,14 @@ def dbname(dbch):
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
                           'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
                           'CONVERTED_NUM_VALUE']
-            df.to_csv('ceyhun.csv')
+            df.to_csv('lermab.csv')
 
 @app.callback(Output('memory-output', 'data'),
               Input('dbvalname', 'value'))
 def filter_values(val_selected):
     if val_selected == None :
         raise PreventUpdate
-    df = pd.read_csv('ceyhun.csv')
+    df = pd.read_csv('lermab.csv')
     print('val_selected', val_selected)
     if not val_selected:
         # Return all the rows on initial load/no country selected.
@@ -4334,14 +4354,6 @@ def filter_values(val_selected):
 
     return filtered
 
-# @app.callback(Output('getdbtable', 'data'),
-#               Input('memory-output', 'data'))
-# def on_data_set_table(data):
-#     print('dataaaaaa', data[:10])
-#     if data is None:
-#         raise PreventUpdate
-#
-#     return data
 @app.callback([Output('getdbtable', 'data'),
                Output('getdbtable', 'columns'),],
               [Input('memory-output', 'data'),
@@ -4417,67 +4429,6 @@ def dbname(dbch):
         return [{'label': i, 'value': i} for i in m]
     else:
         raise PreventUpdate
-#
-#
-# # @app.callback(Output('hiddendb2','children'),
-# #               [Input('dbvalname','value')],)
-# # def zz(f):
-# #     if f != None :
-# #         return f
-# #     else : raise PreventUpdate
-#
-# @app.callback(Output('memory-output', 'data'),
-#               [Input('dbvalname', 'value'),
-#                Input('dbvalchoosen', 'value')],
-#                State('hiddendb3', 'children'))
-# def pp(val,dbch,dataset):
-#     if val == None:
-#         raise PreventUpdate
-#     # if dataset != [] :
-#     #     dataset = json.loads(dataset)
-#     #     df = pd.json_normalize(dataset)
-#     #     dataset = pd.DataFrame(dataset)
-#
-#     else:
-#         print('val', val)
-#         server = SSHTunnelForwarder(
-#             ("193.54.2.211", 22),
-#             ssh_username='soudani',
-#             ssh_password="univ484067152",
-#             remote_bind_address=("193.54.2.211", 3306))
-#
-#         server.start()
-#
-#         try:
-#             conn = mariadb.connect(
-#                 user="dashapp",
-#                 password="dashapp",
-#                 host="193.54.2.211",
-#                 port=3306,
-#                 database="rcckn"
-#             )
-#
-#         except mariadb.Error as e:
-#             print(f"Error connecting to MariaDB Platform: {e}")
-#             sys.exit(1)
-#         # Get Cursor
-#         cur = conn.cursor()
-#         if dbch == 'received_variablevalues' :
-#             if len(val)>0 :
-#                 for i in range(len(val)):
-#                     cur.execute("SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[i])) # spread every variable
-#                     t = cur.fetchall()
-#                 return t
-#         if dbch == 'send_variablevalues' :
-#             if len(val)>0 :
-#                 # dataset = pd.DataFrame([])
-#                 for i in range(len(val)):
-#                     cur.execute("SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{}'".format(val[i])) # spread every variable
-#                     t = cur.fetchall()
-#
-#                 return t
-#         else : return no_update
-#
 
 @app.callback(Output('hiddendb2', 'children'),
               [Input('memory-output', 'data'),
@@ -4504,8 +4455,6 @@ def vv(data, dbch):
         return b
     elif dbch == "send_variablevalues" :
         print('buraya giriyor mu')
-        # df = pd.read_csv('ceyhun.csv')
-
         df.TIMESTAMP = df.TIMESTAMP.apply(pd.to_datetime)
         df["day"] = df.TIMESTAMP.dt.day
         df["month"] = df.TIMESTAMP.dt.month
@@ -4526,162 +4475,77 @@ def xx(f):
     else:
         return [{'label': i[:10], 'value': i} for i in f]
 
-#
-# # @app.callback(Output('getdbtable', 'data'),
-# #               Input('memory-output', 'data'))
-# # def on_data_set_table(data):
-# #     if data is None:
-# #         raise PreventUpdate
-# #     return json.dumps(data)
-# @app.callback([Output('getdbtable', 'data'),
-#                Output('getdbtable', 'columns'),],
-#               [Input('memory-output', 'data'),
-#                Input('dbvaldate', 'value'),
-#                Input('dbvalname', 'value'),
-#                Input('dbvalchoosen', 'value'),
-#                ],
-#               )
-# def on_data_set_table(data,valdat,valname,dbch):
-#     if data is None or valdat == [] or valname == [] or valdat == None or valname == None :
-#         raise PreventUpdate
-#     a = []
-#     if valdat != None or valname != None:
-#         df = pd.DataFrame(data)
-#         if dbch == 'received_variablevalues':
-#             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
-#                               'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
-#
-#             df['REMOTE_TIMESTAMP'] = df['REMOTE_TIMESTAMP'].astype('string')
-#             for i in df['REMOTE_TIMESTAMP']:
-#                 if i.startswith(str(valdat[0])[:10]):
-#                     a.append(i)
-#             b = pd.Series(a)
-#             x = df[(df['VARIABLE_NAME']==valname[0]) & (df['REMOTE_TIMESTAMP'].isin(b))].to_dict('record')
-#
-#
-#             return x , [{'name': i, 'id': i} for i in df.columns]
-#         if dbch == 'send_variablevalues':
-#             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-#                           'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-#
-#             df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
-#             for i in df['TIMESTAMP']:
-#                 if i.startswith(str(valdat[0])[:10]):
-#                     a.append(i)
-#
-#             b = pd.Series(a)
-#
-#             if len(valname) > 0 :
-#
-#                 for k in range(len(valname)):
-#                     if k == 0 :
-#                         x = df[(df['VARIABLE_NAME'] == valname[k]) & (df['TIMESTAMP'].isin(b))].to_dict('record')
-#                         # return m, [{'name': i, 'id': i} for i in df.columns]
-#
-#                     elif k>=1 :
-#                         x = df[(df['VARIABLE_NAME'] == valname[k]) & (df['TIMESTAMP'].isin(b))].to_dict('record')
-#
-#                 return x, [{'name': i, 'id': i} for i in df.columns]
-#
-#
-#
-#             if len(valname)>1:
-#                 print('vallllname', valname)
-#                 for j in range(len(valname)) :
-#                     x = df[(df['VARIABLE_NAME'] == valname[j]) & (df['TIMESTAMP'].isin(b))].to_dict('record')
-#                     xhidden.append(x)
-#
-#                 return xhidden[1], [{'name': i, 'id': i} for i in df.columns]
-#
-#
-# @app.callback(Output('tab3hiddenValuey_axis', 'children'),
-#               [Input('dbvalname', 'value')],)
-#
-# def dbdropdown(x):
-#     if x == [] or x ==None:
-#         raise PreventUpdate
-#     return x
-#
-# @app.callback(Output('getdbgraph', 'figure'),
-#               [Input('memory-output', 'data'),
-#                Input('dbvalname', 'value'),
-#                Input('dbvaldate', 'value')],
-#               [State('dbvalchoosen', 'value')] )
-# def on_data_set_graph(data, valy, valdat,dbch):
-#     if data is None or valy == [] or valdat == [] or valdat == None :
-#         raise PreventUpdate
-#     df = pd.DataFrame(data)
-#     fig = go.Figure()
-#     if dbch == 'received_variablevalues':
-#
-#         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
-#                       'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
-#         for j in valy:
-#             a = df[df['VARIABLE_NAME'] == j]['VARIABLE_NUM_VALUE']
-#             m = []
-#             for i in df['REMOTE_TIMESTAMP']:
-#                 if i[:10] == valdat[0][:10] :
-#                     m.append(i)
-#             b = m
-#             fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(b, a)))
-#             fig.update_layout(
-#                 autosize=True,
-#                 width=1500,
-#                 height=800,
-#                 margin=dict(
-#                     l=50,
-#                     r=50,
-#                     b=50,
-#                     t=50,
-#                     pad=4
-#                 ),
-#                 hovermode='x unified',
-#                 uirevision=j, ),
-#         return fig
-#     else :
-#         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-#                       'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-#         # if data is None:
-#         #     raise PreventUpdate
-#         #
-#         # aggregation = collections.defaultdict(
-#         #     lambda: collections.defaultdict(list)
-#         # )
-#         #
-#         # for row in data:
-#         #     a = aggregation[row['VARIABLE_NAME']]
-#         #
-#         #     a['name'] = row['VARIABLE_NAME']
-#         #     a['mode'] = 'lines+markers'
-#         #
-#         #     a['x'].append(row[field])
-#         #     a['y'].append(row['TIMESTAMP'])
-#         #
-#         # return {
-#         #     'data': [x for x in aggregation.values()]
-#         # }
-#         for j in valy:
-#             a = df[df['VARIABLE_NAME'] == j]['VARIABLE_NUM_VALUE']
-#             print('aaaaaaaaaa', a)
-#             m = []
-#             for i in df['TIMESTAMP']:
-#                 if i[:10] == valdat[0][:10] :
-#                     m.append(i)
-#             b = m
-#             fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(b, a)))
-#             fig.update_layout(
-#                 autosize=True,
-#                 width=1200,
-#                 height=600,
-#                 margin=dict(
-#                     l=50,
-#                     r=50,
-#                     b=50,
-#                     t=50,
-#                     pad=4
-#                 ),
-#                 uirevision=j, ),
-#         return fig
+@app.callback(Output('getdbgraph', 'figure'),
+              [Input('memory-output', 'data'),
+               Input('dbvalname', 'value'),
+               Input('dbvaldate', 'value'),
+               Input('sliderWidthdb', 'value'),
+               Input('sliderHeightdb', 'value'),],
+              [State('dbvalchoosen', 'value')] )
+def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch):
+    if data is None or valy == [] or valdat == [] or valdat == None :
+        raise PreventUpdate
+    df = pd.DataFrame(data)
+    fig = go.Figure()
+    if dbch == 'received_variablevalues':
+
+        df.columns = ['','ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
+                      'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+        a = []
+        for col in df['REMOTE_TIMESTAMP']:
+            a.append(col[:10])
+        df['dates'] = a
+        valdate_new = []
+        for i in range(len(valdat)):
+            valdate_new.append(valdat[i][:10])
+        for j in range(len(valy)):
+            for k in range(len(valdate_new)):
+                a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
+                b = df[df['dates'] == valdate_new[k]]['REMOTE_TIMESTAMP']
+                fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
+            fig.update_layout(
+                autosize=True,
+                width=sliderw,
+                height=sliderh,
+                margin=dict(
+                    l=50,
+                    r=50,
+                    b=50,
+                    t=50,
+                    pad=4
+                ),
+                hovermode='x unified',
+                uirevision=valy[j], ),
+        return fig
+    else :
+        df.columns = ['','ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                      'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+        a = []
+        for col in df['TIMESTAMP'] :
+            a.append(col[:10])
+        df['dates'] = a
+        valdate_new = []
+        for i in range(len(valdat)) :
+            valdate_new.append(valdat[i][:10])
+        for j in range(len(valy)):
+            for k in range(len(valdate_new)):
+                a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
+                b = df[df['dates']== valdate_new[k]]['TIMESTAMP']
+                fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j],valdate_new[k] )))
+                fig.update_layout(
+                    autosize=True,
+                    width=sliderw,
+                    height=sliderh,
+                    margin=dict(
+                        l=50,
+                        r=50,
+                        b=50,
+                        t=50,
+                        pad=4
+                    ),
+                    hovermode='x unified',
+                    uirevision=valy[j], ),
+        return fig
 
 if __name__ == '__main__' :
     # app.run_server(debug = True)
