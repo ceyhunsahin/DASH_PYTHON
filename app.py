@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 import sys
 import os
@@ -725,85 +724,132 @@ def toggle_modal(n1, n2, is_open, children):
 
 
 #### rightside dropdown-checklist relation
-
-
-@app.callback(
-    Output('rightSideDropdown', "children"),
-
-    [
-        Input("showRight", "n_clicks"),
-        Input("clearRight", "n_clicks")
-    ],
-    [
-        State("dropdownRight", "value"),
-        State('rightSideDropdown', "children"),
-    ]
-)
-def edit_list2(ncr1, ncr2, valeur, children):
-    triggered_buttons = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-    triggered = 0
-    if triggered_buttons == "showRight":
-        triggered += 1
-        def mesure1(textRight):
-            if textRight == "Mass de Bois":
-                return "g"
-            elif textRight == 'Volume gaz':
-                return 'm3'
-
-            elif textRight == 'Vitesse de rotation':
-                return 'tour/mn'
-
-            elif textRight in {'Puissance Thermique', 'Puissance Electrique'}:
-                return "W"
-
-            elif textRight in {'CO', 'CO2', 'NO', 'NOX', 'CX'}:
-                return "% MOL"
-
-
-            elif textRight == 'Temperature de Fumée':
-                return '°K'
-
-        if valeur != '':
-            new_listRight = html.Div([html.Div([
-                html.Div([dcc.Markdown('''*{}'''.format(valeur), id="checklistValeur",
-                                       style={'height': '1rem', 'fontFamily': 'arial', 'color': 'black',
-                                              'fontSize': '1.2rem'}),
-                          html.Div([dbc.Input(id='inputRightY_axis',
-                                              type="text",
-                                              min=-10000, max=10000, step=1, bs_size="sm", style={'width': '6rem'},
-                                              placeholder='Y axis value',
-                                              autoFocus=True, ),
-                                    dbc.Input(id='inputRightX_axis',
-                                              type="text",
-                                              min=-10000, max=10000, step=1, bs_size="sm", style={'width': '6rem'},
-                                              placeholder='X axis value',
-                                              autoFocus=True, ),
-                                    ], id="styled-numeric-input"),
-                          html.P(mesure1(valeur),
-                                 style={'margin': '0.1rem 0', 'color': 'black', 'height': '2rem', 'fontFamily': 'arial',
-                                        'fontSize': '1.2rem', }),
-
-                          dbc.Button("Ok", id="valueSendRight", outline=True, n_clicks=0, color="primary",
-                                     className="mr-1",style = {'height' : '40px'}),
-                          dbc.Button("Clear", id="valueClearRight",
-                                     n_clicks=0,
-                                     outline=True,
-                                     color="warning",
-                                     className="mr-1",
-                                     style={'height': '40px', 'color':'blue'}),
-
-                          ], className='design_children2'),
-            ], className='design_children', ), html.Hr()])
-
-            children.append(new_listRight)
-
-    if triggered_buttons == "clearRight":
-        if len(children) == 0:
-            raise PreventUpdate
-        else:
-            children.pop()
-
-    return children
+#
+# @app.callback(
+#     [Output('rightSideDropdown', "children"),
+#      Output('checklistvaleurhidden0', "children"),],
+#     [
+#         Input("showRight", "n_clicks"),
+#         Input("clearRight", "n_clicks")
+#     ],
+#     [
+#         State("dropdownRight", "value"),
+#         State('rightSideDropdown', "children"),
+#         State('checklistvaleurhidden0', "children")
+#     ]
+# )
+# def edit_list2(ncr1, ncr2, valeur, children,hiddenchild):
+#     new_listRight = []
+#     print('hiddenchild', hiddenchild)
+#     triggered_buttons = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
+#     if triggered_buttons == "showRight":
+#         hiddenchild.append(valeur)
+#         for i in range(len(hiddenchild[1:])):
+#
+#             def mesure1(textRight):
+#                 if textRight == "Mass de Bois":
+#                     return "g"
+#                 elif textRight == 'Volume gaz':
+#                     return 'm3'
+#
+#                 elif textRight == 'Vitesse de rotation':
+#                     return 'tour/mn'
+#
+#                 elif textRight in {'Puissance Thermique', 'Puissance Electrique'}:
+#                     return "W"
+#
+#                 elif textRight in {'CO', 'CO2', 'NO', 'NOX', 'CX'}:
+#                     return "% MOL"
+#
+#
+#                 elif textRight == 'Temperature de Fumée':
+#                     return '°K'
+#             if i != '':
+#                 new_listRight = html.Div([html.Div([
+#                     html.Div([dcc.Markdown('''*{}'''.format(valeur), id="checklistValeur{}".format(i),
+#                                            style={'height': '1rem', 'fontFamily': 'arial', 'color': 'black',
+#                                                   'fontSize': '1.2rem'}),
+#                               html.Div([dbc.Input(id='inputRightY_axis{}'.format(i),
+#                                                  type="text",
+#                                                  min=-10000, max=10000, step=1, bs_size="sm", style={'width': '6rem'},
+#                                                  placeholder='Y axis value',
+#                                                  autoFocus=True, ),
+#                                         dbc.Input(id='inputRightX_axis{}'.format(i),
+#                                                   type="text",
+#                                                   min=-10000, max=10000, step=1, bs_size="sm", style={'width': '6rem'},
+#                                                   placeholder='X axis value',
+#                                                   autoFocus=True, ),
+#                                         ], id="styled-numeric-input", ),
+#                               html.P(mesure1(valeur),
+#                                      style={'margin': '0.1rem 0', 'color': 'black', 'height': '2rem', 'fontFamily': 'arial',
+#                                             'fontSize': '1.2rem', }),
+#                               dbc.Button("Ok", id="valueSendRight{}".format(i), outline=True, n_clicks = 0,  color="primary", className="mr-1"),
+#                               dbc.Button("Clr", id="valueClearRight{}".format(i),  n_clicks=0, color="warning",
+#                                          className="mr-1"),
+#
+#                               ], className='design_children2'),
+#                 ], className='design_children', ), html.Hr()])
+#
+#
+#         children.append(new_listRight)
+#
+#     if triggered_buttons == "clearRight":
+#         if len(children) == 0:
+#             raise PreventUpdate
+#         else:
+#             children.pop()
+#             hiddenchild.pop()
+#     print('hiddenchild2',hiddenchild)
+#     return children,hiddenchild
+#
+#
+# #### bunla ugras shapeler ciktiktan sonra referance bilgileri cikmiyor
+#
+# @app.callback([Output("inputRightY_axishidden", "children"),
+#                Output("inputRightX_axishidden", "children"),
+#                Output('checklistvaleurhidden2', "children"),],
+#               [Input('valueSendRight0', 'n_clicks'),
+#                Input('valueClearRight0', 'n_clicks'),
+#                ],
+#               [State("inputRightY_axis0", "value"),
+#                State("inputRightX_axis0", "value"),
+#                State("dropdownRight", "value"),
+#                State('checklistvaleurhidden2', "children"),
+#                State("inputRightY_axishidden", "children"),
+#                State("inputRightX_axishidden", "children"),]
+#               )
+# def Inputaxis0(sendnc,clrnc, y_val, x_val,droplist, checklist, y_axis, x_axis):
+#     if y_val == None or x_val == None :
+#         raise PreventUpdate
+#     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
+#     print('q1', q1)
+#     print('droplist', droplist)
+#     print('checklist', checklist)
+#
+#     if q1 == 'valueSendRight0':
+#         if droplist != None or y_val != None or x_val != None:
+#             y_axis.append(y_val)
+#             x_axis.append(x_val)
+#             checklist.append(droplist)
+#         print('len(checklist)', checklist)
+#         print('yval', y_val)
+#         print('xval', x_val)
+#         if len(checklist) == len(y_axis) and len(checklist) == len(x_axis):
+#
+#             print('y_axis', y_axis)
+#             print('x_axis', x_axis)
+#             return (y_axis, x_axis,checklist)
+#         else:
+#             no_update, no_update, no_update
+#     if q1 == 'valueClearRight0':
+#         y_axis.remove(y_val)
+#         x_axis.remove(x_val)
+#         checklist.remove(droplist)
+#         print('clr sonrasi checklist)', checklist)
+#         print('clr yval', y_axis)
+#         print('clr xval', x_axis)
+#         return (y_axis, x_axis, checklist)
+#     else : no_update,no_update,no_update
 
 
 @app.callback(Output('tabs-content-classes', 'children'),
@@ -1878,7 +1924,6 @@ def aa (a):
 @app.callback(Output('tab4Data', 'children'),
               [Input("my-toggle-switch", "on")],
               [State('tabs-with-classes', 'value')]
-
               )
 def LoadingDataTab4(on,tab):
 
@@ -3556,8 +3601,6 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
     [Input('graph4', 'clickData'),
      Input('radiographtab4hidden', 'children'),
      Input('secondChoosenValueTab4', 'value'),
-
-
      ],
     [State('tab4hiddenValuey_axissecond', 'children'),
      State('tab4hiddenValuex_axissecond', 'children'),
@@ -4660,4 +4703,3 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch):
 if __name__ == '__main__' :
     # app.run_server(debug = True)
     app.run_server(debug = True, host='0.0.0.0', port=8049)
-
