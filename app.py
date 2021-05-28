@@ -66,11 +66,11 @@ index_page = html.Div(className="indexpage",
                       children=[
                           dcc.Link(html.Button('Go to ENERBAT', id="indexPageStyle"), href='/page-1'),
                           html.Br(),
-                          dcc.Link(html.Button('Go to X', id="indexPageStyle"), href='/page-2'),
-                          html.Br(),
-                          dcc.Link(html.Button('Go to Y', id="indexPageStyle"), href='/page-3'),
-                          html.Br(),
-                          dcc.Link(html.Button('Go to Z', id="indexPageStyle"), href='/page-4'),
+                          # dcc.Link(html.Button('Go to X', id="indexPageStyle"), href='/page-2'),
+                          # html.Br(),
+                          # dcc.Link(html.Button('Go to Y', id="indexPageStyle"), href='/page-3'),
+                          # html.Br(),
+                          # dcc.Link(html.Button('Go to Z', id="indexPageStyle"), href='/page-4'),
                       ])
 
 page_1_layout = html.Div(
@@ -2279,7 +2279,13 @@ def showintegral(show):
         return {'visibility' : 'visible'}
     return {'display': 'None'}
 
-
+@app.callback(Output('dbcheck','style'),
+              [Input("calculintegraldb", "value")],
+              )
+def showintegral(show):
+    if show == ['calculdb'] :
+        return {'visibility' : 'visible'}
+    return {'display': 'None'}
 
 
 
@@ -4288,37 +4294,156 @@ def DBcall(tab):
                                                           placeholder="Enter your DB name...")
                                                           ],className="aadb"),
                               html.Div([
-                    dcc.Dropdown(id='dbvalchoosen',
-                                 # options=[{'label': i, 'value': i}
-                                 #          for i in df.columns],
-                                 multi=False,
-                                 style={"cursor": "pointer",'marginTop' :'5px'},
-                                 className='stockSelectorClass3',
-                                 clearable=True,
-                                 placeholder='Select sent or received ...',
+                                        dcc.Dropdown(id='dbvalchoosen',
+                                                     # options=[{'label': i, 'value': i}
+                                                     #          for i in df.columns],
+                                                     multi=False,
+                                                     style={"cursor": "pointer",'marginTop' :'5px'},
+                                                     className='stockSelectorClass3',
+                                                     clearable=True,
+                                                     placeholder='Select sent or received ...',
 
-                                ),
+                                                    ),
 
-                    dcc.Dropdown(id='dbvalname',
-                                 # options=[{'label': i, 'value': i}
-                                 #          for i in df.columns],
-                                 multi=True,
-                                 style={"cursor": "pointer",'marginTop' :'13px'},
-                                 className='stockSelectorClass3',
-                                 clearable=True,
-                                 placeholder='Select your parameters...',
-                                 ),
+                                        dcc.Dropdown(id='dbvalname',
+                                                     # options=[{'label': i, 'value': i}
+                                                     #          for i in df.columns],
+                                                     multi=True,
+                                                     style={"cursor": "pointer",'marginTop' :'13px'},
+                                                     className='stockSelectorClass3',
+                                                     clearable=True,
+                                                     placeholder='Select your parameters...',
+                                                     ),
 
-                    dcc.Dropdown(id='dbvaldate',
-                                 # options=[{'label': i, 'value': i}
-                                 #          for i in df.columns],
-                                 multi=True,
-                                 style={"cursor": "pointer",'marginTop' :'13px'},
-                                 className='stockSelectorClass3',
-                                 clearable=False,
-                                 placeholder='Select your parameters...',
-                                 ),], className='aadb'),], className = 'abcdb'),
+                                        dcc.Dropdown(id='dbvaldate',
+                                                     # options=[{'label': i, 'value': i}
+                                                     #          for i in df.columns],
+                                                     multi=True,
+                                                     style={"cursor": "pointer",'marginTop' :'13px'},
+                                                     className='stockSelectorClass3',
+                                                     clearable=False,
+                                                     placeholder='Select your parameters...',
+                                                     ),], className='aadb'),
+                                        html.Div([
+                                            dbc.Checklist(id="calculintegraldb",
+                                                          options=[
+                                                              {'label': "Calculate Integral", 'value': 'calculdb'}, ]
+                                                          ,
+                                                          value='',
+                                                          labelClassName='groupgraph',
+                                                          labelStyle={'margin': '10px', },
+                                                          inputStyle={'margin': '10px', }),
+                                        ])
+                                        ], className = 'abcdb'),
             dcc.Store(id='memory-output'),
+            html.Div(id='dbcheck', children=
+                              [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValuedb',
+                                                                options=[{'label': i, 'value': i} for i in
+                                                                         []],
+                                                                multi=False,
+                                                                style={"cursor": "pointer", 'width': '180px'},
+                                                                className='',
+                                                                clearable=True,
+                                                                placeholder='First Value...',
+                                                                ),
+                                                   dbc.Input(id='leftIntegralFirstdb',
+                                                             type="text",
+                                                             debounce=True,
+                                                             min=-10000, max=10000, step=1,
+                                                             bs_size="sm",
+                                                             style={'width': '7rem', "marginTop": "1.5rem"},
+                                                             autoFocus=True,
+                                                             placeholder="first point"),
+                                                   dbc.Input(id='leftIntegralSeconddb',
+                                                             type="text",
+                                                             debounce=True,
+                                                             min=-10000, max=10000, step=1,
+                                                             bs_size="sm",
+                                                             style={'width': '7rem', "marginTop": "1.5rem"},
+                                                             autoFocus=True,
+                                                             placeholder="second point"),
+                                                   dbc.Input(id='leftIntegraldb',
+                                                             type="text",
+                                                             min=-10000, max=10000, step=1,
+                                                             bs_size="sm",
+                                                             style={'width': '8rem', "marginTop": "1.5rem"},
+                                                             autoFocus=True,
+                                                             placeholder="total integration"),
+                                                   ]), html.Div([html.Button("Save", id="write_exceldb", n_clicks=0,
+                                                                             style={'fontSize': '1rem', 'width': '4rem',
+                                                                                    'margin': '1rem'},
+                                                                             ),
+                                                                 html.A(html.Button("Download Data",
+                                                                                    id='download_datadb',
+                                                                                    n_clicks=0,
+                                                                                    style={'fontSize': '1rem',
+                                                                                           'width': '9rem',
+                                                                                           'margin': '1rem'}, ),
+                                                                        id='download_exceldb',
+                                                                        # # download="rawdata.csv",
+                                                                        href="/download_excel/",
+                                                                        # target="_blank"
+                                                                        )
+                                                                 ], className='ad')
+
+                                         ]),
+                               html.Div([dbc.Checklist(
+                                   id='operateurdb',
+                                   options=[{'label': i, 'value': i} for i in
+                                            ['Plus', 'Moins', 'Multiplie', 'Division']],
+                                   value=[],
+                                   labelStyle={"display": "Block"},
+                               ), ]),
+                               html.Div([
+                                   dcc.Dropdown(id='secondChoosenValuedb',
+                                                options=[{'label': i, 'value': i} for i in
+                                                         []],
+                                                multi=False,
+                                                style={"cursor": "pointer", 'width': '180px'},
+                                                className='',
+                                                clearable=True,
+                                                placeholder='Second Value...',
+                                                ),
+                                   dbc.Input(id='rightIntegralFirstdb',
+                                             type="text",
+                                             min=-10000, max=10000, step=1,
+                                             bs_size="sm",
+                                             style={'width': '7rem', "marginTop": "1.5rem"},
+                                             autoFocus=True,
+                                             placeholder="first point"),
+                                   dbc.Input(id='rightIntegralSeconddb',
+                                             type="text",
+                                             min=-10000, max=10000, step=1,
+                                             bs_size="sm",
+                                             style={'width': '7rem', "marginTop": "1.5rem"},
+                                             autoFocus=True,
+                                             placeholder="second point"),
+                                   dbc.Input(id='rightIntegralTab4',
+                                             type="text",
+                                             min=-10000, max=10000, step=1,
+                                             bs_size="sm",
+                                             style={'width': '8rem', "marginTop": "1.5rem"},
+                                             autoFocus=True,
+                                             placeholder="total integration")
+                               ]),
+                               html.Div([dbc.Input(id='operationdb',
+                                                   type="text",
+                                                   min=-10000, max=10000, step=1,
+                                                   bs_size="sm",
+                                                   style={'width': '10rem', "marginTop": "2rem",
+                                                          'height': '5rem', 'textAlign': 'center'},
+                                                   autoFocus=True,
+                                                   placeholder="result"),
+                                         dbc.Input(id='intersectiondb',
+                                                   type="text",
+                                                   min=-10000, max=10000, step=1,
+                                                   bs_size="sm",
+                                                   style={'width': '10rem', "marginTop": "2rem",
+                                                          'height': '2rem', 'textAlign': 'center'},
+                                                   autoFocus=True,
+                                                   placeholder="Intersection")], className='aa')
+                               ], style={'display': 'None'},
+                                       className="abTab4"),
                 html.Div([html.Div([html.Div(dcc.Graph(id="getdbgraph",
                                config={'displayModeBar': True,
                                        'scrollZoom': True,
@@ -4345,111 +4470,7 @@ def DBcall(tab):
                                      size=400,
                                      vertical=True,
                                      updatemode='drag'), style= {'margin' : '20px'})], className='abcdb'),
-                          html.Div([html.Div([html.Div([dcc.Dropdown(id='firstChoosenValuedb',
-                                                                     options=[{'label': i, 'value': i} for i in
-                                                                              []],
-                                                                     multi=False,
-                                                                     style={"cursor": "pointer", 'width': '180px'},
-                                                                     className='',
-                                                                     clearable=True,
-                                                                     placeholder='First Value...',
-                                                                     ),
-                                                        dbc.Input(id='leftIntegralFirstdb',
-                                                                  type="text",
-                                                                  debounce=True,
-                                                                  min=-10000, max=10000, step=1,
-                                                                  bs_size="sm",
-                                                                  style={'width': '7rem', "marginTop": "1.5rem"},
-                                                                  autoFocus=True,
-                                                                  placeholder="first point"),
-                                                        dbc.Input(id='leftIntegralSeconddb',
-                                                                  type="text",
-                                                                  debounce=True,
-                                                                  min=-10000, max=10000, step=1,
-                                                                  bs_size="sm",
-                                                                  style={'width': '7rem', "marginTop": "1.5rem"},
-                                                                  autoFocus=True,
-                                                                  placeholder="second point"),
-                                                        dbc.Input(id='leftIntegraldb',
-                                                                  type="text",
-                                                                  min=-10000, max=10000, step=1,
-                                                                  bs_size="sm",
-                                                                  style={'width': '8rem', "marginTop": "1.5rem"},
-                                                                  autoFocus=True,
-                                                                  placeholder="total integration"),
-                                                        ]),
-                                              html.Div([html.Button("Save", id="write_exceldb", n_clicks=0,
-                                                                    style={'fontSize': '1rem', 'width': '4rem',
-                                                                           'margin': '1rem'},
-                                                                    ),
-                                                        html.A(html.Button("Download Data", id='download_datadb',
-                                                                           n_clicks=0,
-                                                                           style={'fontSize': '1rem',
-                                                                                  'width': '9rem',
-                                                                                  'margin': '1rem'}, ),
-                                                               id='download_exceldb',
-                                                               # # download="rawdata.csv",
-                                                               href="/download_excel/",
-                                                               # target="_blank"
-                                                               )
-                                                        ], className='ad')
 
-                                              ]),
-                                    html.Div([dbc.Checklist(
-                                        id='operateurdb',
-                                        options=[{'label': i, 'value': i} for i in
-                                                 ['Plus', 'Moins', 'Multiplie', 'Division']],
-                                        value=[],
-                                        labelStyle={"display": "Block"},
-                                    ), ]),
-                                    html.Div([dcc.Dropdown(id='secondChoosenValuedb',
-                                                           options=[{'label': i, 'value': i} for i in
-                                                                    []],
-                                                           multi=False,
-                                                           style={"cursor": "pointer", 'width': '180px'},
-                                                           className='',
-                                                           clearable=True,
-                                                           placeholder='Second Value...',
-                                                           ),
-                                              dbc.Input(id='rightIntegralFirstdb',
-                                                        type="text",
-                                                        min=-10000, max=10000, step=1,
-                                                        bs_size="sm",
-                                                        style={'width': '7rem', "marginTop": "1.5rem"},
-                                                        autoFocus=True,
-                                                        placeholder="first point"),
-                                              dbc.Input(id='rightIntegralSeconddb',
-                                                        type="text",
-                                                        min=-10000, max=10000, step=1,
-                                                        bs_size="sm",
-                                                        style={'width': '7rem', "marginTop": "1.5rem"},
-                                                        autoFocus=True,
-                                                        placeholder="second point"),
-                                              dbc.Input(id='rightIntegraldb',
-                                                        type="text",
-                                                        min=-10000, max=10000, step=1,
-                                                        bs_size="sm",
-                                                        style={'width': '8rem', "marginTop": "1.5rem"},
-                                                        autoFocus=True,
-                                                        placeholder="total integration")], style = {'marginLeft' : '3rem'}),
-                                    html.Div([dbc.Input(id='operationdb',
-                                                        type="text",
-                                                        min=-10000, max=10000, step=1,
-                                                        bs_size="sm",
-                                                        style={'width': '10rem', "marginTop": "3rem",
-                                                               'height': '5rem', 'textAlign': 'center'},
-                                                        autoFocus=True,
-                                                        placeholder="result"),
-                                              dbc.Input(id='intersectiondb',
-                                                        type="text",
-                                                        min=-10000, max=10000, step=1,
-                                                        bs_size="sm",
-                                                        style={'width': '10rem', "marginTop": "2rem",
-                                                               'height': '2rem', 'textAlign': 'center'},
-                                                        autoFocus=True,
-                                                        placeholder="Intersection")], className='aadb')],
-                                   className="abdb")], className="ab"
-                          ),
                           html.Div([html.Div(daq.Slider(id="sliderWidthdb",
                                                  max=2000,
                                                  min=600,
@@ -4458,7 +4479,7 @@ def DBcall(tab):
                                                  size = 750,
 
                                                  updatemode='drag'), style = {'marginLeft': '5rem'}),
-                  html.Div(id='output-data-upload', children=[])]),
+                                    ]),
             html.Div(dash_table.DataTable(id="getdbtable",
                                           editable=True,
                                           page_size=50,
@@ -4497,7 +4518,7 @@ def DBcall(tab):
             html.Div(id="hiddendb2", style = {'display':'None'}),
             html.Div(id="hiddendb3", children=[], style={'display': 'None'})
 
-        ], ),
+            ], ),], ),
 
         return datalist
 
@@ -4783,6 +4804,22 @@ def xx(f):
         raise PreventUpdate
     else:
         return [{'label': i[:10], 'value': i} for i in f]
+
+
+@app.callback(
+      [Output('firstChoosenValuedb', 'options'),
+       Output('secondChoosenValuedb', 'options')],
+      [Input('dbvalname', 'value'),
+       Input('dbvalname', 'value')],)
+
+def containerdb (val1,val2) :
+    if val1 == None or val2 == None or val1 == [] or val2 == []:
+        raise PreventUpdate
+
+    return [{'label' : i, 'value' : i} for i in val1],[{'label' : i, 'value' : i} for i in val2]
+
+
+
 
 @app.callback(Output('getdbgraph', 'figure'),
               [Input('memory-output', 'data'),
