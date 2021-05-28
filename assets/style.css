@@ -127,11 +127,24 @@
     display: flex;
     flex-direction : row;
     justify-content:space-around;
+
+}
+.abdb{
+    display: flex;
+    flex-direction : row;
+    justify-content:space-around;
+    width : 40%
+}
+.aadb{
+    display: flex;
+    flex-direction : column;
+    justify-content:flex-start;
+
 }
 .abtab4{
     display: flex;
     flex-direction : row;
-background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,182,244,1) 0%, rgba(18,116,231,1) 90.1% );
+    background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,182,244,1) 0%, rgba(18,116,231,1) 90.1% );
     box-sizing: border-box;
 
     border-radius: 0.5rem;
@@ -158,6 +171,13 @@ background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,
     display: flex;
     flex-direction : row;
     justify-content: space-between;
+
+}
+.abcdb{
+    display: flex;
+    flex-direction : row;
+    justify-content: space-between;
+    width : 40%;
 
 }
 .abcTab4{
@@ -287,6 +307,17 @@ background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,
     
 }
 
+.rightsidedesign {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 2px;
+    width : 60%;
+
+}
+
 .group-labels {
     font: bold 18px Roboto, sans-serif;
     padding: 6px 7px;
@@ -409,7 +440,7 @@ background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,
         
         
     }
-#styled-numeric-input input:invalid {
+.styled-numeric-input input:invalid {
         border-color: #dc3545;
         padding-right: calc(1.5em + 0.75rem);
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23dc3545' viewBox='-2 -2 7 7'%3e%3cpath stroke='%23dc3545' d='M0 0l3 3m0-3L0 3'/%3e%3ccircle r='.5'/%3e%3ccircle cx='3' r='.5'/%3e%3ccircle cy='3' r='.5'/%3e%3ccircle cx='3' cy='3' r='.5'/%3e%3c/svg%3E");
