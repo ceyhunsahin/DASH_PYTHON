@@ -22,6 +22,7 @@ from urllib.parse import quote as urlquote
 from numpy import trapz
 from flask import send_file
 from openpyxl import Workbook, load_workbook
+from dash_extensions.enrich import Dash, ServersideOutput
 
 
 from sshtunnel import SSHTunnelForwarder
@@ -43,6 +44,12 @@ def find_data_file(filename):
 
 # Initialize the app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], assets_folder=find_data_file('assets/'))
+# app = DashProxy(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], assets_folder=find_data_file('assets/'),transforms=[
+#     TriggerTransform(),  # enable use of Trigger objects
+#     MultiplexerTransform(),  # makes it possible to target an output multiple times in callbacks
+#     ServersideOutputTransform(),  # enable use of ServersideOutput objects
+#     NoOutputTransform(),  # enable callbacks without output
+# ])
 server = app.server
 app.config.suppress_callback_exceptions = True
 
@@ -396,15 +403,16 @@ def parse_contents(contents, filename, date):
     try:
         if 'csv' in filename:
             # Assume that the user uploaded a CSV file
-            df = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')))
+            df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
+            df['index'] = df.index
+            df = df.reindex(columns=sorted(df.columns, reverse=True))
+            df.to_excel("appending.xlsx")
         elif 'xlsx' in filename:
             # Assume that the user uploaded an excel file
             df = pd.read_excel(io.BytesIO(decoded))
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             df.to_excel("appending.xlsx")
-            df.to_excel("rawinfo.xlsx")
     except Exception as e:
         print(e)
         return html.Div([
@@ -2237,7 +2245,7 @@ def LoadingDataTab4(on,tab):
                           html.Div(daq.Slider(id="sliderHeightTab4",
                                      max=2100,
                                      min=400,
-                                     value=800,
+                                     value=530,
                                      step=100,
                                      size=400,
                                      vertical=True,
@@ -4663,8 +4671,8 @@ def dbname(dbch):
                           'CONVERTED_NUM_VALUE']
             df.to_csv('lermab.csv')
 
-@app.callback(Output('memory-output', 'data'),
-              Input('dbvalname', 'value'))
+@app.callback(ServersideOutput('memory-output', 'data'),
+              Input('dbvalname', 'value'), memoize=True)
 def filter_values(val_selected):
     if val_selected == None :
         raise PreventUpdate
