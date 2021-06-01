@@ -493,20 +493,30 @@ def update_output(list_of_contents, on, list_of_names, list_of_dates, retrieve, 
             parse_contents(c, n, d) for c, n, d in
             zip(list_of_contents, list_of_names, list_of_dates)]
         retrieve = list_of_names
-
+        print('content', pd.DataFrame(content).head(10))
         return content, retrieve
     else:
         return (no_update, no_update)
 
 
 @app.callback(Output('output-data-upload', 'children'),
-              [Input('datatablehidden', 'children')],
+              [Input('datatablehidden', 'children')]
               )
 def retrieve(retrieve):
-    if retrieve == None:
+    if retrieve == None or retrieve == []:
         raise PreventUpdate
+
     return retrieve
 
+@app.callback(ServersideOutput('datastore', 'data'),
+              [Input('datatablehidden', 'children')],memoize=True
+              )
+def retrieve(retrieve):
+    if retrieve == None or retrieve == []:
+        raise PreventUpdate
+    else :
+        xx = retrieve[0]['props']['children'][2]['props']['data']
+        return xx
 
 # @app.callback(Output('tab2DashTable', 'children'),
 #               [Input('datatablehidden', 'children')],
@@ -657,14 +667,16 @@ def opcLoadingData(on):
 
 
 @app.callback(Output("dropdownLeft", "options"),
-              [Input("retrieve", "children")])
+              [Input("datastore", "data")])
 def dropdownlistcontrol(retrieve):
-    if len(retrieve) > 0:
-        df = pd.read_excel('appending.xlsx')
-        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
-        return dff
-    else:
-        return no_update
+    if retrieve == None :
+        raise PreventUpdate
+
+    df = pd.DataFrame(retrieve)
+    dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
+    return dff
+
+
 
 
 # @app.callback(
@@ -1452,7 +1464,7 @@ def clear(nclick, st1, st2) :
                State('shift_x_axishidden', 'children'),
                State('shift_y_axishidden', 'children'),
                State('hiddenDifferance', 'children'),
-               State('retrieve', 'children'),
+               State('datastore', 'data'),
                State('leftintegralfirsthidden', 'children'),
                State('leftintegralsecondhidden', 'children'),
                State('rightintegralfirsthidden', 'children'),
@@ -1465,11 +1477,11 @@ def res2(val, radiograph, sliderheight, sliderwidth,
          minValfirst, minValsecond, firstchoosen, secondchoosen, rightsidedrop, right_y_axis, right_x_axis,
          nclick, nc, cleanclick, axis, shift_x, shift_y, differance, retrieve, leftfirstval, leftsecondval,
          rightfirstval, rightsecondval, firstshape, secondshape, ):
-    if retrieve == None or retrieve == [] or val == []:
+    if retrieve == None or retrieve == [] :
         raise PreventUpdate
-    if len(retrieve) > 0:
+    if retrieve != []:
         print('grapval', val)
-        df = pd.read_excel('appending.xlsx')
+        df = pd.DataFrame(retrieve)
         df['index'] = df.index
         df = df.reindex(columns=sorted(df.columns, reverse=True))
         baseval = ''
@@ -2300,10 +2312,12 @@ def showintegral(show):
 
 
 @app.callback([Output("tabDropdownTop", "options"), Output("tabDropdownDown", "options")],
-              [Input("retrieve", "children")])
+              [Input("datastore", "data")])
 def dropdownlistcontrol(retrieve):
-    if len(retrieve) > 0:
-        df = pd.read_excel('appending.xlsx')
+    if retrieve == [] :
+        raise PreventUpdate
+    if retrieve != []:
+        df = pd.DataFrame(retrieve)
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un')!=1 and i != 'index' and i != 'date']
         return (dff, dff)
     else:
@@ -2311,10 +2325,12 @@ def dropdownlistcontrol(retrieve):
 
 
 @app.callback([Output("tabDropdownTopTab4", "options"), Output("tabDropdownDownTab4", "options")],
-              [Input("retrieve", "children")])
+              [Input("datastore", "data")])
 def dropdownlistcontrolTab4Second(retrieve):
-    if len(retrieve) > 0:
-        df = pd.read_excel('appending.xlsx')
+    if retrieve == [] :
+        raise PreventUpdate
+    if retrieve != []:
+        df = pd.DataFrame(retrieve)
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un')!=1 and i != 'index' and i != 'date']
         return (dff, dff)
     else:
@@ -2323,8 +2339,7 @@ def dropdownlistcontrolTab4Second(retrieve):
 @app.callback([Output('tabDropdownTopTab4', 'style'),
                Output('tabDropdownDownTab4', 'style'),
                Output('tabDropdownTop', 'style'),
-               Output('tabDropdownDown', 'style')
-               ],
+               Output('tabDropdownDown', 'style')],
               [Input('radiographtab4', 'value')],)
 
 def chooseradio(radio) :
@@ -2368,10 +2383,13 @@ def contractdropdown2(valxsecond,valysecond, radio):
 
 
 @app.callback(Output("tabDropdownTop4", "options"),
-              [Input("retrieve", "children")])
+              [Input("datastore", "data")])
 def dropdownlistcontrolTab4First(retrieve):
-    if len(retrieve) > 0:
-        df = pd.read_excel('appending.xlsx')
+    if retrieve == [] :
+        raise PreventUpdate
+    if retrieve != []:
+        df = pd.DataFrame(retrieve)
+
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('TG')==1 or i[-2:] != 'ts']
         return dff
     else:
@@ -4537,16 +4555,28 @@ def DBcall(tab):
                State('db_name', 'value')],
               )
 def connectiondb(button,ipval,db_name):
-    if ipval == None and db_name == None:
+    if db_name == None:
         raise PreventUpdate
+    ipadress = ''
+    dbname = ''
+    if ipval == '' :
+        ipadress = "193.54.2.211"
+    else :
+        ipadress = ipval
+    if db_name == '':
+        dbname  = "rcckn"
+    else:
+        dbname  = db_name
 
+    print(ipadress)
+    print(dbname)
     if button > 0:
 
         server = SSHTunnelForwarder(
-                ("193.54.2.211", 22),
+                (ipadress, 22),
                 ssh_username='soudani',
                 ssh_password="univ484067152",
-                remote_bind_address=("193.54.2.211", 3306))
+                remote_bind_address=(ipadress, 3306))
 
         server.start()
 
@@ -4554,9 +4584,9 @@ def connectiondb(button,ipval,db_name):
             conn = mariadb.connect(
                     user="dashapp",
                     password="dashapp",
-                    host="193.54.2.211",
+                    host=ipadress,
                     port=3306,
-                    database="rcckn"
+                    database=dbname
             )
 
         except mariadb.Error as e:
@@ -4565,7 +4595,7 @@ def connectiondb(button,ipval,db_name):
             # Get Cursor
         cur = conn.cursor()
             # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        b = "select table_name from information_schema.tables where TABLE_SCHEMA='rcckn'"
+        b = f"select table_name from information_schema.tables where TABLE_SCHEMA= '{dbname}'"
             # a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
 
         cur.execute(b)
@@ -4624,15 +4654,25 @@ def connectiondb(button,ipval,db_name):
     #                 and i != 'tbl_sites' and i != 'tbl_inventory' and i != 'send_messages' and i != 'send_variablevaluesmessage']
     # else: return no_update
 
-@app.callback(Output('hiddendb1', 'children'),
-              [Input('dbvalchoosen', 'value')], )
-def dbname(dbch):
+@app.callback(Output('dbvalname', 'options'),
+              [Input('dbvalchoosen', 'value')], [State('db_name', 'value'), State('db_Ip', 'value')])
+def dbname(dbch, db_name, ipval):
+    ipadress = ''
+    dbname = ''
+    if ipval == '' :
+        ipadress = "193.54.2.211"
+    else :
+        ipadress = ipval
+    if db_name == '':
+        dbname  = "rcckn"
+    else:
+        dbname  = db_name
     if dbch != None :
         server = SSHTunnelForwarder(
-            ("193.54.2.211", 22),
+            (ipadress, 22),
             ssh_username='soudani',
             ssh_password="univ484067152",
-            remote_bind_address=("193.54.2.211", 3306))
+            remote_bind_address=(ipadress, 3306))
 
         server.start()
 
@@ -4640,9 +4680,58 @@ def dbname(dbch):
             conn = mariadb.connect(
                 user="dashapp",
                 password="dashapp",
-                host="193.54.2.211",
+                host=ipadress,
                 port=3306,
-                database="rcckn"
+                database=dbname
+            )
+
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+        # Get Cursor
+        cur = conn.cursor()
+        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
+        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
+        #     'received_variablevalues')
+
+        cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
+        t = cur.fetchall()
+        m = []
+        for i in t:
+            m.append(i[0]) # all variable as tuple, got name with [0]
+        return [{'label': i, 'value': i} for i in m]
+    else:
+        raise PreventUpdate
+@app.callback(Output('hiddendb1', 'children'),
+              [Input('dbvalchoosen', 'value')],
+              [State('db_name', 'value'), State('db_Ip', 'value')])
+def dbname2(dbch, db_name, ipval):
+    ipadress = ''
+    dbname = ''
+    if ipval == '' :
+        ipadress = "193.54.2.211"
+    else :
+        ipadress = ipval
+    if db_name == '':
+        dbname  = "rcckn"
+    else:
+        dbname  = db_name
+    if dbch != None :
+        server = SSHTunnelForwarder(
+            (ipadress, 22),
+            ssh_username='soudani',
+            ssh_password="univ484067152",
+            remote_bind_address=(ipadress, 3306))
+
+        server.start()
+
+        try:
+            conn = mariadb.connect(
+                user="dashapp",
+                password="dashapp",
+                host=ipadress,
+                port=3306,
+                database=dbname
             )
 
         except mariadb.Error as e:
@@ -4656,12 +4745,19 @@ def dbname(dbch):
         print("dbch",dbch)
 
         if dbch == 'send_variablevalues':
-            cur.execute("SELECT * FROM send_variablevalues ")
-            t = cur.fetchall()
-            df = pd.DataFrame(t)
-            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                          'PROCESSED', 'TIMED_OUT','UNREFERENCED']
-            df.to_csv('lermab.csv')
+            if dbname  != "rcckn" :
+                cur.execute("SELECT * FROM send_variablevalues ")
+                t = cur.fetchall()
+                df = pd.DataFrame(t)
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+                df.to_csv('lermab.csv')
+            if dbname == "rcckn":
+                cur.execute("SELECT * FROM send_variablevalues")
+                t = cur.fetchall()
+                df = pd.DataFrame(t)
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                              'PROCESSED', 'TIMED_OUT','UNREFERENCED']
+                df.to_csv('lermab.csv')
         if dbch == 'received_variablevalues':
             cur.execute("SELECT * FROM received_variablevalues ")
             t = cur.fetchall()
@@ -4729,44 +4825,7 @@ def on_data_set_table(data,dbch,valdate):
         x = df1.to_dict('record')
         return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
 
-@app.callback(Output('dbvalname', 'options'),
-              [Input('dbvalchoosen', 'value')], )
-def dbname(dbch):
-    if dbch != None :
-        server = SSHTunnelForwarder(
-            ("193.54.2.211", 22),
-            ssh_username='soudani',
-            ssh_password="univ484067152",
-            remote_bind_address=("193.54.2.211", 3306))
 
-        server.start()
-
-        try:
-            conn = mariadb.connect(
-                user="dashapp",
-                password="dashapp",
-                host="193.54.2.211",
-                port=3306,
-                database="rcckn"
-            )
-
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            sys.exit(1)
-        # Get Cursor
-        cur = conn.cursor()
-        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-        #     'received_variablevalues')
-
-        cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
-        t = cur.fetchall()
-        m = []
-        for i in t:
-            m.append(i[0]) # all variable as tuple, got name with [0]
-        return [{'label': i, 'value': i} for i in m]
-    else:
-        raise PreventUpdate
 
 @app.callback(Output('hiddendb2', 'children'),
               [Input('memory-output', 'data'),
@@ -4835,18 +4894,78 @@ def containerdb (val1,val2) :
                Input('dbvaldate', 'value'),
                Input('sliderWidthdb', 'value'),
                Input('sliderHeightdb', 'value'),],
-              [State('dbvalchoosen', 'value')] )
-def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch):
+              [State('dbvalchoosen', 'value'), State('db_name', 'value'),] )
+def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
     if data is None or valy == [] or valdat == [] or valdat == None :
         raise PreventUpdate
     df = pd.DataFrame(data)
     fig = go.Figure()
-    if dbch == 'received_variablevalues':
+    print('dbname', dbname)
+    if dbname == '':
+        if dbch == 'received_variablevalues':
 
-        df.columns = ['','ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
-                      'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+            df.columns = ['','ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
+                          'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+            a = []
+            for col in df['REMOTE_TIMESTAMP']:
+                a.append(col[:10])
+            df['dates'] = a
+            valdate_new = []
+            for i in range(len(valdat)):
+                valdate_new.append(valdat[i][:10])
+            for j in range(len(valy)):
+                for k in range(len(valdate_new)):
+                    a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
+                    b = df[df['dates'] == valdate_new[k]]['REMOTE_TIMESTAMP']
+                    fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
+                fig.update_layout(
+                    autosize=True,
+                    width=sliderw,
+                    height=sliderh,
+                    margin=dict(
+                        l=50,
+                        r=50,
+                        b=50,
+                        t=50,
+                        pad=4
+                    ),
+                    hovermode='x unified',
+                    uirevision=valy[j], ),
+            return fig
+
+        else:
+            df.columns = ['', 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                          'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+            a = []
+            for col in df['TIMESTAMP']:
+                a.append(col[:10])
+            df['dates'] = a
+            valdate_new = []
+            for i in range(len(valdat)):
+                valdate_new.append(valdat[i][:10])
+            for j in range(len(valy)):
+                for k in range(len(valdate_new)):
+                    a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
+                    b = df[df['dates'] == valdate_new[k]]['TIMESTAMP']
+                    fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
+                    fig.update_layout(
+                        autosize=True,
+                        width=sliderw,
+                        height=sliderh,
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=50,
+                            t=50,
+                            pad=4
+                        ),
+                        hovermode='x unified',
+                        uirevision=valy[j], ),
+            return fig
+    if dbname != 'rcckn' :
+        df.columns = ['', 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
         a = []
-        for col in df['REMOTE_TIMESTAMP']:
+        for col in df['TIMESTAMP']:
             a.append(col[:10])
         df['dates'] = a
         valdate_new = []
@@ -4855,37 +4974,8 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch):
         for j in range(len(valy)):
             for k in range(len(valdate_new)):
                 a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
-                b = df[df['dates'] == valdate_new[k]]['REMOTE_TIMESTAMP']
+                b = df[df['dates'] == valdate_new[k]]['TIMESTAMP']
                 fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
-            fig.update_layout(
-                autosize=True,
-                width=sliderw,
-                height=sliderh,
-                margin=dict(
-                    l=50,
-                    r=50,
-                    b=50,
-                    t=50,
-                    pad=4
-                ),
-                hovermode='x unified',
-                uirevision=valy[j], ),
-        return fig
-    else :
-        df.columns = ['','ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                      'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-        a = []
-        for col in df['TIMESTAMP'] :
-            a.append(col[:10])
-        df['dates'] = a
-        valdate_new = []
-        for i in range(len(valdat)) :
-            valdate_new.append(valdat[i][:10])
-        for j in range(len(valy)):
-            for k in range(len(valdate_new)):
-                a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
-                b = df[df['dates']== valdate_new[k]]['TIMESTAMP']
-                fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j],valdate_new[k] )))
                 fig.update_layout(
                     autosize=True,
                     width=sliderw,
@@ -4900,6 +4990,8 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch):
                     hovermode='x unified',
                     uirevision=valy[j], ),
         return fig
+
+
 
 if __name__ == '__main__' :
     # app.run_server(debug = True)
