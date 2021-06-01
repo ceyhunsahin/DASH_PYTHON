@@ -4302,6 +4302,9 @@ def DBcall(tab):
         datalist =  html.Div([html.Div([html.Div([dbc.Button("Database Activate", id="activatedb",  n_clicks=0,
                                                            color="success", size = 'lg',
                                                            ),
+                                                  dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
+                                                             color="danger", size='lg',className="mr-1"
+                                                             ),
                                                 dbc.Input(id='db_Ip',
                                                           type="text",
                                                           debounce=True,
@@ -4550,11 +4553,12 @@ def DBcall(tab):
 
 
 @app.callback(Output('dbvalchoosen', 'options'),
-              [Input('activatedb', 'n_clicks')],
+              [Input('activatedb', 'n_clicks'),
+               Input('deactivatedb', 'n_clicks')],
                [State('db_Ip', 'value'),
-               State('db_name', 'value')],
+               State('db_name', 'value'),State('dbvalchoosen', 'options'),],
               )
-def connectiondb(button,ipval,db_name):
+def connectiondb(button,nc2, ipval,db_name,st):
     if db_name == None:
         raise PreventUpdate
     ipadress = ''
@@ -4570,7 +4574,11 @@ def connectiondb(button,ipval,db_name):
 
     print(ipadress)
     print(dbname)
-    if button > 0:
+    if nc2 >= button :
+        print('nc',nc2)
+        st = [{'label': '', 'value': ''}]
+        return st
+    if button >= nc2:
 
         server = SSHTunnelForwarder(
                 (ipadress, 22),
@@ -4609,50 +4617,10 @@ def connectiondb(button,ipval,db_name):
                 and i != 'app_vw_messaging_followup' and i != 'received_variablerequest' and i != 'received_controlvalues'
                 and i != 'app_system_properties' and i != 'tbl_sites' and i != 'tbl_inventory' and i != 'send_messages'
                 and i != 'send_variablevaluesmessage']
-    else:
-        return no_update
-    # if ipval != '':
-    #     if button > 0:
-    #
-    #         server = SSHTunnelForwarder(
-    #             (ipval, 22),
-    #             ssh_username='soudani',
-    #             ssh_password="univ484067152",
-    #             remote_bind_address=(ipval, 3306))
-    #
-    #         server.start()
-    #
-    #         try:
-    #             conn = mariadb.connect(
-    #                 user="dashapp",
-    #                 password="dashapp",
-    #                 host=ipval,
-    #                 port=3306,
-    #                 database=db_name
-    #             )
-    #
-    #         except mariadb.Error as e:
-    #             print(f"Error connecting to MariaDB Platform: {e}")
-    #             sys.exit(1)
-    #         # Get Cursor
-    #         cur = conn.cursor()
-    #         # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-    #         b = "select table_name from information_schema.tables where TABLE_SCHEMA='{}'".format(db_name)
-    #         # a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
-    #
-    #         cur.execute(b)
-    #         t = cur.fetchall()
-    #         df = pd.DataFrame(t)
-    #         print(df)
-    #         m = []
-    #         for i in t:
-    #             m.append(i[0])
-    #
-    #         return [{'label': i, 'value': i} for i in m if
-    #                 i != 'app_variablerequest' and i != 'send_controlvalues' and i != 'received_ack' and i != 'send_vw_variablerequestdestination' and i != 'flyway_schema_history'
-    #                 and i != 'app_vw_messaging_followup' and i != 'received_variablerequest' and i != 'received_controlvalues' and i != 'app_system_properties'
-    #                 and i != 'tbl_sites' and i != 'tbl_inventory' and i != 'send_messages' and i != 'send_variablevaluesmessage']
-    # else: return no_update
+
+    # else:
+    #     return no_update
+
 
 @app.callback(Output('dbvalname', 'options'),
               [Input('dbvalchoosen', 'value')], [State('db_name', 'value'), State('db_Ip', 'value')])
@@ -4768,17 +4736,15 @@ def dbname2(dbch, db_name, ipval):
             df.to_csv('lermab.csv')
 
 @app.callback(ServersideOutput('memory-output', 'data'),
-              Input('dbvalname', 'value'), memoize=True)
+              [Input('dbvalname', 'value')], memoize=True)
 def filter_values(val_selected):
-    if val_selected == None :
+    if val_selected == None:
         raise PreventUpdate
     df = pd.read_csv('lermab.csv')
     print('val_selected', val_selected)
-    if not val_selected:
+    if not val_selected :
         # Return all the rows on initial load/no country selected.
-
         return df.to_dict('records')
-
     filtered = df.query('VARIABLE_NAME in @val_selected').to_dict('records')
     print('filtered', filtered[:10])
 
@@ -4876,14 +4842,13 @@ def xx(f):
 @app.callback(
       [Output('firstChoosenValuedb', 'options'),
        Output('secondChoosenValuedb', 'options')],
-      [Input('dbvalname', 'value'),
-       Input('dbvalname', 'value')],)
+      [Input('dbvalname', 'value')],)
 
-def containerdb (val1,val2) :
-    if val1 == None or val2 == None or val1 == [] or val2 == []:
+def containerdb (val1) :
+    if val1 == None or val1 == [] :
         raise PreventUpdate
 
-    return [{'label' : i, 'value' : i} for i in val1],[{'label' : i, 'value' : i} for i in val2]
+    return [{'label' : i, 'value' : i} for i in val1],[{'label' : i, 'value' : i} for i in val1]
 
 
 
