@@ -4313,16 +4313,19 @@ def DBcall(tab):
                                                           style={'width': '11rem', "marginTop": "1.5rem"},
                                                           autoFocus=True,
                                                           placeholder="Enter your IP number ..."),
-                                                dbc.Input(id='db_name',
-                                                          type="text",
-                                                          debounce=True,
-                                                          min=-10000, max=10000, step=1,
-                                                          bs_size="mr",
-                                                          style={'width': '11rem', "marginTop": "1.5rem"},
-                                                          autoFocus=True,
-                                                          placeholder="Enter your DB name...")
+
                                                           ],className="aadb"),
                               html.Div([
+                                  dcc.Dropdown(id='db_name',
+                                               options=[{'label': i, 'value': i}
+                                                        for i in ['rcckn', 'enerbat']],
+                                               multi=False,
+                                               style={"cursor": "pointer", 'marginTop': '5px'},
+                                               className='stockSelectorClass3',
+                                               clearable=True,
+                                               placeholder='Select Database',
+
+                                               ),
                                         dcc.Dropdown(id='dbvalchoosen',
                                                      # options=[{'label': i, 'value': i}
                                                      #          for i in df.columns],
@@ -4553,49 +4556,115 @@ def DBcall(tab):
 
 
 @app.callback(Output('dbvalchoosen', 'options'),
-              [Input('activatedb', 'n_clicks'),
-               Input('deactivatedb', 'n_clicks')],
-               [State('db_Ip', 'value'),
-               State('db_name', 'value'),State('dbvalchoosen', 'options'),],
-              )
-def connectiondb(button,nc2, ipval,db_name,st):
-    if db_name == None:
+              [Input('db_name', 'value')])
+
+def relationdb(dbname) :
+    if dbname == None :
+        raise PreventUpdate
+    if dbname == 'rcckn' :
+        return [{'label': i, 'value': i} for i in ['send_variablevalues', 'received_variablevalues']]
+    elif dbname == 'enerbat' :
+        return [{'label': i, 'value': i} for i in ['send_variablevalues']]
+    else : no_update
+
+# @app.callback(Output('dbvalchoosen', 'options'),
+#               [Input('activatedb', 'n_clicks'),
+#                ],
+#                [State('db_Ip', 'value'),
+#                State('db_name', 'value'),State('dbvalchoosen', 'options'),],
+#               )
+# def connectiondb(button, ipval,db_name,st):
+#     if db_name == None:
+#         raise PreventUpdate
+#     ipadress = ''
+#     dbname = ''
+#     if ipval == '' :
+#         ipadress = "193.54.2.211"
+#     else :
+#         ipadress = ipval
+#     if db_name == '':
+#         dbname  = "rcckn"
+#     else:
+#         dbname  = db_name
+#
+#     print(ipadress)
+#     print(dbname)
+#     # if nc2 >= button :
+#     #     print('nc',nc2)
+#     #     st = [{'label': '', 'value': ''}]
+#     #     return st
+#     if button > 0:
+#
+#         server = SSHTunnelForwarder(
+#                 (ipadress, 22),
+#                 ssh_username='soudani',
+#                 ssh_password="univ484067152",
+#                 remote_bind_address=(ipadress, 3306))
+#
+#         server.start()
+#
+#         try:
+#             conn = mariadb.connect(
+#                     user="dashapp",
+#                     password="dashapp",
+#                     host=ipadress,
+#                     port=3306,
+#                     database=dbname
+#             )
+#
+#         except mariadb.Error as e:
+#             print(f"Error connecting to MariaDB Platform: {e}")
+#             sys.exit(1)
+#             # Get Cursor
+#         cur = conn.cursor()
+#             # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
+#         b = f"select table_name from information_schema.tables where TABLE_SCHEMA= '{dbname}'"
+#             # a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
+#
+#         cur.execute(b)
+#         t = cur.fetchall()
+#         df = pd.DataFrame(t)
+#         m = []
+#         for i in t:
+#             m.append(i[0])
+#         return [{'label': i, 'value': i} for i in m if i != 'app_variablerequest' and i != 'send_controlvalues' and
+#                 i != 'received_ack' and i != 'send_vw_variablerequestdestination' and i != 'flyway_schema_history'
+#                 and i != 'app_vw_messaging_followup' and i != 'received_variablerequest' and i != 'received_controlvalues'
+#                 and i != 'app_system_properties' and i != 'tbl_sites' and i != 'tbl_inventory' and i != 'send_messages'
+#                 and i != 'send_variablevaluesmessage']
+#
+#     # else:
+#     #     return no_update
+
+#
+@app.callback([Output('dbvalname', 'options'),Output('dbvaldate', 'options'),ServersideOutput('memory-output', 'data'),],
+              [Input('activatedb', 'n_clicks'),Input('deactivatedb', 'n_clicks')], [State('dbvalchoosen', 'value'),State('db_name', 'value'), State('db_Ip', 'value')])
+def dbname(nc,nc2, dbch,  dbname, ipval):
+    if dbname == None:
         raise PreventUpdate
     ipadress = ''
-    dbname = ''
     if ipval == '' :
         ipadress = "193.54.2.211"
     else :
         ipadress = ipval
-    if db_name == '':
-        dbname  = "rcckn"
-    else:
-        dbname  = db_name
-
-    print(ipadress)
-    print(dbname)
-    if nc2 >= button :
-        print('nc',nc2)
-        st = [{'label': '', 'value': ''}]
-        return st
-    if button >= nc2:
+    q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
+    if q1 == 'activatedb' :
 
         server = SSHTunnelForwarder(
-                (ipadress, 22),
-                ssh_username='soudani',
-                ssh_password="univ484067152",
-                remote_bind_address=(ipadress, 3306))
+            (ipadress, 22),
+            ssh_username='soudani',
+            ssh_password="univ484067152",
+            remote_bind_address=(ipadress, 3306))
 
         server.start()
 
         try:
             conn = mariadb.connect(
-                    user="dashapp",
-                    password="dashapp",
-                    host=ipadress,
-                    port=3306,
-                    database=dbname
-            )
+                user="dashapp",
+                password="dashapp",
+                host=ipadress,
+                port=3306,
+                database=dbname)
 
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
@@ -4603,241 +4672,152 @@ def connectiondb(button,nc2, ipval,db_name,st):
             # Get Cursor
         cur = conn.cursor()
             # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        b = f"select table_name from information_schema.tables where TABLE_SCHEMA= '{dbname}'"
-            # a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
+            # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
+            #     'received_variablevalues')
 
-        cur.execute(b)
+        # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
+        cur.execute("SELECT * FROM {} ".format(dbch))
         t = cur.fetchall()
         df = pd.DataFrame(t)
-        m = []
-        for i in t:
-            m.append(i[0])
-        return [{'label': i, 'value': i} for i in m if i != 'app_variablerequest' and i != 'send_controlvalues' and
-                i != 'received_ack' and i != 'send_vw_variablerequestdestination' and i != 'flyway_schema_history'
-                and i != 'app_vw_messaging_followup' and i != 'received_variablerequest' and i != 'received_controlvalues'
-                and i != 'app_system_properties' and i != 'tbl_sites' and i != 'tbl_inventory' and i != 'send_messages'
-                and i != 'send_variablevaluesmessage']
-
-    # else:
-    #     return no_update
-
-
-@app.callback(Output('dbvalname', 'options'),
-              [Input('dbvalchoosen', 'value')], [State('db_name', 'value'), State('db_Ip', 'value')])
-def dbname(dbch, db_name, ipval):
-    ipadress = ''
-    dbname = ''
-    if ipval == '' :
-        ipadress = "193.54.2.211"
-    else :
-        ipadress = ipval
-    if db_name == '':
-        dbname  = "rcckn"
-    else:
-        dbname  = db_name
-    if dbch != None :
-        server = SSHTunnelForwarder(
-            (ipadress, 22),
-            ssh_username='soudani',
-            ssh_password="univ484067152",
-            remote_bind_address=(ipadress, 3306))
-
-        server.start()
-
-        try:
-            conn = mariadb.connect(
-                user="dashapp",
-                password="dashapp",
-                host=ipadress,
-                port=3306,
-                database=dbname
-            )
-
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            sys.exit(1)
-        # Get Cursor
-        cur = conn.cursor()
-        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-        #     'received_variablevalues')
-
-        cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
-        t = cur.fetchall()
-        m = []
-        for i in t:
-            m.append(i[0]) # all variable as tuple, got name with [0]
-        return [{'label': i, 'value': i} for i in m]
-    else:
-        raise PreventUpdate
-@app.callback(Output('hiddendb1', 'children'),
-              [Input('dbvalchoosen', 'value')],
-              [State('db_name', 'value'), State('db_Ip', 'value')])
-def dbname2(dbch, db_name, ipval):
-    ipadress = ''
-    dbname = ''
-    if ipval == '' :
-        ipadress = "193.54.2.211"
-    else :
-        ipadress = ipval
-    if db_name == '':
-        dbname  = "rcckn"
-    else:
-        dbname  = db_name
-    if dbch != None :
-        server = SSHTunnelForwarder(
-            (ipadress, 22),
-            ssh_username='soudani',
-            ssh_password="univ484067152",
-            remote_bind_address=(ipadress, 3306))
-
-        server.start()
-
-        try:
-            conn = mariadb.connect(
-                user="dashapp",
-                password="dashapp",
-                host=ipadress,
-                port=3306,
-                database=dbname
-            )
-
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            sys.exit(1)
-        # Get Cursor
-        cur = conn.cursor()
-        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-        #     'received_variablevalues')
-        print("dbch",dbch)
-
-        if dbch == 'send_variablevalues':
-            if dbname  != "rcckn" :
-                cur.execute("SELECT * FROM send_variablevalues ")
-                t = cur.fetchall()
-                df = pd.DataFrame(t)
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-                df.to_csv('lermab.csv')
-            if dbname == "rcckn":
-                cur.execute("SELECT * FROM send_variablevalues")
-                t = cur.fetchall()
-                df = pd.DataFrame(t)
+        print('burdaki df nedir', df.head(10))
+        if dbname == 'rcckn':
+            if dbch == 'received_variablevalues':
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                           'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                           'CONVERTED_NUM_VALUE']
+                df['REMOTE_TIMESTAMP'] = df.REMOTE_TIMESTAMP.apply(pd.to_datetime)
+                df["day"] = df.REMOTE_TIMESTAMP.dt.day
+                df["month"] = df.REMOTE_TIMESTAMP.dt.month
+                df["year"] = df.REMOTE_TIMESTAMP.dt.year
+                a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+                a = list(set(a))
+                b = pd.to_datetime(a)
+                b = sorted(b)
+                str_list = [t.strftime("%Y-%m-%d") for t in b]
+                name = df['VARIABLE_NAME'].unique()
+                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list], t
+            elif dbch == "send_variablevalues":
+                print('buraya giriyor mu')
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                              'PROCESSED', 'TIMED_OUT','UNREFERENCED']
-                df.to_csv('lermab.csv')
-        if dbch == 'received_variablevalues':
-            cur.execute("SELECT * FROM received_variablevalues ")
-            t = cur.fetchall()
-            df = pd.DataFrame(t)
-            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                          'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                          'CONVERTED_NUM_VALUE']
-            df.to_csv('lermab.csv')
+                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                df.TIMESTAMP = df.TIMESTAMP.apply(pd.to_datetime)
+                df["day"] = df.TIMESTAMP.dt.day
+                df["month"] = df.TIMESTAMP.dt.month
+                df["year"] = df.TIMESTAMP.dt.year
+                a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+                a = list(set(a))
+                b = pd.to_datetime(a)
+                b = sorted(b)
+                print('bbbbbbbbbbbb22222', b)
+                str_list = [t.strftime("%Y-%m-%d") for t in b]
+                name = df['VARIABLE_NAME'].unique()
+                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list], t
+        if dbname == 'enerbat':
+            if dbch == "send_variablevalues":
+                print('buraya giriyor mu')
+                df.columns = [ 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+                df.TIMESTAMP = df.TIMESTAMP.apply(pd.to_datetime)
+                df["day"] = df.TIMESTAMP.dt.day
+                df["month"] = df.TIMESTAMP.dt.month
+                df["year"] = df.TIMESTAMP.dt.year
+                a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+                a = list(set(a))
+                b = pd.to_datetime(a)
+                b = sorted(b)
+                print('bbbbbbbbbbbb22222', b)
+                name = df['VARIABLE_NAME'].unique()
+                str_list = [t.strftime("%Y-%m-%d") for t in b]
+                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list],t
 
-@app.callback(ServersideOutput('memory-output', 'data'),
-              [Input('dbvalname', 'value')], memoize=True)
-def filter_values(val_selected):
-    if val_selected == None:
-        raise PreventUpdate
-    df = pd.read_csv('lermab.csv')
-    print('val_selected', val_selected)
-    if not val_selected :
-        # Return all the rows on initial load/no country selected.
-        return df.to_dict('records')
-    filtered = df.query('VARIABLE_NAME in @val_selected').to_dict('records')
-    print('filtered', filtered[:10])
-
-    return filtered
-
-
-
+    if q1 == 'deactivatedb' :
+        kk = [{'label': i, 'value': i} for i in '']
+        print('kkkkkkkkk',kk)
+        return [{'label': i, 'value': i} for i in ''],[{'label': i, 'value': i} for i in ''],[]
+    else:
+        no_update, no_update, no_update
 
 @app.callback([Output('getdbtable', 'data'),
                Output('getdbtable', 'columns'),],
-              [Input('memory-output', 'data'),
-               Input('dbvalchoosen', 'value'),
-               Input('dbvaldate', 'value')],
+              [Input('memory-output', 'data'),Input('dbvalname', 'value'),
+               Input('dbvaldate', 'value'),Input('deactivatedb', 'n_clicks')],
+              [Input('dbvalchoosen', 'value'),State('db_name', 'value'), ]
               )
 
-def on_data_set_table(data,dbch,valdate):
-    if data is None or valdate == None:
+def on_data_set_table(data,valname, valdate,nc2, dbch, dbname):
+    if data is None or valname == None or valdate == None or dbch == None or dbname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
     print('dffffffff', df.head(10))
-    if dbch == 'received_variablevalues':
-        df['REMOTE_TIMESTAMP'] = df['REMOTE_TIMESTAMP'].astype('string')
-        a = []
-        for col in df['REMOTE_TIMESTAMP'] :
-            a.append(col[:10])
-        df['dates'] = a
-        valdate_new = []
-        for i in range(len(valdate)) :
-            valdate_new.append(valdate[i][:10])
-        df1 = df[df['dates'].isin(valdate_new)]
-        x = df1.to_dict('record')
-        return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
 
-    if dbch == 'send_variablevalues':
-        df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
-        a = []
-        for col in df['TIMESTAMP'] :
-            a.append(col[:10])
-        df['dates'] = a
-        valdate_new = []
-        for i in range(len(valdate)) :
-            valdate_new.append(valdate[i][:10])
-        df1 = df[df['dates'].isin(valdate_new)]
-        x = df1.to_dict('record')
-        return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
-
-
-
-@app.callback(Output('hiddendb2', 'children'),
-              [Input('memory-output', 'data'),
-               Input('dbvalchoosen', 'value')] )
-
-def vv(data, dbch):
-    if data == [] or data == None:
-        raise PreventUpdate
-    df = pd.DataFrame(data)
-    print('dbch', dbch)
-    if dbch == 'received_variablevalues':
-        # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-        #           'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-        #           'CONVERTED_NUM_VALUE']
-        df['REMOTE_TIMESTAMP'] = df.REMOTE_TIMESTAMP.apply(pd.to_datetime)
-        df["day"] = df.REMOTE_TIMESTAMP.dt.day
-        df["month"] = df.REMOTE_TIMESTAMP.dt.month
-        df["year"] = df.REMOTE_TIMESTAMP.dt.year
-        a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-        a = list(set(a))
-        b = pd.to_datetime(a)
-        b = sorted(b)
-        print('bbbbbbbbbbbb', b)
-        return b
-    elif dbch == "send_variablevalues" :
-        print('buraya giriyor mu')
-        df.TIMESTAMP = df.TIMESTAMP.apply(pd.to_datetime)
-        df["day"] = df.TIMESTAMP.dt.day
-        df["month"] = df.TIMESTAMP.dt.month
-        df["year"] = df.TIMESTAMP.dt.year
-        a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-        a = list(set(a))
-        b = pd.to_datetime(a)
-        b = sorted(b)
-        print('bbbbbbbbbbbb22222', b)
-        return b
-
-
-@app.callback(Output('dbvaldate', 'options'),
-              [Input('hiddendb2', 'children')])
-def xx(f):
-    if f == [] or f == None:
-        raise PreventUpdate
-    else:
-        return [{'label': i[:10], 'value': i} for i in f]
-
+    if dbname == 'rcckn' :
+        if dbch == 'received_variablevalues':
+            print('sikinti burda 1 ')
+            if valdate != '' or valname != []:
+                if df.empty != 1:
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                              'CONVERTED_NUM_VALUE']
+                    print('sikinti burda 2 ')
+                    df['REMOTE_TIMESTAMP'] = df['REMOTE_TIMESTAMP'].astype('string')
+                    a = []
+                    for col in df['REMOTE_TIMESTAMP'] :
+                        a.append(col[:10])
+                    df['dates'] = a
+                    valdate_new = []
+                    for i in range(len(valdate)) :
+                        valdate_new.append(valdate[i][:10])
+                    df1 = df[df['dates'].isin(valdate_new)]
+                    a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
+                    x = a.to_dict('record')
+                    return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
+                else:
+                    raise PreventUpdate
+            else :
+                raise PreventUpdate
+        if dbch == 'send_variablevalues':
+            print('sikinti burda 1send ')
+            if valdate != '' or valname != []:
+                print('sikinti burda 2send ')
+                if df.empty != 1 :
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                                      'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                    print('sikinti burda 3send ')
+                    df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
+                    a = []
+                    for col in df['TIMESTAMP'] :
+                        a.append(col[:10])
+                    df['dates'] = a
+                    valdate_new = []
+                    for i in range(len(valdate)) :
+                        valdate_new.append(valdate[i][:10])
+                    df1 = df[df['dates'].isin(valdate_new)]
+                    print('valname', valname)
+                    a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
+                    x = a.to_dict('record')
+                    return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
+                else:
+                    raise PreventUpdate
+            else:
+                raise PreventUpdate
+    if dbname == 'enerbat' :
+        if dbch == 'send_variablevalues':
+            if valdate != '' or valname != []:
+                if df.empty != 1:
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+                    df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
+                    a = []
+                    for col in df['TIMESTAMP'] :
+                        a.append(col[:10])
+                    df['dates'] = a
+                    valdate_new = []
+                    for i in range(len(valdate)) :
+                        valdate_new.append(valdate[i][:10])
+                    df1 = df[df['dates'].isin(valdate_new)]
+                    a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
+                    x = a.to_dict('record')
+                    return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
+                else:
+                    raise PreventUpdate
 
 @app.callback(
       [Output('firstChoosenValuedb', 'options'),
@@ -4849,10 +4829,10 @@ def containerdb (val1) :
         raise PreventUpdate
 
     return [{'label' : i, 'value' : i} for i in val1],[{'label' : i, 'value' : i} for i in val1]
-
-
-
-
+#
+#
+#
+#
 @app.callback(Output('getdbgraph', 'figure'),
               [Input('memory-output', 'data'),
                Input('dbvalname', 'value'),
@@ -4866,41 +4846,74 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
     df = pd.DataFrame(data)
     fig = go.Figure()
     print('dbname', dbname)
-    if dbname == '':
+    if dbname == 'rcckn':
         if dbch == 'received_variablevalues':
-
-            df.columns = ['','ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
-                          'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
-            a = []
-            for col in df['REMOTE_TIMESTAMP']:
-                a.append(col[:10])
-            df['dates'] = a
-            valdate_new = []
-            for i in range(len(valdat)):
-                valdate_new.append(valdat[i][:10])
-            for j in range(len(valy)):
-                for k in range(len(valdate_new)):
-                    a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
-                    b = df[df['dates'] == valdate_new[k]]['REMOTE_TIMESTAMP']
-                    fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
-                fig.update_layout(
-                    autosize=True,
-                    width=sliderw,
-                    height=sliderh,
-                    margin=dict(
-                        l=50,
-                        r=50,
-                        b=50,
-                        t=50,
-                        pad=4
-                    ),
-                    hovermode='x unified',
-                    uirevision=valy[j], ),
-            return fig
-
+            if df.empty != 1:
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
+                              'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+                a = []
+                for col in df['REMOTE_TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i][:10])
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
+                        b = df[df['dates'] == valdate_new[k]]['REMOTE_TIMESTAMP']
+                        fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
+                    fig.update_layout(
+                        autosize=True,
+                        width=sliderw,
+                        height=sliderh,
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=50,
+                            t=50,
+                            pad=4
+                        ),
+                        hovermode='x unified',
+                        uirevision=valy[j], ),
+                return fig
+            else:
+                raise PreventUpdate
         else:
-            df.columns = ['', 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                          'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+            if df.empty != 1:
+                df.columns = [ 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                a = []
+                for col in df['TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i][:10])
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
+                        b = df[df['dates'] == valdate_new[k]]['TIMESTAMP']
+                        fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
+                        fig.update_layout(
+                            autosize=True,
+                            width=sliderw,
+                            height=sliderh,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=50,
+                                t=50,
+                                pad=4
+                            ),
+                            hovermode='x unified',
+                            uirevision=valy[j], ),
+                return fig
+            else:
+                raise PreventUpdate
+    if dbname == 'enerbat' :
+        if df.empty != 1:
+            df.columns = [ 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
             a = []
             for col in df['TIMESTAMP']:
                 a.append(col[:10])
@@ -4927,35 +4940,8 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                         hovermode='x unified',
                         uirevision=valy[j], ),
             return fig
-    if dbname != 'rcckn' :
-        df.columns = ['', 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-        a = []
-        for col in df['TIMESTAMP']:
-            a.append(col[:10])
-        df['dates'] = a
-        valdate_new = []
-        for i in range(len(valdat)):
-            valdate_new.append(valdat[i][:10])
-        for j in range(len(valy)):
-            for k in range(len(valdate_new)):
-                a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
-                b = df[df['dates'] == valdate_new[k]]['TIMESTAMP']
-                fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
-                fig.update_layout(
-                    autosize=True,
-                    width=sliderw,
-                    height=sliderh,
-                    margin=dict(
-                        l=50,
-                        r=50,
-                        b=50,
-                        t=50,
-                        pad=4
-                    ),
-                    hovermode='x unified',
-                    uirevision=valy[j], ),
-        return fig
-
+        else:
+            raise PreventUpdate
 
 
 if __name__ == '__main__' :
