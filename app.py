@@ -19,6 +19,7 @@ from dash import no_update
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from urllib.parse import quote as urlquote
+import numpy as np
 from numpy import trapz
 from flask import send_file
 from openpyxl import Workbook, load_workbook
@@ -127,41 +128,35 @@ page_1_layout = html.Div(
                                                #              html.Button('File', id='file_save', n_clicks=0, ),
                                                #              html.Button('Database', id='db_save', n_clicks=0, ),
                                                #          ]),
-                                               html.Div(dcc.Store(id='datastore')),
+                                               # html.Div([dcc.Store(id='pointLeftFirstdb'),dcc.Store(id='pointLeftSeconddb')
+                                               #           ,dcc.Store(id='pointRightFirstdb'),dcc.Store(id='pointRightSeconddb')
+                                               #           ,dcc.Store(id='leftIntegralFirstdb'),dcc.Store(id='leftIntegralSeconddb')
+                                               #           ,dcc.Store(id='rightIntegralFirstdb'),dcc.Store(id='rightIntegraleconddb')
+                                               #           ]),
                                                html.Div(id='pointLeftFirst', children=[], style={'display': 'None'}),
                                                html.Div(id='pointLeftSecond', children=[], style={'display': 'None'}),
                                                html.Div(id='pointRightFirst', children=[], style={'display': 'None'}),
                                                html.Div(id='pointRightSecond', children=[], style={'display': 'None'}),
-                                               html.Div(id='pointLeftFirstTab4', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='pointLeftSecondTab4', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='pointRightFirstTab4', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='pointRightSecondTab4', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='leftSideChecklistValue', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='leftSidedroptValue', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='leftSideChecklistValueHidden', children=[],
-                                                        style={'display': 'None'}),
+                                               html.Div(id='pointLeftFirstdb', children=[], style={'display': 'None'}),
+                                               html.Div(id='pointLeftSeconddb', children=[], style={'display': 'None'}),
+                                               html.Div(id='pointRightFirstdb', children=[], style={'display': 'None'}),
+                                               html.Div(id='pointRightSeconddb', children=[], style={'display': 'None'}),
+                                               html.Div(id='pointLeftFirstTab4', children=[],style={'display': 'None'}),
+                                               html.Div(id='pointLeftSecondTab4', children=[],style={'display': 'None'}),
+                                               html.Div(id='pointRightFirstTab4', children=[],style={'display': 'None'}),
+                                               html.Div(id='pointRightSecondTab4', children=[],style={'display': 'None'}),
+                                               html.Div(id='leftSideChecklistValue', children=[],style={'display': 'None'}),
+                                               html.Div(id='leftSidedroptValue', children=[],style={'display': 'None'}),
+                                               html.Div(id='leftSideChecklistValueHidden', children=[],style={'display': 'None'}),
+                                               html.Div(id='leftSideChecklistValueHiddendb', children=[],style={'display': 'None'}),
                                                html.Div(id='deletedval', children=[], style={'display': 'None'}),
-                                               html.Div(id='leftSideChecklistValueHiddenTab4', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='tab2hiddenValuex_axis', style={'display': 'None'},
-                                                        children=[]),
-                                               html.Div(id='tab2hiddenValuey_axis', style={'display': 'None'},
-                                                        children=[]),
-                                               html.Div(id='tab4hiddenValuex_axissecond', style={'display': 'None'},
-                                                        children=[]),
-                                               html.Div(id='tab4hiddenValuey_axissecond', style={'display': 'None'},
-                                                        children=[]),
-                                               html.Div(id='tab4hiddenValuex_axis', style={'display': 'None'},
-                                                        children=[]),
-
-                                               html.Div(id='tab3hiddenValuey_axis', style={'display': 'None'},
-                                                        children=[]),
+                                               html.Div(id='leftSideChecklistValueHiddenTab4', children=[],style={'display': 'None'}),
+                                               html.Div(id='tab2hiddenValuex_axis', style={'display': 'None'},children=[]),
+                                               html.Div(id='tab2hiddenValuey_axis', style={'display': 'None'},children=[]),
+                                               html.Div(id='tab4hiddenValuex_axissecond', style={'display': 'None'},children=[]),
+                                               html.Div(id='tab4hiddenValuey_axissecond', style={'display': 'None'},children=[]),
+                                               html.Div(id='tab4hiddenValuex_axis', style={'display': 'None'},children=[]),
+                                               html.Div(id='tab3hiddenValuey_axis', style={'display': 'None'},children=[]),
                                                html.Div(id='hiddenTextHeader', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextNote', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextxaxis', children=[], style={'display': 'None'}),
@@ -171,8 +166,7 @@ page_1_layout = html.Div(
                                                html.Div(id='hiddenTextxaxis4', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextyaxis4', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenShapeVal', children=[], style={'display': 'None'}),
-                                               html.Div(id='hiddenShapeDate', children=[],
-                                                        style={'display': 'None'}), ], ),
+                                               html.Div(id='hiddenShapeDate', children=[],style={'display': 'None'}), ], ),
                                   html.Div(id='hiddenDifferance', children=[], style={'display': 'None'}),
                                   html.Div(id='retrieve', children=[], style={'display': 'None'}),
                                   html.Div(id='datatablehidden', children=[], style={'display': 'None'}),
@@ -195,6 +189,10 @@ page_1_layout = html.Div(
                                   html.Div(id='leftintegralsecondhidden', children=[], style={'display': 'None'}),
                                   html.Div(id='rightintegralfirsthidden', children=[], style={'display': 'None'}),
                                   html.Div(id='rightintegralsecondhidden', children=[], style={'display': 'None'}),
+                                  html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
+                                  html.Div(id='leftintegralsecondhiddendb', children=[], style={'display': 'None'}),
+                                  html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
+                                  html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
                                   html.Div(id='tableinteractivehidden', children=[], style={'display': 'None'}),
                                   html.Div(id='firstchoosenvalhiddentab4', children=[], style={'display': 'None'}),
                                   html.Div(id='secondchoosenvalhiddentab4', children=[], style={'display': 'None'}),
@@ -241,17 +239,6 @@ page_1_layout = html.Div(
                                                      }
 
                                                      ), ),
-                                  html.Div(dcc.Graph(id='graphTab4hidden',
-                                                     config={},
-                                                     style={'display': 'None'},
-                                                     figure={
-                                                         'layout': {'legend': {'tracegroupgap': 0},
-
-                                                                    }
-                                                     }
-
-                                                     ), )
-                                  ,
 
                               ]),
                  ]),
@@ -1132,7 +1119,16 @@ def res(val, hiddenval):
     print('val', val)
     hiddenval = val
     return hiddenval
-
+# @app.callback(Output("leftSideChecklistValueHiddendb", "children"),
+#               [Input('choosenChecklistLeftdb', 'value'), ],
+#               [State("leftSideChecklistValueHiddendb", "children")]
+#               )
+# def res(val, hiddenval):
+#     if val == None:
+#         raise PreventUpdate
+#     print('val', val)
+#     hiddenval = val
+#     return hiddenval
 
 # @app.callback(Output("leftSideChecklistValueHiddenTab4", "children"),
 #               [Input('choosenChecklistLeft', 'value')],
@@ -1262,11 +1258,11 @@ def firstchright(leftintfirst):
 def firstchrighttab4(leftintfirst):
     return leftintfirst
 
-@app.callback(Output("leftintegralfirsthiddendb", "children"),
-              [Input("leftIntegralFirstdb", "value")],
-              )
-def firstchrightdb(leftintfirst):
-    return leftintfirst
+# @app.callback(Output("leftintegralfirsthiddendb", "children"),
+#               [Input("leftIntegralFirstdb", "value")],
+#               )
+# def firstchrightdb(leftintfirst):
+#     return leftintfirst
 
 
 @app.callback(Output("leftintegralsecondhidden", "children"),
@@ -1282,11 +1278,11 @@ def secondchright(leftintsecond):
 def secondchright(leftintsecond):
     return leftintsecond
 
-@app.callback(Output("leftintegralsecondhiddendb", "children"),
-              [Input("leftIntegralSeconddb", "value")],
-              )
-def secondchrightdb(leftintsecond):
-    return leftintsecond
+# @app.callback(Output("leftintegralsecondhiddendb", "children"),
+#               [Input("leftIntegralSeconddb", "value")],
+#               )
+# def secondchrightdb(leftintsecond):
+#     return leftintsecond
 
 @app.callback(Output("rightintegralfirsthidden", "children"),
               [Input("rightIntegralFirst", "value")],
@@ -3366,12 +3362,79 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
 
     # return left
 
+@app.callback(
+    [Output('pointLeftFirstdb', 'children'),
+     Output('pointLeftSeconddb', 'children')],
+    [Input('getdbgraph', 'clickData'),
+     Input('firstChoosenValuedb', 'value'), ],
+    [State('dbvalname', 'value'),State('pointLeftFirstdb', 'children'),
+     State('pointLeftSeconddb', 'children'),
+     State ('memory-output', 'data'),
+     State('dbvalchoosen', 'value'), State('db_name', 'value')
+     ]
+)
+def valint(clickData, firstchoosen,value, leftchild, rightchild, retrieve, dbch, dbname):
+    if value == [] or value == None or clickData == None or clickData == [] or firstchoosen == None or \
+         retrieve == None or retrieve == []:
+        raise PreventUpdate
+
+    spaceList1 = []
+    zero = 0
+    spaceList2 = []
+    print('firstchoosen', firstchoosen)
+    if retrieve != []:
+        df = pd.DataFrame(retrieve)
+        if dbname == 'rcckn' :
+            if dbch == 'send_variablevalues' :
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+            if dbch == 'received_variablevalues' :
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+        if dbname == 'enerbat' :
+            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+
+        df['index'] = df.index
+
+        for i in range(len(value)):
+            spaceList1.append(zero)
+            zero += 1
+            spaceList2.append(value[i])
+        zippedval = [i for i in list(zip(spaceList1, spaceList2))]
+        print('zippedval', zippedval)
+        curvenumber = clickData['points'][0]['curveNumber']
+        for k in zippedval:
+            if k[1] == firstchoosen:
+                if k[0] == curvenumber:
+                    x_val = clickData['points'][0]['x']
+
+                    x_val = x_val[:10]+'T'+x_val[11:]
+                    print('x_val', x_val)
+                    dff = df[df['VARIABLE_NAME'] == firstchoosen]
+                    # dff = [i for i in b if i.startswith(x_val[:10])]
+
+                    dff = dff[(dff['TIMESTAMP'] == x_val)]
+                    print('dffff', dff.head(5))
+                    a = []
+                    a.append(dff.index)
+                    print('aaaaaaaaa', a)
+                    for i in range(len(a)):
+                        for j in a:
+                            leftchild.append(j[i])
+                            print('leftchild', leftchild)
+                    if len(leftchild) > 2:
+                        leftchild.pop(0)
+                    print('left2', leftchild)
+                    return (leftchild, leftchild)
+                    # else: return (no_update, no_update)
+                else : return(no_update,no_update)
+        else:return (no_update, no_update)
 
 @app.callback([Output('leftIntegralFirst', 'value'), Output('leftIntegralSecond', 'value')],
               [Input('pointLeftFirst', 'children'), Input('pointLeftSecond', 'children')],
               [State('firstChoosenValue', 'value')], )
 def display_hover_data(leftchild, rightchild, firstchoosen):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
+    if leftchild == None or rightchild == None or leftchild == [] or rightchild == [] :
         raise PreventUpdate
 
     minchild = 0
@@ -3393,6 +3456,31 @@ def display_hover_data(leftchild, rightchild, firstchoosen):
     else:
         return (no_update, no_update)
 
+@app.callback([Output('leftIntegralFirstdb', 'value'), Output('leftIntegralSeconddb', 'value')],
+              [Input('pointLeftFirstdb', 'children'), Input('pointLeftSeconddb', 'children')],
+              )
+def display_hover_data_db(leftchild, rightchild):
+    if leftchild == None or rightchild == None or leftchild == [] or rightchild == [] :
+        raise PreventUpdate
+
+    minchild = 0
+    maxchild = 0
+    if len(leftchild) == 2:
+        for i in range(len(leftchild)):
+            if leftchild[0] < leftchild[1]:
+                minchild = leftchild[0]
+                maxchild = leftchild[1]
+            else:
+                minchild = leftchild[1]
+                maxchild = leftchild[0]
+    else:
+        minchild = leftchild[0]
+        maxchild = leftchild[0]
+
+    if len(leftchild) == 2:
+        return ('T ' + str(minchild), 'T ' + str(maxchild))
+    else:
+        return (no_update, no_update)
 
 
 
@@ -3649,6 +3737,99 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, ret
     else:
         return (no_update, no_update)
 
+@app.callback(
+    [Output('pointRightFirstdb', 'children'),
+     Output('pointRightSeconddb', 'children')],
+    [Input('getdbgraph', 'clickData'),
+     Input('secondChoosenValuedb', 'value'), ],
+    [State('dbvalname', 'value'),State('pointRightFirstdb', 'children'),
+     State('pointRightSeconddb', 'children'),
+     State ('memory-output', 'data'),
+     State('dbvalchoosen', 'value'), State('db_name', 'value')
+     ]
+)
+def valint(clickData, secondchoosen,value, leftchild, rightchild, retrieve, dbch, dbname):
+    if value == [] or value == None or clickData == None or clickData == [] or secondchoosen == None or \
+         retrieve == None or retrieve == []:
+        raise PreventUpdate
+
+    spaceList1 = []
+    zero = 0
+    spaceList2 = []
+    if retrieve != []:
+        df = pd.DataFrame(retrieve)
+        if dbname == 'rcckn' :
+            if dbch == 'send_variablevalues' :
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+            if dbch == 'received_variablevalues' :
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+        if dbname == 'enerbat' :
+            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+
+        df['index'] = df.index
+
+        for i in range(len(value)):
+            spaceList1.append(zero)
+            zero += 1
+            spaceList2.append(value[i])
+        zippedval = [i for i in list(zip(spaceList1, spaceList2))]
+        print('zippedval', zippedval)
+        curvenumber = clickData['points'][0]['curveNumber']
+        for k in zippedval:
+            if k[1] == secondchoosen:
+                if k[0] == curvenumber:
+                    x_val = clickData['points'][0]['x']
+
+                    x_val = x_val[:10]+'T'+x_val[11:]
+                    print('x_val', x_val)
+                    dff = df[df['VARIABLE_NAME'] == secondchoosen]
+                    # dff = [i for i in b if i.startswith(x_val[:10])]
+
+                    dff = dff[(dff['TIMESTAMP'] == x_val)]
+                    print('dffff', dff.head(5))
+                    a = []
+                    a.append(dff.index)
+                    print('aaaaaaaaa', a)
+                    for i in range(len(a)):
+                        for j in a:
+                            leftchild.append(j[i])
+                            print('leftchild', leftchild)
+                    if len(leftchild) > 2:
+                        leftchild.pop(0)
+                    print('left2', leftchild)
+                    return (leftchild, leftchild)
+                    # else: return (no_update, no_update)
+                else : return(no_update,no_update)
+        else:return (no_update, no_update)
+
+
+@app.callback([Output('rightIntegralFirstdb', 'value'), Output('rightIntegralSeconddb', 'value')],
+              [Input('pointRightFirstdb', 'children'), Input('pointRightSeconddb', 'children')],
+              )
+def display_hover_data_db(leftchild, rightchild):
+    if leftchild == None or rightchild == None or leftchild == [] or rightchild == [] :
+        raise PreventUpdate
+
+    minchild = 0
+    maxchild = 0
+    if len(leftchild) == 2:
+        for i in range(len(leftchild)):
+            if leftchild[0] < leftchild[1]:
+                minchild = leftchild[0]
+                maxchild = leftchild[1]
+            else:
+                minchild = leftchild[1]
+                maxchild = leftchild[0]
+    else:
+        minchild = leftchild[0]
+        maxchild = leftchild[0]
+
+    if len(leftchild) == 2:
+        return ('T ' + str(minchild), 'T ' + str(maxchild))
+    else:
+        return (no_update, no_update)
 
 @app.callback(
     [Output('rightIntegralFirst', 'value'), Output('rightIntegralSecond', 'value')],
@@ -3890,6 +4071,65 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
         elif st1left != '' and st1right != '' and valuechoosenleft == '':
             return 'total integration'
     # return no_update
+
+
+@app.callback(Output('leftIntegraldb', 'value'),
+              [Input('leftIntegralFirstdb', 'value'),
+               Input('leftIntegralSeconddb', 'value'),
+               Input('firstChoosenValuedb', 'value'),],
+              [State('memory-output', 'data'),
+               State('dbvalchoosen', 'value'), State('db_name', 'value')]
+              )
+def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbname):
+    if st1left == None or st1right == None or valuechoosenleft == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
+        raise PreventUpdate
+    print('st1left',st1left)
+    print('st1left', st1right)
+    if st1left.startswith('T') == 1 and st1right.startswith('T') == 1:
+        st1left = st1left[2:]
+        st1right = st1right[2:]
+    elif st1left.startswith('T') == 1 and st1right.isnumeric() == 1:
+        st1left = st1left[2:]
+        st1right = st1right
+    elif st1left.isnumeric() == 1 and st1right.isnumeric() == 1:
+        st1left = st1left
+        st1right = st1right
+    elif st1left.isnumeric() == 1 and st1right.startswith('T') == 1:
+        st1left = st1left
+        st1right = st1right[2:]
+    if retrieve != []:
+        if st1left != '' and st1right != '':
+            df = pd.DataFrame(retrieve)
+            if dbname == 'rcckn':
+                if dbch == 'send_variablevalues':
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                if dbch == 'received_variablevalues':
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                                  'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                                  'CONVERTED_NUM_VALUE']
+            if dbname == 'enerbat':
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            print('buralra geldik mi')
+            df1 = df[df['VARIABLE_NAME'] == valuechoosenleft]
+            df1['index'] = np.arange(0,len(df1[df1['VARIABLE_NAME'] == valuechoosenleft]))
+            df1.to_csv('lermab.csv')
+            print('bu ne ki <<<<<<<<<<', df1[df1['VARIABLE_NAME'] == valuechoosenleft]['index'])
+            dff2 = df1[(df1[df1['VARIABLE_NAME'] == valuechoosenleft]['index'] >= int(st1left)) & (df1[df1['VARIABLE_NAME'] == valuechoosenleft]['index'] <= int(st1right)) |
+                      (df1[df1['VARIABLE_NAME'] == valuechoosenleft]['index'] >= int(st1right)) & (df1[df1['VARIABLE_NAME'] == valuechoosenleft]['index'] <= int(st1left))]
+
+            print('df cloum df11111', dff2)
+            c = dff2[valuechoosenleft]
+            area1 = abs(trapz((abs(c)), dx=1))
+
+            return area1
+        elif (st1left == '' and st1right != '') or (st1left != '' and st1right == ''):
+            return 'total integration'
+        elif (st1left == '' and st1right == '') and valuechoosenleft != '':
+            return 'total integration'
+        elif st1left != '' and st1right != '' and valuechoosenleft == '':
+            return 'total integration'
+
 
 @app.callback(Output('leftIntegralTab4', 'value'),
               [Input('leftIntegralFirstTab4', 'value'),
@@ -4695,6 +4935,8 @@ def dbname(nc,nc2, dbch,  dbname, ipval):
                 b = sorted(b)
                 str_list = [t.strftime("%Y-%m-%d") for t in b]
                 name = df['VARIABLE_NAME'].unique()
+                df = pd.DataFrame(t)
+                df.to_csv('lermab.csv')
                 return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list], t
             elif dbch == "send_variablevalues":
                 print('buraya giriyor mu')
@@ -4861,7 +5103,8 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
-                        b = df[df['dates'] == valdate_new[k]]['REMOTE_TIMESTAMP']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
                         fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
                     fig.update_layout(
                         autosize=True,
@@ -4874,7 +5117,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                             t=50,
                             pad=4
                         ),
-                        hovermode='x unified',
+
                         uirevision=valy[j], ),
                 return fig
             else:
@@ -4889,11 +5132,13 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                 df['dates'] = a
                 valdate_new = []
                 for i in range(len(valdat)):
-                    valdate_new.append(valdat[i][:10])
+                    valdate_new.append(valdat[i])
+                print('valdattttt', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
-                        b = df[df['dates'] == valdate_new[k]]['TIMESTAMP']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
                         fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
                         fig.update_layout(
                             autosize=True,
@@ -4906,7 +5151,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                                 t=50,
                                 pad=4
                             ),
-                            hovermode='x unified',
+
                             uirevision=valy[j], ),
                 return fig
             else:
@@ -4924,7 +5169,8 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
             for j in range(len(valy)):
                 for k in range(len(valdate_new)):
                     a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
-                    b = df[df['dates'] == valdate_new[k]]['TIMESTAMP']
+                    b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                    b = [i for i in b if i.startswith(valdate_new[k])]
                     fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
                     fig.update_layout(
                         autosize=True,
@@ -4937,7 +5183,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                             t=50,
                             pad=4
                         ),
-                        hovermode='x unified',
+
                         uirevision=valy[j], ),
             return fig
         else:
