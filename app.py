@@ -72,9 +72,11 @@ app.layout = html.Div([
 # 4 page
 index_page = html.Div(className="indexpage",
                       children=[
-                          dcc.Link(html.Button('Go to ENERBAT', id="indexPageStyle"), href='/page-1'),
+                          dcc.Link(html.Button('Work with File (.xlsx/.xls/.csv) ', id="indexPageStyle1"), href='/page-1'),
                           html.Br(),
-                          dcc.Link(html.Button('Go to DATABASE', id="indexPageStyle"), href='/Database'),
+                          dcc.Link(html.Button('Work with DATABASE', id="indexPageStyle2"), href='/Database'),
+                          html.Br(),
+                          dcc.Link(html.Button('Work with Reel Time', id="indexPageStyle3"), href='/reeltime'),
                           html.Br(),
                           # dcc.Link(html.Button('Go to Y', id="indexPageStyle"), href='/page-3'),
                           # html.Br(),
@@ -91,7 +93,7 @@ page_1_layout = html.Div(
                                                       'style': {'fontSize': '22px', 'fontWeight': "bold"}},
                                                labelPosition='bottom', on=False, size=100, color="green",
                                                className='dark-theme-control'),
-                                         html.Div(dcc.Link('Go to DATABASE', href='/Database'),style = {'margin' : '2rem'}),],className = 'abpower'),
+                                         html.Div(dcc.Link('Go to Main Page', href='/page_1'),style = {'margin' : '2rem'}),],className = 'abpower'),
                                html.Div(
                          dcc.Upload(
                              id='upload-data',
@@ -4781,7 +4783,7 @@ page_2_layout =  html.Div([html.Div([html.Div([dbc.Button("Database Activate", i
                                                   dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
                                                              color="danger", size='lg',className="mr-1"
                                                              ),
-                                                dcc.Link('Go to Fichier', href='/page_1'),
+                                                dcc.Link('Go to Main Page', href='/page_1'),
                                                 dbc.Input(id='db_Ip',
                                                           type="text",
                                                           debounce=True,
