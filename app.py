@@ -74,8 +74,8 @@ index_page = html.Div(className="indexpage",
                       children=[
                           dcc.Link(html.Button('Go to ENERBAT', id="indexPageStyle"), href='/page-1'),
                           html.Br(),
-                          # dcc.Link(html.Button('Go to X', id="indexPageStyle"), href='/page-2'),
-                          # html.Br(),
+                          dcc.Link(html.Button('Go to DATABASE', id="indexPageStyle"), href='/Database'),
+                          html.Br(),
                           # dcc.Link(html.Button('Go to Y', id="indexPageStyle"), href='/page-3'),
                           # html.Br(),
                           # dcc.Link(html.Button('Go to Z', id="indexPageStyle"), href='/page-4'),
@@ -86,11 +86,13 @@ page_1_layout = html.Div(
     children=[
         html.Div(id='fourcolumnsdivusercontrols', className="four-columns-div-user-controls",
                  children=[
-                     html.Div([daq.PowerButton(id='my-toggle-switch',
+                     html.Div([html.Div([daq.PowerButton(id='my-toggle-switch',
                                                label={'label': 'Open ...',
                                                       'style': {'fontSize': '22px', 'fontWeight': "bold"}},
                                                labelPosition='bottom', on=False, size=100, color="green",
-                                               className='dark-theme-control'), html.Div(
+                                               className='dark-theme-control'),
+                                         html.Div(dcc.Link('Go to DATABASE', href='/Database'),style = {'margin' : '2rem'}),],className = 'abpower'),
+                               html.Div(
                          dcc.Upload(
                              id='upload-data',
                              children=html.Div([
@@ -168,6 +170,7 @@ page_1_layout = html.Div(
                                                html.Div(id='hiddenShapeVal', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenShapeDate', children=[],style={'display': 'None'}), ], ),
                                   html.Div(id='hiddenDifferance', children=[], style={'display': 'None'}),
+                                  dcc.Store(id='datastore'),
                                   html.Div(id='retrieve', children=[], style={'display': 'None'}),
                                   html.Div(id='datatablehidden', children=[], style={'display': 'None'}),
                                   html.Div(id='radiographhidden', children=[], style={'display': 'None'}),
@@ -321,7 +324,7 @@ page_2_layout = html.Div([
 page_3_layout = html.Div([
     dcc.Link('Go to MODBUS', href='/page-1'),
     html.Br(),
-    dcc.Link('Go to X', href='/page-2'),
+    dcc.Link('Go to DATABASE', href='/DATABASE'),
     html.Br(),
     dcc.Link('Go to Z', href='/page-4'),
     html.Br(),
@@ -331,7 +334,7 @@ page_3_layout = html.Div([
 page_4_layout = html.Div([
     dcc.Link('Go to MODBUS', href='/page-1'),
     html.Br(),
-    dcc.Link('Go to X', href='/page-2'),
+    dcc.Link('Go to DATABASE', href='/Database'),
     html.Br(),
     dcc.Link('Go to Y', href='/page-3'),
     html.Br(),
@@ -373,7 +376,7 @@ page_4_layout = html.Div([
 def display_page(pathname):
     if pathname == '/page-1':
         return page_1_layout
-    elif pathname == '/page-2':
+    elif pathname == '/Database':
         return page_2_layout
     elif pathname == '/page-3':
         return page_3_layout
@@ -878,9 +881,10 @@ def render_content(tab):
             html.Div(id='tab2Data')
         ])
     if tab == 'tab-3':
-        return html.Div([
+        page_2_layout = html.Div([
             html.Div(id='tab3Data', children=[]),
             html.Div(id='Dbdesign')])
+        return page_2_layout
 
     if tab == 'tab-4':
         return html.Div([
@@ -897,7 +901,8 @@ def render_content(tab):
               )
 def LoadingDataTab1(on, dropdownhidden, tab):
     if on == 1 and tab == 'tab-1':
-        loadTab1 = html.Div([html.Div([html.Div([html.Div([dcc.Dropdown(id='firstChoosenValue',
+        loadTab1 = html.Div([html.Div([html.Div([html.Div([
+                                                           dcc.Dropdown(id='firstChoosenValue',
                                                                         options=[{'label': i, 'value': i} for i in
                                                                                  dropdownhidden],
                                                                         multi=False,
@@ -2935,7 +2940,7 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                         for k in range(len(valx2)):
                             a = df[valy2[j]]
                             b = df[valx2[k]]
-                            fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valy2[j], valx2[k])))
+                            fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, name="{}/{}".format(valy2[j], valx2[k])))
                             a = []
                             if nc > 0:
                                 a = controlShape()
@@ -3013,7 +3018,7 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
 
-                    fig.add_trace(go.Scatter(x=a, y=b, mode=radio, name="{}/{}".format(valxsecond[s], valysecond[s])))
+                    fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, name="{}/{}".format(valxsecond[s], valysecond[s])))
                     def controlShape():
                         pathline = ''
                         pathline2 = ''
@@ -4770,18 +4775,13 @@ def download_excel():
     )
 
 
-
-@app.callback(Output('Dbdesign', 'children'),
-              [Input('tabs-with-classes', 'value')],
-              )
-def DBcall(tab):
-    if tab == 'tab-3':
-        datalist =  html.Div([html.Div([html.Div([dbc.Button("Database Activate", id="activatedb",  n_clicks=0,
+page_2_layout =  html.Div([html.Div([html.Div([dbc.Button("Database Activate", id="activatedb",  n_clicks=0,
                                                            color="success", size = 'lg',
                                                            ),
                                                   dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
                                                              color="danger", size='lg',className="mr-1"
                                                              ),
+                                                dcc.Link('Go to Fichier', href='/page_1'),
                                                 dbc.Input(id='db_Ip',
                                                           type="text",
                                                           debounce=True,
@@ -5029,7 +5029,7 @@ def DBcall(tab):
 
             ], ),], ),
 
-        return datalist
+
 
 
 @app.callback(Output('dbvalchoosen', 'options'),
