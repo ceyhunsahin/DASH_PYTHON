@@ -3394,8 +3394,6 @@ def valint(clickData, firstchoosen,value, leftchild, rightchild, retrieve, dbch,
         if dbname == 'enerbat' :
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
 
-        df['index'] = df.index
-
         for i in range(len(value)):
             spaceList1.append(zero)
             zero += 1
@@ -3407,17 +3405,20 @@ def valint(clickData, firstchoosen,value, leftchild, rightchild, retrieve, dbch,
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
-
                     x_val = x_val[:10]+'T'+x_val[11:]
                     print('x_val', x_val)
                     dff = df[df['VARIABLE_NAME'] == firstchoosen]
-                    # dff = [i for i in b if i.startswith(x_val[:10])]
-
+                    if dbch == 'send_variablevalues':
+                        dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
+                    if dbch == 'received_variablevalues':
+                        dff = dff[dff.REMOTE_TIMESTAMP.str.startswith(x_val[:10])]
+                    index = np.arange(0, len(dff['VARIABLE_NAME']))
+                    dff.reset_index(drop = True, inplace = True)
+                    dff.set_index(index, inplace=True)
+                    print('dffff', dff.tail(5))
                     dff = dff[(dff['TIMESTAMP'] == x_val)]
-                    print('dffff', dff.head(5))
                     a = []
                     a.append(dff.index)
-                    print('aaaaaaaaa', a)
                     for i in range(len(a)):
                         for j in a:
                             leftchild.append(j[i])
@@ -3593,7 +3594,6 @@ def valintTab4(clickData4, radioval, firstchoosen,  valysecond,valxsecond, valy,
                                 x_val = clickData4['points'][0]['x']
                                 print('x_val left', x_val)
                                 dff = df[df[m] == x_val]
-                                print('dffffffleft', dff)
                                 a = []
                                 a.append(dff[firstchoosen].index)
                                 print('aaaaaaaleft', a)
@@ -3785,10 +3785,15 @@ def valint(clickData, secondchoosen,value, leftchild, rightchild, retrieve, dbch
                     x_val = x_val[:10]+'T'+x_val[11:]
                     print('x_val', x_val)
                     dff = df[df['VARIABLE_NAME'] == secondchoosen]
-                    # dff = [i for i in b if i.startswith(x_val[:10])]
-
+                    if dbch == 'send_variablevalues':
+                        dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
+                    if dbch == 'received_variablevalues':
+                        dff = dff[dff.REMOTE_TIMESTAMP.str.startswith(x_val[:10])]
+                    index = np.arange(0, len(dff['VARIABLE_NAME']))
+                    dff.reset_index(drop=True, inplace=True)
+                    dff.set_index(index, inplace=True)
+                    print('dffff', dff.tail(5))
                     dff = dff[(dff['TIMESTAMP'] == x_val)]
-                    print('dffff', dff.head(5))
                     a = []
                     a.append(dff.index)
                     print('aaaaaaaaa', a)
@@ -4078,9 +4083,9 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
                Input('leftIntegralSeconddb', 'value'),
                Input('firstChoosenValuedb', 'value'),],
               [State('memory-output', 'data'),
-               State('dbvalchoosen', 'value'), State('db_name', 'value')]
+               State('dbvalchoosen', 'value'), State('db_name', 'value'), State('dbvaldate', 'value')]
               )
-def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbname):
+def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbname, valdate):
     if st1left == None or st1right == None or valuechoosenleft == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
     print('st1left',st1left)
@@ -4110,16 +4115,17 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbn
                                   'CONVERTED_NUM_VALUE']
             if dbname == 'enerbat':
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-            print('buralra geldik mi')
             df1 = df[df['VARIABLE_NAME'] == valuechoosenleft]
-            df1['index'] = np.arange(0,len(df1[df1['VARIABLE_NAME'] == valuechoosenleft]))
-            df1.to_csv('lermab.csv')
-            print('bu ne ki <<<<<<<<<<', df1[df1['VARIABLE_NAME'] == valuechoosenleft]['index'])
-            dff2 = df1[(df1[df1['VARIABLE_NAME'] == valuechoosenleft]['index'] >= int(st1left)) & (df1[df1['VARIABLE_NAME'] == valuechoosenleft]['index'] <= int(st1right)) |
-                      (df1[df1['VARIABLE_NAME'] == valuechoosenleft]['index'] >= int(st1right)) & (df1[df1['VARIABLE_NAME'] == valuechoosenleft]['index'] <= int(st1left))]
-
-            print('df cloum df11111', dff2)
-            c = dff2[valuechoosenleft]
+            if dbch == 'send_variablevalues':
+                df1 = df1[df1.TIMESTAMP.str.startswith(valdate[0])]
+            if dbch == 'received_variablevalues':
+                df1 = df1[df1.REMOTE_TIMESTAMP.str.startswith(valdate[0])]
+            index = np.arange(0,len(df1['VARIABLE_NAME']))
+            df1.reset_index(drop=True, inplace=True)
+            df1.set_index(index, inplace = True)
+            dff2 = df1[(df1.index >= float(st1left)) & (df1.index <= float(st1right)) |
+                      (df1.index >= float(st1right)) & (df1.index <= float(st1left))]
+            c = dff2['VARIABLE_NUM_VALUE']
             area1 = abs(trapz((abs(c)), dx=1))
 
             return area1
@@ -4215,6 +4221,66 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
             return 'total integration'
         elif st2left != '' and st2right != '' and valuechoosenright == '':
             return 'total integration'
+
+@app.callback(Output('rightIntegraldb', 'value'),
+              [Input('rightIntegralFirstdb', 'value'),
+               Input('rightIntegralSeconddb', 'value'),
+               Input('secondChoosenValuedb', 'value'),],
+              [State('memory-output', 'data'),
+               State('dbvalchoosen', 'value'), State('db_name', 'value'), State('dbvaldate', 'value')]
+              )
+def integralCalculationdb(st2left, st2right, valuechoosenright, retrieve, dbch, dbname, valdate):
+    if st2left == None or st2right == None or valuechoosenright == None or valuechoosenright == [] or retrieve == None or retrieve == []:
+        raise PreventUpdate
+    print('st1left',st2left)
+    print('st1left', st2right)
+    if st2left.startswith('T') == 1 and st2right.startswith('T') == 1:
+        st2left = st2left[2:]
+        st2right = st2right[2:]
+    elif st2left.startswith('T') == 1 and st2right.isnumeric() == 1:
+        st2left = st2left[2:]
+        st2right = st2right
+    elif st2left.isnumeric() == 1 and st2right.isnumeric() == 1:
+        st2left = st2left
+        st2right = st2right
+    elif st2left.isnumeric() == 1 and st2right.startswith('T') == 1:
+        st2left = st2left
+        st2right = st2right[2:]
+    if retrieve != []:
+        if st2left != '' and st2right != '':
+            df = pd.DataFrame(retrieve)
+            if dbname == 'rcckn':
+                if dbch == 'send_variablevalues':
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                if dbch == 'received_variablevalues':
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                                  'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                                  'CONVERTED_NUM_VALUE']
+            if dbname == 'enerbat':
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            df1 = df[df['VARIABLE_NAME'] == valuechoosenright]
+            if dbch == 'send_variablevalues':
+                df1 = df1[df1.TIMESTAMP.str.startswith(valdate[0])]
+            if dbch == 'received_variablevalues':
+                df1 = df1[df1.REMOTE_TIMESTAMP.str.startswith(valdate[0])]
+            index = np.arange(0,len(df1['VARIABLE_NAME']))
+            df1.reset_index(drop=True, inplace=True)
+            df1.set_index(index, inplace = True)
+            dff2 = df1[(df1.index >= float(st2left)) & (df1.index <= float(st2right)) |
+                      (df1.index >= float(st2right)) & (df1.index <= float(st2left))]
+            c = dff2['VARIABLE_NUM_VALUE']
+            area1 = abs(trapz((abs(c)), dx=1))
+
+            return area1
+        elif (st2left == '' and st2right != '') or (st2left != '' and st2right == ''):
+            return 'total integration'
+        elif (st2left == '' and st2right == '') and valuechoosenright != '':
+            return 'total integration'
+        elif st2left != '' and st2right != '' and valuechoosenright == '':
+            return 'total integration'
+
+
 @app.callback(Output('rightIntegralTab4', 'value'),
               [Input('rightIntegralFirstTab4', 'value'),
                Input('rightIntegralSecondTab4', 'value'),
@@ -4295,6 +4361,25 @@ def differanceintegrationTab4(value1, value2, ops):
     elif ops == []:
         return []
 
+@app.callback(Output('operationdb', 'value'),
+              [Input('leftIntegraldb', 'value'),
+               Input('rightIntegraldb', 'value'),
+               Input('operateurdb', 'value')],
+              )
+def differanceintegrationdb(value1, value2, ops):
+    if value1 == None or value2 == None:
+        raise PreventUpdate
+    if ops == ['Plus']:
+        return float(value1 + value2)
+    elif ops == ['Moins']:
+        return float(value1 - value2)
+    elif ops == ['Multiplie']:
+        return float(value1 * value2)
+    elif ops == ['Division']:
+        return float(value1 / value2)
+    elif ops == []:
+        return []
+
 @app.callback(Output('intersection', 'value'),
               [Input('hiddenDifferance', 'children'),
                Input('firstChoosenValue', 'value'),
@@ -4347,6 +4432,158 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
             return diff
         else:
             return ['intersection']
+
+
+@app.callback(Output('intersectiondb', 'value'),
+              [Input('firstChoosenValuedb', 'value'),
+               Input('secondChoosenValuedb', 'value'),
+               Input('leftIntegralFirstdb', 'value'),
+               Input('rightIntegralFirstdb', 'value'),
+               Input('leftIntegralSeconddb', 'value'),
+               Input('rightIntegralSeconddb', 'value'),
+               ],
+              [State('intersectiondb', 'value'), State('memory-output', 'data'),
+               State('dbvalchoosen', 'value'), State('db_name', 'value'), State('dbvaldate', 'value')
+               ]
+              )
+def differanceCalculationdb( valuechoosenleft, valuechoosenright, leftfirst, rightfirst,leftsecond, rightsecond,
+                             diff, retrieve, dbch, dbname, dbdate):
+    if retrieve == None or retrieve == [] or leftfirst == None or rightfirst == None or leftsecond == None or rightsecond == None:
+        raise PreventUpdate
+
+    # (len(hiddendif)>=2 and len(valuechoosenright)==1) or (len(hiddendif)>=2 and len(valuechoosenleft)==1) or
+    # if (len(hiddendif) >= 2):
+    #     a = 0
+    #     b = 0
+    #     for i in range(len(hiddendif)):
+    #         if hiddendif[0] < hiddendif[1]:
+    #             a = hiddendif[0]
+    #             b = hiddendif[1]
+    #         else:
+    #             a = hiddendif[1]
+    #             b = hiddendif[0]
+
+    if valuechoosenright != None and valuechoosenleft != None :
+        differance = []
+        print('leftfirst', leftfirst)
+        print('leftfirst', leftsecond)
+        print('rightfirst', rightfirst)
+        print('rightfirst', rightsecond)
+        st1left = leftfirst[2:]
+        a = int(st1left)
+        st1right = leftsecond[2:]
+        b = int(st1right)
+        st2left = rightfirst[2:]
+        c = int(st2left)
+        st2right = rightsecond[2:]
+        d = int(st2right)
+        if set(range(a, b)).issuperset(set(range(c, d))) == 1:
+            differance.append(c)
+            differance.append(d)
+            print('differance1', differance)
+        elif set(range(c, d)).issuperset(set(range(a, b))) == 1:
+            differance.append(a)
+            differance.append(b)
+            print('differance2', differance)
+        elif len(set(range(a, b)).intersection(set(range(c, d)))) >= 1 or len(
+                set(range(c, d)).intersection(set(range(a, b)))) >= 1:
+            if a <= c:
+                if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(b)
+                differance.append(b)
+            if a >= c:
+                if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(a)
+                differance.append(a)
+            if b <= d:
+                if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(c)
+                differance.append(c)
+            if b >= d:
+                if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(d)
+                differance.append(d)
+            print('differance3', differance)
+        else:
+            return ['intersection']
+        print('buralarda miyiz')
+        df1 = pd.DataFrame(retrieve)
+        dates = []
+        if dbname == 'rcckn':
+            if dbch == 'send_variablevalues':
+                df1.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                for col in df1['TIMESTAMP']:
+                    dates.append(col[:10])
+            if dbch == 'received_variablevalues':
+                df1.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                                  'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                                  'CONVERTED_NUM_VALUE']
+                for col in df1['REMOTE_TIMESTAMP']:
+                    dates.append(col[:10])
+        if dbname == 'enerbat':
+            df1.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            for col in df1['TIMESTAMP']:
+                dates.append(col[:10])
+        #
+
+        df1['dates'] = dates
+        first_df = df1[df1['VARIABLE_NAME'] == valuechoosenleft]
+        second_df = df1[df1['VARIABLE_NAME'] == valuechoosenright]
+
+        print('first_df1', first_df)
+        first_df = first_df[first_df['dates'].isin(dbdate)]
+        index = np.arange(0, len(first_df['VARIABLE_NAME']))
+        first_df.reset_index(drop=True, inplace=True)
+        first_df.set_index(index, inplace=True)
+        first_df = first_df[(first_df.index >= float(differance[0])) & (first_df.index <= float(differance[1]))]
+        first_df = first_df['VARIABLE_NUM_VALUE']
+        print('first_df2', first_df)
+        second_df = second_df[second_df['dates'].isin(dbdate)]
+        index = np.arange(0, len(second_df['VARIABLE_NAME']))
+        second_df.reset_index(drop=True, inplace=True)
+        second_df.set_index(index, inplace=True)
+        second_df = second_df[(second_df.index >= float(differance[0])) & (second_df.index <= float(differance[1]))]
+        second_df = second_df['VARIABLE_NUM_VALUE']
+        print('second_df', second_df)
+        min_val = []
+        for i,j in zip(first_df,second_df ):
+            if i <= j :
+                min_val.append(i)
+            if j < i :
+                min_val.append(j)
+
+        # dff2 = df1[(df1.index >= float(st2left)) & (df1.index <= float(st2right)) |
+        #                (df1.index >= float(st2right)) & (df1.index <= float(st2left))]
+        # l = dff2['VARIABLE_NUM_VALUE']
+        # print('lllllllll',l.head(5))
+        # dff3 = df1[(df1.index >= float(st1left)) & (df1.index <= float(st1right)) |
+        #                (df1.index >= float(st1right)) & (df1.index <= float(st1left))]
+        # r = dff3['VARIABLE_NUM_VALUE']
+        # print('rrrrrrrrrrr',r.head(5))
+        # tt = []
+        # yy = []
+        #
+        # for i in l:
+        #     tt.append(i)
+        # for i in r:
+        #     yy.append(i)
+        # for i in range(len(tt)):
+        #     if tt[i] <= yy[i]:
+        #         differance.append(tt[i])
+        #     if yy[i] < tt[i]:
+        #         differance.append(yy[i])
+        diff = (abs(trapz(min_val, dx=1)))
+        return diff
+    else:
+        return ['intersection']
+
+
+
 
 @app.callback(Output('intersectionTab4', 'value'),
               [Input('pointLeftFirstTab4', 'children'),
@@ -4690,7 +4927,7 @@ def DBcall(tab):
                                              style={'width': '7rem', "marginTop": "1.5rem"},
                                              autoFocus=True,
                                              placeholder="second point"),
-                                   dbc.Input(id='rightIntegralTab4',
+                                   dbc.Input(id='rightIntegraldb',
                                              type="text",
                                              min=-10000, max=10000, step=1,
                                              bs_size="sm",
@@ -4989,7 +5226,6 @@ def on_data_set_table(data,valname, valdate,nc2, dbch, dbname):
     if data is None or valname == None or valdate == None or dbch == None or dbname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
-    print('dffffffff', df.head(10))
 
     if dbname == 'rcckn' :
         if dbch == 'received_variablevalues':
@@ -5102,10 +5338,11 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                     valdate_new.append(valdat[i][:10])
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
-                        a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
-                        b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
                     fig.update_layout(
                         autosize=True,
                         width=sliderw,
@@ -5136,10 +5373,11 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                 print('valdattttt', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
-                        a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
                         fig.update_layout(
                             autosize=True,
                             width=sliderw,
@@ -5168,10 +5406,11 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                 valdate_new.append(valdat[i][:10])
             for j in range(len(valy)):
                 for k in range(len(valdate_new)):
-                    a = df[df['VARIABLE_NAME'] == valy[j]]['VARIABLE_NUM_VALUE']
+                    a = df[df['VARIABLE_NAME'] == valy[j]]
+                    a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                     b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                     b = [i for i in b if i.startswith(valdate_new[k])]
-                    fig.add_trace(go.Scatter(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
+                    fig.add_trace(go.Scattergl(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
                     fig.update_layout(
                         autosize=True,
                         width=sliderw,
