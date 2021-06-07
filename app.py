@@ -69,27 +69,14 @@ app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content'),
 ])
-# 4 page
-# dcc.Link(html.Button('Work with File (.xlsx/.xls/.csv) ', id="indexPageStyle1",
-#                      className="btn btn-lg btn-primary btn-block"), href='/page-1'),
-# html.Br(),
-# dcc.Link(html.Button('Work with DATABASE', id="indexPageStyle2", className="btn btn-lg btn-primary btn-block"),
-#          href='/Database'),
-# html.Br(),
-# dcc.Link(html.Button('Work with Reel Time', id="indexPageStyle3", className="btn btn-lg btn-primary btn-block"),
-#          href='/reeltime'),
-# html.Br(),
-# # dcc.Link(html.Button('Go to Y', id="in
-# # # dcc.Link(html.Button('Go to Z', id="indexPageStyle"), href='/pagedexPageStyle"), href='/page-3'),
-# # html.Br(),-4'),
 index_page = html.Div([html.Div(html.Div(html.Div(
              children=[ html.H3('Work with File'),
-                        html.P('Lorem ipsum'),
+                        html.P('Upload and run files such as .xlsx/.xls/.csv'),
                         dcc.Link('Start', href="/page-1")
                       ],className = "content" ),className = 'box'), className = 'card'),
             html.Div(html.Div(html.Div(children=[
                                         html.H3('Work with DATABASE'),
-                                        html.P('Lorem ipsum'),
+                                        html.P('Choose your Database and make analyse'),
                                         dcc.Link('Start', href='/Database')
                                         ],className = "content" ),className = 'box'), className = 'card'),
             html.Div(html.Div(html.Div(children=[
@@ -103,12 +90,12 @@ page_1_layout = html.Div(
     children=[
         html.Div(id='fourcolumnsdivusercontrols', className="four-columns-div-user-controls",
                  children=[
-                     html.Div([html.Div([daq.PowerButton(id='my-toggle-switch',
-                                               label={'label': 'Open ...',
+                     html.Div([daq.PowerButton(id='my-toggle-switch',
+                                               label={'label': 'Open page',
                                                       'style': {'fontSize': '22px', 'fontWeight': "bold"}},
                                                labelPosition='bottom', on=False, size=100, color="green",
                                                className='dark-theme-control'),
-                                         html.Div(dcc.Link('Go to Main Page', href='/page_1'),style = {'margin' : '2rem'}),],className = 'abpower'),
+                                         dcc.Link('Go to Main Page', href='/page_1',id = 'link1'),],className = 'abpower'),
                                html.Div(
                          dcc.Upload(
                              id='upload-data',
@@ -117,6 +104,7 @@ page_1_layout = html.Div(
                                  html.A('Select Files for work')
                              ]),
                              style={
+                                 'marginLeft' : '-2rem',
                                  'visibility': 'hidden',
                              },
                              # Allow multiple files to be uploaded
@@ -124,7 +112,7 @@ page_1_layout = html.Div(
 
                          ),
 
-                     )], ),
+                     ),
 
                      html.Div(id="openOPCDiv", children=[], style={'visibility': 'hidden'}),
                      html.Div(className='userControlDownSide',
@@ -283,23 +271,23 @@ page_1_layout = html.Div(
                                              selected_className='custom-tab--selected',
                                              children=[],
                                          ),
-                                         dcc.Tab(
-                                             id='tab2',
-                                             label='Work on Real Time',
-                                             value='tab-2',
-                                             className='custom-tab',
-                                             selected_className='custom-tab--selected',
-                                             children=[
-                                             ]
-                                         ),
-                                         dcc.Tab(
-                                             id='tab3',
-                                             label='Work On Database',
-                                             value='tab-3', className='custom-tab',
-
-                                             # style = {'visibility' : 'hidden'},
-                                             selected_className='custom-tab--selected'
-                                         ),
+                                         # dcc.Tab(
+                                         #     id='tab2',
+                                         #     label='Work on Real Time',
+                                         #     value='tab-2',
+                                         #     className='custom-tab',
+                                         #     selected_className='custom-tab--selected',
+                                         #     children=[
+                                         #     ]
+                                         # # ),
+                                         # dcc.Tab(
+                                         #     id='tab3',
+                                         #     label='Work On Database',
+                                         #     value='tab-3', className='custom-tab',
+                                         #
+                                         #     # style = {'visibility' : 'hidden'},
+                                         #     selected_className='custom-tab--selected'
+                                         # ),
                                          dcc.Tab(
                                              id="tab4",
                                              label='Work on Different Parameters',
@@ -560,14 +548,15 @@ def opcLoadingData(on):
     ocploadlist = []
 
     if on == 1:
-        visibilty = {'width': '100%',
+        visibilty = {
                      'height': '35px',
                      'lineHeight': '25px',
                      'borderWidth': '1px',
                      'borderStyle': 'dashed',
                      'borderRadius': '5px',
                      'textAlign': 'center',
-                     'margin': '20px',
+                     'margin': '20px 20px 20px -100px',
+                 
                      'visibility': 'visible'}
         data_list = ['CoAd', 'ComManCoP2', 'ComManCoP3P4P5', 'ComManPompeSec', 'CompteurEnergie', 'CoP2',
                      'CtempDepChauff',
@@ -893,15 +882,15 @@ def render_content(tab):
         return html.Div([
             html.Div(id='tab1Data')
         ])
-    if tab == 'tab-2':
-        return html.Div([
-            html.Div(id='tab2Data')
-        ])
-    if tab == 'tab-3':
-        page_2_layout = html.Div([
-            html.Div(id='tab3Data', children=[]),
-            html.Div(id='Dbdesign')])
-        return page_2_layout
+    # if tab == 'tab-2':
+    #     return html.Div([
+    #         html.Div(id='tab2Data')
+    #     ])
+    # if tab == 'tab-3':
+    #     page_2_layout = html.Div([
+    #         html.Div(id='tab3Data', children=[]),
+    #         html.Div(id='Dbdesign')])
+    #     return page_2_layout
 
     if tab == 'tab-4':
         return html.Div([
@@ -933,7 +922,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                                                      debounce=True,
                                                                      min=-10000, max=10000, step=1,
                                                                      bs_size="sm",
-                                                                     style={'width': '7rem', "marginTop": "1.5rem"},
+                                                                     style={'width': '8rem', "marginTop": "1.5rem"},
                                                                      autoFocus=True,
                                                                      placeholder="first point"),
                                                            dbc.Input(id='leftIntegralSecond',
@@ -941,14 +930,14 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                                                      debounce=True,
                                                                      min=-10000, max=10000, step=1,
                                                                      bs_size="sm",
-                                                                     style={'width': '7rem', "marginTop": "1.5rem"},
+                                                                     style={'width': '8rem', "marginTop": "1.5rem"},
                                                                      autoFocus=True,
                                                                      placeholder="second point"),
                                                            dbc.Input(id='leftIntegral',
                                                                      type="text",
                                                                      min=-10000, max=10000, step=1,
                                                                      bs_size="sm",
-                                                                     style={'width': '8rem', "marginTop": "1.5rem"},
+                                                                     style={'width': '9rem', "marginTop": "1.5rem"},
                                                                      autoFocus=True,
                                                                      placeholder="total integration"),
                                                            ]),
@@ -989,21 +978,21 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                                            type="text",
                                                            min=-10000, max=10000, step=1,
                                                            bs_size="sm",
-                                                           style={'width': '7rem', "marginTop": "1.5rem"},
+                                                           style={'width': '8rem', "marginTop": "1.5rem"},
                                                            autoFocus=True,
                                                            placeholder="first point"),
                                                  dbc.Input(id='rightIntegralSecond',
                                                            type="text",
                                                            min=-10000, max=10000, step=1,
                                                            bs_size="sm",
-                                                           style={'width': '7rem', "marginTop": "1.5rem"},
+                                                           style={'width': '8rem', "marginTop": "1.5rem"},
                                                            autoFocus=True,
                                                            placeholder="second point"),
                                                  dbc.Input(id='rightIntegral',
                                                            type="text",
                                                            min=-10000, max=10000, step=1,
                                                            bs_size="sm",
-                                                           style={'width': '8rem', "marginTop": "1.5rem"},
+                                                           style={'width': '9rem', "marginTop": "1.5rem"},
                                                            autoFocus=True,
                                                            placeholder="total integration")]),
                                        html.Div([dbc.Input(id='operation',
@@ -1032,23 +1021,24 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                                       ],
                                                       value='markers',
                                                       labelClassName='groupgraph2',
-                                                      labelStyle={'margin': '10px', },
+                                                      labelStyle={'margin': '10px','display': 'inline-block' },
                                                       inputStyle={'margin': '10px', }
                                                       ),
+                                       html.Div([html.P('Shift Axes (First-Second)'),
                                        dbc.Input(id='minimumValueGraphFirst',
                                                  type="text",
                                                  min=-10000, max=10000, step=1,
                                                  bs_size="sm",
                                                  value=0,
-                                                 style={'width': '7rem', "marginTop": "1rem"},
+                                                 style={'width': '8rem', 'marginLeft': '20px'},
                                                  placeholder="Minimum Value of Graph for First..."),
                                        dbc.Input(id='minimumValueGraphSecond',
                                                  type="text",
                                                  min=-10000, max=10000, step=1,
                                                  bs_size="sm",
                                                  value=0,
-                                                 style={'width': '7rem', "marginTop": "1rem", 'marginLeft': '0.5rem'},
-                                                 placeholder="Minimum Value of Graph for Second..."),
+                                                 style={'width': '8rem', 'marginLeft': '20px'},
+                                                 placeholder="Minimum Value of Graph for Second..."),], className = 'shift'),
 
                                        ], className='abcd'),
 
@@ -1072,14 +1062,14 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                                               min=-100000, max=100000, step=1,
                                                               bs_size="sm",
                                                               value=0,
-                                                              style={'width': '7rem', },
+                                                              style={'width': '8rem', },
                                                               placeholder="Shift X axis..."),
                                                     dbc.Input(id='shift_y_axis',
                                                               type="number",
                                                               min=-100000, max=100000, step=1,
                                                               bs_size="sm",
                                                               value=0,
-                                                              style={'width': '7rem', },
+                                                              style={'width': '8rem', },
                                                               placeholder="Shift Y axis..."),
                                                     dbc.Button("Ok", id="tab1send", outline=True, n_clicks=0,
                                                                color="primary",
@@ -1240,13 +1230,13 @@ def firstchlefttab4(firstchoosen4, hiddenfirstchoosen4):
     hiddenfirstchoosen4.append(firstchoosen4)
     return hiddenfirstchoosen4
 
-@app.callback(Output("firstchoosenvalhiddendb", "children"),
-              [Input("firstChoosenValuedb", "value")],
-              [State("firstchoosenvalhiddendb", "children")]
-              )
-def firstchleftdb(firstchoosendb, hiddenfirstchoosendb):
-    hiddenfirstchoosendb.append(firstchoosendb)
-    return hiddenfirstchoosendb
+# @app.callback(Output("firstchoosenvalhiddendb", "children"),
+#               [Input("firstChoosenValuedb", "value")],
+#               [State("firstchoosenvalhiddendb", "children")]
+#               )
+# def firstchleftdb(firstchoosendb, hiddenfirstchoosendb):
+#     hiddenfirstchoosendb.append(firstchoosendb)
+#     return hiddenfirstchoosendb
 
 @app.callback(Output("secondchoosenvalhidden", "children"),
               [Input("secondChoosenValue", "value")],
@@ -2129,7 +2119,7 @@ def LoadingDataTab4(on,tab):
                                                   debounce=True,
                                                   min=-10000, max=10000, step=1,
                                                   bs_size="sm",
-                                                  style={'width': '7rem', "marginTop": "1.5rem"},
+                                                  style={'width': '8rem', "marginTop": "1.5rem"},
                                                   autoFocus=True,
                                                   placeholder="first point"),
                                         dbc.Input(id='leftIntegralSecondTab4',
@@ -2137,17 +2127,17 @@ def LoadingDataTab4(on,tab):
                                                   debounce=True,
                                                   min=-10000, max=10000, step=1,
                                                   bs_size="sm",
-                                                  style={'width': '7rem', "marginTop": "1.5rem"},
+                                                  style={'width': '8rem', "marginTop": "1.5rem"},
                                                   autoFocus=True,
                                                   placeholder="second point"),
                                         dbc.Input(id='leftIntegralTab4',
                                                   type="text",
                                                   min=-10000, max=10000, step=1,
                                                   bs_size="sm",
-                                                  style={'width': '8rem', "marginTop": "1.5rem"},
+                                                  style={'width': '9rem', "marginTop": "1.5rem"},
                                                   autoFocus=True,
                                                   placeholder="total integration"),
-                                        ]), html.Div([html.Button("Save", id="write_excelTab4", n_clicks=0,
+                                        ] ), html.Div([html.Button("Save", id="write_excelTab4", n_clicks=0,
                                                                   style={'fontSize': '1rem', 'width': '4rem', 'margin': '1rem'},
                                                                   ),
                                                       html.A(html.Button("Download Data", id='download_dataTab4',
@@ -2159,7 +2149,7 @@ def LoadingDataTab4(on,tab):
                                                              href="/download_excel/",
                                                              # target="_blank"
                                                              )
-                                                      ], className='ad')
+                                                      ], className='abTab4')
 
                               ]),
                     html.Div([dbc.Checklist(
@@ -2183,21 +2173,21 @@ def LoadingDataTab4(on,tab):
                                         type="text",
                                         min=-10000, max=10000, step=1,
                                         bs_size="sm",
-                                        style={'width': '7rem', "marginTop": "1.5rem"},
+                                        style={'width': '8rem', "marginTop": "1.5rem"},
                                         autoFocus=True,
                                         placeholder="first point"),
                               dbc.Input(id='rightIntegralSecondTab4',
                                         type="text",
                                         min=-10000, max=10000, step=1,
                                         bs_size="sm",
-                                        style={'width': '7rem', "marginTop": "1.5rem"},
+                                        style={'width': '8rem', "marginTop": "1.5rem"},
                                         autoFocus=True,
                                         placeholder="second point"),
                               dbc.Input(id='rightIntegralTab4',
                                         type="text",
                                         min=-10000, max=10000, step=1,
                                         bs_size="sm",
-                                        style={'width': '8rem', "marginTop": "1.5rem"},
+                                        style={'width': '9rem', "marginTop": "1.5rem"},
                                         autoFocus=True,
                                         placeholder="total integration")
                               ]),
@@ -2218,7 +2208,7 @@ def LoadingDataTab4(on,tab):
                                         autoFocus=True,
                                         placeholder="Intersection")], className='aa')
                               ],style = {'display' : 'None'},
-                    className="abTab4"),
+                    className="abdbase"),
 
             html.Div(id='tab4second', children = [dcc.Dropdown(id='shiftaxisdroptab4',
                                    options=[{'label': i, 'value': i} for i in
@@ -2241,14 +2231,14 @@ def LoadingDataTab4(on,tab):
                                              min=-100000, max=100000, step=1,
                                              bs_size="sm",
                                              value=0,
-                                             style={'width': '7rem', },
+                                             style={'width': '8rem', },
                                              placeholder="Shift X axis..."),
                                    dbc.Input(id='shift_y_axistab4',
                                              type="number",
                                              min=-100000, max=100000, step=1,
                                              bs_size="sm",
                                              value=0,
-                                             style={'width': '7rem', },
+                                             style={'width': '8rem', },
                                              placeholder="Shift Y axis..."),
                                    dbc.Button("Ok", id="tab4send", outline=True, n_clicks=0, color="primary",
                                               className="mr-2"),
@@ -2290,7 +2280,7 @@ def LoadingDataTab4(on,tab):
                                      updatemode='drag'),
                           html.Div(id="tab4DashTable", children=[])
                           ]),
-            ]),])
+            ]),], style={'background' : 'White'})
 
         return loadlist
     else : no_update
@@ -3395,15 +3385,17 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
      State('dbvalchoosen', 'value'), State('db_name', 'value')
      ]
 )
-def valint(clickData, firstchoosen,value, leftchild, rightchild, retrieve, dbch, dbname):
-    if value == [] or value == None or clickData == None or clickData == [] or firstchoosen == None or \
+def valintdb(clickData, firstchoosen,value, leftchild, rightchild, retrieve, dbch, dbname):
+    if value == [] or value == None or firstchoosen == None or \
          retrieve == None or retrieve == []:
         raise PreventUpdate
-
     spaceList1 = []
     zero = 0
     spaceList2 = []
     print('firstchoosen', firstchoosen)
+    print('value', value)
+    print(dbch)
+    print(dbname)
     if retrieve != []:
         df = pd.DataFrame(retrieve)
         if dbname == 'rcckn' :
@@ -3770,11 +3762,11 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, ret
      State('dbvalchoosen', 'value'), State('db_name', 'value')
      ]
 )
-def valint(clickData, secondchoosen,value, leftchild, rightchild, retrieve, dbch, dbname):
+def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, dbch, dbname):
     if value == [] or value == None or clickData == None or clickData == [] or secondchoosen == None or \
          retrieve == None or retrieve == []:
         raise PreventUpdate
-
+    print('secondchoosen', secondchoosen)
     spaceList1 = []
     zero = 0
     spaceList2 = []
@@ -4792,13 +4784,13 @@ def download_excel():
     )
 
 
-page_2_layout =  html.Div([html.Div([html.Div([dbc.Button("Database Activate", id="activatedb",  n_clicks=0,
-                                                           color="success", size = 'lg',
+page_2_layout =  html.Div([html.Div([html.Div([dbc.ButtonGroup([dbc.Button("Database Activate", id="activatedb",  n_clicks=0,
+                                                          size="lg", className="mr-1",color="success", style={'width' : '25rem'}
                                                            ),
-                                                  dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
-                                                             color="danger", size='lg',className="mr-1"
-                                                             ),
-                                                dcc.Link('Go to Main Page', href='/page_1'),
+                                                dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
+                                                             size="lg", className="mr-1",color="danger",style={'width' : '25rem'}
+                                                             )]),
+                                                dcc.Link('Go to Main Page', href='/page_1',id = 'link1'),
                                                 dbc.Input(id='db_Ip',
                                                           type="text",
                                                           debounce=True,
@@ -4877,7 +4869,7 @@ page_2_layout =  html.Div([html.Div([html.Div([dbc.Button("Database Activate", i
                                                              debounce=True,
                                                              min=-10000, max=10000, step=1,
                                                              bs_size="sm",
-                                                             style={'width': '7rem', "marginTop": "1.5rem"},
+                                                             style={'width': '8rem', "marginTop": "1.5rem"},
                                                              autoFocus=True,
                                                              placeholder="first point"),
                                                    dbc.Input(id='leftIntegralSeconddb',
@@ -4885,14 +4877,14 @@ page_2_layout =  html.Div([html.Div([html.Div([dbc.Button("Database Activate", i
                                                              debounce=True,
                                                              min=-10000, max=10000, step=1,
                                                              bs_size="sm",
-                                                             style={'width': '7rem', "marginTop": "1.5rem"},
+                                                             style={'width': '8rem', "marginTop": "1.5rem"},
                                                              autoFocus=True,
                                                              placeholder="second point"),
                                                    dbc.Input(id='leftIntegraldb',
                                                              type="text",
                                                              min=-10000, max=10000, step=1,
                                                              bs_size="sm",
-                                                             style={'width': '8rem', "marginTop": "1.5rem"},
+                                                             style={'width': '9rem', "marginTop": "1.5rem"},
                                                              autoFocus=True,
                                                              placeholder="total integration"),
                                                    ]), html.Div([html.Button("Save", id="write_exceldb", n_clicks=0,
@@ -4934,21 +4926,21 @@ page_2_layout =  html.Div([html.Div([html.Div([dbc.Button("Database Activate", i
                                              type="text",
                                              min=-10000, max=10000, step=1,
                                              bs_size="sm",
-                                             style={'width': '7rem', "marginTop": "1.5rem"},
+                                             style={'width': '8rem', "marginTop": "1.5rem"},
                                              autoFocus=True,
                                              placeholder="first point"),
                                    dbc.Input(id='rightIntegralSeconddb',
                                              type="text",
                                              min=-10000, max=10000, step=1,
                                              bs_size="sm",
-                                             style={'width': '7rem', "marginTop": "1.5rem"},
+                                             style={'width': '8rem', "marginTop": "1.5rem"},
                                              autoFocus=True,
                                              placeholder="second point"),
                                    dbc.Input(id='rightIntegraldb',
                                              type="text",
                                              min=-10000, max=10000, step=1,
                                              bs_size="sm",
-                                             style={'width': '8rem', "marginTop": "1.5rem"},
+                                             style={'width': '9rem', "marginTop": "1.5rem"},
                                              autoFocus=True,
                                              placeholder="total integration")
                                ]),
@@ -4969,7 +4961,7 @@ page_2_layout =  html.Div([html.Div([html.Div([dbc.Button("Database Activate", i
                                                    autoFocus=True,
                                                    placeholder="Intersection")], className='aa')
                                ], style={'display': 'None'},
-                                       className="abTab4"),
+                                       className="abdbase"),
                 html.Div([html.Div([html.Div(dcc.Graph(id="getdbgraph",
                                config={'displayModeBar': True,
                                        'scrollZoom': True,
@@ -5322,6 +5314,7 @@ def on_data_set_table(data,valname, valdate,nc2, dbch, dbname):
 def containerdb (val1) :
     if val1 == None or val1 == [] :
         raise PreventUpdate
+    print('val1',val1)
 
     return [{'label' : i, 'value' : i} for i in val1],[{'label' : i, 'value' : i} for i in val1]
 #
