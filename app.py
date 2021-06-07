@@ -41,10 +41,10 @@ def find_data_file(filename):
         datadir = os.path.dirname(__file__)
 
     return os.path.join(datadir, filename)
-
+BS = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
 
 # Initialize the app
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], assets_folder=find_data_file('assets/'))
+app = dash.Dash(__name__, external_stylesheets=[BS], assets_folder=find_data_file('assets/'), update_title='Loading...')
 # app = DashProxy(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], assets_folder=find_data_file('assets/'),transforms=[
 #     TriggerTransform(),  # enable use of Trigger objects
 #     MultiplexerTransform(),  # makes it possible to target an output multiple times in callbacks
@@ -70,18 +70,33 @@ app.layout = html.Div([
     html.Div(id='page-content'),
 ])
 # 4 page
-index_page = html.Div(className="indexpage",
-                      children=[
-                          dcc.Link(html.Button('Work with File (.xlsx/.xls/.csv) ', id="indexPageStyle1"), href='/page-1'),
-                          html.Br(),
-                          dcc.Link(html.Button('Work with DATABASE', id="indexPageStyle2"), href='/Database'),
-                          html.Br(),
-                          dcc.Link(html.Button('Work with Reel Time', id="indexPageStyle3"), href='/reeltime'),
-                          html.Br(),
-                          # dcc.Link(html.Button('Go to Y', id="indexPageStyle"), href='/page-3'),
-                          # html.Br(),
-                          # dcc.Link(html.Button('Go to Z', id="indexPageStyle"), href='/page-4'),
-                      ])
+# dcc.Link(html.Button('Work with File (.xlsx/.xls/.csv) ', id="indexPageStyle1",
+#                      className="btn btn-lg btn-primary btn-block"), href='/page-1'),
+# html.Br(),
+# dcc.Link(html.Button('Work with DATABASE', id="indexPageStyle2", className="btn btn-lg btn-primary btn-block"),
+#          href='/Database'),
+# html.Br(),
+# dcc.Link(html.Button('Work with Reel Time', id="indexPageStyle3", className="btn btn-lg btn-primary btn-block"),
+#          href='/reeltime'),
+# html.Br(),
+# # dcc.Link(html.Button('Go to Y', id="in
+# # # dcc.Link(html.Button('Go to Z', id="indexPageStyle"), href='/pagedexPageStyle"), href='/page-3'),
+# # html.Br(),-4'),
+index_page = html.Div([html.Div(html.Div(html.Div(
+             children=[ html.H3('Work with File'),
+                        html.P('Lorem ipsum'),
+                        dcc.Link('Start', href="/page-1")
+                      ],className = "content" ),className = 'box'), className = 'card'),
+            html.Div(html.Div(html.Div(children=[
+                                        html.H3('Work with DATABASE'),
+                                        html.P('Lorem ipsum'),
+                                        dcc.Link('Start', href='/Database')
+                                        ],className = "content" ),className = 'box'), className = 'card'),
+            html.Div(html.Div(html.Div(children=[
+                            html.H3('Work with Reel Time'),
+                            html.P('Lorem ipsum'),
+                            dcc.Link('Start', href='/reelTime')
+                            ],className = "content" ),className = 'box'), className = 'card')], className = 'container')
 
 page_1_layout = html.Div(
     className='main_container',
