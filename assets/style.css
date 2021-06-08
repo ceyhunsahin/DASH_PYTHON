@@ -6,14 +6,14 @@
 }
 .main_container {
     display : grid;
-    grid-template-columns:38% 62%;
+    grid-template-columns:32% 68%;
     grid-gap: 1rem;
     height : 30%
 
 }
 
 .four-columns-div-user-controls {
-    background-color: bisque;
+    background-color:#7a99ed ;
     display: flex;
     flex-direction : column;
     align-items: center;
@@ -22,38 +22,29 @@
     
 }
 .userControlDownSide {
-    background-color: bisque;
-    height :1150px;
-    width : 100%; 
+    width : 100%;
     
 }
 .userControlDownSideCreated {
-    background-color: bisque;
+    background-color:white;
     display : grid;
     grid-template-columns:50% 50%;
-    width:100%;
-    height :950px;
-    
+
+    height :826px;
+
 }
 .userControlDownLeftSide {
-    background-color: bisque;
     display: flex;
     flex-direction : column;
-    
-    
-    height :850px;
-    background-color: rgb(223, 197, 197);
-    width:100%
+    background-color: #d0cfcb;
+
 }
 .userControlDownRightSide {
-    background-color: rgb(66, 44, 17);
+
     display: flex;
     flex-direction : column;
-   
-   
-    height :850px;
-    background-color:rgb(204, 211, 134);
-    width:100%
+    background-color:#ffe2c3;
+
 }
 
 .aa{ 
@@ -103,13 +94,32 @@
     display: flex;
     flex-direction : row;
     justify-content:space-around;
+    background-color : #d6f2f2
 
 }
 .abpower{
-    display: flex;
-    flex-direction : row;
-    justify-content:space-around;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+    grid-template-rows: auto auto auto auto auto;
+    width : 100%;
 
+}
+
+.dark-theme-control {
+  grid-column-start: 3;
+  grid-column-end: 4;
+  grid-row-start: row1-start;
+  grid-row-end:3;
+}
+#link1 {
+  grid-column-start: 5;
+  grid-column-end: 6;
+  grid-row-start: 6;
+  grid-row-end: 7;
+  vertical-align: bottom;
+  text-decoration: none;
+  text-transform: uppercase;
+  color : black
 }
 .abdb{
     display: flex;
@@ -128,9 +138,9 @@
     flex-direction : row;
     background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,182,244,1) 0%, rgba(18,116,231,1) 90.1% );
     box-sizing: border-box;
+    margin : 10px;
 
     border-radius: 0.5rem;
-
 
 }
 .abTab4{
@@ -139,6 +149,16 @@
     justify-content:space-between;
     width : 60%;
     margin : 10px
+    background : #f5f5f5
+
+}
+.abdbase{
+    display: flex;
+    flex-direction : row;
+    justify-content:space-between;
+    width : 60%;
+    margin : 10px;
+    background : #f5f5f5
 
 }
 .abTab4_1{
@@ -180,6 +200,18 @@
     flex-direction : row;
     justify-content: flex-start;
     margin : 1rem
+    }
+
+.shift{
+    display: flex;
+    flex-direction : row;
+    justify-content: flex-start;
+    margin : 1.5rem;
+    border: 1px solid transparent;
+    background-Color : #c0e9eb;
+    color : #050505;
+    border-radius: 0.3rem;
+
     }
 
 #active_server {
@@ -319,7 +351,6 @@
     font: bold 18px Roboto, sans-serif;
     padding: 6px 7px;
     cursor: pointer;
-
   }
 .knobs_design {
     display : flex;
@@ -363,7 +394,10 @@
   
     
 }
-#showLeft, #showRight, #showTab, #upload_data, #write_excel,#addText,#addText4, #write_excelTab4, #download, #download_data,#download_dataTab4 {
+html {
+  overflow-y: scroll;
+}
+#showLeft, #showRight, #showTab, #upload_data, #write_excel,#write_exceldb,#addText,#addText4, #write_excelTab4, #download, #download_data,#download_dataTab4,#download_datadb {
     background-color: #0996ce; 
     border: none;
     color: white;
@@ -375,11 +409,11 @@
     cursor: pointer;
     border-radius: 0.3rem;
 }
-#showLeft:hover, #showRight:hover, #showTab:hover, #write_excel:hover,#write_excelTab4:hover,#addText:hover,#addText4:hover, #download:hover,#download_data:hover #download_dataTab4:hover  {
+#showLeft:hover, #showRight:hover, #showTab:hover,#write_exceldb:hover, #write_excel:hover,#write_excelTab4:hover,#addText:hover,#addText4:hover, #download:hover,#download_data:hover,#download_datadb:hover,#download_dataTab4:hover  {
     background-color: #052b5e; 
     color: white;
 }
-#showLeft:active, #showRight:active, #showTab:active , #write_excel:active,#write_excelTab4:active,#addText:active,#addText4:active, #download:active, #download_data:active,#download_dataTab4:active{
+#showLeft:active, #showRight:active, #showTab:active ,#write_exceldb:active, #write_excel:active,#write_excelTab4:active,#addText:active,#addText4:active, #download:active, #download_data:active,#download_dataTab4:active, #download_datadb:active{
     background-color: #052b5e; 
     color: white;
 }
@@ -415,7 +449,7 @@
         margin : auto;
         width : 100%;
         height : 100%;
-        background-color:aquamarine;
+        background-color:#f2f2f2;
         display : grid;
         grid-template-rows: 70% 10% ;
         grid-column-gap: 1rem;
@@ -569,18 +603,6 @@ blockquote {
 }
 
 
-/* Links
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-a {
-  color: #1EAEDB;
-  text-decoration: underline;
-  cursor: pointer;}
-a:hover {
-  color: #0FA0CE; }
-
-
-
-
 /* Forms
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 input[type="email"],
@@ -635,9 +657,6 @@ legend {
 fieldset {
   padding: 0;
   border-width: 0; }
-input[type="checkbox"],
-input[type="radio"] {
-  display: inline; }
 label > .label-body {
   display: inline-block;
   margin-left: .5rem;

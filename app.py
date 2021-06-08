@@ -15,6 +15,7 @@ import dash_html_components as html
 import dash_table  # #
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.express as px
 from dash import no_update
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
@@ -144,10 +145,7 @@ page_1_layout = html.Div(
                                                html.Div(id='pointLeftSecond', children=[], style={'display': 'None'}),
                                                html.Div(id='pointRightFirst', children=[], style={'display': 'None'}),
                                                html.Div(id='pointRightSecond', children=[], style={'display': 'None'}),
-                                               html.Div(id='pointLeftFirstdb', children=[], style={'display': 'None'}),
-                                               html.Div(id='pointLeftSeconddb', children=[], style={'display': 'None'}),
-                                               html.Div(id='pointRightFirstdb', children=[], style={'display': 'None'}),
-                                               html.Div(id='pointRightSeconddb', children=[], style={'display': 'None'}),
+
                                                html.Div(id='pointLeftFirstTab4', children=[],style={'display': 'None'}),
                                                html.Div(id='pointLeftSecondTab4', children=[],style={'display': 'None'}),
                                                html.Div(id='pointRightFirstTab4', children=[],style={'display': 'None'}),
@@ -197,10 +195,7 @@ page_1_layout = html.Div(
                                   html.Div(id='leftintegralsecondhidden', children=[], style={'display': 'None'}),
                                   html.Div(id='rightintegralfirsthidden', children=[], style={'display': 'None'}),
                                   html.Div(id='rightintegralsecondhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
-                                  html.Div(id='leftintegralsecondhiddendb', children=[], style={'display': 'None'}),
-                                  html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
-                                  html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
+
                                   html.Div(id='tableinteractivehidden', children=[], style={'display': 'None'}),
                                   html.Div(id='firstchoosenvalhiddentab4', children=[], style={'display': 'None'}),
                                   html.Div(id='secondchoosenvalhiddentab4', children=[], style={'display': 'None'}),
@@ -208,17 +203,12 @@ page_1_layout = html.Div(
                                   html.Div(id='leftintegralsecondhiddentab4', children=[], style={'display': 'None'}),
                                   html.Div(id='rightintegralfirsthiddentab4', children=[], style={'display': 'None'}),
                                   html.Div(id='rightintegralsecondhiddentab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='firstchoosenvalhiddendb', children=[], style={'display': 'None'}),
-                                  html.Div(id='secondchoosenvalhiddendb', children=[], style={'display': 'None'}),
-                                  html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
-                                  html.Div(id='leftintegralsecondhiddendb', children=[], style={'display': 'None'}),
-                                  html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
-                                  html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
+
                                   html.Div(id='tableinteractivehiddentab4', children=[], style={'display': 'None'}),
                                   # html.Div(id='tableinteractivehiddendb', children=[], style={'display': 'None'}),
                                   html.Div(id='writeexcelhidden', children=[], style={'display': 'None'}),
                                   html.Div(id='writeexcelhiddenTab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='writeexcelhiddendb', children=[], style={'display': 'None'}),
+
                                   html.Div(id='hiddenrecord1', children=[], style={'display': 'None'}),
                                   html.Div(id='hiddenrecord2', children=[], style={'display': 'None'}),
                                   html.Div(id='hiddenrecord3', children=[], style={'display': 'None'}),
@@ -316,36 +306,279 @@ page_1_layout = html.Div(
         # dcc.Graph(id = "first_value_graph", config = {'displayModeLine': True}, animate=True)
     ]),
 
-page_2_layout = html.Div([
-    dcc.Link('Go to MODBUS', href='/page-1'),
-    html.Br(),
-    dcc.Link('Go to Y', href='/page-3'),
-    html.Br(),
-    dcc.Link('Go to Z', href='/page-4'),
-    html.Br(),
-    dcc.Link('Go back to home', href='/')
-])
+page_2_layout =  html.Div([html.Div([html.Div([dbc.ButtonGroup([dbc.Button("Database Activate", id="activatedb",  n_clicks=0,
+                                                          size="lg", className="mr-1",color="success", style={'width' : '25rem'}
+                                                           ),
+                                                dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
+                                                             size="lg", className="mr-1",color="danger",style={'width' : '25rem'}
+                                                             )]),
+                                                html.Div(dcc.Link('Go to Main Page', href='/page_1',id = 'link1'), style={'marginTop' : '2rem'}),
+                                                dbc.Input(id='db_Ip',
+                                                          type="text",
+                                                          debounce=True,
+                                                          min=-10000, max=10000, step=1,
+                                                          bs_size="mr",
+                                                          style={'width': '11rem', "marginTop": "1.5rem"},
+                                                          autoFocus=True,
+                                                          placeholder="Enter your IP number ..."),
 
-page_3_layout = html.Div([
-    dcc.Link('Go to MODBUS', href='/page-1'),
-    html.Br(),
-    dcc.Link('Go to DATABASE', href='/DATABASE'),
-    html.Br(),
-    dcc.Link('Go to Z', href='/page-4'),
-    html.Br(),
-    dcc.Link('Go back to home', href='/')
-])
+                                                          ],className="aadb"),
+                              html.Div([
+                                  dcc.Dropdown(id='db_name',
+                                               options=[{'label': i, 'value': i}
+                                                        for i in ['rcckn', 'enerbat']],
+                                               multi=False,
+                                               style={"cursor": "pointer", 'marginTop': '5px'},
+                                               className='stockSelectorClass3',
+                                               clearable=True,
+                                               placeholder='Select Database',
 
-page_4_layout = html.Div([
-    dcc.Link('Go to MODBUS', href='/page-1'),
-    html.Br(),
-    dcc.Link('Go to DATABASE', href='/Database'),
-    html.Br(),
-    dcc.Link('Go to Y', href='/page-3'),
-    html.Br(),
-    dcc.Link('Go back to home', href='/')
-])
+                                               ),
+                                        dcc.Dropdown(id='dbvalchoosen',
+                                                     # options=[{'label': i, 'value': i}
+                                                     #          for i in df.columns],
+                                                     multi=False,
+                                                     style={"cursor": "pointer",'marginTop' :'5px'},
+                                                     className='stockSelectorClass3',
+                                                     clearable=True,
+                                                     placeholder='Select sent or received ...',
 
+                                                    ),
+
+                                        dcc.Dropdown(id='dbvalname',
+                                                     # options=[{'label': i, 'value': i}
+                                                     #          for i in df.columns],
+                                                     multi=True,
+                                                     style={"cursor": "pointer",'marginTop' :'13px'},
+                                                     className='stockSelectorClass3',
+                                                     clearable=True,
+                                                     placeholder='Select your parameters...',
+                                                     ),
+
+                                        dcc.Dropdown(id='dbvaldate',
+                                                     # options=[{'label': i, 'value': i}
+                                                     #          for i in df.columns],
+                                                     multi=True,
+                                                     style={"cursor": "pointer",'marginTop' :'13px'},
+                                                     className='stockSelectorClass3',
+                                                     clearable=False,
+                                                     placeholder='Select your parameters...',
+                                                     ),], className='aadb'),
+                                        html.Div([
+                                            dbc.Checklist(id="calculintegraldb",
+                                                          options=[
+                                                              {'label': "Calculate Integral", 'value': 'calculdb'}, ]
+                                                          ,
+                                                          value='',
+                                                          labelClassName='groupgraph',
+                                                          labelStyle={'margin': '10px', },
+                                                          inputStyle={'margin': '10px', }),
+                                        ])
+                                        ], className = 'abcdb'),
+            dcc.Store(id='memory-output'),
+            html.Div(id='dbcheck', children=
+                              [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValuedb',
+                                                                options=[{'label': i, 'value': i} for i in
+                                                                         []],
+                                                                multi=False,
+                                                                style={"cursor": "pointer", 'width': '180px'},
+                                                                className='',
+                                                                clearable=True,
+                                                                placeholder='First Value...',
+                                                                ),
+                                                   dbc.Input(id='leftIntegralFirstdb',
+                                                             type="text",
+                                                             debounce=True,
+                                                             min=-10000, max=10000, step=1,
+                                                             bs_size="sm",
+                                                             style={'width': '8rem', "marginTop": "1.5rem"},
+                                                             autoFocus=True,
+                                                             placeholder="first point"),
+                                                   dbc.Input(id='leftIntegralSeconddb',
+                                                             type="text",
+                                                             debounce=True,
+                                                             min=-10000, max=10000, step=1,
+                                                             bs_size="sm",
+                                                             style={'width': '8rem', "marginTop": "1.5rem"},
+                                                             autoFocus=True,
+                                                             placeholder="second point"),
+                                                   dbc.Input(id='leftIntegraldb',
+                                                             type="text",
+                                                             min=-10000, max=10000, step=1,
+                                                             bs_size="sm",
+                                                             style={'width': '9rem', "marginTop": "1.5rem"},
+                                                             autoFocus=True,
+                                                             placeholder="total integration"),
+                                                   ]), html.Div([html.Button("Save", id="write_exceldb", n_clicks=0,
+                                                                             style={'fontSize': '1rem', 'width': '4rem',
+                                                                                    'margin': '1rem'},
+                                                                             ),
+                                                                 html.A(html.Button("Download Data",
+                                                                                    id='download_datadb',
+                                                                                    n_clicks=0,
+                                                                                    style={'fontSize': '1rem',
+                                                                                           'width': '9rem',
+                                                                                           'margin': '1rem'}, ),
+                                                                        id='download_exceldb',
+                                                                        # # download="rawdata.csv",
+                                                                        href="/download_exceldb/",
+                                                                        # target="_blank"
+                                                                        )
+                                                                 ], className='ad')
+
+                                         ]),
+                               html.Div([dbc.Checklist(
+                                   id='operateurdb',
+                                   options=[{'label': i, 'value': i} for i in
+                                            ['Plus', 'Moins', 'Multiplie', 'Division']],
+                                   value=[],
+                                   labelStyle={"display": "Block"},
+                               ), ]),
+                               html.Div([
+                                   dcc.Dropdown(id='secondChoosenValuedb',
+                                                options=[{'label': i, 'value': i} for i in
+                                                         []],
+                                                multi=False,
+                                                style={"cursor": "pointer", 'width': '180px'},
+                                                className='',
+                                                clearable=True,
+                                                placeholder='Second Value...',
+                                                ),
+                                   dbc.Input(id='rightIntegralFirstdb',
+                                             type="text",
+                                             min=-10000, max=10000, step=1,
+                                             bs_size="sm",
+                                             style={'width': '8rem', "marginTop": "1.5rem"},
+                                             autoFocus=True,
+                                             placeholder="first point"),
+                                   dbc.Input(id='rightIntegralSeconddb',
+                                             type="text",
+                                             min=-10000, max=10000, step=1,
+                                             bs_size="sm",
+                                             style={'width': '8rem', "marginTop": "1.5rem"},
+                                             autoFocus=True,
+                                             placeholder="second point"),
+                                   dbc.Input(id='rightIntegraldb',
+                                             type="text",
+                                             min=-10000, max=10000, step=1,
+                                             bs_size="sm",
+                                             style={'width': '9rem', "marginTop": "1.5rem"},
+                                             autoFocus=True,
+                                             placeholder="total integration")
+                               ]),
+                               html.Div([dbc.Input(id='operationdb',
+                                                   type="text",
+                                                   min=-10000, max=10000, step=1,
+                                                   bs_size="sm",
+                                                   style={'width': '10rem', "marginTop": "2rem",
+                                                          'height': '5rem', 'textAlign': 'center'},
+                                                   autoFocus=True,
+                                                   placeholder="result"),
+                                         dbc.Input(id='intersectiondb',
+                                                   type="text",
+                                                   min=-10000, max=10000, step=1,
+                                                   bs_size="sm",
+                                                   style={'width': '10rem', "marginTop": "2rem",
+                                                          'height': '2rem', 'textAlign': 'center'},
+                                                   autoFocus=True,
+                                                   placeholder="Intersection")], className='aa')
+                               ], style={'display': 'None'},
+                                       className="abdbase"),
+                html.Div([html.Div([html.Div(dcc.Graph(id="getdbgraph",
+                               config={'displayModeBar': True,
+                                       'scrollZoom': True,
+                                       'modeBarButtonsToAdd': [
+                                           'drawline',
+                                           'drawrect',
+                                           'drawopenpath',
+                                           'select2d',
+                                           'eraseshape',
+                                       ]},
+                               style={'marginTop': 20,},
+                               figure={
+                                   'layout': {'legend': {'tracegroupgap': 0},
+
+                                              }
+                               }
+
+                               ), ),
+                          html.Div(daq.Slider(id="sliderHeightdb",
+                                     max=2100,
+                                     min=400,
+                                     value=530,
+                                     step=100,
+                                     size=400,
+                                     vertical=True,
+                                     updatemode='drag'), style= {'margin' : '20px'})], className='abcdb'),
+
+                          html.Div([html.Div(daq.Slider(id="sliderWidthdb",
+                                                 max=2000,
+                                                 min=600,
+                                                 value=1000,
+                                                 step=100,
+                                                 size = 750,
+
+                                                 updatemode='drag'), style = {'marginLeft': '5rem'}),
+                                    ]),
+            html.Div(dash_table.DataTable(id="getdbtable",
+                                          editable=True,
+                                          page_size=50,
+                                          style_table={'height': '500px', 'overflowY': 'auto', 'width': '98%'},
+                                          style_cell={
+                                              'overflow': 'hidden',
+                                              'textOverflow': 'ellipsis',
+                                              'maxWidth': 0,
+                                              'fontSize': '1rem',
+                                              'TextAlign': 'center',
+                                          },
+
+                                          fixed_rows={'headers': True},
+
+                                          # style_cell_conditional=[
+                                          # {'if': {'column_id': 'date'},
+                                          #  'width': '15%'}
+
+                                          style_header={
+                                              'backgroundColor': 'rgb(230, 230, 230)',
+                                              'fontWeight': 'bold'
+                                          },
+                                          filter_action="native",
+                                          sort_action="native",
+                                          sort_mode="multi",
+                                          column_selectable="single",
+                                          # row_selectable="multi",
+                                          # row_deletable=True,
+                                          selected_columns=[],
+                                          selected_rows=[],
+                                          page_action="native",
+                                          page_current=0,
+                                          export_format='xlsx',
+                                          export_headers='display',
+                                          merge_duplicate_headers=True)),
+            html.Div(id="hiddendb1", children = [], style = {'display':'None'}),
+            html.Div(id="hiddendb2", style = {'display':'None'}),
+            html.Div(id="hiddendb3", children=[], style={'display': 'None'}),
+            html.Div(id='pointLeftFirstdb', children=[], style={'display': 'None'}),
+            html.Div(id='pointLeftSeconddb', children=[], style={'display': 'None'}),
+            html.Div(id='pointRightFirstdb', children=[], style={'display': 'None'}),
+            html.Div(id='pointRightSeconddb', children=[], style={'display': 'None'}),
+            html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
+            html.Div(id='leftintegralsecondhiddendb', children=[], style={'display': 'None'}),
+            html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
+            html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
+            html.Div(id='firstchoosenvalhiddendb', children=[], style={'display': 'None'}),
+            html.Div(id='secondchoosenvalhiddendb', children=[], style={'display': 'None'}),
+            html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
+            html.Div(id='leftintegralsecondhiddendb', children=[], style={'display': 'None'}),
+            html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
+            html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
+            html.Div(id='hiddenrecord1db', children=[], style={'display': 'None'}),
+            html.Div(id='hiddenrecord2db', children=[], style={'display': 'None'}),
+            html.Div(id='hiddenrecord3db', children=[], style={'display': 'None'}),
+            html.Div(id='hiddenrecord4db', children=[], style={'display': 'None'}),
+            html.Div(id='writeexcelhiddendb', children=[], style={'display': 'None'}),
+
+            ], ),], ),
 
 # @app.callback(Output('tab2', 'children'),
 #               [Input("my-toggle-switch", "on"), Input('interval', 'n_intervals')])
@@ -402,7 +635,7 @@ def parse_contents(contents, filename, date):
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             df.to_excel("appending.xlsx")
-        elif 'xlsx' in filename:
+        elif 'xls'  in filename:
             # Assume that the user uploaded an excel file
             df = pd.read_excel(io.BytesIO(decoded))
             df['index'] = df.index
@@ -1561,7 +1794,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                     else:
                         x_axis = df['date']
 
-            fig.add_trace(go.Scattergl(x=x_axis, y=y_axis, mode=radiograph, name=val[i_val]))
+            fig.add_trace(go.Scattergl(x=x_axis, y=y_axis, mode=radiograph,marker=dict(line=dict(width=0.2,color='white')), name=val[i_val]))
             color = {0: 'blue', 1: 'red', 2: 'green', 3: 'purple', 4: 'orange'}
             if len(firstshape) == 2 and leftfirstval != firstshape[0] and leftfirstval != []:
                 if leftfirstval.startswith('T') == 1:
@@ -2293,8 +2526,6 @@ def LoadingDataTab4(on,tab):
 def tab4enlarger(tab) :
     if tab == 'tab-4' :
         return {'display': 'None'}, {'width' : '260%', 'margin' : '1rem'}
-    if tab == 'tab-3' :
-        return {'display': 'None'}, {'width' : '260%', 'margin' : '1rem'}
     else : return {'visibility': 'visible'}, {'visibility': 'visible'}
 
 
@@ -2947,7 +3178,7 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                         for k in range(len(valx2)):
                             a = df[valy2[j]]
                             b = df[valx2[k]]
-                            fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, name="{}/{}".format(valy2[j], valx2[k])))
+                            fig.add_trace(go.Scattergl(x=a, y=b, mode=radio,marker=dict(line=dict(width=0.2,color='white')), name="{}/{}".format(valy2[j], valx2[k])))
                             a = []
                             if nc > 0:
                                 a = controlShape()
@@ -3025,7 +3256,7 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
 
-                    fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, name="{}/{}".format(valxsecond[s], valysecond[s])))
+                    fig.add_trace(go.Scattergl(x=a, y=b, mode=radio,marker=dict(line=dict(width=0.2,color='white')), name="{}/{}".format(valxsecond[s], valysecond[s])))
                     def controlShape():
                         pathline = ''
                         pathline2 = ''
@@ -3372,7 +3603,12 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
             # else : return(no_update,no_update)
     else:return (no_update, no_update)
 
-    # return left
+#     # return left
+# @app.callback(
+#     Output('pointLeftFirstdb', 'children'),
+#     [Input('getdbgraph', 'clickData')],)
+# def ceyhun (p):
+#     print(json.dumps(p))
 
 @app.callback(
     [Output('pointLeftFirstdb', 'children'),
@@ -3386,16 +3622,12 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
      ]
 )
 def valintdb(clickData, firstchoosen,value, leftchild, rightchild, retrieve, dbch, dbname):
-    if value == [] or value == None or firstchoosen == None or \
+    if value == [] or value == None or firstchoosen == None or clickData == None or clickData == [] or \
          retrieve == None or retrieve == []:
         raise PreventUpdate
     spaceList1 = []
     zero = 0
     spaceList2 = []
-    print('firstchoosen', firstchoosen)
-    print('value', value)
-    print(dbch)
-    print(dbname)
     if retrieve != []:
         df = pd.DataFrame(retrieve)
         if dbname == 'rcckn' :
@@ -3421,16 +3653,23 @@ def valintdb(clickData, firstchoosen,value, leftchild, rightchild, retrieve, dbc
                     x_val = clickData['points'][0]['x']
                     x_val = x_val[:10]+'T'+x_val[11:]
                     print('x_val', x_val)
+
                     dff = df[df['VARIABLE_NAME'] == firstchoosen]
                     if dbch == 'send_variablevalues':
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
+                        index = np.arange(0, len(dff['VARIABLE_NAME']))
+                        dff.reset_index(drop=True, inplace=True)
+                        dff.set_index(index, inplace=True)
+                        print('dffff', dff.tail(5))
+                        dff = dff[(dff['TIMESTAMP'] == x_val)]
                     if dbch == 'received_variablevalues':
                         dff = dff[dff.REMOTE_TIMESTAMP.str.startswith(x_val[:10])]
-                    index = np.arange(0, len(dff['VARIABLE_NAME']))
-                    dff.reset_index(drop = True, inplace = True)
-                    dff.set_index(index, inplace=True)
-                    print('dffff', dff.tail(5))
-                    dff = dff[(dff['TIMESTAMP'] == x_val)]
+                        index = np.arange(0, len(dff['VARIABLE_NAME']))
+                        dff.reset_index(drop=True, inplace=True)
+                        dff.set_index(index, inplace=True)
+                        print('dffff', dff.tail(5))
+                        dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
+
                     a = []
                     a.append(dff.index)
                     for i in range(len(a)):
@@ -3801,13 +4040,19 @@ def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, d
                     dff = df[df['VARIABLE_NAME'] == secondchoosen]
                     if dbch == 'send_variablevalues':
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
+                        index = np.arange(0, len(dff['VARIABLE_NAME']))
+                        dff.reset_index(drop=True, inplace=True)
+                        dff.set_index(index, inplace=True)
+                        print('dffff', dff.tail(5))
+                        dff = dff[(dff['TIMESTAMP'] == x_val)]
                     if dbch == 'received_variablevalues':
                         dff = dff[dff.REMOTE_TIMESTAMP.str.startswith(x_val[:10])]
-                    index = np.arange(0, len(dff['VARIABLE_NAME']))
-                    dff.reset_index(drop=True, inplace=True)
-                    dff.set_index(index, inplace=True)
-                    print('dffff', dff.tail(5))
-                    dff = dff[(dff['TIMESTAMP'] == x_val)]
+                        index = np.arange(0, len(dff['VARIABLE_NAME']))
+                        dff.reset_index(drop=True, inplace=True)
+                        dff.set_index(index, inplace=True)
+                        print('dffff', dff.tail(5))
+                        dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
+
                     a = []
                     a.append(dff.index)
                     print('aaaaaaaaa', a)
@@ -4763,6 +5008,68 @@ def exportdata(valueparse):
 
     df = pd.DataFrame(t_parse)
     df.to_excel('new_fichier.xlsx')
+@app.callback(Output('writeexcelhiddendb', 'children'),
+              [Input('write_exceldb', 'n_clicks')],
+              [State('firstChoosenValuedb', 'value'),
+               State('leftIntegralFirstdb', 'value'),
+               State('leftIntegralSeconddb', 'value'),
+               State('leftIntegraldb', 'value'),
+               State('secondChoosenValuedb', 'value'),
+               State('rightIntegralFirstdb', 'value'),
+               State('rightIntegralSeconddb', 'value'),
+               State('rightIntegraldb', 'value'),
+               State('operationdb', 'value'),
+               State('intersectiondb', 'value'),
+               ],
+              )
+def write_exceldb(nc, a, b, c, d, e, f, g, h, i, j):
+    if nc > 0:
+        now = datetime.datetime.now()
+        if i == [] :
+            i= None
+        if j == ['intersection']:
+            j = None
+        x = (now, a, b, c, d, e, f, g, h, i, j)
+
+        if x != None : return x
+@app.callback(Output('hiddenrecord3db', 'children'),
+              [Input('writeexcelhiddendb', 'children'),Input('writeexcelhiddendb', 'children')],
+                   )
+def pasfuncdb(hiddenvalchild,hiddenvalchild4):
+    if hiddenvalchild == None and hiddenvalchild4 == None:
+        raise PreventUpdate
+    if hiddenvalchild != None :
+        return hiddenvalchild
+    if hiddenvalchild4 != None :
+        return hiddenvalchild4
+
+@app.callback(Output('hiddenrecord4db', 'children'),
+                  [Input('hiddenrecord3db', 'children')],
+                  State('hiddenrecord4db', 'children'),)
+
+def lastfuncdb(hiddenvalchild,lastvalchild):
+    lastvalchild=hiddenvalchild+lastvalchild
+    return lastvalchild
+
+@app.callback(Output('hiddenrecord1db', 'children'),
+             [Input('hiddenrecord4db', 'children')],
+              )
+
+def exportdatadb(valueparse):
+    a_parse = []
+    t_parse = []
+    for i in valueparse:
+        if i ==None:
+            a_parse.append('None')
+        else : a_parse.append(i)
+        if len(a_parse)%11 ==0:
+            t_parse.append(a_parse)
+            a_parse = []
+    t_parse.insert(0,['time','firstChoosenValue','leftIntegralFirst','leftIntegralSecond','leftIntegral','secondChoosenValue',
+    'rightIntegralFirst','rightIntegralSecond','rightIntegral', 'operation','intersection'])
+
+    df = pd.DataFrame(t_parse)
+    df.to_excel('new_fichier.xlsx')
 
 @app.server.route("/download_excel/")
 def download_excel():
@@ -4782,264 +5089,24 @@ def download_excel():
         as_attachment=True,
         cache_timeout=0
     )
-
-
-page_2_layout =  html.Div([html.Div([html.Div([dbc.ButtonGroup([dbc.Button("Database Activate", id="activatedb",  n_clicks=0,
-                                                          size="lg", className="mr-1",color="success", style={'width' : '25rem'}
-                                                           ),
-                                                dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
-                                                             size="lg", className="mr-1",color="danger",style={'width' : '25rem'}
-                                                             )]),
-                                                dcc.Link('Go to Main Page', href='/page_1',id = 'link1'),
-                                                dbc.Input(id='db_Ip',
-                                                          type="text",
-                                                          debounce=True,
-                                                          min=-10000, max=10000, step=1,
-                                                          bs_size="mr",
-                                                          style={'width': '11rem', "marginTop": "1.5rem"},
-                                                          autoFocus=True,
-                                                          placeholder="Enter your IP number ..."),
-
-                                                          ],className="aadb"),
-                              html.Div([
-                                  dcc.Dropdown(id='db_name',
-                                               options=[{'label': i, 'value': i}
-                                                        for i in ['rcckn', 'enerbat']],
-                                               multi=False,
-                                               style={"cursor": "pointer", 'marginTop': '5px'},
-                                               className='stockSelectorClass3',
-                                               clearable=True,
-                                               placeholder='Select Database',
-
-                                               ),
-                                        dcc.Dropdown(id='dbvalchoosen',
-                                                     # options=[{'label': i, 'value': i}
-                                                     #          for i in df.columns],
-                                                     multi=False,
-                                                     style={"cursor": "pointer",'marginTop' :'5px'},
-                                                     className='stockSelectorClass3',
-                                                     clearable=True,
-                                                     placeholder='Select sent or received ...',
-
-                                                    ),
-
-                                        dcc.Dropdown(id='dbvalname',
-                                                     # options=[{'label': i, 'value': i}
-                                                     #          for i in df.columns],
-                                                     multi=True,
-                                                     style={"cursor": "pointer",'marginTop' :'13px'},
-                                                     className='stockSelectorClass3',
-                                                     clearable=True,
-                                                     placeholder='Select your parameters...',
-                                                     ),
-
-                                        dcc.Dropdown(id='dbvaldate',
-                                                     # options=[{'label': i, 'value': i}
-                                                     #          for i in df.columns],
-                                                     multi=True,
-                                                     style={"cursor": "pointer",'marginTop' :'13px'},
-                                                     className='stockSelectorClass3',
-                                                     clearable=False,
-                                                     placeholder='Select your parameters...',
-                                                     ),], className='aadb'),
-                                        html.Div([
-                                            dbc.Checklist(id="calculintegraldb",
-                                                          options=[
-                                                              {'label': "Calculate Integral", 'value': 'calculdb'}, ]
-                                                          ,
-                                                          value='',
-                                                          labelClassName='groupgraph',
-                                                          labelStyle={'margin': '10px', },
-                                                          inputStyle={'margin': '10px', }),
-                                        ])
-                                        ], className = 'abcdb'),
-            dcc.Store(id='memory-output'),
-            html.Div(id='dbcheck', children=
-                              [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValuedb',
-                                                                options=[{'label': i, 'value': i} for i in
-                                                                         []],
-                                                                multi=False,
-                                                                style={"cursor": "pointer", 'width': '180px'},
-                                                                className='',
-                                                                clearable=True,
-                                                                placeholder='First Value...',
-                                                                ),
-                                                   dbc.Input(id='leftIntegralFirstdb',
-                                                             type="text",
-                                                             debounce=True,
-                                                             min=-10000, max=10000, step=1,
-                                                             bs_size="sm",
-                                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                                             autoFocus=True,
-                                                             placeholder="first point"),
-                                                   dbc.Input(id='leftIntegralSeconddb',
-                                                             type="text",
-                                                             debounce=True,
-                                                             min=-10000, max=10000, step=1,
-                                                             bs_size="sm",
-                                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                                             autoFocus=True,
-                                                             placeholder="second point"),
-                                                   dbc.Input(id='leftIntegraldb',
-                                                             type="text",
-                                                             min=-10000, max=10000, step=1,
-                                                             bs_size="sm",
-                                                             style={'width': '9rem', "marginTop": "1.5rem"},
-                                                             autoFocus=True,
-                                                             placeholder="total integration"),
-                                                   ]), html.Div([html.Button("Save", id="write_exceldb", n_clicks=0,
-                                                                             style={'fontSize': '1rem', 'width': '4rem',
-                                                                                    'margin': '1rem'},
-                                                                             ),
-                                                                 html.A(html.Button("Download Data",
-                                                                                    id='download_datadb',
-                                                                                    n_clicks=0,
-                                                                                    style={'fontSize': '1rem',
-                                                                                           'width': '9rem',
-                                                                                           'margin': '1rem'}, ),
-                                                                        id='download_exceldb',
-                                                                        # # download="rawdata.csv",
-                                                                        href="/download_excel/",
-                                                                        # target="_blank"
-                                                                        )
-                                                                 ], className='ad')
-
-                                         ]),
-                               html.Div([dbc.Checklist(
-                                   id='operateurdb',
-                                   options=[{'label': i, 'value': i} for i in
-                                            ['Plus', 'Moins', 'Multiplie', 'Division']],
-                                   value=[],
-                                   labelStyle={"display": "Block"},
-                               ), ]),
-                               html.Div([
-                                   dcc.Dropdown(id='secondChoosenValuedb',
-                                                options=[{'label': i, 'value': i} for i in
-                                                         []],
-                                                multi=False,
-                                                style={"cursor": "pointer", 'width': '180px'},
-                                                className='',
-                                                clearable=True,
-                                                placeholder='Second Value...',
-                                                ),
-                                   dbc.Input(id='rightIntegralFirstdb',
-                                             type="text",
-                                             min=-10000, max=10000, step=1,
-                                             bs_size="sm",
-                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                             autoFocus=True,
-                                             placeholder="first point"),
-                                   dbc.Input(id='rightIntegralSeconddb',
-                                             type="text",
-                                             min=-10000, max=10000, step=1,
-                                             bs_size="sm",
-                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                             autoFocus=True,
-                                             placeholder="second point"),
-                                   dbc.Input(id='rightIntegraldb',
-                                             type="text",
-                                             min=-10000, max=10000, step=1,
-                                             bs_size="sm",
-                                             style={'width': '9rem', "marginTop": "1.5rem"},
-                                             autoFocus=True,
-                                             placeholder="total integration")
-                               ]),
-                               html.Div([dbc.Input(id='operationdb',
-                                                   type="text",
-                                                   min=-10000, max=10000, step=1,
-                                                   bs_size="sm",
-                                                   style={'width': '10rem', "marginTop": "2rem",
-                                                          'height': '5rem', 'textAlign': 'center'},
-                                                   autoFocus=True,
-                                                   placeholder="result"),
-                                         dbc.Input(id='intersectiondb',
-                                                   type="text",
-                                                   min=-10000, max=10000, step=1,
-                                                   bs_size="sm",
-                                                   style={'width': '10rem', "marginTop": "2rem",
-                                                          'height': '2rem', 'textAlign': 'center'},
-                                                   autoFocus=True,
-                                                   placeholder="Intersection")], className='aa')
-                               ], style={'display': 'None'},
-                                       className="abdbase"),
-                html.Div([html.Div([html.Div(dcc.Graph(id="getdbgraph",
-                               config={'displayModeBar': True,
-                                       'scrollZoom': True,
-                                       'modeBarButtonsToAdd': [
-                                           'drawline',
-                                           'drawrect',
-                                           'drawopenpath',
-                                           'select2d',
-                                           'eraseshape',
-                                       ]},
-                               style={'marginTop': 20,},
-                               figure={
-                                   'layout': {'legend': {'tracegroupgap': 0},
-
-                                              }
-                               }
-
-                               ), ),
-                          html.Div(daq.Slider(id="sliderHeightdb",
-                                     max=2100,
-                                     min=400,
-                                     value=530,
-                                     step=100,
-                                     size=400,
-                                     vertical=True,
-                                     updatemode='drag'), style= {'margin' : '20px'})], className='abcdb'),
-
-                          html.Div([html.Div(daq.Slider(id="sliderWidthdb",
-                                                 max=2000,
-                                                 min=600,
-                                                 value=1000,
-                                                 step=100,
-                                                 size = 750,
-
-                                                 updatemode='drag'), style = {'marginLeft': '5rem'}),
-                                    ]),
-            html.Div(dash_table.DataTable(id="getdbtable",
-                                          editable=True,
-                                          page_size=50,
-                                          style_table={'height': '500px', 'overflowY': 'auto', 'width': '98%'},
-                                          style_cell={
-                                              'overflow': 'hidden',
-                                              'textOverflow': 'ellipsis',
-                                              'maxWidth': 0,
-                                              'fontSize': '1rem',
-                                              'TextAlign': 'center',
-                                          },
-                                          fixed_rows={'headers': True},
-
-                                          # style_cell_conditional=[
-                                          # {'if': {'column_id': 'date'},
-                                          #  'width': '15%'}
-
-                                          style_header={
-                                              'backgroundColor': 'rgb(230, 230, 230)',
-                                              'fontWeight': 'bold'
-                                          },
-                                          filter_action="native",
-                                          sort_action="native",
-                                          sort_mode="multi",
-                                          column_selectable="single",
-                                          # row_selectable="multi",
-                                          # row_deletable=True,
-                                          selected_columns=[],
-                                          selected_rows=[],
-                                          page_action="native",
-                                          page_current=0,
-                                          export_format='xlsx',
-                                          export_headers='display',
-                                          merge_duplicate_headers=True)),
-            html.Div(id="hiddendb1", children = [], style = {'display':'None'}),
-            html.Div(id="hiddendb2", style = {'display':'None'}),
-            html.Div(id="hiddendb3", children=[], style={'display': 'None'})
-
-            ], ),], ),
-
-
-
+@app.server.route("/download_exceldb/")
+def download_exceldb():
+    # Create DF
+    dff = pd.read_excel("new_fichier.xlsx")
+    # Convert DF
+    buf = io.BytesIO()
+    excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
+    dff.to_excel(excel_writer, sheet_name="sheet1")
+    excel_writer.save()
+    excel_data = buf.getvalue()
+    buf.seek(0)
+    return send_file(
+        buf,
+        mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        attachment_filename="LERMAB.xlsx",
+        as_attachment=True,
+        cache_timeout=0
+    )
 
 @app.callback(Output('dbvalchoosen', 'options'),
               [Input('db_name', 'value')])
@@ -5053,56 +5120,6 @@ def relationdb(dbname) :
         return [{'label': i, 'value': i} for i in ['send_variablevalues']]
     else : no_update
 
-# @app.callback(Output('dbvalchoosen', 'options'),
-#               [Input('activatedb', 'n_clicks'),
-#                ],
-#                [State('db_Ip', 'value'),
-#                State('db_name', 'value'),State('dbvalchoosen', 'options'),],
-#               )
-# def connectiondb(button, ipval,db_name,st):
-#     if db_name == None:
-#         raise PreventUpdate
-#     ipadress = ''
-#     dbname = ''
-#     if ipval == '' :
-#         ipadress = "193.54.2.211"
-#     else :
-#         ipadress = ipval
-#     if db_name == '':
-#         dbname  = "rcckn"
-#     else:
-#         dbname  = db_name
-#
-#     print(ipadress)
-#     print(dbname)
-#     # if nc2 >= button :
-#     #     print('nc',nc2)
-#     #     st = [{'label': '', 'value': ''}]
-#     #     return st
-#     if button > 0:
-#
-#         server = SSHTunnelForwarder(
-#                 (ipadress, 22),
-#                 ssh_username='soudani',
-#                 ssh_password="univ484067152",
-#                 remote_bind_address=(ipadress, 3306))
-#
-#         server.start()
-#
-#         try:
-#             conn = mariadb.connect(
-#                     user="dashapp",
-#                     password="dashapp",
-#                     host=ipadress,
-#                     port=3306,
-#                     database=dbname
-#             )
-#
-#         except mariadb.Error as e:
-#             print(f"Error connecting to MariaDB Platform: {e}")
-#             sys.exit(1)
-#             # Get Cursor
-#         cur = conn.cursor()
 #             # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
 #         b = f"select table_name from information_schema.tables where TABLE_SCHEMA= '{dbname}'"
 #             # a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
@@ -5120,10 +5137,10 @@ def relationdb(dbname) :
 #                 and i != 'send_variablevaluesmessage']
 #
 #     # else:
-#     #     return no_update
+    #     return no_update
 
 #
-@app.callback([Output('dbvalname', 'options'),Output('dbvaldate', 'options'),ServersideOutput('memory-output', 'data'),],
+@app.callback([Output('dbvalname', 'options'),Output('dbvaldate', 'options')],
               [Input('activatedb', 'n_clicks'),Input('deactivatedb', 'n_clicks')], [State('dbvalchoosen', 'value'),State('db_name', 'value'), State('db_Ip', 'value')])
 def dbname(nc,nc2, dbch,  dbname, ipval):
     if dbname == None:
@@ -5156,21 +5173,24 @@ def dbname(nc,nc2, dbch,  dbname, ipval):
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
             # Get Cursor
-        cur = conn.cursor()
+
             # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
             # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
             #     'received_variablevalues')
 
         # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
-        cur.execute("SELECT * FROM {} ".format(dbch))
-        t = cur.fetchall()
-        df = pd.DataFrame(t)
-        print('burdaki df nedir', df.head(10))
         if dbname == 'rcckn':
             if dbch == 'received_variablevalues':
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                           'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                           'CONVERTED_NUM_VALUE']
+                cur1 = conn.cursor()
+                cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues ")
+                t1 = cur1.fetchall()
+                name = [i[0] for i in t1]
+                cur2 = conn.cursor()
+                cur2.execute("SELECT DISTINCT REMOTE_TIMESTAMP FROM received_variablevalues ")
+                t2 = cur2.fetchall()
+                str_list = [i[0] for i in t2]
+                df = pd.DataFrame(str_list)
+                df.columns = ['REMOTE_TIMESTAMP']
                 df['REMOTE_TIMESTAMP'] = df.REMOTE_TIMESTAMP.apply(pd.to_datetime)
                 df["day"] = df.REMOTE_TIMESTAMP.dt.day
                 df["month"] = df.REMOTE_TIMESTAMP.dt.month
@@ -5180,15 +5200,19 @@ def dbname(nc,nc2, dbch,  dbname, ipval):
                 b = pd.to_datetime(a)
                 b = sorted(b)
                 str_list = [t.strftime("%Y-%m-%d") for t in b]
-                name = df['VARIABLE_NAME'].unique()
-                df = pd.DataFrame(t)
-                df.to_csv('lermab.csv')
-                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list], t
+                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
             elif dbch == "send_variablevalues":
-                print('buraya giriyor mu')
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-                df.TIMESTAMP = df.TIMESTAMP.apply(pd.to_datetime)
+                cur1 = conn.cursor()
+                cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM send_variablevalues ")
+                t1 = cur1.fetchall()
+                name = [i[0] for i in t1]
+                cur2 = conn.cursor()
+                cur2.execute("SELECT DISTINCT TIMESTAMP FROM send_variablevalues ")
+                t2 = cur2.fetchall()
+                str_list = [i[0] for i in t2]
+                df = pd.DataFrame(str_list)
+                df.columns = ['TIMESTAMP']
+                df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
                 df["day"] = df.TIMESTAMP.dt.day
                 df["month"] = df.TIMESTAMP.dt.month
                 df["year"] = df.TIMESTAMP.dt.year
@@ -5196,15 +5220,21 @@ def dbname(nc,nc2, dbch,  dbname, ipval):
                 a = list(set(a))
                 b = pd.to_datetime(a)
                 b = sorted(b)
-                print('bbbbbbbbbbbb22222', b)
                 str_list = [t.strftime("%Y-%m-%d") for t in b]
-                name = df['VARIABLE_NAME'].unique()
-                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list], t
+                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
         if dbname == 'enerbat':
             if dbch == "send_variablevalues":
-                print('buraya giriyor mu')
-                df.columns = [ 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-                df.TIMESTAMP = df.TIMESTAMP.apply(pd.to_datetime)
+                cur1 = conn.cursor()
+                cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM send_variablevalues ")
+                t1 = cur1.fetchall()
+                name = [i[0] for i in t1]
+                cur2 = conn.cursor()
+                cur2.execute("SELECT DISTINCT TIMESTAMP FROM send_variablevalues ")
+                t2 = cur2.fetchall()
+                str_list = [i[0] for i in t2]
+                df = pd.DataFrame(str_list)
+                df.columns = ['TIMESTAMP']
+                df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
                 df["day"] = df.TIMESTAMP.dt.day
                 df["month"] = df.TIMESTAMP.dt.month
                 df["year"] = df.TIMESTAMP.dt.year
@@ -5212,17 +5242,109 @@ def dbname(nc,nc2, dbch,  dbname, ipval):
                 a = list(set(a))
                 b = pd.to_datetime(a)
                 b = sorted(b)
-                print('bbbbbbbbbbbb22222', b)
-                name = df['VARIABLE_NAME'].unique()
                 str_list = [t.strftime("%Y-%m-%d") for t in b]
-                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list],t
+                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
 
     if q1 == 'deactivatedb' :
         kk = [{'label': i, 'value': i} for i in '']
         print('kkkkkkkkk',kk)
-        return [{'label': i, 'value': i} for i in ''],[{'label': i, 'value': i} for i in ''],[]
+        return [{'label': i, 'value': i} for i in ''],[{'label': i, 'value': i} for i in '']
     else:
-        no_update, no_update, no_update
+        no_update, no_update
+
+@app.callback(ServersideOutput('memory-output', 'data'),
+              [Input('dbvalname', 'value'), Input('dbvaldate', 'value')], [State('dbvalchoosen', 'value'),State('db_name', 'value'), State('db_Ip', 'value')])
+def dbname(valname,valdate, dbch,  dbname, ipval):
+    if dbname == None or valname == None or valdate == None:
+        raise PreventUpdate
+    ipadress = ''
+    if ipval == '' :
+        ipadress = "193.54.2.211"
+    else :
+        ipadress = ipval
+    server = SSHTunnelForwarder(
+            (ipadress, 22),
+            ssh_username='soudani',
+            ssh_password="univ484067152",
+            remote_bind_address=(ipadress, 3306))
+
+    server.start()
+
+    try:
+        conn = mariadb.connect(
+                user="dashapp",
+                password="dashapp",
+                host=ipadress,
+                port=3306,
+                database=dbname)
+
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+            # Get Cursor
+
+            # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
+            # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
+            #     'received_variablevalues')
+
+        # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
+    if dbname == 'rcckn':
+        if dbch == 'received_variablevalues':
+            cur1 = conn.cursor()
+
+            print('valname[0]', valname)
+            if len(valname) == 1 :
+                cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
+            elif len(valname) > 1 :
+                valname = tuple(valname)
+                cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME IN {valname}")
+            t1 = cur1.fetchall()
+            df = pd.DataFrame(t1)
+            print('bakalim olacak mi', df.head(10))
+            return t1
+            # name = [i[0] for i in t1]
+            # cur2 = conn.cursor()
+            # cur2.execute("SELECT DISTINCT REMOTE_TIMESTAMP FROM received_variablevalues ")
+            # t2 = cur2.fetchall()
+            # str_list = [i[0] for i in t2]
+            # df = pd.DataFrame(str_list)
+            # df.columns = ['REMOTE_TIMESTAMP']
+            # df['REMOTE_TIMESTAMP'] = df.REMOTE_TIMESTAMP.apply(pd.to_datetime)
+            # df["day"] = df.REMOTE_TIMESTAMP.dt.day
+            # df["month"] = df.REMOTE_TIMESTAMP.dt.month
+            # df["year"] = df.REMOTE_TIMESTAMP.dt.year
+            # a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+            # a = list(set(a))
+            # b = pd.to_datetime(a)
+            # b = sorted(b)
+            # str_list = [t.strftime("%Y-%m-%d") for t in b]
+            # return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+        elif dbch == "send_variablevalues":
+            cur1 = conn.cursor()
+            print('valname[0]', valname)
+            if len(valname) == 1:
+                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
+            elif len(valname) > 1:
+                valname = tuple(valname)
+                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
+            t1 = cur1.fetchall()
+            df = pd.DataFrame(t1)
+            print('bakalim olacak mi', df.head(10))
+            return t1
+    if dbname == 'enerbat':
+        if dbch == "send_variablevalues":
+            cur1 = conn.cursor()
+            print('valname[0]', valname)
+            if len(valname) == 1:
+                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
+            elif len(valname) > 1:
+                valname = tuple(valname)
+                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
+            t1 = cur1.fetchall()
+            df = pd.DataFrame(t1)
+            print('bakalim olacak mi', df.head(10))
+            return t1
+
 
 @app.callback([Output('getdbtable', 'data'),
                Output('getdbtable', 'columns'),],
@@ -5235,7 +5357,7 @@ def on_data_set_table(data,valname, valdate,nc2, dbch, dbname):
     if data is None or valname == None or valdate == None or dbch == None or dbname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
-
+    print(df.head(10))
     if dbname == 'rcckn' :
         if dbch == 'received_variablevalues':
             print('sikinti burda 1 ')
@@ -5352,7 +5474,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',marker=dict(line=dict(width=0.2,color='white')),name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
                         autosize=True,
                         width=sliderw,
@@ -5365,7 +5487,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                             pad=4
                         ),
 
-                        uirevision=valy[j], ),
+                        uirevision=valy[j]),
                 return fig
             else:
                 raise PreventUpdate
@@ -5387,7 +5509,12 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                                   marker=dict(
+                                                       line=dict(
+                                                           width=0.2,
+                                                           color='white')),
+                                        name="{}/{}".format(valy[j], valdate_new[k]))),
                         fig.update_layout(
                             autosize=True,
                             width=sliderw,
@@ -5420,7 +5547,12 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                     a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                     b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                     b = [i for i in b if i.startswith(valdate_new[k])]
-                    fig.add_trace(go.Scattergl(x=b, y=a, mode='markers', name="{}/{}".format(valy[j], valdate_new[k])))
+                    fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                               marker=dict(
+                                                   line=dict(
+                                                       width=0.2,
+                                                       color='white')),
+                                name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
                         autosize=True,
                         width=sliderw,
