@@ -25,12 +25,12 @@ from numpy import trapz
 from flask import send_file
 from openpyxl import Workbook, load_workbook
 from dash_extensions.enrich import Dash, ServersideOutput
-
+import OpenOPC
 
 from sshtunnel import SSHTunnelForwarder
 import mariadb
-# import pywintypes
-# pywintypes.datetime = pywintypes.TimeType
+import pywintypes
+pywintypes.datetime = pywintypes.TimeType
 
 def find_data_file(filename):
     if getattr(sys, 'frozen', False):
@@ -59,7 +59,6 @@ app.config.suppress_callback_exceptions = True
 
 # get data from MAF
 
-getDataFromModbus = []
 
 extra_data_list = [
     'Mass de Bois', 'Volume gaz', 'Vitesse de rotation', 'Puissance Thermique',
@@ -580,32 +579,52 @@ page_2_layout =  html.Div([html.Div([html.Div([dbc.ButtonGroup([dbc.Button("Data
 
             ], ),], ),
 
-# @app.callback(Output('tab2', 'children'),
-#               [Input("my-toggle-switch", "on"), Input('interval', 'n_intervals')])
-# def values(on, n_intervals):
-#     if on == 1:
-#
-#         opc = OpenOPC.client()
-#         opc.servers()
-#         opc.connect('Kepware.KEPServerEX.V6')
-#
-#         for name, value, quality, time in opc.iread(
-#                 ['schneider_Xflow.MAF.CoAd', 'schneider_Xflow.MAF.ComManCoP2',
-#                  'schneider_Xflow.MAF.ComManCoP3P4P5', 'schneider_Xflow.MAF.ComManPompeSec',
-#                  'schneider_Xflow.MAF.CompteurEnergie', 'schneider_Xflow.MAF.CoP2',
-#                  'schneider_Xflow.MAF.CtempDepChauff', 'schneider_Xflow.MAF.D1',
-#                  'schneider_Xflow.MAF.D2', 'schneider_Xflow.MAF.D3', 'schneider_Xflow.MAF.D4',
-#                  'schneider_Xflow.MAF.MarcheBruleur', 'schneider_Xflow.MAF.Teg',
-#                  'schneider_Xflow.MAF.SdeBasBouMelange', 'schneider_Xflow.MAF.SdeBasHauMelange',
-#                  'schneider_Xflow.MAF.TambN3', 'schneider_Xflow.MAF.Tb1', 'schneider_Xflow.MAF.Tb2',
-#                  'schneider_Xflow.MAF.Tb3', 'schneider_Xflow.MAF.Tb4', 'schneider_Xflow.MAF.TdepPLC',
-#                  'schneider_Xflow.MAF.Teb', 'schneider_Xflow.MAF.Tec ', 'schneider_Xflow.MAF.Teev',
-#                  'schneider_Xflow.MAF.TempminMaf', 'schneider_Xflow.MAF.Text', 'schneider_Xflow.MAF.Tsb',
-#                  'schneider_Xflow.MAF.Tsc', 'schneider_Xflow.MAF.Tsev', 'schneider_Xflow.MAF.Tsg']):
-#             getDataFromModbus.append((name, value, quality, time))
-#             df = pd.DataFrame(getDataFromModbus, columns=['ItemID', 'Value', 'DataType', 'TimeStamp'])
-#             df.to_csv("cc.csv")
-#     return getDataFromModbus
+page_3_layout = html.Div(
+    className='main_container',
+    children=[
+        html.Div(id='fourcolumnsdivusercontrolsreel', className="four-columns-div-user-controlsreel",
+                 children=[
+                     html.Div([daq.PowerButton(id='my-toggle-switch-reel',
+                                               label={'label': 'Connection',
+                                                      'style': {'fontSize': '22px', 'fontWeight': "bold"}},
+                                               labelPosition='bottom', on=False, size=100, color="green",
+                                               className='dark-theme-control'),
+                                         dcc.Link('Go to Main Page', href='/page_1',id = 'link1'),],className = 'abpower'),
+                 dcc.Store(id = 'get_data_from_modbus'),
+                 html.Div(id='data_to_store', children=[], style={'display': 'None'}),
+
+                 dcc.Interval(
+                            id='interval_component',
+                            interval=1*5000, # in milliseconds
+                            n_intervals=0)])])
+
+@app.callback(Output('data_to_store', 'children'),
+              [Input("my-toggle-switch-reel", "on"), Input('interval_component', 'n_intervals')],
+              [State('data_to_store', 'children')],)
+def values(on, n_intervals, from_modbus):
+    if on == 1:
+        opc = OpenOPC.client()
+        opc.servers()
+        opc.connect('Kepware.KEPServerEX.V6')
+        print(opc.servers())
+
+        for name, value, time in opc.iread(
+                'sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2'):
+            from_modbus.append((name, value, time))
+
+    return from_modbus
+
+@app.callback(Output('get_data_from_modbus', 'data'),
+              [Input('data_to_store', 'children')],)
+
+def storedata(store) :
+    print('store', store)
+    if store == None :
+        raise PreventUpdate
+    else :
+        df = pd.DataFrame(store, columns=['ItemID', 'Value', 'TimeStamp'])
+        df.to_csv("cc.csv")
+    return store
 
 # surf between pages
 # Update the index
@@ -616,7 +635,7 @@ def display_page(pathname):
         return page_1_layout
     elif pathname == '/Database':
         return page_2_layout
-    elif pathname == '/page-3':
+    elif pathname == '/reelTime':
         return page_3_layout
     elif pathname == '/page-4':
         return page_4_layout
