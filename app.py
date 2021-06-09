@@ -581,8 +581,7 @@ page_2_layout =  html.Div([html.Div([html.Div([dbc.ButtonGroup([dbc.Button("Data
 
 page_3_layout = html.Div(
     className='main_container',
-    children=[
-        html.Div(id='fourcolumnsdivusercontrolsreel', className="four-columns-div-user-controlsreel",
+    children=[html.Div(id='fourcolumnsdivusercontrolsreel', className="four-columns-div-user-controlsreel",
                  children=[
                      html.Div([daq.PowerButton(id='my-toggle-switch-reel',
                                                label={'label': 'Connection',
@@ -591,14 +590,36 @@ page_3_layout = html.Div(
                                                className='dark-theme-control'),
                                          dcc.Link('Go to Main Page', href='/page_1',id = 'link1'),],className = 'abpower'),
                  dcc.Store(id = 'get_data_from_modbus'),
-                 html.Div(id='data_to_store', children=[], style={'display': 'None'}),
-
+                 html.Div(id='data_to_store_id', children=[], style={'display': 'None'}),
+                 html.Div(id='data_to_store_value', children=[], style={'display': 'None'}),
+                 html.Div(id='data_to_store_qualite', children=[], style={'display': 'None'}),
+                 html.Div(id='data_to_store_date', children=[], style={'display': 'None'}),
                  dcc.Interval(
                             id='interval_component',
+                            disabled= True,
                             interval=1*5000, # in milliseconds
-                            n_intervals=0),
-                 html.Div(id = 'ceyhun', children = []), ]),
-        html.Div([dcc.Graph(id='graphreel',
+                            n_intervals=0),]),
+              html.Div([
+                  dcc.Dropdown(id='realvalue',
+                               multi=False,
+                               style={"cursor": "pointer", 'marginTop': '5px'},
+                               className='stockSelectorClass3',
+                               clearable=True,
+                               placeholder='Select Value',
+
+                               ),
+
+                  dcc.Dropdown(id='realdate',
+                               # options=[{'label': i, 'value': i}
+                               #          for i in df.columns],
+                               multi=True,
+                               style={"cursor": "pointer", 'marginTop': '13px'},
+                               className='stockSelectorClass3',
+                               clearable=False,
+                               placeholder='Select your parameters...',
+                               ), ], className='aadb'),
+
+        html.Div([dcc.Graph(id='graphreal',
                             config={'displayModeBar': True,
                                     'scrollZoom': True,
                                     'modeBarButtonsToAdd': [
@@ -625,66 +646,101 @@ page_3_layout = html.Div(
                                       vertical=True,
                                       updatemode='drag'), style={'margin': '20px'})],
                  className='abcdb'),
-    ])
+              html.Div(id = 'ceyhun')
+             ])
 #
-@app.callback(Output('data_to_store', 'children'),
+@app.callback(Output('interval_component', 'disabled'),
+              [Input("my-toggle-switch-reel", "on")],
+             )
+def intervalcontrol(on):
+    if on == 1 :
+        return False
+    else :
+        return True
+
+@app.callback([Output('data_to_store_id', 'children'),
+               Output('data_to_store_value', 'children'),
+               Output('data_to_store_qualite', 'children'),
+               Output('data_to_store_date', 'children'),],
               [Input("my-toggle-switch-reel", "on"), Input('interval_component', 'n_intervals')],
-               State('data_to_store', 'children'),)
-def values(on, n_intervals, from_modbus):
+               [State('data_to_store_id', 'children'),
+                State('data_to_store_value', 'children'),
+                State('data_to_store_qualite', 'children'),
+                State('data_to_store_date', 'children'),])
+def values(on, n_intervals, id, val, qual, date):
     # if from_modbus == None :
     #     raise PreventUpdate
     if on == 1:
         opc = OpenOPC.client()
         opc.servers()
         opc.connect('Kepware.KEPServerEX.V6')
-        a = 0
         for ID, value,Quality,Timestamp in opc.iread(
                 ['sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2', 'sauter.EY6AS680.Tb3', 'sauter.EY6AS680.Tb4',
                  'sauter.EY6AS680.Tec', 'sauter.EY6AS680.Teev', 'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
                  'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg',]):
             # print('value', (ID, value, Quality, Timestamp))
-            if a == 0 :
-                from_modbus.append(ID)
-                from_modbus.append( value)
-                from_modbus.append( Quality)
-                from_modbus.append( Timestamp)
-            # else :
-            #     from_modbus.append([ID, value, Quality, Timestamp])
+            id.append(ID)
+            val.append(value)
+            qual.append(Quality)
+            date.append(Timestamp)
 
-                df = pd.DataFrame(from_modbus)
-                print('modbus verileri', df)
-    print('modbus verileri', from_modbus)
-
-    return from_modbus
+    return id, val, qual, date
 #
-@app.callback(Output('get_data_from_modbus', 'data'),
-              [Input('data_to_store', 'children')],)
+@app.callback([Output('get_data_from_modbus', 'data'),Output('realvalue', 'options')],
+              [Input('data_to_store_id', 'children'),
+                Input('data_to_store_value', 'children'),
+                Input('data_to_store_qualite', 'children'),
+                Input('data_to_store_date', 'children'),],)
 
-def storedata(store) :
-    if store == None :
-        raise PreventUpdate
-    print('store', store)
-    return store
-#
+def storedata(id, val, qual, date) :
+    # if store == None :
+    #     raise PreventUpdate
+    zipped_val = list(zip(id,val,qual,date))
+    print('zippedval', zipped_val)
 
-@app.callback(Output('ceyhun', 'children'),
-              [Input('get_data_from_modbus', 'data')],)
+    df = pd.DataFrame(list(zip(id,val,qual,date)),
+                      columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
+    print('df', df)
+    val = df['ID'].unique()
+    return zipped_val, [{'label' : i, 'value' : i} for i in val]
 
-def storedatar(store) :
-
-    print('store,f,,fgh', store)
 
 #
-# @app.callback(Output('graphreel', 'figure'),
+# @app.callback(Output('ceyhun', 'children'),
 #               [Input('get_data_from_modbus', 'data')])
 #
 # def graphreelTime(data) :
-#     df = pd.DataFrame(data)
-#     print('df', df)
-#     fig = go.Figure()
-#     return {}
+#     df = pd.DataFrame(data,columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
+#     print('df bakalim olacak mi', df)
 
 
+@app.callback(Output('graphreal', 'figure'),
+              [Input('get_data_from_modbus', 'data'),
+               Input('realvalue', 'value')])
+
+def graphreelTime(data,val) :
+    if val == None :
+        raise PreventUpdate
+    print('valllll', [val])
+    df = pd.DataFrame(data,columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
+    y = df[df['Value'].isin([val])]
+    df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
+    df["day"] = df.TIMESTAMP.dt.day
+    df["month"] = df.TIMESTAMP.dt.month
+    df["year"] = df.TIMESTAMP.dt.year
+    # df["hour"] = df.TIMESTAMP.dt.hour
+    # df["minute"] = df.TIMESTAMP.dt.minute
+    # df["second"] = df.TIMESTAMP.dt.second
+    # a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+    # a = list(set(a))
+    # b = pd.to_datetime(a)
+    # b = sorted(b)
+    # str_list = [t.strftime("%Y-%m-%d") for t in b]
+    fig = go.Figure()
+    fig.add_trace(go.Scattergl(x=df['TIMESTAMP'], y=y , marker=dict(line=dict(width=0.2, color='white')),
+                               ))
+
+    return fig
 
 
 # surf between pages
