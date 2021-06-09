@@ -596,35 +596,96 @@ page_3_layout = html.Div(
                  dcc.Interval(
                             id='interval_component',
                             interval=1*5000, # in milliseconds
-                            n_intervals=0)])])
+                            n_intervals=0),
+                 html.Div(id = 'ceyhun', children = []), ]),
+        html.Div([dcc.Graph(id='graphreel',
+                            config={'displayModeBar': True,
+                                    'scrollZoom': True,
+                                    'modeBarButtonsToAdd': [
+                                        'drawline',
+                                        'drawrect',
+                                        'drawopenpath',
+                                        'select2d',
+                                        'eraseshape',
+                                    ]},
+                            style={'marginTop': 20},
+                            figure={
+                                'layout': {'legend': {'tracegroupgap': 0},
 
+                                           }
+                            }
+
+                            ),
+                  html.Div(daq.Slider(id="sliderHeightreel",
+                                      max=2100,
+                                      min=400,
+                                      value=530,
+                                      step=100,
+                                      size=400,
+                                      vertical=True,
+                                      updatemode='drag'), style={'margin': '20px'})],
+                 className='abcdb'),
+    ])
+#
 @app.callback(Output('data_to_store', 'children'),
               [Input("my-toggle-switch-reel", "on"), Input('interval_component', 'n_intervals')],
-              [State('data_to_store', 'children')],)
+               State('data_to_store', 'children'),)
 def values(on, n_intervals, from_modbus):
+    # if from_modbus == None :
+    #     raise PreventUpdate
     if on == 1:
         opc = OpenOPC.client()
         opc.servers()
         opc.connect('Kepware.KEPServerEX.V6')
-        print(opc.servers())
+        a = 0
+        for ID, value,Quality,Timestamp in opc.iread(
+                ['sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2', 'sauter.EY6AS680.Tb3', 'sauter.EY6AS680.Tb4',
+                 'sauter.EY6AS680.Tec', 'sauter.EY6AS680.Teev', 'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
+                 'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg',]):
+            # print('value', (ID, value, Quality, Timestamp))
+            if a == 0 :
+                from_modbus.append(ID)
+                from_modbus.append( value)
+                from_modbus.append( Quality)
+                from_modbus.append( Timestamp)
+            # else :
+            #     from_modbus.append([ID, value, Quality, Timestamp])
 
-        for name, value, time in opc.iread(
-                'sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2'):
-            from_modbus.append((name, value, time))
+                df = pd.DataFrame(from_modbus)
+                print('modbus verileri', df)
+    print('modbus verileri', from_modbus)
 
     return from_modbus
-
+#
 @app.callback(Output('get_data_from_modbus', 'data'),
               [Input('data_to_store', 'children')],)
 
 def storedata(store) :
-    print('store', store)
     if store == None :
         raise PreventUpdate
-    else :
-        df = pd.DataFrame(store, columns=['ItemID', 'Value', 'TimeStamp'])
-        df.to_csv("cc.csv")
+    print('store', store)
     return store
+#
+
+@app.callback(Output('ceyhun', 'children'),
+              [Input('get_data_from_modbus', 'data')],)
+
+def storedatar(store) :
+
+    print('store,f,,fgh', store)
+
+#
+# @app.callback(Output('graphreel', 'figure'),
+#               [Input('get_data_from_modbus', 'data')])
+#
+# def graphreelTime(data) :
+#     df = pd.DataFrame(data)
+#     print('df', df)
+#     fig = go.Figure()
+#     return {}
+
+
+
 
 # surf between pages
 # Update the index
