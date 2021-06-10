@@ -583,12 +583,13 @@ page_3_layout = html.Div(
     className='main_container',
     children=[html.Div(id='fourcolumnsdivusercontrolsreel', className="four-columns-div-user-controlsreel",
                  children=[
-                     html.Div([daq.PowerButton(id='my-toggle-switch-reel',
+                     html.Div([dcc.Link('Go to Main Page', href='/page_1',id = 'link1'),
+                               daq.PowerButton(id='my-toggle-switch-reel',
                                                label={'label': 'Connection',
                                                       'style': {'fontSize': '22px', 'fontWeight': "bold"}},
                                                labelPosition='bottom', on=False, size=100, color="green",
                                                className='dark-theme-control'),
-                                         dcc.Link('Go to Main Page', href='/page_1',id = 'link1'),],className = 'abpower'),
+                                         ],className = 'abpower'),
                  dcc.Store(id = 'get_data_from_modbus'),
                  html.Div(id='data_to_store_id', children=[], style={'display': 'None'}),
                  html.Div(id='data_to_store_value', children=[], style={'display': 'None'}),
@@ -597,29 +598,43 @@ page_3_layout = html.Div(
                  dcc.Interval(
                             id='interval_component',
                             disabled= True,
-                            interval=1*5000, # in milliseconds
+                            interval=1*1000, # in milliseconds
                             n_intervals=0),]),
               html.Div([
                   dcc.Dropdown(id='realvalue',
-                               multi=False,
-                               style={"cursor": "pointer", 'marginTop': '5px'},
+                               multi=True,
+                               style={"cursor": "pointer", 'margin': '5px 5px 10px 0', 'width':'40rem'},
                                className='stockSelectorClass3',
                                clearable=True,
                                placeholder='Select Value',
 
                                ),
+                  html.P('Enter interval value (Millisecond)'),
+                  dbc.Input(id = 'interval_value', type="text", value = '1000',
+                                                 min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'},),
 
-                  dcc.Dropdown(id='realdate',
-                               # options=[{'label': i, 'value': i}
-                               #          for i in df.columns],
-                               multi=True,
-                               style={"cursor": "pointer", 'marginTop': '13px'},
-                               className='stockSelectorClass3',
-                               clearable=False,
-                               placeholder='Select your parameters...',
-                               ), ], className='aadb'),
+                  # dcc.Dropdown(id='realdate',
+                  #              # options=[{'label': i, 'value': i}
+                  #              #          for i in df.columns],
+                  #              multi=True,
+                  #              style={"cursor": "pointer", 'marginTop': '13px'},
+                  #              className='stockSelectorClass3',
+                  #              clearable=False,
+                  #              placeholder='Select your parameters...',
+                  #              ),
+                  html.Div([dbc.Button("Save", id="write_excel_reel", n_clicks=0, size="lg", className="mr-1",color="primary",style = {'margin' : '1rem 1rem 1rem 0'}),
+                            html.A(dbc.Button("Download As Excel", id='download_data_reel',n_clicks=0, size="lg", className="mr-1",color="primary",
+                                              style = {'margin' : '1rem 1rem 1rem 0'}),
+                                                                  id='excel_for_reel',
+                                                                  # # download="rawdata.csv",
+                                                                  href="/download_excel_reel/",
+                                                                  # target="_blank"
+                                                                  ),
+                            dbc.Button("Download to Database", id='download_reel_db',n_clicks=0, size="lg", className="mr-1",color="primary",style = {'margin' : '1rem 1rem 1rem 0'}),
+                            ], className='abcd')
+              ], className='aadb'),
 
-        html.Div([dcc.Graph(id='graphreal',
+              html.Div([html.Div([dcc.Graph(id='graphreal',
                             config={'displayModeBar': True,
                                     'scrollZoom': True,
                                     'modeBarButtonsToAdd': [
@@ -646,7 +661,17 @@ page_3_layout = html.Div(
                                       vertical=True,
                                       updatemode='drag'), style={'margin': '20px'})],
                  className='abcdb'),
-              html.Div(id = 'ceyhun')
+                        html.Div([daq.Slider(id="sliderWidthreel",
+                                             max=2000,
+                                             min=600,
+                                             value=1000,
+                                             step=100,
+                                             size=750,
+                                             updatemode='drag'),
+                                  ], style = {'marginLeft' : "3rem"}),
+                        ], className='aa'),
+
+              html.Div(id = 'reelhidden1', children=[], style={'display': 'None'})
              ])
 #
 @app.callback(Output('interval_component', 'disabled'),
@@ -657,6 +682,16 @@ def intervalcontrol(on):
         return False
     else :
         return True
+
+@app.callback(Output('interval_component', 'interval'),
+              [Input("interval_value", "value")],
+             )
+def intervalcontrol2(val):
+    val = int(val)
+    return val
+
+
+
 
 @app.callback([Output('data_to_store_id', 'children'),
                Output('data_to_store_value', 'children'),
@@ -696,15 +731,38 @@ def storedata(id, val, qual, date) :
     # if store == None :
     #     raise PreventUpdate
     zipped_val = list(zip(id,val,qual,date))
-    print('zippedval', zipped_val)
-
     df = pd.DataFrame(list(zip(id,val,qual,date)),
                       columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-    print('df', df)
     val = df['ID'].unique()
     return zipped_val, [{'label' : i, 'value' : i} for i in val]
 
+@app.callback(Output('reelhidden1', 'children'),
+              [Input("write_excel_reel", "n_clicks")],
+              [State('get_data_from_modbus', 'data')],
+             )
+def intervalcontrol2(nc, data):
+    if nc > 0 :
+        df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'Date'])
+        df.to_excel('real.xlsx')
 
+@app.server.route("/download_excel_reel/")
+def download_excel_reel():
+    # Create DF
+    dff = pd.read_excel("real.xlsx")
+    # Convert DF
+    buf = io.BytesIO()
+    excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
+    dff.to_excel(excel_writer, sheet_name="sheet1")
+    excel_writer.save()
+    excel_data = buf.getvalue()
+    buf.seek(0)
+    return send_file(
+        buf,
+        mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        attachment_filename="real.xlsx",
+        as_attachment=True,
+        cache_timeout=0
+    )
 #
 # @app.callback(Output('ceyhun', 'children'),
 #               [Input('get_data_from_modbus', 'data')])
@@ -716,29 +774,35 @@ def storedata(id, val, qual, date) :
 
 @app.callback(Output('graphreal', 'figure'),
               [Input('get_data_from_modbus', 'data'),
-               Input('realvalue', 'value')])
+               Input('realvalue', 'value'),
+               Input('sliderWidthreel', 'value'),
+               Input('sliderHeightreel', 'value')])
 
-def graphreelTime(data,val) :
+def graphreelTime(data,val, sliderwidth, sliderheight) :
     if val == None :
         raise PreventUpdate
-    print('valllll', [val])
     df = pd.DataFrame(data,columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-    y = df[df['Value'].isin([val])]
-    df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
-    df["day"] = df.TIMESTAMP.dt.day
-    df["month"] = df.TIMESTAMP.dt.month
-    df["year"] = df.TIMESTAMP.dt.year
-    # df["hour"] = df.TIMESTAMP.dt.hour
-    # df["minute"] = df.TIMESTAMP.dt.minute
-    # df["second"] = df.TIMESTAMP.dt.second
-    # a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-    # a = list(set(a))
-    # b = pd.to_datetime(a)
-    # b = sorted(b)
-    # str_list = [t.strftime("%Y-%m-%d") for t in b]
+    df1 = df[df['ID'].isin(val)]
+    a = df1.loc[df1['ID'].isin(val)]
     fig = go.Figure()
-    fig.add_trace(go.Scattergl(x=df['TIMESTAMP'], y=y , marker=dict(line=dict(width=0.2, color='white')),
-                               ))
+    for i in val:
+        fig.add_trace(go.Scattergl(x=a[a['ID']==i]['TIMESTAMP'], y=a[a['ID']==i]['Value'] ,mode='lines',marker=dict(line=dict(width=0.2,color='white')),name="{}".format(i),
+                                   ))
+    fig.update_layout(
+        autosize=False,
+        width=sliderwidth,
+        height=sliderheight,
+
+        margin=dict(
+            l=50,
+            r=50,
+            b=100,
+            t=50,
+            pad=4
+
+        ),
+        paper_bgcolor="LightSteelBlue",
+    )
 
     return fig
 
@@ -5610,6 +5674,8 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
+                        print('aaaaaaaaa',a)
+                        print('bbbbbbbbb', b)
                         fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',marker=dict(line=dict(width=0.2,color='white')),name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
                         autosize=True,
