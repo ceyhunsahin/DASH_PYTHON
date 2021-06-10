@@ -29,6 +29,7 @@ import OpenOPC
 
 from sshtunnel import SSHTunnelForwarder
 import mariadb
+import mysql.connector
 import pywintypes
 pywintypes.datetime = pywintypes.TimeType
 
@@ -671,7 +672,8 @@ page_3_layout = html.Div(
                                   ], style = {'marginLeft' : "3rem"}),
                         ], className='aa'),
 
-              html.Div(id = 'reelhidden1', children=[], style={'display': 'None'})
+              html.Div(id = 'reelhidden1', children=[], style={'display': 'None'}),
+              html.Div(id = 'reelhidden2', children=[], style={'display': 'None'})
              ])
 #
 @app.callback(Output('interval_component', 'disabled'),
@@ -763,6 +765,29 @@ def download_excel_reel():
         as_attachment=True,
         cache_timeout=0
     )
+@app.callback(Output('reelhidden2', 'children'),
+              [Input('download_reel_db', 'n_clicks'),Input('get_data_from_modbus', 'data')])
+def ceyhun(nc,data) :
+    if nc > 0 :
+        df = pd.read_excel('real.xlsx')
+        a = [i for i in range(len(df.index))]
+        b = [i for i in df['ID']]
+        print(b)
+        c = [i for i in df['Date']]
+        db_connection = mysql.connector.connect(
+            host="193.54.2.211",
+            user="dashapp",
+            passwd="dashapp",
+            database="enerbat",
+            port = 3306,)
+        db_cursor = db_connection.cursor()
+        # Here creating database table as student'
+        db_cursor.execute("CREATE TABLE Ceyhun (id BIGINT, variable_name VARCHAR(255), variable_num_value DOUBLE, TIMESTAMP TIMESTAMP)")
+        sql_query = " INSERT INTO Ceyhun (id, variable_name, TIMESTAMP) VALUES (a, b, c)"
+        # Get database table'
+        db_cursor.execute(sql_query)
+        db_connection.commit()
+
 #
 # @app.callback(Output('ceyhun', 'children'),
 #               [Input('get_data_from_modbus', 'data')])
