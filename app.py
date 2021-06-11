@@ -631,7 +631,14 @@ page_3_layout = html.Div(
                                                                   href="/download_excel_reel/",
                                                                   # target="_blank"
                                                                   ),
-                            dbc.Button("Download to Database", id='download_reel_db',n_clicks=0, size="lg", className="mr-1",color="primary",style = {'margin' : '1rem 1rem 1rem 0'}),
+
+                            html.Div([
+                                                dcc.ConfirmDialogProvider(
+                                                    children=[
+                                                        dbc.Button("Download to Database", id='download_reel_db',n_clicks=0, size="lg", className="mr-1",color="primary",style = {'margin' : '1rem 1rem 1rem 0'}),],
+                                                    id='approver',
+                                                    message='Save your table name as'
+                                                ),]),
                             ], className='abcd')
               ], className='aadb'),
 
@@ -662,6 +669,7 @@ page_3_layout = html.Div(
                                       vertical=True,
                                       updatemode='drag'), style={'margin': '20px'})],
                  className='abcdb'),
+
                         html.Div([daq.Slider(id="sliderWidthreel",
                                              max=2000,
                                              min=600,
@@ -766,29 +774,43 @@ def download_excel_reel():
         cache_timeout=0
     )
 @app.callback(Output('reelhidden2', 'children'),
-              [Input('download_reel_db', 'n_clicks'),Input('get_data_from_modbus', 'data')])
-def ceyhun(nc,data) :
+              [Input('download_reel_db', 'n_clicks')],[State('get_data_from_modbus', 'data')])
+def pandastosql(nc,data) :
     if nc > 0 :
-        df = pd.read_excel('real.xlsx')
-        a = [i for i in range(len(df.index))]
-        b = [i for i in df['ID']]
-        print(b)
-        c = [i for i in df['Date']]
-        db_connection = mysql.connector.connect(
-            host="193.54.2.211",
-            user="dashapp",
-            passwd="dashapp",
-            database="enerbat",
-            port = 3306,)
-        db_cursor = db_connection.cursor()
-        # Here creating database table as student'
-        db_cursor.execute("CREATE TABLE Ceyhun (id BIGINT, variable_name VARCHAR(255), variable_num_value DOUBLE, TIMESTAMP TIMESTAMP)")
-        sql_query = " INSERT INTO Ceyhun (id, variable_name, TIMESTAMP) VALUES (a, b, c)"
-        # Get database table'
-        db_cursor.execute(sql_query)
-        db_connection.commit()
+        df = pd.DataFrame(data, columns=['variable_name','variable_num_value','quality', 'TIMESTAMP'])
+        a = [i for i in range(len(df.index))] # for ID
+        b = [i for i in df['variable_name']] # name of variable
+        c = [i for i in df['variable_num_value']]
+        d = [i for i in df['TIMESTAMP']]
+        df['TIMESTAMP'] = df['TIMESTAMP'].apply(lambda x: pd.Timestamp(x).strftime('%Y-%m-%d %H:%M:%S'))
+        sql_insert = list(zip(a,df['variable_name'],df['variable_num_value'],df['TIMESTAMP']))
 
-#
+        try:
+            db_connection = mysql.connector.connect(
+                host="193.54.2.211",
+                user="dashapp",
+                passwd="dashapp",
+                database="enerbat",
+                port = 3306,)
+            db_cursor = db_connection.cursor()
+
+            # Here creating database table as student'
+            db_cursor.execute("CREATE TABLE EYHUN (id BIGINT PRIMARY KEY, variable_name VARCHAR(255), variable_num_value DOUBLE, TIMESTAMP TIMESTAMP)")
+
+            sql_query = f" INSERT INTO EYHUN (id, variable_name,variable_num_value,TIMESTAMP) VALUES (%s, %s, %s, %s)"
+            # Get database table'
+            db_cursor.executemany(sql_query,sql_insert)
+            db_connection.commit()
+            print(db_cursor.rowcount, "Record inserted successfully into ENERBAT Database")
+        except mysql.connector.Error as error:
+            print("Failed to insert record into MARIADB table {}".format(error))
+        finally:
+            if db_connection.is_connected():
+                db_cursor.close()
+                db_connection.close()
+                print("MySQL connection is closed")
+
+
 # @app.callback(Output('ceyhun', 'children'),
 #               [Input('get_data_from_modbus', 'data')])
 #
