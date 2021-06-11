@@ -31,7 +31,9 @@ from sshtunnel import SSHTunnelForwarder
 import mariadb
 import mysql.connector
 import pywintypes
+
 pywintypes.datetime = pywintypes.TimeType
+
 
 def find_data_file(filename):
     if getattr(sys, 'frozen', False):
@@ -43,6 +45,8 @@ def find_data_file(filename):
         datadir = os.path.dirname(__file__)
 
     return os.path.join(datadir, filename)
+
+
 BS = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
 
 # Initialize the app
@@ -71,24 +75,24 @@ app.layout = html.Div([
     html.Div(id='page-content'),
 ])
 index_page = html.Div([html.Div(html.Div(html.Div(
-             children=[ html.H3('Work with File'),
-                        html.P('Upload and run files such as .xlsx/.xls/.csv'),
-                        dcc.Link('Start', href="/page-1")
-                      ],className = "content" ),className = 'box'), className = 'card'),
-            html.Div(html.Div(html.Div(children=[
-                                        html.H3('Work with DATABASE'),
-                                        html.P('Choose your Database and make analyse'),
-                                        dcc.Link('Start', href='/Database')
-                                        ],className = "content" ),className = 'box'), className = 'card'),
-            html.Div(html.Div(html.Div(children=[
-                            html.H3('Work with Reel Time'),
-                            html.P('Lorem ipsum'),
-                            dcc.Link('Start', href='/reelTime')
-                            ],className = "content" ),className = 'box'), className='card'),
-            html.Div(html.Div(html.Div(children=[
-                            html.H3('Project'),
-                            dcc.Link('Start', href='/project')
-                            ], className="content"), className='box'), className='card')], className = 'container')
+    children=[html.H3('Work with File'),
+              html.P('Upload and run files such as .xlsx/.xls/.csv'),
+              dcc.Link('Start', href="/page-1")
+              ], className="content"), className='box'), className='card'),
+    html.Div(html.Div(html.Div(children=[
+        html.H3('Work with DATABASE'),
+        html.P('Choose your Database and make analyse'),
+        dcc.Link('Start', href='/Database')
+    ], className="content"), className='box'), className='card'),
+    html.Div(html.Div(html.Div(children=[
+        html.H3('Work with Reel Time'),
+        html.P('Lorem ipsum'),
+        dcc.Link('Start', href='/reelTime')
+    ], className="content"), className='box'), className='card'),
+    html.Div(html.Div(html.Div(children=[
+        html.H3('Project'),
+        dcc.Link('Start', href='/project')
+    ], className="content"), className='box'), className='card')], className='container')
 
 page_1_layout = html.Div(
     className='main_container',
@@ -100,8 +104,8 @@ page_1_layout = html.Div(
                                                       'style': {'fontSize': '22px', 'fontWeight': "bold"}},
                                                labelPosition='bottom', on=False, size=100, color="green",
                                                className='dark-theme-control'),
-                                         dcc.Link('Go to Main Page', href='/page_1',id = 'link1'),],className = 'abpower'),
-                               html.Div(
+                               dcc.Link('Go to Main Page', href='/page_1', id='link1'), ], className='abpower'),
+                     html.Div(
                          dcc.Upload(
                              id='upload-data',
                              children=html.Div([
@@ -109,7 +113,7 @@ page_1_layout = html.Div(
                                  html.A('Select Files for work')
                              ]),
                              style={
-                                 'marginLeft' : '-2rem',
+                                 'marginLeft': '-2rem',
                                  'visibility': 'hidden',
                              },
                              # Allow multiple files to be uploaded
@@ -150,22 +154,37 @@ page_1_layout = html.Div(
                                                html.Div(id='pointRightFirst', children=[], style={'display': 'None'}),
                                                html.Div(id='pointRightSecond', children=[], style={'display': 'None'}),
 
-                                               html.Div(id='pointLeftFirstTab4', children=[],style={'display': 'None'}),
-                                               html.Div(id='pointLeftSecondTab4', children=[],style={'display': 'None'}),
-                                               html.Div(id='pointRightFirstTab4', children=[],style={'display': 'None'}),
-                                               html.Div(id='pointRightSecondTab4', children=[],style={'display': 'None'}),
-                                               html.Div(id='leftSideChecklistValue', children=[],style={'display': 'None'}),
-                                               html.Div(id='leftSidedroptValue', children=[],style={'display': 'None'}),
-                                               html.Div(id='leftSideChecklistValueHidden', children=[],style={'display': 'None'}),
-                                               html.Div(id='leftSideChecklistValueHiddendb', children=[],style={'display': 'None'}),
+                                               html.Div(id='pointLeftFirstTab4', children=[],
+                                                        style={'display': 'None'}),
+                                               html.Div(id='pointLeftSecondTab4', children=[],
+                                                        style={'display': 'None'}),
+                                               html.Div(id='pointRightFirstTab4', children=[],
+                                                        style={'display': 'None'}),
+                                               html.Div(id='pointRightSecondTab4', children=[],
+                                                        style={'display': 'None'}),
+                                               html.Div(id='leftSideChecklistValue', children=[],
+                                                        style={'display': 'None'}),
+                                               html.Div(id='leftSidedroptValue', children=[],
+                                                        style={'display': 'None'}),
+                                               html.Div(id='leftSideChecklistValueHidden', children=[],
+                                                        style={'display': 'None'}),
+                                               html.Div(id='leftSideChecklistValueHiddendb', children=[],
+                                                        style={'display': 'None'}),
                                                html.Div(id='deletedval', children=[], style={'display': 'None'}),
-                                               html.Div(id='leftSideChecklistValueHiddenTab4', children=[],style={'display': 'None'}),
-                                               html.Div(id='tab2hiddenValuex_axis', style={'display': 'None'},children=[]),
-                                               html.Div(id='tab2hiddenValuey_axis', style={'display': 'None'},children=[]),
-                                               html.Div(id='tab4hiddenValuex_axissecond', style={'display': 'None'},children=[]),
-                                               html.Div(id='tab4hiddenValuey_axissecond', style={'display': 'None'},children=[]),
-                                               html.Div(id='tab4hiddenValuex_axis', style={'display': 'None'},children=[]),
-                                               html.Div(id='tab3hiddenValuey_axis', style={'display': 'None'},children=[]),
+                                               html.Div(id='leftSideChecklistValueHiddenTab4', children=[],
+                                                        style={'display': 'None'}),
+                                               html.Div(id='tab2hiddenValuex_axis', style={'display': 'None'},
+                                                        children=[]),
+                                               html.Div(id='tab2hiddenValuey_axis', style={'display': 'None'},
+                                                        children=[]),
+                                               html.Div(id='tab4hiddenValuex_axissecond', style={'display': 'None'},
+                                                        children=[]),
+                                               html.Div(id='tab4hiddenValuey_axissecond', style={'display': 'None'},
+                                                        children=[]),
+                                               html.Div(id='tab4hiddenValuex_axis', style={'display': 'None'},
+                                                        children=[]),
+                                               html.Div(id='tab3hiddenValuey_axis', style={'display': 'None'},
+                                                        children=[]),
                                                html.Div(id='hiddenTextHeader', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextNote', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextxaxis', children=[], style={'display': 'None'}),
@@ -175,7 +194,8 @@ page_1_layout = html.Div(
                                                html.Div(id='hiddenTextxaxis4', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenTextyaxis4', children=[], style={'display': 'None'}),
                                                html.Div(id='hiddenShapeVal', children=[], style={'display': 'None'}),
-                                               html.Div(id='hiddenShapeDate', children=[],style={'display': 'None'}), ], ),
+                                               html.Div(id='hiddenShapeDate', children=[],
+                                                        style={'display': 'None'}), ], ),
                                   html.Div(id='hiddenDifferance', children=[], style={'display': 'None'}),
                                   dcc.Store(id='datastore'),
                                   html.Div(id='retrieve', children=[], style={'display': 'None'}),
@@ -310,313 +330,316 @@ page_1_layout = html.Div(
         # dcc.Graph(id = "first_value_graph", config = {'displayModeLine': True}, animate=True)
     ]),
 
-page_2_layout =  html.Div([html.Div([html.Div([dbc.ButtonGroup([dbc.Button("Database Activate", id="activatedb",  n_clicks=0,
-                                                          size="lg", className="mr-1",color="success", style={'width' : '25rem'}
-                                                           ),
-                                                dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
-                                                             size="lg", className="mr-1",color="danger",style={'width' : '25rem'}
-                                                             )]),
-                                                html.Div(dcc.Link('Go to Main Page', href='/page_1',id = 'link1'), style={'marginTop' : '2rem'}),
-                                                dbc.Input(id='db_Ip',
-                                                          type="text",
-                                                          debounce=True,
-                                                          min=-10000, max=10000, step=1,
-                                                          bs_size="mr",
-                                                          style={'width': '11rem', "marginTop": "1.5rem"},
-                                                          autoFocus=True,
-                                                          placeholder="Enter your IP number ..."),
-
-                                                          ],className="aadb"),
-                              html.Div([
-                                  dcc.Dropdown(id='db_name',
-                                               options=[{'label': i, 'value': i}
-                                                        for i in ['rcckn', 'enerbat']],
-                                               multi=False,
-                                               style={"cursor": "pointer", 'marginTop': '5px'},
-                                               className='stockSelectorClass3',
-                                               clearable=True,
-                                               placeholder='Select Database',
-
-                                               ),
-                                        dcc.Dropdown(id='dbvalchoosen',
-                                                     # options=[{'label': i, 'value': i}
-                                                     #          for i in df.columns],
-                                                     multi=False,
-                                                     style={"cursor": "pointer",'marginTop' :'5px'},
-                                                     className='stockSelectorClass3',
-                                                     clearable=True,
-                                                     placeholder='Select Table ...',
-
-                                                    ),
-
-                                        dcc.Dropdown(id='dbvalname',
-                                                     # options=[{'label': i, 'value': i}
-                                                     #          for i in df.columns],
-                                                     multi=True,
-                                                     style={"cursor": "pointer",'marginTop' :'13px'},
-                                                     className='stockSelectorClass3',
-                                                     clearable=True,
-                                                     placeholder='Select your parameters...',
+page_2_layout = html.Div(
+    [html.Div([html.Div([dbc.ButtonGroup([dbc.Button("Database Activate", id="activatedb", n_clicks=0,
+                                                     size="lg", className="mr-1", color="success",
+                                                     style={'width': '25rem'}
                                                      ),
+                                          dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
+                                                     size="lg", className="mr-1", color="danger",
+                                                     style={'width': '25rem'}
+                                                     )]),
+                         html.Div(dcc.Link('Go to Main Page', href='/page_1', id='link1'), style={'marginTop': '2rem'}),
+                         dbc.Input(id='db_Ip',
+                                   type="text",
+                                   debounce=True,
+                                   min=-10000, max=10000, step=1,
+                                   bs_size="mr",
+                                   style={'width': '11rem', "marginTop": "1.5rem"},
+                                   autoFocus=True,
+                                   placeholder="Enter your IP number ..."),
 
-                                        dcc.Dropdown(id='dbvaldate',
-                                                     # options=[{'label': i, 'value': i}
-                                                     #          for i in df.columns],
-                                                     multi=True,
-                                                     style={"cursor": "pointer",'marginTop' :'13px'},
-                                                     className='stockSelectorClass3',
-                                                     clearable=False,
-                                                     placeholder='Select your parameters...',
-                                                     ),], className='aadb'),
-                                        html.Div([
-                                            dbc.Checklist(id="calculintegraldb",
-                                                          options=[
-                                                              {'label': "Calculate Integral", 'value': 'calculdb'}, ]
-                                                          ,
-                                                          value='',
-                                                          labelClassName='groupgraph',
-                                                          labelStyle={'margin': '10px', },
-                                                          inputStyle={'margin': '10px', }),
-                                        ])
-                                        ], className = 'abcdb'),
-            dcc.Store(id='memory-output'),
-            html.Div(id='dbcheck', children=
-                              [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValuedb',
-                                                                options=[{'label': i, 'value': i} for i in
-                                                                         []],
-                                                                multi=False,
-                                                                style={"cursor": "pointer", 'width': '180px'},
-                                                                className='',
-                                                                clearable=True,
-                                                                placeholder='First Value...',
-                                                                ),
-                                                   dbc.Input(id='leftIntegralFirstdb',
-                                                             type="text",
-                                                             debounce=True,
-                                                             min=-10000, max=10000, step=1,
-                                                             bs_size="sm",
-                                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                                             autoFocus=True,
-                                                             placeholder="first point"),
-                                                   dbc.Input(id='leftIntegralSeconddb',
-                                                             type="text",
-                                                             debounce=True,
-                                                             min=-10000, max=10000, step=1,
-                                                             bs_size="sm",
-                                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                                             autoFocus=True,
-                                                             placeholder="second point"),
-                                                   dbc.Input(id='leftIntegraldb',
-                                                             type="text",
-                                                             min=-10000, max=10000, step=1,
-                                                             bs_size="sm",
-                                                             style={'width': '9rem', "marginTop": "1.5rem"},
-                                                             autoFocus=True,
-                                                             placeholder="total integration"),
-                                                   ]), html.Div([html.Button("Save", id="write_exceldb", n_clicks=0,
-                                                                             style={'fontSize': '1rem', 'width': '4rem',
-                                                                                    'margin': '1rem'},
-                                                                             ),
-                                                                 html.A(html.Button("Download Data",
-                                                                                    id='download_datadb',
-                                                                                    n_clicks=0,
-                                                                                    style={'fontSize': '1rem',
-                                                                                           'width': '9rem',
-                                                                                           'margin': '1rem'}, ),
-                                                                        id='download_exceldb',
-                                                                        # # download="rawdata.csv",
-                                                                        href="/download_exceldb/",
-                                                                        # target="_blank"
-                                                                        )
-                                                                 ], className='ad')
+                         ], className="aadb"),
+               html.Div([
+                   dcc.Dropdown(id='db_name',
+                                options=[{'label': i, 'value': i}
+                                         for i in ['rcckn', 'enerbat']],
+                                multi=False,
+                                style={"cursor": "pointer", 'marginTop': '5px'},
+                                className='stockSelectorClass3',
+                                clearable=True,
+                                placeholder='Select Database',
 
-                                         ]),
-                               html.Div([dbc.Checklist(
-                                   id='operateurdb',
-                                   options=[{'label': i, 'value': i} for i in
-                                            ['Plus', 'Moins', 'Multiplie', 'Division']],
-                                   value=[],
-                                   labelStyle={"display": "Block"},
-                               ), ]),
-                               html.Div([
-                                   dcc.Dropdown(id='secondChoosenValuedb',
-                                                options=[{'label': i, 'value': i} for i in
-                                                         []],
-                                                multi=False,
-                                                style={"cursor": "pointer", 'width': '180px'},
-                                                className='',
-                                                clearable=True,
-                                                placeholder='Second Value...',
-                                                ),
-                                   dbc.Input(id='rightIntegralFirstdb',
-                                             type="text",
-                                             min=-10000, max=10000, step=1,
-                                             bs_size="sm",
-                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                             autoFocus=True,
-                                             placeholder="first point"),
-                                   dbc.Input(id='rightIntegralSeconddb',
-                                             type="text",
-                                             min=-10000, max=10000, step=1,
-                                             bs_size="sm",
-                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                             autoFocus=True,
-                                             placeholder="second point"),
-                                   dbc.Input(id='rightIntegraldb',
-                                             type="text",
-                                             min=-10000, max=10000, step=1,
-                                             bs_size="sm",
-                                             style={'width': '9rem', "marginTop": "1.5rem"},
-                                             autoFocus=True,
-                                             placeholder="total integration")
-                               ]),
-                               html.Div([dbc.Input(id='operationdb',
-                                                   type="text",
-                                                   min=-10000, max=10000, step=1,
-                                                   bs_size="sm",
-                                                   style={'width': '10rem', "marginTop": "2rem",
-                                                          'height': '5rem', 'textAlign': 'center'},
-                                                   autoFocus=True,
-                                                   placeholder="result"),
-                                         dbc.Input(id='intersectiondb',
-                                                   type="text",
-                                                   min=-10000, max=10000, step=1,
-                                                   bs_size="sm",
-                                                   style={'width': '10rem', "marginTop": "2rem",
-                                                          'height': '2rem', 'textAlign': 'center'},
-                                                   autoFocus=True,
-                                                   placeholder="Intersection")], className='aa')
-                               ], style={'display': 'None'},
-                                       className="abdbase"),
-                html.Div([html.Div([html.Div(dcc.Graph(id="getdbgraph",
-                               config={'displayModeBar': True,
-                                       'scrollZoom': True,
-                                       'modeBarButtonsToAdd': [
-                                           'drawline',
-                                           'drawrect',
-                                           'drawopenpath',
-                                           'select2d',
-                                           'eraseshape',
-                                       ]},
-                               style={'marginTop': 20,},
-                               figure={
-                                   'layout': {'legend': {'tracegroupgap': 0},
+                                ),
+                   dcc.Dropdown(id='dbvalchoosen',
+                                # options=[{'label': i, 'value': i}
+                                #          for i in df.columns],
+                                multi=False,
+                                style={"cursor": "pointer", 'marginTop': '5px'},
+                                className='stockSelectorClass3',
+                                clearable=True,
+                                placeholder='Select Table ...',
 
-                                              }
-                               }
+                                ),
 
-                               ), ),
-                          html.Div(daq.Slider(id="sliderHeightdb",
-                                     max=2100,
-                                     min=400,
-                                     value=530,
-                                     step=100,
-                                     size=400,
-                                     vertical=True,
-                                     updatemode='drag'), style= {'margin' : '20px'})], className='abcdb'),
+                   dcc.Dropdown(id='dbvalname',
+                                # options=[{'label': i, 'value': i}
+                                #          for i in df.columns],
+                                multi=True,
+                                style={"cursor": "pointer", 'marginTop': '13px'},
+                                className='stockSelectorClass3',
+                                clearable=True,
+                                placeholder='Select your parameters...',
+                                ),
 
-                          html.Div([html.Div(daq.Slider(id="sliderWidthdb",
-                                                 max=2000,
-                                                 min=600,
-                                                 value=1000,
-                                                 step=100,
-                                                 size = 750,
+                   dcc.Dropdown(id='dbvaldate',
+                                # options=[{'label': i, 'value': i}
+                                #          for i in df.columns],
+                                multi=True,
+                                style={"cursor": "pointer", 'marginTop': '13px'},
+                                className='stockSelectorClass3',
+                                clearable=False,
+                                placeholder='Select your parameters...',
+                                ), ], className='aadb'),
+               html.Div([
+                   dbc.Checklist(id="calculintegraldb",
+                                 options=[
+                                     {'label': "Calculate Integral", 'value': 'calculdb'}, ]
+                                 ,
+                                 value='',
+                                 labelClassName='groupgraph',
+                                 labelStyle={'margin': '10px', },
+                                 inputStyle={'margin': '10px', }),
+               ])
+               ], className='abcdb'),
+     dcc.Store(id='memory-output'),
+     html.Div(id='dbcheck', children=
+     [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValuedb',
+                                       options=[{'label': i, 'value': i} for i in
+                                                []],
+                                       multi=False,
+                                       style={"cursor": "pointer", 'width': '180px'},
+                                       className='',
+                                       clearable=True,
+                                       placeholder='First Value...',
+                                       ),
+                          dbc.Input(id='leftIntegralFirstdb',
+                                    type="text",
+                                    debounce=True,
+                                    min=-10000, max=10000, step=1,
+                                    bs_size="sm",
+                                    style={'width': '8rem', "marginTop": "1.5rem"},
+                                    autoFocus=True,
+                                    placeholder="first point"),
+                          dbc.Input(id='leftIntegralSeconddb',
+                                    type="text",
+                                    debounce=True,
+                                    min=-10000, max=10000, step=1,
+                                    bs_size="sm",
+                                    style={'width': '8rem', "marginTop": "1.5rem"},
+                                    autoFocus=True,
+                                    placeholder="second point"),
+                          dbc.Input(id='leftIntegraldb',
+                                    type="text",
+                                    min=-10000, max=10000, step=1,
+                                    bs_size="sm",
+                                    style={'width': '9rem', "marginTop": "1.5rem"},
+                                    autoFocus=True,
+                                    placeholder="total integration"),
+                          ]), html.Div([html.Button("Save", id="write_exceldb", n_clicks=0,
+                                                    style={'fontSize': '1rem', 'width': '4rem',
+                                                           'margin': '1rem'},
+                                                    ),
+                                        html.A(html.Button("Download Data",
+                                                           id='download_datadb',
+                                                           n_clicks=0,
+                                                           style={'fontSize': '1rem',
+                                                                  'width': '9rem',
+                                                                  'margin': '1rem'}, ),
+                                               id='download_exceldb',
+                                               # # download="rawdata.csv",
+                                               href="/download_exceldb/",
+                                               # target="_blank"
+                                               )
+                                        ], className='ad')
 
-                                                 updatemode='drag'), style = {'marginLeft': '5rem'}),
-                                    ]),
-            html.Div(dash_table.DataTable(id="getdbtable",
-                                          editable=True,
-                                          page_size=50,
-                                          style_table={'height': '500px', 'overflowY': 'auto', 'width': '98%'},
-                                          style_cell={
-                                              'overflow': 'hidden',
-                                              'textOverflow': 'ellipsis',
-                                              'maxWidth': 0,
-                                              'fontSize': '1rem',
-                                              'TextAlign': 'center',
-                                          },
+                ]),
+      html.Div([dbc.Checklist(
+          id='operateurdb',
+          options=[{'label': i, 'value': i} for i in
+                   ['Plus', 'Moins', 'Multiplie', 'Division']],
+          value=[],
+          labelStyle={"display": "Block"},
+      ), ]),
+      html.Div([
+          dcc.Dropdown(id='secondChoosenValuedb',
+                       options=[{'label': i, 'value': i} for i in
+                                []],
+                       multi=False,
+                       style={"cursor": "pointer", 'width': '180px'},
+                       className='',
+                       clearable=True,
+                       placeholder='Second Value...',
+                       ),
+          dbc.Input(id='rightIntegralFirstdb',
+                    type="text",
+                    min=-10000, max=10000, step=1,
+                    bs_size="sm",
+                    style={'width': '8rem', "marginTop": "1.5rem"},
+                    autoFocus=True,
+                    placeholder="first point"),
+          dbc.Input(id='rightIntegralSeconddb',
+                    type="text",
+                    min=-10000, max=10000, step=1,
+                    bs_size="sm",
+                    style={'width': '8rem', "marginTop": "1.5rem"},
+                    autoFocus=True,
+                    placeholder="second point"),
+          dbc.Input(id='rightIntegraldb',
+                    type="text",
+                    min=-10000, max=10000, step=1,
+                    bs_size="sm",
+                    style={'width': '9rem', "marginTop": "1.5rem"},
+                    autoFocus=True,
+                    placeholder="total integration")
+      ]),
+      html.Div([dbc.Input(id='operationdb',
+                          type="text",
+                          min=-10000, max=10000, step=1,
+                          bs_size="sm",
+                          style={'width': '10rem', "marginTop": "2rem",
+                                 'height': '5rem', 'textAlign': 'center'},
+                          autoFocus=True,
+                          placeholder="result"),
+                dbc.Input(id='intersectiondb',
+                          type="text",
+                          min=-10000, max=10000, step=1,
+                          bs_size="sm",
+                          style={'width': '10rem', "marginTop": "2rem",
+                                 'height': '2rem', 'textAlign': 'center'},
+                          autoFocus=True,
+                          placeholder="Intersection")], className='aa')
+      ], style={'display': 'None'},
+              className="abdbase"),
+     html.Div([html.Div([html.Div(dcc.Graph(id="getdbgraph",
+                                            config={'displayModeBar': True,
+                                                    'scrollZoom': True,
+                                                    'modeBarButtonsToAdd': [
+                                                        'drawline',
+                                                        'drawrect',
+                                                        'drawopenpath',
+                                                        'select2d',
+                                                        'eraseshape',
+                                                    ]},
+                                            style={'marginTop': 20, },
+                                            figure={
+                                                'layout': {'legend': {'tracegroupgap': 0},
 
-                                          fixed_rows={'headers': True},
+                                                           }
+                                            }
 
-                                          # style_cell_conditional=[
-                                          # {'if': {'column_id': 'date'},
-                                          #  'width': '15%'}
+                                            ), ),
+                         html.Div(daq.Slider(id="sliderHeightdb",
+                                             max=2100,
+                                             min=400,
+                                             value=530,
+                                             step=100,
+                                             size=400,
+                                             vertical=True,
+                                             updatemode='drag'), style={'margin': '20px'})], className='abcdb'),
 
-                                          style_header={
-                                              'backgroundColor': 'rgb(230, 230, 230)',
-                                              'fontWeight': 'bold'
-                                          },
-                                          filter_action="native",
-                                          sort_action="native",
-                                          sort_mode="multi",
-                                          column_selectable="single",
-                                          # row_selectable="multi",
-                                          # row_deletable=True,
-                                          selected_columns=[],
-                                          selected_rows=[],
-                                          page_action="native",
-                                          page_current=0,
-                                          export_format='xlsx',
-                                          export_headers='display',
-                                          merge_duplicate_headers=True)),
-            html.Div(id="hiddendb1", children = [], style = {'display':'None'}),
-            html.Div(id="hiddendb2", style = {'display':'None'}),
-            html.Div(id="hiddendb3", children=[], style={'display': 'None'}),
-            html.Div(id='pointLeftFirstdb', children=[], style={'display': 'None'}),
-            html.Div(id='pointLeftSeconddb', children=[], style={'display': 'None'}),
-            html.Div(id='pointRightFirstdb', children=[], style={'display': 'None'}),
-            html.Div(id='pointRightSeconddb', children=[], style={'display': 'None'}),
-            html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
-            html.Div(id='leftintegralsecondhiddendb', children=[], style={'display': 'None'}),
-            html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
-            html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
-            html.Div(id='firstchoosenvalhiddendb', children=[], style={'display': 'None'}),
-            html.Div(id='secondchoosenvalhiddendb', children=[], style={'display': 'None'}),
-            html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
-            html.Div(id='leftintegralsecondhiddendb', children=[], style={'display': 'None'}),
-            html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
-            html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
-            html.Div(id='hiddenrecord1db', children=[], style={'display': 'None'}),
-            html.Div(id='hiddenrecord2db', children=[], style={'display': 'None'}),
-            html.Div(id='hiddenrecord3db', children=[], style={'display': 'None'}),
-            html.Div(id='hiddenrecord4db', children=[], style={'display': 'None'}),
-            html.Div(id='writeexcelhiddendb', children=[], style={'display': 'None'}),
+               html.Div([html.Div(daq.Slider(id="sliderWidthdb",
+                                             max=2000,
+                                             min=600,
+                                             value=1000,
+                                             step=100,
+                                             size=750,
 
-            ], ),], ),
+                                             updatemode='drag'), style={'marginLeft': '5rem'}),
+                         ]),
+               html.Div(dash_table.DataTable(id="getdbtable",
+                                             editable=True,
+                                             page_size=50,
+                                             style_table={'height': '500px', 'overflowY': 'auto', 'width': '98%'},
+                                             style_cell={
+                                                 'overflow': 'hidden',
+                                                 'textOverflow': 'ellipsis',
+                                                 'maxWidth': 0,
+                                                 'fontSize': '1rem',
+                                                 'TextAlign': 'center',
+                                             },
+
+                                             fixed_rows={'headers': True},
+
+                                             # style_cell_conditional=[
+                                             # {'if': {'column_id': 'date'},
+                                             #  'width': '15%'}
+
+                                             style_header={
+                                                 'backgroundColor': 'rgb(230, 230, 230)',
+                                                 'fontWeight': 'bold'
+                                             },
+                                             filter_action="native",
+                                             sort_action="native",
+                                             sort_mode="multi",
+                                             column_selectable="single",
+                                             # row_selectable="multi",
+                                             # row_deletable=True,
+                                             selected_columns=[],
+                                             selected_rows=[],
+                                             page_action="native",
+                                             page_current=0,
+                                             export_format='xlsx',
+                                             export_headers='display',
+                                             merge_duplicate_headers=True)),
+               html.Div(id="hiddendb1", children=[], style={'display': 'None'}),
+               html.Div(id="hiddendb2", style={'display': 'None'}),
+               html.Div(id="hiddendb3", children=[], style={'display': 'None'}),
+               html.Div(id='pointLeftFirstdb', children=[], style={'display': 'None'}),
+               html.Div(id='pointLeftSeconddb', children=[], style={'display': 'None'}),
+               html.Div(id='pointRightFirstdb', children=[], style={'display': 'None'}),
+               html.Div(id='pointRightSeconddb', children=[], style={'display': 'None'}),
+               html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
+               html.Div(id='leftintegralsecondhiddendb', children=[], style={'display': 'None'}),
+               html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
+               html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
+               html.Div(id='firstchoosenvalhiddendb', children=[], style={'display': 'None'}),
+               html.Div(id='secondchoosenvalhiddendb', children=[], style={'display': 'None'}),
+               html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
+               html.Div(id='leftintegralsecondhiddendb', children=[], style={'display': 'None'}),
+               html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
+               html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenrecord1db', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenrecord2db', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenrecord3db', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenrecord4db', children=[], style={'display': 'None'}),
+               html.Div(id='writeexcelhiddendb', children=[], style={'display': 'None'}),
+
+               ], ), ], ),
 
 page_3_layout = html.Div(
     className='main_container',
     children=[html.Div(id='fourcolumnsdivusercontrolsreel', className="four-columns-div-user-controlsreel",
-                 children=[
-                     html.Div([dcc.Link('Go to Main Page', href='/page_1',id = 'link1'),
-                               daq.PowerButton(id='my-toggle-switch-reel',
-                                               label={'label': 'Connection',
-                                                      'style': {'fontSize': '22px', 'fontWeight': "bold"}},
-                                               labelPosition='bottom', on=False, size=100, color="green",
-                                               className='dark-theme-control'),
-                                         ],className = 'abpower'),
-                 dcc.Store(id = 'get_data_from_modbus'),
-                 html.Div(id='data_to_store_id', children=[], style={'display': 'None'}),
-                 html.Div(id='data_to_store_value', children=[], style={'display': 'None'}),
-                 html.Div(id='data_to_store_qualite', children=[], style={'display': 'None'}),
-                 html.Div(id='data_to_store_date', children=[], style={'display': 'None'}),
-                 dcc.Interval(
-                            id='interval_component',
-                            disabled= True,
-                            interval=1*1000, # in milliseconds
-                            n_intervals=0),]),
+                       children=[
+                           html.Div([dcc.Link('Go to Main Page', href='/page_1', id='link1'),
+                                     daq.PowerButton(id='my-toggle-switch-reel',
+                                                     label={'label': 'Connection',
+                                                            'style': {'fontSize': '22px', 'fontWeight': "bold"}},
+                                                     labelPosition='bottom', on=False, size=100, color="green",
+                                                     className='dark-theme-control'),
+                                     ], className='abpower'),
+                           dcc.Store(id='get_data_from_modbus'),
+                           html.Div(id='data_to_store_id', children=[], style={'display': 'None'}),
+                           html.Div(id='data_to_store_value', children=[], style={'display': 'None'}),
+                           html.Div(id='data_to_store_qualite', children=[], style={'display': 'None'}),
+                           html.Div(id='data_to_store_date', children=[], style={'display': 'None'}),
+                           dcc.Interval(
+                               id='interval_component',
+                               disabled=True,
+                               interval=1 * 1000,  # in milliseconds
+                               n_intervals=0), ]),
               html.Div([
                   dcc.Dropdown(id='realvalue',
                                multi=True,
-                               style={"cursor": "pointer", 'margin': '5px 5px 10px 0', 'width':'40rem'},
+                               style={"cursor": "pointer", 'margin': '5px 5px 10px 0', 'width': '40rem'},
                                className='stockSelectorClass3',
                                clearable=True,
                                placeholder='Select Value',
 
                                ),
                   html.P('Enter interval value (Millisecond)'),
-                  dbc.Input(id = 'interval_value', type="text", value = '1000',
-                                                 min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'},),
+                  dbc.Input(id='interval_value', type="text", value='1000',
+                            min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
 
                   # dcc.Dropdown(id='realdate',
                   #              # options=[{'label': i, 'value': i}
@@ -627,14 +650,16 @@ page_3_layout = html.Div(
                   #              clearable=False,
                   #              placeholder='Select your parameters...',
                   #              ),
-                  html.Div([dbc.Button("Save", id="write_excel_reel", n_clicks=0, size="lg", className="mr-1",color="primary",style = {'margin' : '1rem 1rem 1rem 0'}),
-                            html.A(dbc.Button("Download As Excel", id='download_data_reel',n_clicks=0, size="lg", className="mr-1",color="primary",
-                                              style = {'margin' : '1rem 1rem 1rem 0'}),
-                                                                  id='excel_for_reel',
-                                                                  # # download="rawdata.csv",
-                                                                  href="/download_excel_reel/",
-                                                                  # target="_blank"
-                                                                  ),
+                  html.Div([dbc.Button("Save", id="write_excel_reel", n_clicks=0, size="lg", className="mr-1",
+                                       color="primary", style={'margin': '1rem 1rem 1rem 0'}),
+                            html.A(dbc.Button("Download As Excel", id='download_data_reel', n_clicks=0, size="lg",
+                                              className="mr-1", color="primary",
+                                              style={'margin': '1rem 1rem 1rem 0'}),
+                                   id='excel_for_reel',
+                                   # # download="rawdata.csv",
+                                   href="/download_excel_reel/",
+                                   # target="_blank"
+                                   ),
                             html.Div(
                                 [
                                     dbc.Button("Send to Database", id='download_reel_db', n_clicks=0, size="lg",
@@ -643,46 +668,47 @@ page_3_layout = html.Div(
                                         [
                                             dbc.ModalHeader("Save Your Table As"),
                                             dbc.Input(id='input_tablename',
-                                                  type="text",
-                                                  min=-10000, max=10000, step=1, bs_size="sm", style={'width': '31rem', },
-                                                  autoFocus=True, ),
+                                                      type="text",
+                                                      min=-10000, max=10000, step=1, bs_size="sm",
+                                                      style={'width': '31rem', },
+                                                      autoFocus=True, ),
                                             dbc.ModalFooter([
                                                 dbc.Button("Okey", id="ok_reel", className="ml-auto"),
                                                 dbc.Button("Close", id="close_reel", className="ml-auto")]
                                             ),
                                         ],
                                         id="modal_reel",
-                                    ),]),
+                                    ), ]),
                             ], className='abcd')
-                    ], className='aadb'),
+              ], className='aadb'),
 
               html.Div([html.Div([dcc.Graph(id='graphreal',
-                            config={'displayModeBar': True,
-                                    'scrollZoom': True,
-                                    'modeBarButtonsToAdd': [
-                                        'drawline',
-                                        'drawrect',
-                                        'drawopenpath',
-                                        'select2d',
-                                        'eraseshape',
-                                    ]},
-                            style={'marginTop': 20},
-                            figure={
-                                'layout': {'legend': {'tracegroupgap': 0},
+                                            config={'displayModeBar': True,
+                                                    'scrollZoom': True,
+                                                    'modeBarButtonsToAdd': [
+                                                        'drawline',
+                                                        'drawrect',
+                                                        'drawopenpath',
+                                                        'select2d',
+                                                        'eraseshape',
+                                                    ]},
+                                            style={'marginTop': 20},
+                                            figure={
+                                                'layout': {'legend': {'tracegroupgap': 0},
 
-                                           }
-                            }
+                                                           }
+                                            }
 
-                            ),
-                  html.Div(daq.Slider(id="sliderHeightreel",
-                                      max=2100,
-                                      min=400,
-                                      value=530,
-                                      step=100,
-                                      size=400,
-                                      vertical=True,
-                                      updatemode='drag'), style={'margin': '20px'})],
-                 className='abcdb'),
+                                            ),
+                                  html.Div(daq.Slider(id="sliderHeightreel",
+                                                      max=2100,
+                                                      min=400,
+                                                      value=530,
+                                                      step=100,
+                                                      size=400,
+                                                      vertical=True,
+                                                      updatemode='drag'), style={'margin': '20px'})],
+                                 className='abcdb'),
 
                         html.Div([daq.Slider(id="sliderWidthreel",
                                              max=2000,
@@ -691,290 +717,368 @@ page_3_layout = html.Div(
                                              step=100,
                                              size=750,
                                              updatemode='drag'),
-                                  ], style = {'marginLeft' : "3rem"}),
+                                  ], style={'marginLeft': "3rem"}),
                         ], className='aa'),
 
-              html.Div(id = 'reelhidden1', children=[], style={'display': 'None'}),
-              html.Div(id = 'reelhidden2', children=[], style={'display': 'None'}),
-              html.Div(id = 'reelhidden3', children=[], style={'display': 'None'}),
-              html.Div(id = 'ok_click_hidden', children=[], style={'display': 'None'}),
-             ])
-page_4_layout =  html.Div([html.Div([html.Div([dbc.ButtonGroup([dbc.Button("Database Activate", id="activatepr",  n_clicks=0,
-                                                          size="lg", className="mr-1",color="success", style={'width' : '25rem'}
-                                                           ),
-                                                dbc.Button("Database Deactivate", id="deactivatepr", n_clicks=0,
-                                                             size="lg", className="mr-1",color="danger",style={'width' : '25rem'}
-                                                             )]),
-                                                html.Div(dcc.Link('Go to Main Page', href='/page_1',id = 'link1'), style={'marginTop' : '2rem'}),
-                                                dbc.Input(id='pr_Ip',
-                                                          type="text",
-                                                          debounce=True,
-                                                          min=-10000, max=10000, step=1,
-                                                          bs_size="mr",
-                                                          style={'width': '11rem', "marginTop": "1.5rem"},
-                                                          autoFocus=True,
-                                                          placeholder="Enter your IP number ..."),
-
-                                                          ],className="aadb"),
-                              html.Div([
-                                  dcc.Dropdown(id='prname',
-                                               options=[{'label': i, 'value': i}
-                                                        for i in ['rcckn', 'enerbat']],
-                                               multi=False,
-                                               style={"cursor": "pointer", 'marginTop': '5px'},
-                                               className='stockSelectorClass3',
-                                               clearable=True,
-                                               placeholder='Select Database',
-
-                                               ),
-                                        dcc.Dropdown(id='prvalchoosen',
-                                                     # options=[{'label': i, 'value': i}
-                                                     #          for i in df.columns],
-                                                     multi=False,
-                                                     style={"cursor": "pointer",'marginTop' :'5px'},
-                                                     className='stockSelectorClass3',
-                                                     clearable=True,
-                                                     placeholder='Select Table ...',
-
-                                                    ),
-
-                                        dcc.Dropdown(id='prvalname',
-                                                     # options=[{'label': i, 'value': i}
-                                                     #          for i in df.columns],
-                                                     multi=True,
-                                                     style={"cursor": "pointer",'marginTop' :'13px'},
-                                                     className='stockSelectorClass3',
-                                                     clearable=True,
-                                                     placeholder='Select your parameters...',
+              html.Div(id='reelhidden1', children=[], style={'display': 'None'}),
+              html.Div(id='reelhidden2', children=[], style={'display': 'None'}),
+              html.Div(id='reelhidden3', children=[], style={'display': 'None'}),
+              html.Div(id='ok_click_hidden', children=[], style={'display': 'None'}),
+              ])
+page_4_layout = html.Div(
+    [html.Div([html.Div([dbc.ButtonGroup([dbc.Button("Database Activate", id="activatepr", n_clicks=0,
+                                                     size="lg", className="mr-1", color="success",
+                                                     style={'width': '25rem'}
                                                      ),
+                                          dbc.Button("Database Deactivate", id="deactivatepr", n_clicks=0,
+                                                     size="lg", className="mr-1", color="danger",
+                                                     style={'width': '25rem'}
+                                                     ),
+                                          ]),
+                         html.Div(dcc.Link('Go to Main Page', href='/page_1', id='link1'), style={'marginTop': '2rem'}),
+                        html.Div([
+                                               dbc.Checklist(id="calculintegralpr",
+                                                             options=[
+                                                                 {'label': "Calculate Integral", 'value': 'calculpr'}, ]
+                                                             ,
+                                                             value='',
+                                                             labelClassName='groupgraph',
+                                                             labelStyle={'margin': '10px', },
+                                                             inputStyle={'margin': '10px', }),
+                                           ]),
+                         dbc.Input(id='pr_Ip',
+                                   type="text",
+                                   debounce=True,
+                                   min=-10000, max=10000, step=1,
+                                   bs_size="mr",
+                                   style={'width': '11rem', "marginTop": "1.5rem",'display':'None'},
+                                   autoFocus=True,
+                                   placeholder="Enter your IP number ...",
+                                   ),
+                html.Div([html.Div([
+                   dcc.Dropdown(id='prname',
+                                options=[{'label': i, 'value': i}
+                                         for i in ['rcckn', 'enerbat']],
+                                multi=False,
+                                style={"cursor": "pointer", 'marginTop': '5px'},
+                                className='stockSelectorClass3',
+                                clearable=True,
+                                placeholder='Select Database',
 
-                                        dcc.Dropdown(id='prvaldate',
-                                                     # options=[{'label': i, 'value': i}
-                                                     #          for i in df.columns],
-                                                     multi=True,
-                                                     style={"cursor": "pointer",'marginTop' :'13px'},
-                                                     className='stockSelectorClass3',
-                                                     clearable=False,
-                                                     placeholder='Select your parameters...',
-                                                     ),], className='aadb'),
-                                        html.Div([
-                                            dbc.Checklist(id="calculintegralpr",
-                                                          options=[
-                                                              {'label': "Calculate Integral", 'value': 'calculpr'}, ]
-                                                          ,
-                                                          value='',
-                                                          labelClassName='groupgraph',
-                                                          labelStyle={'margin': '10px', },
-                                                          inputStyle={'margin': '10px', }),
-                                        ])
-                                        ], className = 'abcdb'),
-            dcc.Store(id='memory-outputpr'),
-            html.Div(id='prcheck', children=
-                              [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValuepr',
-                                                                options=[{'label': i, 'value': i} for i in
-                                                                         []],
-                                                                multi=False,
-                                                                style={"cursor": "pointer", 'width': '180px'},
-                                                                className='',
-                                                                clearable=True,
-                                                                placeholder='First Value...',
-                                                                ),
-                                                   dbc.Input(id='leftIntegralFirstpr',
-                                                             type="text",
-                                                             debounce=True,
-                                                             min=-10000, max=10000, step=1,
-                                                             bs_size="sm",
-                                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                                             autoFocus=True,
-                                                             placeholder="first point"),
-                                                   dbc.Input(id='leftIntegralSecondpr',
-                                                             type="text",
-                                                             debounce=True,
-                                                             min=-10000, max=10000, step=1,
-                                                             bs_size="sm",
-                                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                                             autoFocus=True,
-                                                             placeholder="second point"),
-                                                   dbc.Input(id='leftIntegralpr',
-                                                             type="text",
-                                                             min=-10000, max=10000, step=1,
-                                                             bs_size="sm",
-                                                             style={'width': '9rem', "marginTop": "1.5rem"},
-                                                             autoFocus=True,
-                                                             placeholder="total integration"),
-                                                   ]), html.Div([html.Button("Save", id="write_excelpr", n_clicks=0,
-                                                                             style={'fontSize': '1rem', 'width': '4rem',
-                                                                                    'margin': '1rem'},
-                                                                             ),
-                                                                 html.A(html.Button("Download Data",
-                                                                                    id='download_datapr',
-                                                                                    n_clicks=0,
-                                                                                    style={'fontSize': '1rem',
-                                                                                           'width': '9rem',
-                                                                                           'margin': '1rem'}, ),
-                                                                        id='download_excelpr',
-                                                                        # # download="rawdata.csv",
-                                                                        href="/download_excelpr/",
-                                                                        # target="_blank"
-                                                                        )
-                                                                 ], className='ad')
+                                ),
+                   dcc.Dropdown(id='prvalchoosen',
+                                # options=[{'label': i, 'value': i}
+                                #          for i in df.columns],
+                                multi=False,
+                                style={"cursor": "pointer", 'marginTop': '5px'},
+                                className='stockSelectorClass3',
+                                clearable=True,
+                                placeholder='Select Table ...',
 
-                                         ]),
-                               html.Div([dbc.Checklist(
-                                   id='operateurpr',
-                                   options=[{'label': i, 'value': i} for i in
-                                            ['Plus', 'Moins', 'Multiplie', 'Division']],
-                                   value=[],
-                                   labelStyle={"display": "Block"},
-                               ), ]),
-                               html.Div([
-                                   dcc.Dropdown(id='secondChoosenValuepr',
-                                                options=[{'label': i, 'value': i} for i in
-                                                         []],
-                                                multi=False,
-                                                style={"cursor": "pointer", 'width': '180px'},
-                                                className='',
-                                                clearable=True,
-                                                placeholder='Second Value...',
-                                                ),
-                                   dbc.Input(id='rightIntegralFirstpr',
-                                             type="text",
-                                             min=-10000, max=10000, step=1,
-                                             bs_size="sm",
-                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                             autoFocus=True,
-                                             placeholder="first point"),
-                                   dbc.Input(id='rightIntegralSecondpr',
-                                             type="text",
-                                             min=-10000, max=10000, step=1,
-                                             bs_size="sm",
-                                             style={'width': '8rem', "marginTop": "1.5rem"},
-                                             autoFocus=True,
-                                             placeholder="second point"),
-                                   dbc.Input(id='rightIntegralpr',
-                                             type="text",
-                                             min=-10000, max=10000, step=1,
-                                             bs_size="sm",
-                                             style={'width': '9rem', "marginTop": "1.5rem"},
-                                             autoFocus=True,
-                                             placeholder="total integration")
-                               ]),
-                               html.Div([dbc.Input(id='operationpr',
-                                                   type="text",
-                                                   min=-10000, max=10000, step=1,
-                                                   bs_size="sm",
-                                                   style={'width': '10rem', "marginTop": "2rem",
-                                                          'height': '5rem', 'textAlign': 'center'},
-                                                   autoFocus=True,
-                                                   placeholder="result"),
-                                         dbc.Input(id='intersectionpr',
-                                                   type="text",
-                                                   min=-10000, max=10000, step=1,
-                                                   bs_size="sm",
-                                                   style={'width': '10rem', "marginTop": "2rem",
-                                                          'height': '2rem', 'textAlign': 'center'},
-                                                   autoFocus=True,
-                                                   placeholder="Intersection")], className='aa')
-                               ], style={'display': 'None'},
-                                       className="abdbase"),
-                html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph",
-                               config={'displayModeBar': True,
-                                       'scrollZoom': True,
-                                       'modeBarButtonsToAdd': [
-                                           'drawline',
-                                           'drawrect',
-                                           'drawopenpath',
-                                           'select2d',
-                                           'eraseshape',
-                                       ]},
-                               style={'marginTop': 20,},
-                               figure={
-                                   'layout': {'legend': {'tracegroupgap': 0},
+                                ),
 
-                                              }
-                               }
+                   dcc.Dropdown(id='prvalname',
+                                # options=[{'label': i, 'value': i}
+                                #          for i in df.columns],
+                                multi=True,
+                                style={"cursor": "pointer", 'marginTop': '13px'},
+                                className='stockSelectorClass3',
+                                clearable=True,
+                                placeholder='Select your parameters...',
+                                ),
 
-                               ), ),
-                          html.Div(daq.Slider(id="sliderHeightpr",
-                                     max=2100,
-                                     min=400,
-                                     value=530,
-                                     step=100,
-                                     size=400,
-                                     vertical=True,
-                                     updatemode='drag'), style= {'margin' : '20px'})], className='abcdb'),
+                   dcc.Dropdown(id='prvaldate',
+                                # options=[{'label': i, 'value': i}
+                                #          for i in df.columns],
+                                multi=True,
+                                style={"cursor": "pointer", 'marginTop': '13px'},
+                                className='stockSelectorClass3',
+                                clearable=False,
+                                placeholder='Select your parameters...',
+                                ), ], className='aadb'),
+                    html.Div(
+                        className='main_container',
+                        children=[html.Div(id='fourcolumnsdivusercontrolspr',
+                                           className="four-columns-div-user-controlspr",
+                                           children=[
+                                               html.Div([daq.PowerButton(id='my-toggle-switch-pr',
+                                                                         label={'label': 'Connection',
+                                                                                'style': {'fontSize': '22px',
+                                                                                          'fontWeight': "bold"}},
+                                                                         labelPosition='bottom', on=False, size=100,
+                                                                         color="green",
+                                                                         className='dark-theme-control'),
+                                                         ], className='abpower',style = {'marginLeft':'10rem'}),
+                                               dcc.Store(id='get_data_from_modbus_pr'),
+                                               html.Div(id='data_to_store_id_pr', children=[], style={'display': 'None'}),
+                                               html.Div(id='data_to_store_value_pr', children=[],
+                                                        style={'display': 'None'}),
+                                               html.Div(id='data_to_store_qualite_pr', children=[],
+                                                        style={'display': 'None'}),
+                                               html.Div(id='data_to_store_date_pr', children=[],
+                                                        style={'display': 'None'}),
+                                               dcc.Interval(
+                                                   id='interval_component_pr',
+                                                   disabled=True,
+                                                   interval=1 * 1000,  # in milliseconds
+                                                   n_intervals=0), ]),
+                                  html.Div([
+                                      dcc.Dropdown(id='realvalue_pr',
+                                                   multi=True,
+                                                   style={"cursor": "pointer", 'margin': '5px 5px 10px 0',
+                                                          'width': '40rem'},
+                                                   className='stockSelectorClass3',
+                                                   clearable=True,
+                                                   placeholder='Select Value',
 
-                          html.Div([html.Div(daq.Slider(id="sliderWidthpr",
-                                                 max=2000,
-                                                 min=600,
-                                                 value=1000,
-                                                 step=100,
-                                                 size = 750,
+                                                   ),
+                                      html.P('Enter interval value (Millisecond)'),
+                                      dbc.Input(id='interval_value_pr', type="text", value='1000',
+                                                min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
 
-                                                 updatemode='drag'), style = {'marginLeft': '5rem'}),
-                                    ]),
-            html.Div(dash_table.DataTable(id="getprtable",
-                                          editable=True,
-                                          page_size=50,
-                                          style_table={'height': '500px', 'overflowY': 'auto', 'width': '98%'},
-                                          style_cell={
-                                              'overflow': 'hidden',
-                                              'textOverflow': 'ellipsis',
-                                              'maxWidth': 0,
-                                              'fontSize': '1rem',
-                                              'TextAlign': 'center',
-                                          },
+                                      html.Div([dbc.Button("Save", id="write_excel_pr", n_clicks=0, size="lg",
+                                                           className="mr-1",
+                                                           color="primary", style={'margin': '1rem 1rem 1rem 0'}),
+                                                html.A(
+                                                    dbc.Button("Download As Excel", id='download_data_pr', n_clicks=0,
+                                                               size="lg",
+                                                               className="mr-1", color="primary",
+                                                               style={'margin': '1rem 1rem 1rem 0'}),
+                                                    id='excel_for_pr',
+                                                    # # download="rawdata.csv",
+                                                    href="/download_excel_pr/",
+                                                    # target="_blank"
+                                                    ),
+                                                html.Div(
+                                                    [
+                                                        dbc.Button("Send to Database", id='download_pr',
+                                                                   n_clicks=0, size="lg",
+                                                                   className="mr-1", color="primary",
+                                                                   style={'margin': '1rem 1rem 1rem 0'}),
+                                                        ]),
+                                                ], className='abcd')
+                                  ], className='aadb', ),
 
-                                          fixed_rows={'headers': True},
+                                  html.Div(id='reelhidden1', children=[], style={'display': 'None'}),
+                                  html.Div(id='reelhidden2', children=[], style={'display': 'None'}),
+                                  html.Div(id='reelhidden3', children=[], style={'display': 'None'}),
+                                  html.Div(id='ok_click_hidden', children=[], style={'display': 'None'}),
+                                  ])
+                ],className="prstyle")
 
-                                          # style_cell_conditional=[
-                                          # {'if': {'column_id': 'date'},
-                                          #  'width': '15%'}
+                         ], className="aadb"),
 
-                                          style_header={
-                                              'backgroundColor': 'rgb(230, 230, 230)',
-                                              'fontWeight': 'bold'
-                                          },
-                                          filter_action="native",
-                                          sort_action="native",
-                                          sort_mode="multi",
-                                          column_selectable="single",
-                                          # row_selectable="multi",
-                                          # row_deletable=True,
-                                          selected_columns=[],
-                                          selected_rows=[],
-                                          page_action="native",
-                                          page_current=0,
-                                          export_format='xlsx',
-                                          export_headers='display',
-                                          merge_duplicate_headers=True)),
-            html.Div(id="hiddenpr1", children = [], style = {'display':'None'}),
-            html.Div(id="hiddenpr2", style = {'display':'None'}),
-            html.Div(id="hiddenpr3", children=[], style={'display': 'None'}),
-            html.Div(id='pointLeftFirstpr', children=[], style={'display': 'None'}),
-            html.Div(id='pointLeftSecondpr', children=[], style={'display': 'None'}),
-            html.Div(id='pointRightFirstpr', children=[], style={'display': 'None'}),
-            html.Div(id='pointRightSecondpr', children=[], style={'display': 'None'}),
-            html.Div(id='leftintegralfirsthiddenpr', children=[], style={'display': 'None'}),
-            html.Div(id='leftintegralsecondhiddenpr', children=[], style={'display': 'None'}),
-            html.Div(id='rightintegralfirsthiddenpr', children=[], style={'display': 'None'}),
-            html.Div(id='rightintegralsecondhiddenpr', children=[], style={'display': 'None'}),
-            html.Div(id='firstchoosenvalhiddenpr', children=[], style={'display': 'None'}),
-            html.Div(id='secondchoosenvalhiddenpr', children=[], style={'display': 'None'}),
-            html.Div(id='leftintegralfirsthiddenpr', children=[], style={'display': 'None'}),
-            html.Div(id='leftintegralsecondhiddenpr', children=[], style={'display': 'None'}),
-            html.Div(id='rightintegralfirsthiddenpr', children=[], style={'display': 'None'}),
-            html.Div(id='rightintegralsecondhiddenpr', children=[], style={'display': 'None'}),
-            html.Div(id='hiddenrecord1pr', children=[], style={'display': 'None'}),
-            html.Div(id='hiddenrecord2pr', children=[], style={'display': 'None'}),
-            html.Div(id='hiddenrecord3pr', children=[], style={'display': 'None'}),
-            html.Div(id='hiddenrecord4pr', children=[], style={'display': 'None'}),
-            html.Div(id='writeexcelhiddenpr', children=[], style={'display': 'None'}),
 
-            ], ),], ),
+               ], className='abcdb'),
+     dcc.Store(id='memory-outputpr'),
+     html.Div(id='prcheck', children=
+     [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValuepr',
+                                       options=[{'label': i, 'value': i} for i in
+                                                []],
+                                       multi=False,
+                                       style={"cursor": "pointer", 'width': '180px'},
+                                       className='',
+                                       clearable=True,
+                                       placeholder='First Value...',
+                                       ),
+                          dbc.Input(id='leftIntegralFirstpr',
+                                    type="text",
+                                    debounce=True,
+                                    min=-10000, max=10000, step=1,
+                                    bs_size="sm",
+                                    style={'width': '8rem', "marginTop": "1.5rem"},
+                                    autoFocus=True,
+                                    placeholder="first point"),
+                          dbc.Input(id='leftIntegralSecondpr',
+                                    type="text",
+                                    debounce=True,
+                                    min=-10000, max=10000, step=1,
+                                    bs_size="sm",
+                                    style={'width': '8rem', "marginTop": "1.5rem"},
+                                    autoFocus=True,
+                                    placeholder="second point"),
+                          dbc.Input(id='leftIntegralpr',
+                                    type="text",
+                                    min=-10000, max=10000, step=1,
+                                    bs_size="sm",
+                                    style={'width': '9rem', "marginTop": "1.5rem"},
+                                    autoFocus=True,
+                                    placeholder="total integration"),
+                          ]), html.Div([html.Button("Save", id="write_excelpr", n_clicks=0,
+                                                    style={'fontSize': '1rem', 'width': '4rem',
+                                                           'margin': '1rem'},
+                                                    ),
+                                        html.A(html.Button("Download Data",
+                                                           id='download_datapr',
+                                                           n_clicks=0,
+                                                           style={'fontSize': '1rem',
+                                                                  'width': '9rem',
+                                                                  'margin': '1rem'}, ),
+                                               id='download_excelpr',
+                                               # # download="rawdata.csv",
+                                               href="/download_excelpr/",
+                                               # target="_blank"
+                                               )
+                                        ], className='ad')
+
+                ]),
+      html.Div([dbc.Checklist(
+          id='operateurpr',
+          options=[{'label': i, 'value': i} for i in
+                   ['Plus', 'Moins', 'Multiplie', 'Division']],
+          value=[],
+          labelStyle={"display": "Block"},
+      ), ]),
+      html.Div([
+          dcc.Dropdown(id='secondChoosenValuepr',
+                       options=[{'label': i, 'value': i} for i in
+                                []],
+                       multi=False,
+                       style={"cursor": "pointer", 'width': '180px'},
+                       className='',
+                       clearable=True,
+                       placeholder='Second Value...',
+                       ),
+          dbc.Input(id='rightIntegralFirstpr',
+                    type="text",
+                    min=-10000, max=10000, step=1,
+                    bs_size="sm",
+                    style={'width': '8rem', "marginTop": "1.5rem"},
+                    autoFocus=True,
+                    placeholder="first point"),
+          dbc.Input(id='rightIntegralSecondpr',
+                    type="text",
+                    min=-10000, max=10000, step=1,
+                    bs_size="sm",
+                    style={'width': '8rem', "marginTop": "1.5rem"},
+                    autoFocus=True,
+                    placeholder="second point"),
+          dbc.Input(id='rightIntegralpr',
+                    type="text",
+                    min=-10000, max=10000, step=1,
+                    bs_size="sm",
+                    style={'width': '9rem', "marginTop": "1.5rem"},
+                    autoFocus=True,
+                    placeholder="total integration")
+      ]),
+      html.Div([dbc.Input(id='operationpr',
+                          type="text",
+                          min=-10000, max=10000, step=1,
+                          bs_size="sm",
+                          style={'width': '10rem', "marginTop": "2rem",
+                                 'height': '5rem', 'textAlign': 'center'},
+                          autoFocus=True,
+                          placeholder="result"),
+                dbc.Input(id='intersectionpr',
+                          type="text",
+                          min=-10000, max=10000, step=1,
+                          bs_size="sm",
+                          style={'width': '10rem', "marginTop": "2rem",
+                                 'height': '2rem', 'textAlign': 'center'},
+                          autoFocus=True,
+                          placeholder="Intersection")], className='aa')
+      ], style={'display': 'None'},
+              className="abdbase"),
+     html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph",
+                                            config={'displayModeBar': True,
+                                                    'scrollZoom': True,
+                                                    'modeBarButtonsToAdd': [
+                                                        'drawline',
+                                                        'drawrect',
+                                                        'drawopenpath',
+                                                        'select2d',
+                                                        'eraseshape',
+                                                    ]},
+                                            style={'marginTop': 20, },
+                                            figure={
+                                                'layout': {'legend': {'tracegroupgap': 0},
+
+                                                           }
+                                            }
+
+                                            ), ),
+                         html.Div(daq.Slider(id="sliderHeightpr",
+                                             max=2100,
+                                             min=400,
+                                             value=530,
+                                             step=100,
+                                             size=400,
+                                             vertical=True,
+                                             updatemode='drag'), style={'margin': '20px'})], className='abcdb'),
+
+               html.Div([html.Div(daq.Slider(id="sliderWidthpr",
+                                             max=2000,
+                                             min=600,
+                                             value=1000,
+                                             step=100,
+                                             size=750,
+
+                                             updatemode='drag'), style={'marginLeft': '5rem'}),
+                         ]),
+               html.Div(dash_table.DataTable(id="getprtable",
+                                             editable=True,
+                                             page_size=50,
+                                             style_table={'height': '500px', 'overflowY': 'auto', 'width': '98%'},
+                                             style_cell={
+                                                 'overflow': 'hidden',
+                                                 'textOverflow': 'ellipsis',
+                                                 'maxWidth': 0,
+                                                 'fontSize': '1rem',
+                                                 'TextAlign': 'center',
+                                             },
+
+                                             fixed_rows={'headers': True},
+
+                                             # style_cell_conditional=[
+                                             # {'if': {'column_id': 'date'},
+                                             #  'width': '15%'}
+
+                                             style_header={
+                                                 'backgroundColor': 'rgb(230, 230, 230)',
+                                                 'fontWeight': 'bold'
+                                             },
+                                             filter_action="native",
+                                             sort_action="native",
+                                             sort_mode="multi",
+                                             column_selectable="single",
+                                             # row_selectable="multi",
+                                             # row_deletable=True,
+                                             selected_columns=[],
+                                             selected_rows=[],
+                                             page_action="native",
+                                             page_current=0,
+                                             export_format='xlsx',
+                                             export_headers='display',
+                                             merge_duplicate_headers=True)),
+               html.Div(id="hiddenpr1", children=[], style={'display': 'None'}),
+               html.Div(id="hiddenpr2", style={'display': 'None'}),
+               html.Div(id="hiddenpr3", children=[], style={'display': 'None'}),
+               html.Div(id='pointLeftFirstpr', children=[], style={'display': 'None'}),
+               html.Div(id='pointLeftSecondpr', children=[], style={'display': 'None'}),
+               html.Div(id='pointRightFirstpr', children=[], style={'display': 'None'}),
+               html.Div(id='pointRightSecondpr', children=[], style={'display': 'None'}),
+               html.Div(id='leftintegralfirsthiddenpr', children=[], style={'display': 'None'}),
+               html.Div(id='leftintegralsecondhiddenpr', children=[], style={'display': 'None'}),
+               html.Div(id='rightintegralfirsthiddenpr', children=[], style={'display': 'None'}),
+               html.Div(id='rightintegralsecondhiddenpr', children=[], style={'display': 'None'}),
+               html.Div(id='firstchoosenvalhiddenpr', children=[], style={'display': 'None'}),
+               html.Div(id='secondchoosenvalhiddenpr', children=[], style={'display': 'None'}),
+               html.Div(id='leftintegralfirsthiddenpr', children=[], style={'display': 'None'}),
+               html.Div(id='leftintegralsecondhiddenpr', children=[], style={'display': 'None'}),
+               html.Div(id='rightintegralfirsthiddenpr', children=[], style={'display': 'None'}),
+               html.Div(id='rightintegralsecondhiddenpr', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenrecord1pr', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenrecord2pr', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenrecord3pr', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenrecord4pr', children=[], style={'display': 'None'}),
+               html.Div(id='writeexcelhiddenpr', children=[], style={'display': 'None'}),
+
+               ], ), ], ),
+
+
 @app.callback(
     Output("reelhidden3", "children"),
-    [Input("ok_reel", "n_clicks"),],
+    [Input("ok_reel", "n_clicks"), ],
     [State("input_tablename", "value")],
 )
 def toggle_modal(nc, name):
@@ -982,12 +1086,13 @@ def toggle_modal(nc, name):
         print('name 1 ', name)
         return name
 
+
 @app.callback(
     Output("modal_reel", "is_open"),
     [Input("download_reel_db", "n_clicks"), Input("close_reel", "n_clicks"), Input("ok_reel", "n_clicks")],
     [State("modal_reel", "is_open")],
 )
-def toggle_modal(n1, n2,n3, is_open):
+def toggle_modal(n1, n2, n3, is_open):
     if n1 or n2 or n3:
         return not is_open
     return is_open
@@ -995,32 +1100,31 @@ def toggle_modal(n1, n2,n3, is_open):
 
 @app.callback(Output('interval_component', 'disabled'),
               [Input("my-toggle-switch-reel", "on")],
-             )
+              )
 def intervalcontrol(on):
-    if on == 1 :
+    if on == 1:
         return False
-    else :
+    else:
         return True
+
 
 @app.callback(Output('interval_component', 'interval'),
               [Input("interval_value", "value")],
-             )
+              )
 def intervalcontrol2(val):
     val = int(val)
     return val
 
 
-
-
 @app.callback([Output('data_to_store_id', 'children'),
                Output('data_to_store_value', 'children'),
                Output('data_to_store_qualite', 'children'),
-               Output('data_to_store_date', 'children'),],
+               Output('data_to_store_date', 'children'), ],
               [Input("my-toggle-switch-reel", "on"), Input('interval_component', 'n_intervals')],
-               [State('data_to_store_id', 'children'),
-                State('data_to_store_value', 'children'),
-                State('data_to_store_qualite', 'children'),
-                State('data_to_store_date', 'children'),])
+              [State('data_to_store_id', 'children'),
+               State('data_to_store_value', 'children'),
+               State('data_to_store_qualite', 'children'),
+               State('data_to_store_date', 'children'), ])
 def values(on, n_intervals, id, val, qual, date):
     # if from_modbus == None :
     #     raise PreventUpdate
@@ -1028,10 +1132,10 @@ def values(on, n_intervals, id, val, qual, date):
         opc = OpenOPC.client()
         opc.servers()
         opc.connect('Kepware.KEPServerEX.V6')
-        for ID, value,Quality,Timestamp in opc.iread(
+        for ID, value, Quality, Timestamp in opc.iread(
                 ['sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2', 'sauter.EY6AS680.Tb3', 'sauter.EY6AS680.Tb4',
                  'sauter.EY6AS680.Tec', 'sauter.EY6AS680.Teev', 'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
-                 'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg',]):
+                 'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg', ]):
             # print('value', (ID, value, Quality, Timestamp))
             id.append(ID[16:])
             val.append(value)
@@ -1040,30 +1144,33 @@ def values(on, n_intervals, id, val, qual, date):
 
     return id, val, qual, date
     return id, val, qual, date
-#
-@app.callback([Output('get_data_from_modbus', 'data'),Output('realvalue', 'options')],
-              [Input('data_to_store_id', 'children'),
-                Input('data_to_store_value', 'children'),
-                Input('data_to_store_qualite', 'children'),
-                Input('data_to_store_date', 'children'),],)
 
-def storedata(id, val, qual, date) :
+
+#
+@app.callback([Output('get_data_from_modbus', 'data'), Output('realvalue', 'options')],
+              [Input('data_to_store_id', 'children'),
+               Input('data_to_store_value', 'children'),
+               Input('data_to_store_qualite', 'children'),
+               Input('data_to_store_date', 'children'), ], )
+def storedata(id, val, qual, date):
     # if store == None :
     #     raise PreventUpdate
-    zipped_val = list(zip(id,val,qual,date))
-    df = pd.DataFrame(list(zip(id,val,qual,date)),
+    zipped_val = list(zip(id, val, qual, date))
+    df = pd.DataFrame(list(zip(id, val, qual, date)),
                       columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
     val = df['ID'].unique()
-    return zipped_val, [{'label' : i, 'value' : i} for i in val]
+    return zipped_val, [{'label': i, 'value': i} for i in val]
+
 
 @app.callback(Output('reelhidden1', 'children'),
               [Input("write_excel_reel", "n_clicks")],
               [State('get_data_from_modbus', 'data')],
-             )
+              )
 def intervalcontrol2(nc, data):
-    if nc > 0 :
+    if nc > 0:
         df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'Date'])
         df.to_excel('real.xlsx')
+
 
 @app.server.route("/download_excel_reel/")
 def download_excel_reel():
@@ -1078,25 +1185,27 @@ def download_excel_reel():
     buf.seek(0)
     return send_file(
         buf,
-        mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         attachment_filename="real.xlsx",
         as_attachment=True,
         cache_timeout=0
     )
+
+
 @app.callback(Output('reelhidden2', 'children'),
-              [Input("reelhidden3", "children"),],[State('get_data_from_modbus', 'data')])
-def pandastosql(name, data) :
-    if name == None :
+              [Input("reelhidden3", "children"), ], [State('get_data_from_modbus', 'data')])
+def pandastosql(name, data):
+    if name == None:
         raise PreventUpdate
     print('name', name)
-    if name != None :
-        df = pd.DataFrame(data, columns=['variable_name','variable_num_value','quality', 'TIMESTAMP'])
-        a = [i for i in range(len(df.index))] # for ID
-        b = [i for i in df['variable_name']] # name of variable
+    if name != None:
+        df = pd.DataFrame(data, columns=['variable_name', 'variable_num_value', 'quality', 'TIMESTAMP'])
+        a = [i for i in range(len(df.index))]  # for ID
+        b = [i for i in df['variable_name']]  # name of variable
         c = [i for i in df['variable_num_value']]
         d = [i for i in df['TIMESTAMP']]
         df['TIMESTAMP'] = df['TIMESTAMP'].apply(lambda x: pd.Timestamp(x).strftime('%Y-%m-%d %H:%M:%S'))
-        sql_insert = list(zip(a,df['variable_name'],df['variable_num_value'],df['TIMESTAMP']))
+        sql_insert = list(zip(a, df['variable_name'], df['variable_num_value'], df['TIMESTAMP']))
 
         try:
             db_connection = mysql.connector.connect(
@@ -1104,15 +1213,16 @@ def pandastosql(name, data) :
                 user="dashapp",
                 passwd="dashapp",
                 database="enerbat",
-                port = 3306,)
+                port=3306, )
             db_cursor = db_connection.cursor()
-# +
+            # +
             # Here creating database table as student'
-            db_cursor.execute(f"CREATE TABLE {name} (id BIGINT PRIMARY KEY, variable_name VARCHAR(255), variable_num_value DOUBLE, TIMESTAMP TIMESTAMP)")
+            db_cursor.execute(
+                f"CREATE TABLE {name} (id BIGINT PRIMARY KEY, variable_name VARCHAR(255), variable_num_value DOUBLE, TIMESTAMP TIMESTAMP)")
 
             sql_query = f" INSERT INTO {name} (id, variable_name,variable_num_value,TIMESTAMP) VALUES (%s, %s, %s, %s)"
             # Get database table'
-            db_cursor.executemany(sql_query,sql_insert)
+            db_cursor.executemany(sql_query, sql_insert)
             db_connection.commit()
             print(db_cursor.rowcount, "Record inserted successfully into ENERBAT Database")
         except mysql.connector.Error as error:
@@ -1137,16 +1247,16 @@ def pandastosql(name, data) :
                Input('realvalue', 'value'),
                Input('sliderWidthreel', 'value'),
                Input('sliderHeightreel', 'value')])
-
-def graphreelTime(data,val, sliderwidth, sliderheight) :
-    if val == None :
+def graphreelTime(data, val, sliderwidth, sliderheight):
+    if val == None:
         raise PreventUpdate
-    df = pd.DataFrame(data,columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
+    df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
     df1 = df[df['ID'].isin(val)]
     a = df1.loc[df1['ID'].isin(val)]
     fig = go.Figure()
     for i in val:
-        fig.add_trace(go.Scattergl(x=a[a['ID']==i]['TIMESTAMP'], y=a[a['ID']==i]['Value'] ,mode='lines',marker=dict(line=dict(width=0.2,color='white')),name="{}".format(i),
+        fig.add_trace(go.Scattergl(x=a[a['ID'] == i]['TIMESTAMP'], y=a[a['ID'] == i]['Value'], mode='lines',
+                                   marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
                                    ))
     fig.update_layout(
         autosize=False,
@@ -1195,7 +1305,7 @@ def parse_contents(contents, filename, date):
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             df.to_excel("appending.xlsx")
-        elif 'xls'  in filename:
+        elif 'xls' in filename:
             # Assume that the user uploaded an excel file
             df = pd.read_excel(io.BytesIO(decoded))
             df['index'] = df.index
@@ -1296,15 +1406,17 @@ def retrieve(retrieve):
 
     return retrieve
 
+
 @app.callback(ServersideOutput('datastore', 'data'),
-              [Input('datatablehidden', 'children')],memoize=True
+              [Input('datatablehidden', 'children')], memoize=True
               )
 def retrieve(retrieve):
     if retrieve == None or retrieve == []:
         raise PreventUpdate
-    else :
+    else:
         xx = retrieve[0]['props']['children'][2]['props']['data']
         return xx
+
 
 # @app.callback(Output('tab2DashTable', 'children'),
 #               [Input('datatablehidden', 'children')],
@@ -1342,15 +1454,15 @@ def opcLoadingData(on):
 
     if on == 1:
         visibilty = {
-                     'height': '35px',
-                     'lineHeight': '25px',
-                     'borderWidth': '1px',
-                     'borderStyle': 'dashed',
-                     'borderRadius': '5px',
-                     'textAlign': 'center',
-                     'margin': '20px 20px 20px -100px',
-                 
-                     'visibility': 'visible'}
+            'height': '35px',
+            'lineHeight': '25px',
+            'borderWidth': '1px',
+            'borderStyle': 'dashed',
+            'borderRadius': '5px',
+            'textAlign': 'center',
+            'margin': '20px 20px 20px -100px',
+
+            'visibility': 'visible'}
         data_list = ['CoAd', 'ComManCoP2', 'ComManCoP3P4P5', 'ComManPompeSec', 'CompteurEnergie', 'CoP2',
                      'CtempDepChauff',
                      'D1', 'D2', 'D3', 'D4', 'MarcheBruleur', 'Teg', 'SdeBasBouMelange', 'SdeBasHauMelange', 'TambN3',
@@ -1458,14 +1570,12 @@ def opcLoadingData(on):
 @app.callback(Output("dropdownLeft", "options"),
               [Input("datastore", "data")])
 def dropdownlistcontrol(retrieve):
-    if retrieve == None :
+    if retrieve == None:
         raise PreventUpdate
 
     df = pd.DataFrame(retrieve)
     dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
     return dff
-
-
 
 
 # @app.callback(
@@ -1545,7 +1655,7 @@ def toggle_modal(n1, n2, is_open, children):
 
 @app.callback(
     [Output('rightSideDropdown', "children"),
-     Output('checklistvaleurhidden', "children"),],
+     Output('checklistvaleurhidden', "children"), ],
     [
         Input("showRight", "n_clicks"),
         Input("clearRight", "n_clicks")
@@ -1556,12 +1666,13 @@ def toggle_modal(n1, n2, is_open, children):
         State('checklistvaleurhidden', "children")
     ]
 )
-def edit_list2(ncr1, ncr2, valeur, children,hiddenchild):
+def edit_list2(ncr1, ncr2, valeur, children, hiddenchild):
     new_listRight = []
     print('hiddenchild', hiddenchild)
     triggered_buttons = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
     if triggered_buttons == "showRight":
         hiddenchild.append(valeur)
+
         def mesure1(textRight):
             if textRight == "Mass de Bois":
                 return "g"
@@ -1575,36 +1686,37 @@ def edit_list2(ncr1, ncr2, valeur, children,hiddenchild):
                 return "W"
 
             elif textRight in {'CO', 'CO2', 'NO', 'NOX', 'CX'}:
-                   return "% MOL"
+                return "% MOL"
 
             elif textRight == 'Temperature de Fumée':
                 return '°K'
+
         if hiddenchild != ['']:
             new_listRight = html.Div([html.Div([
-                    html.Div([dcc.Markdown('''*{}'''.format(valeur), id="checklistValeur0",
-                                           style={'height': '1rem', 'fontFamily': 'arial', 'color': 'black',
-                                                  'fontSize': '1.2rem'}),
-                              html.Div([dbc.Input(id='inputRightY_axis0',
-                                                 type="text",
-                                                 min=-10000, max=10000, step=1, bs_size="sm", style={'width': '6rem'},
-                                                 placeholder='Y axis value',
-                                                 autoFocus=True, ),
-                                        dbc.Input(id='inputRightX_axis0',
-                                                  type="text",
-                                                  min=-10000, max=10000, step=1, bs_size="sm", style={'width': '6rem'},
-                                                  placeholder='X axis value',
-                                                  autoFocus=True, ),
-                                        ], id="styled-numeric-input", ),
-                              html.P(mesure1(valeur),
-                                     style={'margin': '0.1rem 0', 'color': 'black', 'height': '2rem', 'fontFamily': 'arial',
-                                            'fontSize': '1.2rem', }),
-                              dbc.Button("Ok", id="valueSendRight0", outline=True, n_clicks = 0,  color="primary", className="mr-1"),
-                              dbc.Button("Clr", id="valueClearRight0",  n_clicks=0, color="warning",
-                                         className="mr-1"),
+                html.Div([dcc.Markdown('''*{}'''.format(valeur), id="checklistValeur0",
+                                       style={'height': '1rem', 'fontFamily': 'arial', 'color': 'black',
+                                              'fontSize': '1.2rem'}),
+                          html.Div([dbc.Input(id='inputRightY_axis0',
+                                              type="text",
+                                              min=-10000, max=10000, step=1, bs_size="sm", style={'width': '6rem'},
+                                              placeholder='Y axis value',
+                                              autoFocus=True, ),
+                                    dbc.Input(id='inputRightX_axis0',
+                                              type="text",
+                                              min=-10000, max=10000, step=1, bs_size="sm", style={'width': '6rem'},
+                                              placeholder='X axis value',
+                                              autoFocus=True, ),
+                                    ], id="styled-numeric-input", ),
+                          html.P(mesure1(valeur),
+                                 style={'margin': '0.1rem 0', 'color': 'black', 'height': '2rem', 'fontFamily': 'arial',
+                                        'fontSize': '1.2rem', }),
+                          dbc.Button("Ok", id="valueSendRight0", outline=True, n_clicks=0, color="primary",
+                                     className="mr-1"),
+                          dbc.Button("Clr", id="valueClearRight0", n_clicks=0, color="warning",
+                                     className="mr-1"),
 
-                              ], className='design_children2'),
-                ], className='design_children', ), html.Hr()])
-
+                          ], className='design_children2'),
+            ], className='design_children', ), html.Hr()])
 
         children.append(new_listRight)
 
@@ -1614,8 +1726,10 @@ def edit_list2(ncr1, ncr2, valeur, children,hiddenchild):
         else:
             children.pop()
             hiddenchild.pop()
-    print('hiddenchild2',hiddenchild)
-    return children,hiddenchild
+    print('hiddenchild2', hiddenchild)
+    return children, hiddenchild
+
+
 #
 #
 # #### bunla ugras shapeler ciktiktan sonra referance bilgileri cikmiyor
@@ -1701,214 +1815,214 @@ def render_content(tab):
 def LoadingDataTab1(on, dropdownhidden, tab):
     if on == 1 and tab == 'tab-1':
         loadTab1 = html.Div([html.Div([html.Div([html.Div([
-                                                           dcc.Dropdown(id='firstChoosenValue',
-                                                                        options=[{'label': i, 'value': i} for i in
-                                                                                 dropdownhidden],
-                                                                        multi=False,
-                                                                        style={"cursor": "pointer", 'width': '180px'},
-                                                                        className='',
-                                                                        clearable=True,
-                                                                        placeholder='First Value...',
-                                                                        ),
-                                                           dbc.Input(id='leftIntegralFirst',
-                                                                     type="text",
-                                                                     debounce=True,
-                                                                     min=-10000, max=10000, step=1,
-                                                                     bs_size="sm",
-                                                                     style={'width': '8rem', "marginTop": "1.5rem"},
-                                                                     autoFocus=True,
-                                                                     placeholder="first point"),
-                                                           dbc.Input(id='leftIntegralSecond',
-                                                                     type="text",
-                                                                     debounce=True,
-                                                                     min=-10000, max=10000, step=1,
-                                                                     bs_size="sm",
-                                                                     style={'width': '8rem', "marginTop": "1.5rem"},
-                                                                     autoFocus=True,
-                                                                     placeholder="second point"),
-                                                           dbc.Input(id='leftIntegral',
-                                                                     type="text",
-                                                                     min=-10000, max=10000, step=1,
-                                                                     bs_size="sm",
-                                                                     style={'width': '9rem', "marginTop": "1.5rem"},
-                                                                     autoFocus=True,
-                                                                     placeholder="total integration"),
-                                                           ]),
-                                                 html.Div([html.Button("Save", id="write_excel", n_clicks=0,
-                                                                       style={'fontSize': '1rem', 'width': '4rem',
-                                                                              'margin': '1rem'},
-                                                                       ),
-                                                           html.A(html.Button("Download Data", id='download_data',
-                                                                              n_clicks=0,
-                                                                              style={'fontSize': '1rem',
-                                                                                     'width': '9rem',
-                                                                                     'margin': '1rem'}, ),
-                                                                  id='download_excel',
-                                                                  # # download="rawdata.csv",
-                                                                  href="/download_excel/",
-                                                                  # target="_blank"
-                                                                  )
-                                                           ], className='ad')
+            dcc.Dropdown(id='firstChoosenValue',
+                         options=[{'label': i, 'value': i} for i in
+                                  dropdownhidden],
+                         multi=False,
+                         style={"cursor": "pointer", 'width': '180px'},
+                         className='',
+                         clearable=True,
+                         placeholder='First Value...',
+                         ),
+            dbc.Input(id='leftIntegralFirst',
+                      type="text",
+                      debounce=True,
+                      min=-10000, max=10000, step=1,
+                      bs_size="sm",
+                      style={'width': '8rem', "marginTop": "1.5rem"},
+                      autoFocus=True,
+                      placeholder="first point"),
+            dbc.Input(id='leftIntegralSecond',
+                      type="text",
+                      debounce=True,
+                      min=-10000, max=10000, step=1,
+                      bs_size="sm",
+                      style={'width': '8rem', "marginTop": "1.5rem"},
+                      autoFocus=True,
+                      placeholder="second point"),
+            dbc.Input(id='leftIntegral',
+                      type="text",
+                      min=-10000, max=10000, step=1,
+                      bs_size="sm",
+                      style={'width': '9rem', "marginTop": "1.5rem"},
+                      autoFocus=True,
+                      placeholder="total integration"),
+        ]),
+            html.Div([html.Button("Save", id="write_excel", n_clicks=0,
+                                  style={'fontSize': '1rem', 'width': '4rem',
+                                         'margin': '1rem'},
+                                  ),
+                      html.A(html.Button("Download Data", id='download_data',
+                                         n_clicks=0,
+                                         style={'fontSize': '1rem',
+                                                'width': '9rem',
+                                                'margin': '1rem'}, ),
+                             id='download_excel',
+                             # # download="rawdata.csv",
+                             href="/download_excel/",
+                             # target="_blank"
+                             )
+                      ], className='ad')
 
-                                                 ]),
-                                       html.Div([dbc.Checklist(
-                                           id='operateur',
-                                           options=[{'label': i, 'value': i} for i in
-                                                    ['Plus', 'Moins', 'Multiplie', 'Division']],
-                                           value=[],
-                                           labelStyle={"display": "Block"},
-                                       ), ]),
-                                       html.Div([dcc.Dropdown(id='secondChoosenValue',
-                                                              options=[{'label': i, 'value': i} for i in
-                                                                       dropdownhidden],
-                                                              multi=False,
-                                                              style={"cursor": "pointer", 'width': '180px'},
-                                                              className='',
-                                                              clearable=True,
-                                                              placeholder='Second Value...',
-                                                              ),
-                                                 dbc.Input(id='rightIntegralFirst',
-                                                           type="text",
-                                                           min=-10000, max=10000, step=1,
-                                                           bs_size="sm",
-                                                           style={'width': '8rem', "marginTop": "1.5rem"},
-                                                           autoFocus=True,
-                                                           placeholder="first point"),
-                                                 dbc.Input(id='rightIntegralSecond',
-                                                           type="text",
-                                                           min=-10000, max=10000, step=1,
-                                                           bs_size="sm",
-                                                           style={'width': '8rem', "marginTop": "1.5rem"},
-                                                           autoFocus=True,
-                                                           placeholder="second point"),
-                                                 dbc.Input(id='rightIntegral',
-                                                           type="text",
-                                                           min=-10000, max=10000, step=1,
-                                                           bs_size="sm",
-                                                           style={'width': '9rem', "marginTop": "1.5rem"},
-                                                           autoFocus=True,
-                                                           placeholder="total integration")]),
-                                       html.Div([dbc.Input(id='operation',
-                                                           type="text",
-                                                           min=-10000, max=10000, step=1,
-                                                           bs_size="sm",
-                                                           style={'width': '10rem', "marginTop": "2rem",
-                                                                  'height': '5rem', 'textAlign': 'center'},
-                                                           autoFocus=True,
-                                                           placeholder="result"),
-                                                 dbc.Input(id='intersection',
-                                                           type="text",
-                                                           min=-10000, max=10000, step=1,
-                                                           bs_size="sm",
-                                                           style={'width': '10rem', "marginTop": "2rem",
-                                                                  'height': '2rem', 'textAlign': 'center'},
-                                                           autoFocus=True,
-                                                           placeholder="Intersection")], className='aa')],
-                                      className="ab"),
-                             html.Div([dcc.RadioItems(id="radiograph",
-                                                      options=[
-                                                          {'label': 'Point', 'value': 'markers'},
-                                                          {'label': 'Line', 'value': 'lines'},
-                                                          {'label': 'Line + Point', 'value': 'lines+markers'},
+        ]),
+            html.Div([dbc.Checklist(
+                id='operateur',
+                options=[{'label': i, 'value': i} for i in
+                         ['Plus', 'Moins', 'Multiplie', 'Division']],
+                value=[],
+                labelStyle={"display": "Block"},
+            ), ]),
+            html.Div([dcc.Dropdown(id='secondChoosenValue',
+                                   options=[{'label': i, 'value': i} for i in
+                                            dropdownhidden],
+                                   multi=False,
+                                   style={"cursor": "pointer", 'width': '180px'},
+                                   className='',
+                                   clearable=True,
+                                   placeholder='Second Value...',
+                                   ),
+                      dbc.Input(id='rightIntegralFirst',
+                                type="text",
+                                min=-10000, max=10000, step=1,
+                                bs_size="sm",
+                                style={'width': '8rem', "marginTop": "1.5rem"},
+                                autoFocus=True,
+                                placeholder="first point"),
+                      dbc.Input(id='rightIntegralSecond',
+                                type="text",
+                                min=-10000, max=10000, step=1,
+                                bs_size="sm",
+                                style={'width': '8rem', "marginTop": "1.5rem"},
+                                autoFocus=True,
+                                placeholder="second point"),
+                      dbc.Input(id='rightIntegral',
+                                type="text",
+                                min=-10000, max=10000, step=1,
+                                bs_size="sm",
+                                style={'width': '9rem', "marginTop": "1.5rem"},
+                                autoFocus=True,
+                                placeholder="total integration")]),
+            html.Div([dbc.Input(id='operation',
+                                type="text",
+                                min=-10000, max=10000, step=1,
+                                bs_size="sm",
+                                style={'width': '10rem', "marginTop": "2rem",
+                                       'height': '5rem', 'textAlign': 'center'},
+                                autoFocus=True,
+                                placeholder="result"),
+                      dbc.Input(id='intersection',
+                                type="text",
+                                min=-10000, max=10000, step=1,
+                                bs_size="sm",
+                                style={'width': '10rem', "marginTop": "2rem",
+                                       'height': '2rem', 'textAlign': 'center'},
+                                autoFocus=True,
+                                placeholder="Intersection")], className='aa')],
+            className="ab"),
+            html.Div([dcc.RadioItems(id="radiograph",
+                                     options=[
+                                         {'label': 'Point', 'value': 'markers'},
+                                         {'label': 'Line', 'value': 'lines'},
+                                         {'label': 'Line + Point', 'value': 'lines+markers'},
 
-                                                      ],
-                                                      value='markers',
-                                                      labelClassName='groupgraph2',
-                                                      labelStyle={'margin': '10px','display': 'inline-block' },
-                                                      inputStyle={'margin': '10px', }
-                                                      ),
-                                       html.Div([html.P('Shift Axes (First-Second)'),
-                                       dbc.Input(id='minimumValueGraphFirst',
-                                                 type="text",
-                                                 min=-10000, max=10000, step=1,
-                                                 bs_size="sm",
-                                                 value=0,
-                                                 style={'width': '8rem', 'marginLeft': '20px'},
-                                                 placeholder="Minimum Value of Graph for First..."),
-                                       dbc.Input(id='minimumValueGraphSecond',
-                                                 type="text",
-                                                 min=-10000, max=10000, step=1,
-                                                 bs_size="sm",
-                                                 value=0,
-                                                 style={'width': '8rem', 'marginLeft': '20px'},
-                                                 placeholder="Minimum Value of Graph for Second..."),], className = 'shift'),
+                                     ],
+                                     value='markers',
+                                     labelClassName='groupgraph2',
+                                     labelStyle={'margin': '10px', 'display': 'inline-block'},
+                                     inputStyle={'margin': '10px', }
+                                     ),
+                      html.Div([html.P('Shift Axes (First-Second)'),
+                                dbc.Input(id='minimumValueGraphFirst',
+                                          type="text",
+                                          min=-10000, max=10000, step=1,
+                                          bs_size="sm",
+                                          value=0,
+                                          style={'width': '8rem', 'marginLeft': '20px'},
+                                          placeholder="Minimum Value of Graph for First..."),
+                                dbc.Input(id='minimumValueGraphSecond',
+                                          type="text",
+                                          min=-10000, max=10000, step=1,
+                                          bs_size="sm",
+                                          value=0,
+                                          style={'width': '8rem', 'marginLeft': '20px'},
+                                          placeholder="Minimum Value of Graph for Second..."), ], className='shift'),
 
-                                       ], className='abcd'),
+                      ], className='abcd'),
 
-                             html.Div([dcc.Dropdown(id='shiftaxisdrop',
-                                                    options=[{'label': i, 'value': i} for i in
-                                                             dropdownhidden],
-                                                    multi=False,
-                                                    style={"cursor": "pointer", 'width': '180px', 'margin': '1rem'},
-                                                    className='',
-                                                    clearable=True,
-                                                    placeholder='Choose Value...',
-                                                    ),
-                                       dbc.Button("See Surface", id="valuechange", n_clicks=0,
-                                                  color="warning", style={'height': '2.5em', 'margin': '1.8rem'}),
-                                       dbc.Button("Clean Surface", id="cleanshape", n_clicks=0,
-                                                  color="danger", style={'height': '2.5em', 'margin': '1.8rem'}),
-                                       html.Div(id='shiftaxis',
-                                                children=[
-                                                    dbc.Input(id='shift_x_axis',
-                                                              type="number",
-                                                              min=-100000, max=100000, step=1,
-                                                              bs_size="sm",
-                                                              value=0,
-                                                              style={'width': '8rem', },
-                                                              placeholder="Shift X axis..."),
-                                                    dbc.Input(id='shift_y_axis',
-                                                              type="number",
-                                                              min=-100000, max=100000, step=1,
-                                                              bs_size="sm",
-                                                              value=0,
-                                                              style={'width': '8rem', },
-                                                              placeholder="Shift Y axis..."),
-                                                    dbc.Button("Ok", id="tab1send", outline=True, n_clicks=0,
-                                                               color="primary",
-                                                               className="mr-2"),
-                                                ], className='abcd', style={'display': 'None'}),
+            html.Div([dcc.Dropdown(id='shiftaxisdrop',
+                                   options=[{'label': i, 'value': i} for i in
+                                            dropdownhidden],
+                                   multi=False,
+                                   style={"cursor": "pointer", 'width': '180px', 'margin': '1rem'},
+                                   className='',
+                                   clearable=True,
+                                   placeholder='Choose Value...',
+                                   ),
+                      dbc.Button("See Surface", id="valuechange", n_clicks=0,
+                                 color="warning", style={'height': '2.5em', 'margin': '1.8rem'}),
+                      dbc.Button("Clean Surface", id="cleanshape", n_clicks=0,
+                                 color="danger", style={'height': '2.5em', 'margin': '1.8rem'}),
+                      html.Div(id='shiftaxis',
+                               children=[
+                                   dbc.Input(id='shift_x_axis',
+                                             type="number",
+                                             min=-100000, max=100000, step=1,
+                                             bs_size="sm",
+                                             value=0,
+                                             style={'width': '8rem', },
+                                             placeholder="Shift X axis..."),
+                                   dbc.Input(id='shift_y_axis',
+                                             type="number",
+                                             min=-100000, max=100000, step=1,
+                                             bs_size="sm",
+                                             value=0,
+                                             style={'width': '8rem', },
+                                             placeholder="Shift Y axis..."),
+                                   dbc.Button("Ok", id="tab1send", outline=True, n_clicks=0,
+                                              color="primary",
+                                              className="mr-2"),
+                               ], className='abcd', style={'display': 'None'}),
 
-                                       ], className='abcd'),
+                      ], className='abcd'),
 
-                             html.Div([dcc.Graph(id='graph',
-                                                 config={'displayModeBar': True,
-                                                         'scrollZoom': True,
-                                                         'modeBarButtonsToAdd': [
-                                                             'drawline',
-                                                             'drawrect',
-                                                             'drawopenpath',
-                                                             'select2d',
-                                                             'eraseshape',
-                                                         ]},
-                                                 style={'marginTop': 20},
-                                                 figure={
-                                                     'layout': {'legend': {'tracegroupgap': 0},
+            html.Div([dcc.Graph(id='graph',
+                                config={'displayModeBar': True,
+                                        'scrollZoom': True,
+                                        'modeBarButtonsToAdd': [
+                                            'drawline',
+                                            'drawrect',
+                                            'drawopenpath',
+                                            'select2d',
+                                            'eraseshape',
+                                        ]},
+                                style={'marginTop': 20},
+                                figure={
+                                    'layout': {'legend': {'tracegroupgap': 0},
 
-                                                                }
-                                                 }
+                                               }
+                                }
 
-                                                 ),
-                                       html.Div(daq.Slider(id="sliderHeightTab1",
-                                                           max=2100,
-                                                           min=400,
-                                                           value=530,
-                                                           step=100,
-                                                           size=400,
-                                                           vertical=True,
-                                                           updatemode='drag'), style={'margin': '20px'})],
-                                      className='abcdb'),
+                                ),
+                      html.Div(daq.Slider(id="sliderHeightTab1",
+                                          max=2100,
+                                          min=400,
+                                          value=530,
+                                          step=100,
+                                          size=400,
+                                          vertical=True,
+                                          updatemode='drag'), style={'margin': '20px'})],
+                     className='abcdb'),
 
-                             html.Div([daq.Slider(id="sliderWidthTab1",
-                                                  max=2000,
-                                                  min=600,
-                                                  value=1000,
-                                                  step=100,
-                                                  size=750,
-                                                  updatemode='drag'),
-                                       html.Div(id='output-data-upload', children=[])]),
+            html.Div([daq.Slider(id="sliderWidthTab1",
+                                 max=2000,
+                                 min=600,
+                                 value=1000,
+                                 step=100,
+                                 size=750,
+                                 updatemode='drag'),
+                      html.Div(id='output-data-upload', children=[])]),
 
-                             ])
+        ])
 
         return loadTab1
 
@@ -1924,6 +2038,8 @@ def res(val, hiddenval):
     print('val', val)
     hiddenval = val
     return hiddenval
+
+
 # @app.callback(Output("leftSideChecklistValueHiddendb", "children"),
 #               [Input('choosenChecklistLeftdb', 'value'), ],
 #               [State("leftSideChecklistValueHiddendb", "children")]
@@ -2023,6 +2139,7 @@ def firstchlefttab4(firstchoosen4, hiddenfirstchoosen4):
     hiddenfirstchoosen4.append(firstchoosen4)
     return hiddenfirstchoosen4
 
+
 # @app.callback(Output("firstchoosenvalhiddendb", "children"),
 #               [Input("firstChoosenValuedb", "value")],
 #               [State("firstchoosenvalhiddendb", "children")]
@@ -2044,17 +2161,20 @@ def secondchleft(secondchoosen):
 def secondchleftTab4(secondchoosen):
     return secondchoosen
 
+
 @app.callback(Output("secondchoosenvalhiddendb", "children"),
               [Input("secondChoosenValuedb", "value")],
               )
 def secondchleftdb(secondchoosen):
     return secondchoosen
 
+
 @app.callback(Output("secondchoosenvalhiddenpr", "children"),
               [Input("secondChoosenValuedb", "value")],
               )
 def secondchleftpr(secondchoosen):
     return secondchoosen
+
 
 @app.callback(Output("leftintegralfirsthidden", "children"),
               [Input("leftIntegralFirst", "value")],
@@ -2068,6 +2188,7 @@ def firstchright(leftintfirst):
               )
 def firstchrighttab4(leftintfirst):
     return leftintfirst
+
 
 # @app.callback(Output("leftintegralfirsthiddendb", "children"),
 #               [Input("leftIntegralFirstdb", "value")],
@@ -2089,6 +2210,7 @@ def secondchright(leftintsecond):
 def secondchright(leftintsecond):
     return leftintsecond
 
+
 # @app.callback(Output("leftintegralsecondhiddendb", "children"),
 #               [Input("leftIntegralSeconddb", "value")],
 #               )
@@ -2108,17 +2230,20 @@ def rightfrst(rightintfirst):
 def rightfrsttab4(rightintfirst):
     return rightintfirst
 
+
 @app.callback(Output("rightintegralfirsthiddendb", "children"),
               [Input("rightIntegralFirstdb", "value")],
               )
 def rightfrstdb(rightintfirst):
     return rightintfirst
 
+
 @app.callback(Output("rightintegralfirsthiddenpr", "children"),
               [Input("rightIntegralFirstpr", "value")],
               )
 def rightfrstpr(rightintfirst):
     return rightintfirst
+
 
 @app.callback(Output("rightintegralsecondhidden", "children"),
               [Input("rightIntegralSecond", "value")],
@@ -2133,17 +2258,19 @@ def rightscnd(rightintsecond):
 def rightscndtab4(rightintsecond):
     return rightintsecond
 
+
 @app.callback(Output("rightintegralsecondhiddendb", "children"),
               [Input("rightIntegralSeconddb", "value")],
               )
 def rightscnddb(rightintsecond):
     return rightintsecond
+
+
 @app.callback(Output("rightintegralsecondhiddenpr", "children"),
               [Input("rightIntegralSecondpr", "value")],
               )
 def rightscndpr(rightintsecond):
     return rightintsecond
-
 
 
 # @app.callback(Output('valueSendRighthidden','children'),
@@ -2202,10 +2329,10 @@ def shiftingaxes(val):
                State("dropdownRight", "value"),
                State('checklistvaleurhidden2', "children"),
                State("inputRightY_axishidden", "children"),
-               State("inputRightX_axishidden", "children"),]
+               State("inputRightX_axishidden", "children"), ]
               )
-def Inputaxis(sendnc,clrnc, y_val, x_val,droplist, checklist, y_axis, x_axis):
-    if y_val == None or x_val == None :
+def Inputaxis(sendnc, clrnc, y_val, x_val, droplist, checklist, y_axis, x_axis):
+    if y_val == None or x_val == None:
         raise PreventUpdate
     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
     print('droplist', droplist)
@@ -2219,7 +2346,7 @@ def Inputaxis(sendnc,clrnc, y_val, x_val,droplist, checklist, y_axis, x_axis):
         enum_y_axis = [j for j in enumerate(y_axis, 0)]
         enum_x_axis = [j for j in enumerate(x_axis, 0)]
         enum_checklist = [j for j in enumerate(checklist, 0)]
-        print('enum_y_axis',enum_y_axis)
+        print('enum_y_axis', enum_y_axis)
         print('enum_x_axis', enum_x_axis)
         print('enum_checklist', enum_checklist)
         print('len(checklist)', checklist)
@@ -2229,7 +2356,7 @@ def Inputaxis(sendnc,clrnc, y_val, x_val,droplist, checklist, y_axis, x_axis):
 
             print('y_axis', y_axis)
             print('x_axis', x_axis)
-            return (y_axis, x_axis,checklist)
+            return (y_axis, x_axis, checklist)
         else:
             no_update, no_update, no_update
 
@@ -2242,22 +2369,22 @@ def Inputaxis(sendnc,clrnc, y_val, x_val,droplist, checklist, y_axis, x_axis):
         print('clr xval', x_axis)
         return (y_axis, x_axis, checklist)
 
+
 @app.callback([Output("inputRightY_axis0", "value"),
                Output("inputRightX_axis0", "value")],
               [Input('valueClearRight0', 'n_clicks')],
               State("inputRightY_axis0", "value"),
               State("inputRightX_axis0", "value")
               )
-
-def clear(nclick, st1, st2) :
-    if st1 == None or st2 == None :
+def clear(nclick, st1, st2):
+    if st1 == None or st2 == None:
         raise PreventUpdate
-    if nclick > 0 :
+    if nclick > 0:
         st1 = 0
         st2 = 0
-        return st1,st2
-    else : no_update, no_update
-
+        return st1, st2
+    else:
+        no_update, no_update
 
 
 @app.callback([Output('graphhidden', 'figure'),
@@ -2294,7 +2421,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
          minValfirst, minValsecond, firstchoosen, secondchoosen, rightsidedrop, right_y_axis, right_x_axis,
          nclick, nc, cleanclick, axis, shift_x, shift_y, differance, retrieve, leftfirstval, leftsecondval,
          rightfirstval, rightsecondval, firstshape, secondshape, ):
-    if retrieve == None or retrieve == [] :
+    if retrieve == None or retrieve == []:
         raise PreventUpdate
     if retrieve != []:
         print('grapval', val)
@@ -2314,12 +2441,12 @@ def res2(val, radiograph, sliderheight, sliderwidth,
             dt = ["{}-{:02.0f}-{:02.0f}_{:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day, d.hour, d.minute,
                                                                            d.second) for d in df_shape.index]
         fig = go.Figure()
-        print('rightsidedrop',rightsidedrop)
+        print('rightsidedrop', rightsidedrop)
         print('right_y_axis', right_y_axis)
         print('right_x_axis', right_x_axis)
         if right_x_axis != [] and right_y_axis != []:
             for k in range(len(rightsidedrop)):
-                if len(rightsidedrop) == len(right_x_axis) and len(rightsidedrop) == len(right_y_axis) :
+                if len(rightsidedrop) == len(right_x_axis) and len(rightsidedrop) == len(right_y_axis):
                     x = int(right_x_axis[k])
                     y = int(right_y_axis[k])
                     z = int(right_x_axis[k]) / 100
@@ -2335,7 +2462,6 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                        showarrow=True,
                                        yshift=80
                                        )
-
 
         for i_val in range(len(val)):
             y_axis = df[val[i_val]]
@@ -2370,7 +2496,9 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                     else:
                         x_axis = df['date']
 
-            fig.add_trace(go.Scattergl(x=x_axis, y=y_axis, mode=radiograph,marker=dict(line=dict(width=0.2,color='white')), name=val[i_val]))
+            fig.add_trace(
+                go.Scattergl(x=x_axis, y=y_axis, mode=radiograph, marker=dict(line=dict(width=0.2, color='white')),
+                             name=val[i_val]))
             color = {0: 'blue', 1: 'red', 2: 'green', 3: 'purple', 4: 'orange'}
             if len(firstshape) == 2 and leftfirstval != firstshape[0] and leftfirstval != []:
                 if leftfirstval.startswith('T') == 1:
@@ -2647,8 +2775,9 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                             opacity=0.8,
                             line_color="#8896BF",
                         )]
+
             a = []
-            if nc > 0 :
+            if nc > 0:
                 a = controlShape()
             fig.update_layout(
                 autosize=False,
@@ -2707,10 +2836,12 @@ def res2(val, radiograph, sliderheight, sliderwidth,
     else:
         return (no_update, no_update)
 
+
 @app.callback(Output('graph', 'figure'),
-              [Input("graphhidden", "figure")],)
-def aa (a):
+              [Input("graphhidden", "figure")], )
+def aa(a):
     return a
+
 
 # @app.callback(Output('tab2Data', 'children'),
 #               [Input("my-toggle-switch", "on")],
@@ -2811,335 +2942,341 @@ def aa (a):
               [Input("my-toggle-switch", "on")],
               [State('tabs-with-classes', 'value')]
               )
-def LoadingDataTab4(on,tab):
-
+def LoadingDataTab4(on, tab):
     if on == 1 and tab == 'tab-4':
 
         data_list = ['Choose your value firstly']
 
         loadlist = html.Div([html.Div([
-                html.Div(id='tab4first', children = [html.Div([html.Div([
-                    dcc.RadioItems(id="radiographtab4",
-                                   options=[
-                                       {'label': 'X - Y illimité', 'value': 'optionlibre'},
-                                       {'label': 'Choose Values', 'value': 'choosevalue'},
-                                     ],
-                                   # value='choosevalue',
-                                   labelClassName='groupgraph',
-                                   labelStyle={'margin': '10px', },
-                                   inputStyle={'margin': '10px',}
-                                   ),
+            html.Div(id='tab4first', children=[html.Div([html.Div([
+                dcc.RadioItems(id="radiographtab4",
+                               options=[
+                                   {'label': 'X - Y illimité', 'value': 'optionlibre'},
+                                   {'label': 'Choose Values', 'value': 'choosevalue'},
+                               ],
+                               # value='choosevalue',
+                               labelClassName='groupgraph',
+                               labelStyle={'margin': '10px', },
+                               inputStyle={'margin': '10px', }
+                               ),
 
-                    dcc.RadioItems(id="radiograph4",
-                                   options=[
-                                       {'label': 'Point', 'value': 'markers'},
-                                       {'label': 'Line', 'value': 'lines'},
-                                       {'label': 'Line + Point', 'value': 'lines+markers'}],
-                                   value='markers',
-                                   labelClassName='groupgraph2',
-                                   labelStyle={'margin': '10px', },
-                                   inputStyle={'margin': '10px', }
-                                   ),
-                ], className="abtab4"),
-                                    html.Div([dcc.Dropdown(id='tabDropdownTop4',
-                                                           options=[{'label': i, 'value': i} for i in data_list],
-                                                           multi=True,
-                                                           style={"cursor": "pointer", 'display' : 'None'},
-                                                           className='stockSelectorClass2',
-                                                           clearable=True,
-                                                           placeholder='Select your y-axis value...',
+                dcc.RadioItems(id="radiograph4",
+                               options=[
+                                   {'label': 'Point', 'value': 'markers'},
+                                   {'label': 'Line', 'value': 'lines'},
+                                   {'label': 'Line + Point', 'value': 'lines+markers'}],
+                               value='markers',
+                               labelClassName='groupgraph2',
+                               labelStyle={'margin': '10px', },
+                               inputStyle={'margin': '10px', }
+                               ),
+            ], className="abtab4"),
+                html.Div([dcc.Dropdown(id='tabDropdownTop4',
+                                       options=[{'label': i, 'value': i} for i in data_list],
+                                       multi=True,
+                                       style={"cursor": "pointer", 'display': 'None'},
+                                       className='stockSelectorClass2',
+                                       clearable=True,
+                                       placeholder='Select your y-axis value...',
+                                       ),
+                          dcc.Dropdown(id='tabDropdownTopTab4',
+                                       options=[{'label': i, 'value': i} for i in data_list],
+                                       multi=True,
+                                       style={"cursor": "pointer", 'display': 'None'},
+                                       className='stockSelectorClass2',
+                                       clearable=True,
+                                       placeholder='Select your y-axis value...',
+                                       ),
+                          dcc.Dropdown(id='tabDropdownDownTab4',
+                                       options=[{'label': i, 'value': i} for i in data_list],
+                                       multi=True,
+                                       style={"cursor": "pointer", 'display': 'None'},
+                                       className='stockSelectorClass2',
+                                       clearable=True,
+                                       placeholder='Select your x-axis value...',
+                                       ),
+                          dcc.Dropdown(id='tabDropdownTop',
+                                       options=[{'label': i, 'value': i} for i in data_list],
+                                       multi=True,
+                                       style={"cursor": "pointer", 'display': 'None'},
+                                       className='stockSelectorClass2',
+                                       clearable=True,
+                                       placeholder='Select your y-axis value...',
+                                       ),
+                          dcc.Dropdown(id='tabDropdownDown',
+                                       options=[{'label': i, 'value': i} for i in data_list],
+                                       multi=True,
+                                       style={"cursor": "pointer", 'display': 'None'},
+                                       className='stockSelectorClass2',
+                                       clearable=True,
+                                       placeholder='Select your x-axis value...',
+                                       ),
+                          ], className="ab"),
+                html.Div([
+                    dbc.Checklist(id="calculintegraltab4",
+                                  options=[{'label': "Calculate Integral", 'value': 'calcultab4'}, ]
+                                  ,
+                                  value='',
+                                  labelClassName='groupgraph',
+                                  labelStyle={'margin': '10px', },
+                                  inputStyle={'margin': '10px', }),
+                ]), ], className="ac"),
+
+                html.Div([dcc.Dropdown(id="dropadd4",
+                                       options=[
+                                           {'label': 'Note', 'value': 'note'},
+                                           {'label': 'Header', 'value': 'header'},
+                                           {'label': 'x-axis', 'value': 'x_axis'},
+                                           {'label': 'y-axis', 'value': 'y_axis'},
+
+                                       ],
+                                       value='header',
+                                       ),
+                          dcc.Textarea(
+                              id='textarea4',
+                              value='',
+                              style={'width': '15rem', 'marginTop': '0.5rem'},
+                              autoFocus='Saisir',
+                          ),
+                          ], className="aatab4"),
+
+                html.Button('Add Text', id='addText4', n_clicks=0, style={'marginTop': '1.5rem', 'marginLeft': '2rem'}),
+
+            ], className="tabDesigntab4", ),
+            html.Div(id='tab4check', children=
+            [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValueTab4',
+                                              options=[{'label': i, 'value': i} for i in
+                                                       data_list],
+                                              multi=False,
+                                              style={"cursor": "pointer", 'width': '180px'},
+                                              className='',
+                                              clearable=True,
+                                              placeholder='First Value...',
+                                              ),
+                                 dbc.Input(id='leftIntegralFirstTab4',
+                                           type="text",
+                                           debounce=True,
+                                           min=-10000, max=10000, step=1,
+                                           bs_size="sm",
+                                           style={'width': '8rem', "marginTop": "1.5rem"},
+                                           autoFocus=True,
+                                           placeholder="first point"),
+                                 dbc.Input(id='leftIntegralSecondTab4',
+                                           type="text",
+                                           debounce=True,
+                                           min=-10000, max=10000, step=1,
+                                           bs_size="sm",
+                                           style={'width': '8rem', "marginTop": "1.5rem"},
+                                           autoFocus=True,
+                                           placeholder="second point"),
+                                 dbc.Input(id='leftIntegralTab4',
+                                           type="text",
+                                           min=-10000, max=10000, step=1,
+                                           bs_size="sm",
+                                           style={'width': '9rem', "marginTop": "1.5rem"},
+                                           autoFocus=True,
+                                           placeholder="total integration"),
+                                 ]), html.Div([html.Button("Save", id="write_excelTab4", n_clicks=0,
+                                                           style={'fontSize': '1rem', 'width': '4rem',
+                                                                  'margin': '1rem'},
                                                            ),
-                                              dcc.Dropdown(id='tabDropdownTopTab4',
-                                                  options=[{'label': i, 'value': i} for i in data_list],
-                                                  multi=True,
-                                                  style={"cursor": "pointer", 'display' : 'None'},
-                                                  className='stockSelectorClass2',
-                                                  clearable=True,
-                                                  placeholder='Select your y-axis value...',
-                                                  ),
-                                    dcc.Dropdown(id='tabDropdownDownTab4',
-                                                  options=[{'label': i, 'value': i} for i in data_list],
-                                                  multi=True,
-                                                  style={"cursor": "pointer",'display' : 'None'},
-                                                  className='stockSelectorClass2',
-                                                  clearable=True,
-                                                  placeholder='Select your x-axis value...',
-                                                  ),
-                                    dcc.Dropdown(id='tabDropdownTop',
-                                                           options=[{'label': i, 'value': i} for i in data_list],
-                                                           multi=True,
-                                                           style={"cursor": "pointer", 'display' : 'None'},
-                                                           className='stockSelectorClass2',
-                                                           clearable=True,
-                                                           placeholder='Select your y-axis value...',
-                                                           ),
-                                    dcc.Dropdown(id='tabDropdownDown',
-                                                           options=[{'label': i, 'value': i} for i in data_list],
-                                                           multi=True,
-                                                           style={"cursor": "pointer", 'display' : 'None'},
-                                                           className='stockSelectorClass2',
-                                                           clearable=True,
-                                                           placeholder='Select your x-axis value...',
-                                                           ),
-                                              ], className = "ab"),
-                                    html.Div([
-                                              dbc.Checklist(id="calculintegraltab4",
-                                                             options=[{'label': "Calculate Integral", 'value': 'calcultab4'},]
-                                                                      ,
-                                                             value='',
-                                                             labelClassName='groupgraph',
-                                                             labelStyle={'margin': '10px', },
-                                                             inputStyle={'margin': '10px', }),
-                                              ]), ], className="ac"),
+                                               html.A(html.Button("Download Data", id='download_dataTab4',
+                                                                  n_clicks=0,
+                                                                  style={'fontSize': '1rem', 'width': '9rem',
+                                                                         'margin': '1rem'}, ),
+                                                      id='download_excelTab4',
+                                                      # # download="rawdata.csv",
+                                                      href="/download_excel/",
+                                                      # target="_blank"
+                                                      )
+                                               ], className='abTab4')
 
-                          html.Div([dcc.Dropdown(id="dropadd4",
-                                                 options=[
-                                                     {'label': 'Note', 'value': 'note'},
-                                                     {'label': 'Header', 'value': 'header'},
-                                                     {'label': 'x-axis', 'value': 'x_axis'},
-                                                     {'label': 'y-axis', 'value': 'y_axis'},
+                       ]),
+             html.Div([dbc.Checklist(
+                 id='operateurTab4',
+                 options=[{'label': i, 'value': i} for i in
+                          ['Plus', 'Moins', 'Multiplie', 'Division']],
+                 value=[],
+                 labelStyle={"display": "Block"},
+             ), ]),
+             html.Div([
+                 dcc.Dropdown(id='secondChoosenValueTab4',
+                              options=[{'label': i, 'value': i} for i in
+                                       data_list],
+                              multi=False,
+                              style={"cursor": "pointer", 'width': '180px'},
+                              className='',
+                              clearable=True,
+                              placeholder='Second Value...',
+                              ),
+                 dbc.Input(id='rightIntegralFirstTab4',
+                           type="text",
+                           min=-10000, max=10000, step=1,
+                           bs_size="sm",
+                           style={'width': '8rem', "marginTop": "1.5rem"},
+                           autoFocus=True,
+                           placeholder="first point"),
+                 dbc.Input(id='rightIntegralSecondTab4',
+                           type="text",
+                           min=-10000, max=10000, step=1,
+                           bs_size="sm",
+                           style={'width': '8rem', "marginTop": "1.5rem"},
+                           autoFocus=True,
+                           placeholder="second point"),
+                 dbc.Input(id='rightIntegralTab4',
+                           type="text",
+                           min=-10000, max=10000, step=1,
+                           bs_size="sm",
+                           style={'width': '9rem', "marginTop": "1.5rem"},
+                           autoFocus=True,
+                           placeholder="total integration")
+             ]),
+             html.Div([dbc.Input(id='operationTab4',
+                                 type="text",
+                                 min=-10000, max=10000, step=1,
+                                 bs_size="sm",
+                                 style={'width': '10rem', "marginTop": "2rem",
+                                        'height': '5rem', 'textAlign': 'center'},
+                                 autoFocus=True,
+                                 placeholder="result"),
+                       dbc.Input(id='intersectionTab4',
+                                 type="text",
+                                 min=-10000, max=10000, step=1,
+                                 bs_size="sm",
+                                 style={'width': '10rem', "marginTop": "2rem",
+                                        'height': '2rem', 'textAlign': 'center'},
+                                 autoFocus=True,
+                                 placeholder="Intersection")], className='aa')
+             ], style={'display': 'None'},
+                     className="abdbase"),
 
-                                                 ],
-                                                 value='header',
-                                                 ),
-                                    dcc.Textarea(
-                                        id='textarea4',
-                                        value='',
-                                        style={'width': '15rem', 'marginTop': '0.5rem'},
-                                        autoFocus='Saisir',
-                                    ),
-                                    ], className="aatab4"),
+            html.Div(id='tab4second', children=[dcc.Dropdown(id='shiftaxisdroptab4',
+                                                             options=[{'label': i, 'value': i} for i in
+                                                                      []],
+                                                             multi=False,
+                                                             style={"cursor": "pointer", 'width': '180px',
+                                                                    'margin': '1rem'},
+                                                             className='',
+                                                             clearable=True,
+                                                             placeholder='Choose Value...',
+                                                             ),
+                                                dbc.Button("See Surface", id="valuechangetab4", n_clicks=0,
+                                                           color="warning",
+                                                           style={'height': '2.5em', 'margin': '1.8rem'}),
+                                                dbc.Button("Clean Surface", id="cleanshapetab4", n_clicks=0,
+                                                           color="danger",
+                                                           style={'height': '2.5em', 'margin': '1.8rem'}),
+                                                html.Div(id='shiftaxistab4',
+                                                         children=[
+                                                             dbc.Input(id='shift_x_axistab4',
+                                                                       type="number",
+                                                                       min=-100000, max=100000, step=1,
+                                                                       bs_size="sm",
+                                                                       value=0,
+                                                                       style={'width': '8rem', },
+                                                                       placeholder="Shift X axis..."),
+                                                             dbc.Input(id='shift_y_axistab4',
+                                                                       type="number",
+                                                                       min=-100000, max=100000, step=1,
+                                                                       bs_size="sm",
+                                                                       value=0,
+                                                                       style={'width': '8rem', },
+                                                                       placeholder="Shift Y axis..."),
+                                                             dbc.Button("Ok", id="tab4send", outline=True, n_clicks=0,
+                                                                        color="primary",
+                                                                        className="mr-2"),
+                                                         ], className='abcd',
+                                                         style={'display': 'None'})
 
-                          html.Button('Add Text', id='addText4', n_clicks=0, style={'marginTop': '1.5rem', 'marginLeft' : '2rem'}),
+                                                ], className='abcd'),
 
-                          ], className="tabDesigntab4", ),
-                    html.Div(id = 'tab4check', children =
-                                        [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValueTab4',
-                                                     options=[{'label': i, 'value': i} for i in
-                                                              data_list],
-                                                     multi=False,
-                                                     style={"cursor": "pointer", 'width': '180px'},
-                                                     className='',
-                                                     clearable=True,
-                                                     placeholder='First Value...',
-                                                     ),
-                                        dbc.Input(id='leftIntegralFirstTab4',
-                                                  type="text",
-                                                  debounce=True,
-                                                  min=-10000, max=10000, step=1,
-                                                  bs_size="sm",
-                                                  style={'width': '8rem', "marginTop": "1.5rem"},
-                                                  autoFocus=True,
-                                                  placeholder="first point"),
-                                        dbc.Input(id='leftIntegralSecondTab4',
-                                                  type="text",
-                                                  debounce=True,
-                                                  min=-10000, max=10000, step=1,
-                                                  bs_size="sm",
-                                                  style={'width': '8rem', "marginTop": "1.5rem"},
-                                                  autoFocus=True,
-                                                  placeholder="second point"),
-                                        dbc.Input(id='leftIntegralTab4',
-                                                  type="text",
-                                                  min=-10000, max=10000, step=1,
-                                                  bs_size="sm",
-                                                  style={'width': '9rem', "marginTop": "1.5rem"},
-                                                  autoFocus=True,
-                                                  placeholder="total integration"),
-                                        ] ), html.Div([html.Button("Save", id="write_excelTab4", n_clicks=0,
-                                                                  style={'fontSize': '1rem', 'width': '4rem', 'margin': '1rem'},
-                                                                  ),
-                                                      html.A(html.Button("Download Data", id='download_dataTab4',
-                                                                         n_clicks=0,
-                                                                         style={'fontSize': '1rem', 'width': '9rem',
-                                                                                'margin': '1rem'}, ),
-                                                             id='download_excelTab4',
-                                                             # # download="rawdata.csv",
-                                                             href="/download_excel/",
-                                                             # target="_blank"
-                                                             )
-                                                      ], className='abTab4')
+            html.Div(id='tab4third', children=[dcc.Store(id='tab4datastore'),
+                                               dcc.Graph(id='graph4', config={'displayModeBar': True,
+                                                                              'scrollZoom': True,
+                                                                              'modeBarButtonsToAdd': [
+                                                                                  'drawopenpath',
+                                                                                  'drawcircle',
+                                                                                  'eraseshape',
+                                                                                  'select2d',
+                                                                              ]},
+                                                         figure={
+                                                             'layout': {'legend': {'tracegroupgap': 0},
 
-                              ]),
-                    html.Div([dbc.Checklist(
-                        id='operateurTab4',
-                        options=[{'label': i, 'value': i} for i in
-                                 ['Plus', 'Moins', 'Multiplie', 'Division']],
-                        value=[],
-                        labelStyle={"display": "Block"},
-                    ), ]),
-                    html.Div([
-                        dcc.Dropdown(id='secondChoosenValueTab4',
-                                           options=[{'label': i, 'value': i} for i in
-                                                    data_list],
-                                           multi=False,
-                                           style={"cursor": "pointer", 'width': '180px'},
-                                           className='',
-                                           clearable=True,
-                                           placeholder='Second Value...',
-                                           ),
-                              dbc.Input(id='rightIntegralFirstTab4',
-                                        type="text",
-                                        min=-10000, max=10000, step=1,
-                                        bs_size="sm",
-                                        style={'width': '8rem', "marginTop": "1.5rem"},
-                                        autoFocus=True,
-                                        placeholder="first point"),
-                              dbc.Input(id='rightIntegralSecondTab4',
-                                        type="text",
-                                        min=-10000, max=10000, step=1,
-                                        bs_size="sm",
-                                        style={'width': '8rem', "marginTop": "1.5rem"},
-                                        autoFocus=True,
-                                        placeholder="second point"),
-                              dbc.Input(id='rightIntegralTab4',
-                                        type="text",
-                                        min=-10000, max=10000, step=1,
-                                        bs_size="sm",
-                                        style={'width': '9rem', "marginTop": "1.5rem"},
-                                        autoFocus=True,
-                                        placeholder="total integration")
-                              ]),
-                    html.Div([dbc.Input(id='operationTab4',
-                                        type="text",
-                                        min=-10000, max=10000, step=1,
-                                        bs_size="sm",
-                                        style={'width': '10rem', "marginTop": "2rem",
-                                               'height': '5rem', 'textAlign': 'center'},
-                                        autoFocus=True,
-                                        placeholder="result"),
-                              dbc.Input(id='intersectionTab4',
-                                        type="text",
-                                        min=-10000, max=10000, step=1,
-                                        bs_size="sm",
-                                        style={'width': '10rem', "marginTop": "2rem",
-                                               'height': '2rem', 'textAlign': 'center'},
-                                        autoFocus=True,
-                                        placeholder="Intersection")], className='aa')
-                              ],style = {'display' : 'None'},
-                    className="abdbase"),
+                                                                        }
+                                                         }
+                                                         ),
+                                               html.Div(daq.Slider(id="sliderHeightTab4",
+                                                                   max=2100,
+                                                                   min=400,
+                                                                   value=530,
+                                                                   step=100,
+                                                                   size=400,
+                                                                   vertical=True,
+                                                                   updatemode='drag'), style={'margin': '10px'})],
+                     className='abcTab4'),
 
-            html.Div(id='tab4second', children = [dcc.Dropdown(id='shiftaxisdroptab4',
-                                   options=[{'label': i, 'value': i} for i in
-                                            []],
-                                   multi=False,
-                                   style={"cursor": "pointer", 'width': '180px', 'margin': '1rem'},
-                                   className='',
-                                   clearable=True,
-                                   placeholder='Choose Value...',
-                                   ),
-                                   dbc.Button("See Surface", id="valuechangetab4", n_clicks=0,
-                                   color="warning",
-                                   style={'height': '2.5em', 'margin': '1.8rem'}),
-                                   dbc.Button("Clean Surface", id="cleanshapetab4", n_clicks=0,
-                                                color="danger", style={'height': '2.5em', 'margin': '1.8rem'}),
-                      html.Div(id='shiftaxistab4',
-                               children=[
-                                   dbc.Input(id='shift_x_axistab4',
-                                             type="number",
-                                             min=-100000, max=100000, step=1,
-                                             bs_size="sm",
-                                             value=0,
-                                             style={'width': '8rem', },
-                                             placeholder="Shift X axis..."),
-                                   dbc.Input(id='shift_y_axistab4',
-                                             type="number",
-                                             min=-100000, max=100000, step=1,
-                                             bs_size="sm",
-                                             value=0,
-                                             style={'width': '8rem', },
-                                             placeholder="Shift Y axis..."),
-                                   dbc.Button("Ok", id="tab4send", outline=True, n_clicks=0, color="primary",
-                                              className="mr-2"),
-                               ], className='abcd',
-                               style={'display': 'None'})
-
-                      ], className='abcd'),
-
-            html.Div(id='tab4third', children = [dcc.Store(id = 'tab4datastore'),
-                       dcc.Graph(id='graph4', config={'displayModeBar': True,
-                                                         'scrollZoom': True,
-                                                         'modeBarButtonsToAdd': [
-                                                             'drawopenpath',
-                                                             'drawcircle',
-                                                             'eraseshape',
-                                                             'select2d',
-                                                         ]},
-                                    figure={
-                                        'layout': {'legend': {'tracegroupgap': 0},
-
-                                                   }
-                                    }
-                                    ),
-                          html.Div(daq.Slider(id="sliderHeightTab4",
-                                     max=2100,
-                                     min=400,
-                                     value=530,
-                                     step=100,
-                                     size=400,
-                                     vertical=True,
-                                     updatemode='drag'), style = {'margin' : '10px'})], className='abcTab4'),
-
-                html.Div([daq.Slider(id="sliderWidthTab4",
-                                     max=2000,
-                                     min=600,
-                                     value=1500,
-                                     step=100,
-                                     size = 750,
-                                     updatemode='drag'),
-                          html.Div(id="tab4DashTable", children=[])
-                          ]),
-            ]),], style={'background' : 'White'})
+            html.Div([daq.Slider(id="sliderWidthTab4",
+                                 max=2000,
+                                 min=600,
+                                 value=1500,
+                                 step=100,
+                                 size=750,
+                                 updatemode='drag'),
+                      html.Div(id="tab4DashTable", children=[])
+                      ]),
+        ]), ], style={'background': 'White'})
 
         return loadlist
-    else : no_update
+    else:
+        no_update
+
 
 @app.callback([Output('fourcolumnsdivusercontrols', 'style'),
-               Output('eightcolumnsdivforcharts', 'style'),],
-               # Output('tab4third', 'style'),],
-              Input('tabs-with-classes', 'value'),)
+               Output('eightcolumnsdivforcharts', 'style'), ],
+              # Output('tab4third', 'style'),],
+              Input('tabs-with-classes', 'value'), )
+def tab4enlarger(tab):
+    if tab == 'tab-4':
+        return {'display': 'None'}, {'width': '260%', 'margin': '1rem'}
+    else:
+        return {'visibility': 'visible'}, {'visibility': 'visible'}
 
-def tab4enlarger(tab) :
-    if tab == 'tab-4' :
-        return {'display': 'None'}, {'width' : '260%', 'margin' : '1rem'}
-    else : return {'visibility': 'visible'}, {'visibility': 'visible'}
 
-
-
-@app.callback(Output('tab4check','style'),
+@app.callback(Output('tab4check', 'style'),
               [Input("calculintegraltab4", "value")],
               )
 def showintegral(show):
-    if show == ['calcultab4'] :
-        return {'visibility' : 'visible'}
+    if show == ['calcultab4']:
+        return {'visibility': 'visible'}
     return {'display': 'None'}
 
-@app.callback(Output('dbcheck','style'),
+
+@app.callback(Output('dbcheck', 'style'),
               [Input("calculintegraldb", "value")],
               )
 def showintegral(show):
-    if show == ['calculdb'] :
-        return {'visibility' : 'visible'}
+    if show == ['calculdb']:
+        return {'visibility': 'visible'}
     return {'display': 'None'}
-@app.callback(Output('prcheck','style'),
+
+
+@app.callback(Output('prcheck', 'style'),
               [Input("calculintegralpr", "value")],
               )
 def showintegralpr(show):
-    if show == ['calculpr'] :
-        return {'visibility' : 'visible'}
+    if show == ['calculpr']:
+        return {'visibility': 'visible'}
     return {'display': 'None'}
-
-
 
 
 @app.callback([Output("tabDropdownTop", "options"), Output("tabDropdownDown", "options")],
               [Input("datastore", "data")])
 def dropdownlistcontrol(retrieve):
-    if retrieve == [] :
+    if retrieve == []:
         raise PreventUpdate
     if retrieve != []:
         df = pd.DataFrame(retrieve)
-        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un')!=1 and i != 'index' and i != 'date']
+        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
         return (dff, dff)
     else:
         return (no_update, no_update)
@@ -3148,29 +3285,28 @@ def dropdownlistcontrol(retrieve):
 @app.callback([Output("tabDropdownTopTab4", "options"), Output("tabDropdownDownTab4", "options")],
               [Input("datastore", "data")])
 def dropdownlistcontrolTab4Second(retrieve):
-    if retrieve == [] :
+    if retrieve == []:
         raise PreventUpdate
     if retrieve != []:
         df = pd.DataFrame(retrieve)
-        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un')!=1 and i != 'index' and i != 'date']
+        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
         return (dff, dff)
     else:
         return (no_update, no_update)
+
 
 @app.callback([Output('tabDropdownTopTab4', 'style'),
                Output('tabDropdownDownTab4', 'style'),
                Output('tabDropdownTop', 'style'),
                Output('tabDropdownDown', 'style')],
-              [Input('radiographtab4', 'value')],)
-
-def chooseradio(radio) :
-    if radio == None :
+              [Input('radiographtab4', 'value')], )
+def chooseradio(radio):
+    if radio == None:
         raise PreventUpdate
-    if radio == 'choosevalue' :
-        return {'visibility': 'visible'},{'visibility': 'visible'},{'display': 'None'},{'display': 'None'}
-    if radio == 'optionlibre' :
-        return {'display': 'None'},{'display': 'None'},{'visibility': 'visible'},{'visibility': 'visible'},
-
+    if radio == 'choosevalue':
+        return {'visibility': 'visible'}, {'visibility': 'visible'}, {'display': 'None'}, {'display': 'None'}
+    if radio == 'optionlibre':
+        return {'display': 'None'}, {'display': 'None'}, {'visibility': 'visible'}, {'visibility': 'visible'},
 
 
 @app.callback([Output('tab2hiddenValuex_axis', 'children'),
@@ -3179,12 +3315,14 @@ def chooseradio(radio) :
                Input('tabDropdownDown', 'value'),
                Input('radiographtab4', 'value')],
               )
-def contractdropdown(x,y,radioval):
+def contractdropdown(x, y, radioval):
     if x == [] or x == None or y == None or y == []:
         raise PreventUpdate
     if radioval == 'optionlibre':
-        return x,y
-    else : return [],[]
+        return x, y
+    else:
+        return [], []
+
 
 @app.callback([Output('tab4hiddenValuex_axissecond', 'children'),
                Output('tab4hiddenValuey_axissecond', 'children'),
@@ -3193,35 +3331,36 @@ def contractdropdown(x,y,radioval):
                Input('tabDropdownDownTab4', 'value'),
                Input('radiographtab4', 'value')]
               )
-def contractdropdown2(valxsecond,valysecond, radio):
-    if valxsecond == None or valysecond == None  or radio == None :
+def contractdropdown2(valxsecond, valysecond, radio):
+    if valxsecond == None or valysecond == None or radio == None:
         raise PreventUpdate
 
-    if radio == 'choosevalue' :
+    if radio == 'choosevalue':
         return valxsecond, valysecond
 
-    else : return [],[]
+    else:
+        return [], []
 
 
 @app.callback(Output("tabDropdownTop4", "options"),
               [Input("datastore", "data")])
 def dropdownlistcontrolTab4First(retrieve):
-    if retrieve == [] :
+    if retrieve == []:
         raise PreventUpdate
     if retrieve != []:
         df = pd.DataFrame(retrieve)
 
-        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('TG')==1 or i[-2:] != 'ts']
+        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('TG') == 1 or i[-2:] != 'ts']
         return dff
     else:
         return no_update
 
+
 @app.callback(
-     Output('output_s', 'children'),
+    Output('output_s', 'children'),
     [Input('tabDropdownTopTab4', 'value'),
      Input('tabDropdownTop', 'value'),
      Input('radiographtab4', 'value')], )
-
 def container4(val2, val3, radio):
     if val2 == None and val3 == None or radio == None:
         raise PreventUpdate
@@ -3243,27 +3382,26 @@ def container4(val2, val3, radio):
             return ''
 
 
-
 @app.callback(
-      Output('shiftaxisdroptab4', 'options'),
-     [Input('tabDropdownTopTab4', 'value'),
-      Input('tabDropdownTop', 'value'),
-      Input('radiographtab4', 'value')],)
-
-def container5 (val2, val3, radio) :
+    Output('shiftaxisdroptab4', 'options'),
+    [Input('tabDropdownTopTab4', 'value'),
+     Input('tabDropdownTop', 'value'),
+     Input('radiographtab4', 'value')], )
+def container5(val2, val3, radio):
     if val2 == None and val3 == None or radio == None:
         raise PreventUpdate
 
     a = []
 
     if radio == 'choosevalue':
-        if val2 != None :
+        if val2 != None:
             a = val2
 
     if radio == 'optionlibre':
         if val3 != None:
             a = val3
     return [{'label': i, 'value': i} for i in a]
+
 
 # @app.callback(
 #       [Output('firstChoosenValueTab4', 'value'),
@@ -3277,23 +3415,23 @@ def container5 (val2, val3, radio) :
 
 
 @app.callback(
-      [Output('firstChoosenValueTab4', 'options'),
-       Output('secondChoosenValueTab4', 'options')],
-      [Input('output_s', 'children'),
-       Input('radiographtab4', 'value')],)
-
-def container4_2 (val,radio) :
+    [Output('firstChoosenValueTab4', 'options'),
+     Output('secondChoosenValueTab4', 'options')],
+    [Input('output_s', 'children'),
+     Input('radiographtab4', 'value')], )
+def container4_2(val, radio):
     if val == None or val == []:
         raise PreventUpdate
     a = []
     if radio == 'choosevalue':
         print('vallllllllll output olan2', val)
-        a = [{'label' : i, 'value' : i} for i in val],[{'label' : i, 'value' : i} for i in val]
+        a = [{'label': i, 'value': i} for i in val], [{'label': i, 'value': i} for i in val]
     elif radio == 'optionlibre':
         print('vallllllllll output olan3', val)
-        a = [{'label' : i, 'value' : i} for i in val],[{'label' : i, 'value' : i} for i in val]
+        a = [{'label': i, 'value': i} for i in val], [{'label': i, 'value': i} for i in val]
     print('son radioya gore optionslar', val)
     return a
+
 
 @app.callback([Output('hiddenTextxaxis', 'children'), Output('hiddenTextyaxis', 'children'),
                Output('hiddenTextHeader', 'children'), Output('hiddenTextNote', 'children')],
@@ -3353,43 +3491,38 @@ def detailedGraph4(addtextclick, textarea, add, g1, g2, head, note):
         return (no_update, no_update, no_update, no_update)
 
 
-
 @app.callback(Output('shiftaxistab4', 'style'),
-              [Input('shiftaxisdroptab4','value')])
-
+              [Input('shiftaxisdroptab4', 'value')])
 def shiftingaxestab4(val):
-
-    if val == None :
+    if val == None:
         return {'display': 'None'}
-    return {'visibility': 'visible', 'marginTop' : '2rem'}
+    return {'visibility': 'visible', 'marginTop': '2rem'}
 
 
 @app.callback(Output('shiftaxisdroptab4hidden', 'children'),
-              [Input('shiftaxisdroptab4', 'value')],)
-
+              [Input('shiftaxisdroptab4', 'value')], )
 def relay4(val):
     return val
 
-@app.callback(Output('shift_x_axistab4hidden', 'children'),
-              [Input('shift_x_axistab4', 'value')],)
 
+@app.callback(Output('shift_x_axistab4hidden', 'children'),
+              [Input('shift_x_axistab4', 'value')], )
 def relay5(val):
     return val
 
-@app.callback(Output('shift_y_axistab4hidden', 'children'),
-              [Input('shift_y_axistab4', 'value')],)
 
+@app.callback(Output('shift_y_axistab4hidden', 'children'),
+              [Input('shift_y_axistab4', 'value')], )
 def relay6(val):
     return val
 
-@app.callback(Output('radiographtab4hidden', 'children'),
-              [Input('radiographtab4', 'value')],)
 
+@app.callback(Output('radiographtab4hidden', 'children'),
+              [Input('radiographtab4', 'value')], )
 def relay7(valradio):
-    if valradio == None :
+    if valradio == None:
         raise PreventUpdate
     return valradio
-
 
 
 @app.callback(Output('graph4', 'figure'),
@@ -3404,7 +3537,7 @@ def relay7(valradio):
                Input('hiddenTextyaxis4', 'children'),
                Input('hiddenTextHeader4', 'children'),
                Input('hiddenTextNote4', 'children'),
-               Input('tab4send','n_clicks'),
+               Input('tab4send', 'n_clicks'),
                Input('firstChoosenValueTab4', 'value'),
                Input('secondChoosenValueTab4', 'value'),
                Input('valuechangetab4', 'n_clicks'),
@@ -3424,17 +3557,17 @@ def relay7(valradio):
                State('rightIntegralSecondTab4', 'value'),
                ]
               )
-def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
-                   slideheight, slidewidth, g1, g2,head, note,nclick,firstchoosen, secondchoosen,nc,
-                   valx2, valy2, cleanclick, axisdrop,shift_x,shift_y, retrieve, firstshape, secondshape,
-                   leftfirstval, leftsecondval, rightfirstval, rightsecondval,):
+def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
+                   slideheight, slidewidth, g1, g2, head, note, nclick, firstchoosen, secondchoosen, nc,
+                   valx2, valy2, cleanclick, axisdrop, shift_x, shift_y, retrieve, firstshape, secondshape,
+                   leftfirstval, leftsecondval, rightfirstval, rightsecondval, ):
     if g1 == None or g2 == None or head == None or note == None or radioval == []:
         raise PreventUpdate
     print('firstchoosen', firstchoosen)
-    if radioval != None :
-        if len(retrieve) > 0 :
+    if radioval != None:
+        if len(retrieve) > 0:
             df = pd.read_excel("appending.xlsx")
-            df.dropna(axis = 0, inplace = True)
+            df.dropna(axis=0, inplace=True)
             fig = go.Figure()
             print('firstshape ne olmali', firstshape)
 
@@ -3659,6 +3792,7 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                         )]
                 else:
                     return no_update
+
             if len(firstshape) == 2 and leftfirstval != firstshape[0] and leftfirstval != []:
                 if leftfirstval.startswith('T') == 1:
                     del firstshape[0]
@@ -3711,7 +3845,7 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                 del secondshape[1]
             if len(firstshape) == 2 and firstchoosen == None:
                 del firstshape[1]
-            print('firstshape',firstshape)
+            print('firstshape', firstshape)
             print('secondshape', secondshape)
             print('radioval', radioval)
             if radioval == 'optionlibre' and valx2 != None and valy2 != None:
@@ -3760,7 +3894,9 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                         for k in range(len(valx2)):
                             a = df[valy2[j]]
                             b = df[valx2[k]]
-                            fig.add_trace(go.Scattergl(x=a, y=b, mode=radio,marker=dict(line=dict(width=0.2,color='white')), name="{}/{}".format(valy2[j], valx2[k])))
+                            fig.add_trace(
+                                go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
+                                             name="{}/{}".format(valy2[j], valx2[k])))
                             a = []
                             if nc > 0:
                                 a = controlShape()
@@ -3783,35 +3919,35 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                 shapes=a if (nc > cleanclick) else [],
                                 height=slideheight,
                                 margin=dict(
-                                        l=50,
-                                        r=50,
-                                        b=50,
-                                        t=50,
-                                        pad=4
+                                    l=50,
+                                    r=50,
+                                    b=50,
+                                    t=50,
+                                    pad=4
                                 ),
-                                    # hovermode='x unified',
+                                # hovermode='x unified',
                                 uirevision=valy2[0], ),
                             fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                                   xref="paper", yref="paper",
-                                                   x=0, y=0.7, showarrow=False)
+                                               xref="paper", yref="paper",
+                                               x=0, y=0.7, showarrow=False)
 
                     return fig
 
             if radioval == 'choosevalue' and len(valxsecond) > 0 and len(valysecond) > 0:
                 lst = []
-                for j in zip(valysecond,valxsecond):
+                for j in zip(valysecond, valxsecond):
                     lst.append(j)
-                print('lst',lst)
+                print('lst', lst)
                 s = -1
                 m = ''
                 for i in range(len(lst)):
-                    if  lst[i][0][-2].isdigit()==1:
+                    if lst[i][0][-2].isdigit() == 1:
                         m = lst[i][0][-2]
                         m = 'T' + m
-                    elif lst[i][0][-1].isdigit()==1:
+                    elif lst[i][0][-1].isdigit() == 1:
                         m = lst[i][0][-1]
                         m = 'T' + m
-                    s+=1
+                    s += 1
                     a = df[lst[i][0]]
                     b = df[lst[i][1]]
                     if nclick > 0:
@@ -3838,14 +3974,16 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
 
-                    fig.add_trace(go.Scattergl(x=a, y=b, mode=radio,marker=dict(line=dict(width=0.2,color='white')), name="{}/{}".format(valxsecond[s], valysecond[s])))
+                    fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
+                                               name="{}/{}".format(valxsecond[s], valysecond[s])))
+
                     def controlShape():
                         pathline = ''
                         pathline2 = ''
                         minValfirst = 0
                         minValsecond = 0
                         val = 0
-                        if firstchoosen != None and secondchoosen != None :
+                        if firstchoosen != None and secondchoosen != None:
                             if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:
                                 if int(firstshape[1]) > int(firstshape[0]):
                                     pathline = ''
@@ -3854,28 +3992,34 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     if ':' or '-' in df[lst[i][0]][0]:
                                         print('burda miyim1')
                                         for k in rangeshape:
-                                            if k == rangeshape[0] :
+                                            if k == rangeshape[0]:
                                                 if lst[i][1] == firstchoosen:
                                                     val = i
-                                                print('df[lst[i][0]][k]',df[lst[i][0]][k])
-                                                pathline += 'M ' + str(int(df[lst[val][0]][k])) + ', ' + str(minValsecond) + ' L' + \
-                                                            str(int(df[lst[val][0]][k])) + ', ' + str(df[firstchoosen][k]) + ' '
+                                                print('df[lst[i][0]][k]', df[lst[i][0]][k])
+                                                pathline += 'M ' + str(int(df[lst[val][0]][k])) + ', ' + str(
+                                                    minValsecond) + ' L' + \
+                                                            str(int(df[lst[val][0]][k])) + ', ' + str(
+                                                    df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
                                                 if lst[i][1] == firstchoosen:
                                                     val = i
-                                                pathline += ' L' + str(int(df[lst[val][0]][k])) + ', ' + str(df[firstchoosen][k])
+                                                pathline += ' L' + str(int(df[lst[val][0]][k])) + ', ' + str(
+                                                    df[firstchoosen][k])
                                         pathline += ' L' + str(int(df[lst[val][0]][k])) + ', ' + str(minValsecond)
                                         pathline += ' Z'
                                     else:
                                         print('yoksa burda miyim')
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline += 'M ' + str(int(df[lst[val][0]][k])) + ', ' + str(minValfirst) + ' L' + \
-                                                            str(int(df[lst[val][0]][k])) + ', ' + str(df[firstchoosen][k]) + ' '
+                                                pathline += 'M ' + str(int(df[lst[val][0]][k])) + ', ' + str(
+                                                    minValfirst) + ' L' + \
+                                                            str(int(df[lst[val][0]][k])) + ', ' + str(
+                                                    df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(int(df[lst[val][0]][k])) + ', ' + str(df[firstchoosen][k])
+                                                pathline += ' L' + str(int(df[lst[val][0]][k])) + ', ' + str(
+                                                    df[firstchoosen][k])
                                         pathline += ' L' + str(int(df[lst[val][0]][k])) + ', ' + str(minValfirst)
                                         pathline += ' Z'
                                     print('pathline ==========>', pathline)
@@ -3887,21 +4031,27 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
                                                 print('df[lst[i][0]][k] 2. section', df[lst[i][0]])
-                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond) + ' L' + \
-                                                             str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k]) + ' '
+                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    minValsecond) + ' L' + \
+                                                             str(df[lst[i][0]][k]) + ', ' + str(
+                                                    df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
+                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    df[secondchoosen][k])
                                         pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
                                         pathline2 += ' Z'
                                     else:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond) + ' L' + \
-                                                             str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k]) + ' '
+                                                pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    minValsecond) + ' L' + \
+                                                             str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k])
+                                                pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[secondchoosen][k])
                                         pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
                                         pathline2 += ' Z'
                                     print('pathline222 ==========>', pathline2)
@@ -3929,12 +4079,14 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     if ':' or '-' in df[lst[i][0]][0]:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst) + ' L' + str(
+                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    minValfirst) + ' L' + str(
                                                     df[lst[i][0]][k]) + ', ' + str(
                                                     df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k])
+                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    df[firstchoosen][k])
                                         pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValfirst)
                                         pathline += ' Z'
                                     else:
@@ -3965,12 +4117,14 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     if ':' or '-' in df[lst[i][0]][0]:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond) + ' L' + str(
+                                                pathline += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    minValsecond) + ' L' + str(
                                                     df[lst[i][0]][k]) + ', ' + str(
                                                     df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[firstchoosen][k])
+                                                pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    df[firstchoosen][k])
                                         pathline += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
                                         pathline += ' Z'
                                     else:
@@ -3983,7 +4137,8 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                                     df[firstchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[firstchoosen][k])
+                                                pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[firstchoosen][k])
                                         pathline += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
                                         pathline += ' Z'
 
@@ -4003,12 +4158,14 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     if ':' or '-' in df[lst[i][0]][0]:
                                         for k in rangeshape:
                                             if k == rangeshape[0]:
-                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond) + ' L' + str(
+                                                pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    minValsecond) + ' L' + str(
                                                     df[lst[i][0]][k]) + ', ' + str(
                                                     df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(df[secondchoosen][k])
+                                                pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                    df[secondchoosen][k])
                                         pathline2 += ' L' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond)
                                         pathline2 += ' Z'
                                     else:
@@ -4021,7 +4178,8 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                                     df[secondchoosen][k]) + ' '
 
                                             elif k != rangeshape[0] and k != rangeshape[-1]:
-                                                pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k])
+                                                pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                    df[secondchoosen][k])
                                         pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
                                         pathline2 += ' Z'
 
@@ -4038,7 +4196,8 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     rangeshape = range(int(secondshape[1]), int(secondshape[0]))
                                     for k in rangeshape:
                                         if k == rangeshape[0]:
-                                            pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(minValsecond) + ' L' + str(
+                                            pathline2 += 'M ' + str(df[lst[i][0]][k]) + ', ' + str(
+                                                minValsecond) + ' L' + str(
                                                 df[lst[i][0]][k]) + ', ' + str(
                                                 df[secondchoosen][k]) + ' '
 
@@ -4051,12 +4210,14 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     for k in rangeshape:
 
                                         if k == rangeshape[0]:
-                                            pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond) + ' L' + str(
+                                            pathline2 += 'M ' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                minValsecond) + ' L' + str(
                                                 int(df[lst[i][0]][k])) + ', ' + str(
                                                 df[secondchoosen][k]) + ' '
 
                                         elif k != rangeshape[0] and k != rangeshape[-1]:
-                                            pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(df[secondchoosen][k])
+                                            pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(
+                                                df[secondchoosen][k])
                                     pathline2 += ' L' + str(int(df[lst[i][0]][k])) + ', ' + str(minValsecond)
                                     pathline2 += ' Z'
 
@@ -4068,64 +4229,68 @@ def detailedGraph4(radio, radioval, valx,valxsecond, valysecond,
                                     opacity=0.8,
                                     line_color="#8896BF",
                                 )]
+
                     a = []
                     if nc > 0:
                         a = controlShape()
                     fig.update_xaxes(
-                                tickangle=90,
-                                title_text='' if g1 == [] else g1[-1],
-                                title_font={"size": 20},
-                                title_standoff=25),
+                        tickangle=90,
+                        title_text='' if g1 == [] else g1[-1],
+                        title_font={"size": 20},
+                        title_standoff=25),
 
                     fig.update_yaxes(
-                                title_text='' if g2 == [] else g2[-1],
-                                title_standoff=25),
-                    fig.update_shapes(yref = 'y' ),
+                        title_text='' if g2 == [] else g2[-1],
+                        title_standoff=25),
+                    fig.update_shapes(yref='y'),
                     fig.update_layout(
-                                title_text=head[-1] if len(head) > 0 else "{}/{}".format(valxsecond[0], valysecond[0]),
-                                autosize=True,
-                                width=slidewidth,
-                                shapes=a if (nc > cleanclick) else [],
-                                height=slideheight,
-                                margin=dict(
-                                    l=50,
-                                    r=50,
-                                    b=50,
-                                    t=50,
-                                    pad=4
-                                ),
-                                yaxis=dict(
-                                    title='' if g2 == [] else g2[-1],
-                                    titlefont=dict(
-                                        color="#1f77b4"
-                                    ),
-                                    tickfont=dict(
-                                        color="#1f77b4"
-                                    )
-                                ),
-                                # yaxis2=dict(
-                                #     title='' if g2 == [] else g2[-1],
-                                #     titlefont=dict(
-                                #         color="#d62728"
-                                #     ),
-                                #     tickfont=dict(
-                                #         color="#d62728"
-                                #     ),
-                                #     anchor="x",
-                                #     overlaying="y",
-                                #     side="right"),
-                                # hovermode='x unified',
-                                uirevision=valysecond[0], ),
+                        title_text=head[-1] if len(head) > 0 else "{}/{}".format(valxsecond[0], valysecond[0]),
+                        autosize=True,
+                        width=slidewidth,
+                        shapes=a if (nc > cleanclick) else [],
+                        height=slideheight,
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=50,
+                            t=50,
+                            pad=4
+                        ),
+                        yaxis=dict(
+                            title='' if g2 == [] else g2[-1],
+                            titlefont=dict(
+                                color="#1f77b4"
+                            ),
+                            tickfont=dict(
+                                color="#1f77b4"
+                            )
+                        ),
+                        # yaxis2=dict(
+                        #     title='' if g2 == [] else g2[-1],
+                        #     titlefont=dict(
+                        #         color="#d62728"
+                        #     ),
+                        #     tickfont=dict(
+                        #         color="#d62728"
+                        #     ),
+                        #     anchor="x",
+                        #     overlaying="y",
+                        #     side="right"),
+                        # hovermode='x unified',
+                        uirevision=valysecond[0], ),
                     fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                               xref="paper", yref="paper",
-                                               x=0, y=0.7, showarrow=False)
+                                       xref="paper", yref="paper",
+                                       x=0, y=0.7, showarrow=False)
 
                 return fig
 
 
-            else: return no_update
+            else:
+                return no_update
         else:
             return no_update
+
+
 @app.callback(
     [Output('pointLeftFirst', 'children'),
      Output('pointLeftSecond', 'children')],
@@ -4183,7 +4348,9 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
                 else:
                     return (no_update, no_update)
             # else : return(no_update,no_update)
-    else:return (no_update, no_update)
+    else:
+        return (no_update, no_update)
+
 
 #     # return left
 # @app.callback(
@@ -4197,29 +4364,30 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
      Output('pointLeftSeconddb', 'children')],
     [Input('getdbgraph', 'clickData'),
      Input('firstChoosenValuedb', 'value'), ],
-    [State('dbvalname', 'value'),State('pointLeftFirstdb', 'children'),
+    [State('dbvalname', 'value'), State('pointLeftFirstdb', 'children'),
      State('pointLeftSeconddb', 'children'),
-     State ('memory-output', 'data'),
+     State('memory-output', 'data'),
      State('dbvalchoosen', 'value'), State('db_name', 'value')
      ]
 )
-def valintdb(clickData, firstchoosen,value, leftchild, rightchild, retrieve, dbch, dbname):
+def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, dbch, dbname):
     if value == [] or value == None or firstchoosen == None or clickData == None or clickData == [] or \
-         retrieve == None or retrieve == []:
+            retrieve == None or retrieve == []:
         raise PreventUpdate
     spaceList1 = []
     zero = 0
     spaceList2 = []
     if retrieve != []:
         df = pd.DataFrame(retrieve)
-        if dbname == 'rcckn' :
-            if dbch == 'send_variablevalues' :
+        if dbname == 'rcckn':
+            if dbch == 'send_variablevalues':
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-            if dbch == 'received_variablevalues' :
+            if dbch == 'received_variablevalues':
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
-        if dbname == 'enerbat' :
+                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                              'CONVERTED_NUM_VALUE']
+        if dbname == 'enerbat':
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
 
         for i in range(len(value)):
@@ -4233,7 +4401,7 @@ def valintdb(clickData, firstchoosen,value, leftchild, rightchild, retrieve, dbc
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
-                    x_val = x_val[:10]+'T'+x_val[11:]
+                    x_val = x_val[:10] + 'T' + x_val[11:]
                     print('x_val', x_val)
 
                     dff = df[df['VARIABLE_NAME'] == firstchoosen]
@@ -4251,7 +4419,7 @@ def valintdb(clickData, firstchoosen,value, leftchild, rightchild, retrieve, dbc
                         dff.set_index(index, inplace=True)
                         print('dffff', dff.tail(5))
                         dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
-                    else :
+                    else:
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
@@ -4269,37 +4437,41 @@ def valintdb(clickData, firstchoosen,value, leftchild, rightchild, retrieve, dbc
                     print('left2', leftchild)
                     return (leftchild, leftchild)
                     # else: return (no_update, no_update)
-                else : return(no_update,no_update)
-        else:return (no_update, no_update)
+                else:
+                    return (no_update, no_update)
+        else:
+            return (no_update, no_update)
+
 
 @app.callback(
     [Output('pointLeftFirstpr', 'children'),
      Output('pointLeftSecondpr', 'children')],
     [Input('getprgraph', 'clickData'),
      Input('firstChoosenValuepr', 'value'), ],
-    [State('prvalname', 'value'),State('pointLeftFirstpr', 'children'),
+    [State('prvalname', 'value'), State('pointLeftFirstpr', 'children'),
      State('pointLeftSecondpr', 'children'),
-     State ('memory-outputpr', 'data'),
+     State('memory-outputpr', 'data'),
      State('prvalchoosen', 'value'), State('prname', 'value')
      ]
 )
-def valintpr(clickData, firstchoosen,value, leftchild, rightchild, retrieve, prch, prname):
+def valintpr(clickData, firstchoosen, value, leftchild, rightchild, retrieve, prch, prname):
     if value == [] or value == None or firstchoosen == None or clickData == None or clickData == [] or \
-         retrieve == None or retrieve == []:
+            retrieve == None or retrieve == []:
         raise PreventUpdate
     spaceList1 = []
     zero = 0
     spaceList2 = []
     if retrieve != []:
         df = pd.DataFrame(retrieve)
-        if prname == 'rcckn' :
-            if prch == 'send_variablevalues' :
+        if prname == 'rcckn':
+            if prch == 'send_variablevalues':
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-            if prch == 'received_variablevalues' :
+            if prch == 'received_variablevalues':
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
-        if prname == 'enerbat' :
+                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                              'CONVERTED_NUM_VALUE']
+        if prname == 'enerbat':
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
 
         for i in range(len(value)):
@@ -4313,7 +4485,7 @@ def valintpr(clickData, firstchoosen,value, leftchild, rightchild, retrieve, prc
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
-                    x_val = x_val[:10]+'T'+x_val[11:]
+                    x_val = x_val[:10] + 'T' + x_val[11:]
                     print('x_val', x_val)
 
                     dff = df[df['VARIABLE_NAME'] == firstchoosen]
@@ -4331,7 +4503,7 @@ def valintpr(clickData, firstchoosen,value, leftchild, rightchild, retrieve, prc
                         dff.set_index(index, inplace=True)
                         print('dffff', dff.tail(5))
                         dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
-                    else :
+                    else:
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
@@ -4349,14 +4521,17 @@ def valintpr(clickData, firstchoosen,value, leftchild, rightchild, retrieve, prc
                     print('left2', leftchild)
                     return (leftchild, leftchild)
                     # else: return (no_update, no_update)
-                else : return(no_update,no_update)
-        else:return (no_update, no_update)
+                else:
+                    return (no_update, no_update)
+        else:
+            return (no_update, no_update)
+
 
 @app.callback([Output('leftIntegralFirst', 'value'), Output('leftIntegralSecond', 'value')],
               [Input('pointLeftFirst', 'children'), Input('pointLeftSecond', 'children')],
               [State('firstChoosenValue', 'value')], )
 def display_hover_data(leftchild, rightchild, firstchoosen):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == [] :
+    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
         raise PreventUpdate
 
     minchild = 0
@@ -4378,11 +4553,12 @@ def display_hover_data(leftchild, rightchild, firstchoosen):
     else:
         return (no_update, no_update)
 
+
 @app.callback([Output('leftIntegralFirstdb', 'value'), Output('leftIntegralSeconddb', 'value')],
               [Input('pointLeftFirstdb', 'children'), Input('pointLeftSeconddb', 'children')],
               )
 def display_hover_data_db(leftchild, rightchild):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == [] :
+    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
         raise PreventUpdate
 
     minchild = 0
@@ -4403,12 +4579,13 @@ def display_hover_data_db(leftchild, rightchild):
         return ('T ' + str(minchild), 'T ' + str(maxchild))
     else:
         return (no_update, no_update)
+
 
 @app.callback([Output('leftIntegralFirstpr', 'value'), Output('leftIntegralSecondpr', 'value')],
               [Input('pointLeftFirstpr', 'children'), Input('pointLeftSecondpr', 'children')],
               )
 def display_hover_data_pr(leftchild, rightchild):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == [] :
+    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
         raise PreventUpdate
 
     minchild = 0
@@ -4429,6 +4606,7 @@ def display_hover_data_pr(leftchild, rightchild):
         return ('T ' + str(minchild), 'T ' + str(maxchild))
     else:
         return (no_update, no_update)
+
 
 @app.callback(
     [Output('pointLeftFirstTab4', 'children'),
@@ -4437,7 +4615,7 @@ def display_hover_data_pr(leftchild, rightchild):
      Input('radiographtab4hidden', 'children'),
      Input('firstChoosenValueTab4', 'value'),
      # Input('shiftaxisdroptab4hidden', 'children'),
-     ], # describe variable of shift
+     ],  # describe variable of shift
     [State('tab4hiddenValuey_axissecond', 'children'),
      State('tab4hiddenValuex_axissecond', 'children'),
      State('tab2hiddenValuey_axis', 'children'),
@@ -4445,12 +4623,13 @@ def display_hover_data_pr(leftchild, rightchild):
      State('pointLeftFirstTab4', 'children'),
      State('pointLeftSecondTab4', 'children'),
      State('retrieve', 'children'),
-     State('shift_x_axistab4', 'value'), # shifting value of x_axis
-     State('output_s', 'children') # it takes values of tabdropdowntop and topdropdowntoptab4
-    ]
+     State('shift_x_axistab4', 'value'),  # shifting value of x_axis
+     State('output_s', 'children')  # it takes values of tabdropdowntop and topdropdowntoptab4
+     ]
 )
-def valintTab4(clickData4, radioval, firstchoosen,  valysecond,valxsecond, valy,valx, leftchild, rightchild, retrieve,shift_x, container):
-    if  clickData4 == None or clickData4 == [] or firstchoosen == None or retrieve == None or retrieve == []:
+def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy, valx, leftchild, rightchild, retrieve,
+               shift_x, container):
+    if clickData4 == None or clickData4 == [] or firstchoosen == None or retrieve == None or retrieve == []:
         raise PreventUpdate
     spaceList1 = []
     zero = 0
@@ -4466,10 +4645,10 @@ def valintTab4(clickData4, radioval, firstchoosen,  valysecond,valxsecond, valy,
         zippedval = [i for i in list(zip(spaceList1, spaceList2))]
         curvenumber = clickData4['points'][0]['curveNumber']
         for k in zippedval:
-            if k[1] == firstchoosen :
+            if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     if radioval == 'choosevalue':
-                        if firstchoosen[-1].isdigit() == 1 :
+                        if firstchoosen[-1].isdigit() == 1:
                             if valxsecond != []:
                                 t = valxsecond.index(firstchoosen)
                                 m = valysecond[t]
@@ -4485,7 +4664,7 @@ def valintTab4(clickData4, radioval, firstchoosen,  valysecond,valxsecond, valy,
                                 if len(leftchild) > 2:
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
-                            else :
+                            else:
                                 m = firstchoosen[-1:]
                                 m = 'T' + m
                                 x_val = clickData4['points'][0]['x']
@@ -4500,7 +4679,7 @@ def valintTab4(clickData4, radioval, firstchoosen,  valysecond,valxsecond, valy,
                                 if len(leftchild) > 2:
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
-                        elif firstchoosen[-2].isdigit() == 1 :
+                        elif firstchoosen[-2].isdigit() == 1:
                             if valxsecond != []:
                                 t = valxsecond.index(firstchoosen)
                                 m = valysecond[t]
@@ -4516,7 +4695,7 @@ def valintTab4(clickData4, radioval, firstchoosen,  valysecond,valxsecond, valy,
                                 if len(leftchild) > 2:
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
-                            else :
+                            else:
                                 m = firstchoosen[-2:]
                                 m = 'T' + m
                                 x_val = clickData4['points'][0]['x']
@@ -4560,7 +4739,7 @@ def valintTab4(clickData4, radioval, firstchoosen,  valysecond,valxsecond, valy,
                             print('df', df)
                             t = valx.index(firstchoosen)
                             m = valy[t]
-                            print('mmmmmm',m)
+                            print('mmmmmm', m)
                             x_val = clickData4['points'][0]['x']
                             print('x_val left first', x_val)
                             dff = df[df[m] == x_val]
@@ -4602,14 +4781,13 @@ def valintTab4(clickData4, radioval, firstchoosen,  valysecond,valxsecond, valy,
         return (no_update, no_update)
 
 
-
 @app.callback([Output('leftIntegralFirstTab4', 'value'),
                Output('leftIntegralSecondTab4', 'value')],
               [Input('pointLeftFirstTab4', 'children'),
                Input('pointLeftSecondTab4', 'children'),
-               Input('firstChoosenValueTab4', 'value'),],)
+               Input('firstChoosenValueTab4', 'value'), ], )
 def display_hover_dataTab4(leftchild1, rightchild, firstchoosen):
-    if leftchild1 == None or firstchoosen==None or rightchild == None or leftchild1 == [] or rightchild == []:
+    if leftchild1 == None or firstchoosen == None or rightchild == None or leftchild1 == [] or rightchild == []:
         raise PreventUpdate
 
     if firstchoosen != '' and len(leftchild1) == 2:
@@ -4623,7 +4801,7 @@ def display_hover_dataTab4(leftchild1, rightchild, firstchoosen):
                 maxchild = leftchild1[0]
                 return 'T ' + str(minchild), 'T ' + str(maxchild)
     else:
-        return no_update,no_update
+        return no_update, no_update
 
 
 @app.callback(
@@ -4682,20 +4860,21 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, ret
     else:
         return (no_update, no_update)
 
+
 @app.callback(
     [Output('pointRightFirstdb', 'children'),
      Output('pointRightSeconddb', 'children')],
     [Input('getdbgraph', 'clickData'),
      Input('secondChoosenValuedb', 'value'), ],
-    [State('dbvalname', 'value'),State('pointRightFirstdb', 'children'),
+    [State('dbvalname', 'value'), State('pointRightFirstdb', 'children'),
      State('pointRightSeconddb', 'children'),
-     State ('memory-output', 'data'),
+     State('memory-output', 'data'),
      State('dbvalchoosen', 'value'), State('db_name', 'value')
      ]
 )
-def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, dbch, dbname):
+def valintdb2(clickData, secondchoosen, value, leftchild, rightchild, retrieve, dbch, dbname):
     if value == [] or value == None or clickData == None or clickData == [] or secondchoosen == None or \
-         retrieve == None or retrieve == []:
+            retrieve == None or retrieve == []:
         raise PreventUpdate
     print('secondchoosen', secondchoosen)
     spaceList1 = []
@@ -4703,14 +4882,15 @@ def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, d
     spaceList2 = []
     if retrieve != []:
         df = pd.DataFrame(retrieve)
-        if dbname == 'rcckn' :
-            if dbch == 'send_variablevalues' :
+        if dbname == 'rcckn':
+            if dbch == 'send_variablevalues':
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-            if dbch == 'received_variablevalues' :
+            if dbch == 'received_variablevalues':
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
-        if dbname == 'enerbat' :
+                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                              'CONVERTED_NUM_VALUE']
+        if dbname == 'enerbat':
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
 
         df['index'] = df.index
@@ -4727,7 +4907,7 @@ def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, d
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
 
-                    x_val = x_val[:10]+'T'+x_val[11:]
+                    x_val = x_val[:10] + 'T' + x_val[11:]
                     print('x_val', x_val)
                     dff = df[df['VARIABLE_NAME'] == secondchoosen]
                     if dbch == 'send_variablevalues':
@@ -4744,7 +4924,7 @@ def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, d
                         dff.set_index(index, inplace=True)
                         print('dffff', dff.tail(5))
                         dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
-                    else :
+                    else:
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
@@ -4763,23 +4943,26 @@ def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, d
                     print('left2', leftchild)
                     return (leftchild, leftchild)
                     # else: return (no_update, no_update)
-                else : return(no_update,no_update)
-        else:return (no_update, no_update)
+                else:
+                    return (no_update, no_update)
+        else:
+            return (no_update, no_update)
+
 
 @app.callback(
     [Output('pointRightFirstpr', 'children'),
      Output('pointRightSecondpr', 'children')],
     [Input('getprgraph', 'clickData'),
      Input('secondChoosenValuepr', 'value'), ],
-    [State('prvalname', 'value'),State('pointRightFirstpr', 'children'),
+    [State('prvalname', 'value'), State('pointRightFirstpr', 'children'),
      State('pointRightSecondpr', 'children'),
-     State ('memory-outputpr', 'data'),
+     State('memory-outputpr', 'data'),
      State('prvalchoosen', 'value'), State('prname', 'value')
      ]
 )
-def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, prch, prname):
+def valintdb2(clickData, secondchoosen, value, leftchild, rightchild, retrieve, prch, prname):
     if value == [] or value == None or clickData == None or clickData == [] or secondchoosen == None or \
-         retrieve == None or retrieve == []:
+            retrieve == None or retrieve == []:
         raise PreventUpdate
     print('secondchoosen', secondchoosen)
     spaceList1 = []
@@ -4787,14 +4970,15 @@ def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, p
     spaceList2 = []
     if retrieve != []:
         df = pd.DataFrame(retrieve)
-        if prname == 'rcckn' :
-            if dbch == 'send_variablevalues' :
+        if prname == 'rcckn':
+            if dbch == 'send_variablevalues':
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-            if prch == 'received_variablevalues' :
+            if prch == 'received_variablevalues':
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
-        if prname == 'enerbat' :
+                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                              'CONVERTED_NUM_VALUE']
+        if prname == 'enerbat':
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
 
         df['index'] = df.index
@@ -4811,7 +4995,7 @@ def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, p
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
 
-                    x_val = x_val[:10]+'T'+x_val[11:]
+                    x_val = x_val[:10] + 'T' + x_val[11:]
                     print('x_val', x_val)
                     dff = df[df['VARIABLE_NAME'] == secondchoosen]
                     if prch == 'send_variablevalues':
@@ -4828,15 +5012,13 @@ def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, p
                         dff.set_index(index, inplace=True)
                         print('dffff', dff.tail(5))
                         dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
-                    else :
+                    else:
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
                         print('dffff', dff.tail(5))
                         dff = dff[(dff['TIMESTAMP'] == x_val)]
-
-
 
                     a = []
                     a.append(dff.index)
@@ -4850,13 +5032,17 @@ def valintdb2(clickData, secondchoosen,value, leftchild, rightchild, retrieve, p
                     print('left2', leftchild)
                     return (leftchild, leftchild)
                     # else: return (no_update, no_update)
-                else : return(no_update,no_update)
-        else:return (no_update, no_update)
+                else:
+                    return (no_update, no_update)
+        else:
+            return (no_update, no_update)
+
+
 @app.callback([Output('rightIntegralFirstdb', 'value'), Output('rightIntegralSeconddb', 'value')],
               [Input('pointRightFirstdb', 'children'), Input('pointRightSeconddb', 'children')],
               )
 def display_hover_data_db(leftchild, rightchild):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == [] :
+    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
         raise PreventUpdate
 
     minchild = 0
@@ -4877,11 +5063,13 @@ def display_hover_data_db(leftchild, rightchild):
         return ('T ' + str(minchild), 'T ' + str(maxchild))
     else:
         return (no_update, no_update)
+
+
 @app.callback([Output('rightIntegralFirstpr', 'value'), Output('rightIntegralSecondpr', 'value')],
               [Input('pointRightFirstpr', 'children'), Input('pointRightSecondpr', 'children')],
               )
 def display_hover_data_pr(leftchild, rightchild):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == [] :
+    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
         raise PreventUpdate
 
     minchild = 0
@@ -4902,6 +5090,7 @@ def display_hover_data_pr(leftchild, rightchild):
         return ('T ' + str(minchild), 'T ' + str(maxchild))
     else:
         return (no_update, no_update)
+
 
 @app.callback(
     [Output('rightIntegralFirst', 'value'), Output('rightIntegralSecond', 'value')],
@@ -4929,6 +5118,7 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
     else:
         return (no_update, no_update)
 
+
 @app.callback(
     [Output('pointRightFirstTab4', 'children'),
      Output('pointRightSecondTab4', 'children')],
@@ -4944,11 +5134,10 @@ def display_hover_data2(leftchild1, rightchild1, secondchoosen):
      State('pointRightSecondTab4', 'children'),
      State('retrieve', 'children'),
      State('output_s', 'children'),
-     State('shift_x_axistab4', 'value'),]
+     State('shift_x_axistab4', 'value'), ]
 )
-
-
-def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, valy, valx, leftchild, rightchild, retrieve,container,shift_x):
+def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, valy, valx, leftchild, rightchild,
+                 retrieve, container, shift_x):
     if clickData == None or container is [] or container is None or secondchoosen == None or secondchoosen == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
 
@@ -4969,7 +5158,7 @@ def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, val
                 if k[0] == curvenumber:
                     if radioval == "choosevalue":
                         if secondchoosen[-1].isdigit() == 1:
-                            print('valxsecond ne alaka anlamadim 1 ',valxsecond)
+                            print('valxsecond ne alaka anlamadim 1 ', valxsecond)
                             if valxsecond != []:
                                 t = valxsecond.index(secondchoosen)
                                 m = valysecond[t]
@@ -5042,7 +5231,8 @@ def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, val
                                 if len(leftchild) > 2:
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
-                            else : return no_update,no_update
+                            else:
+                                return no_update, no_update
                     elif radioval == 'optionlibre':
                         if valx != []:
                             print('valxxxxxx', valx)
@@ -5072,8 +5262,8 @@ def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, val
             # else:
             #     return (no_update, no_update)
 
-    else: return (no_update, no_update)
-
+    else:
+        return (no_update, no_update)
 
 
 @app.callback(
@@ -5081,7 +5271,7 @@ def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, val
      Output('rightIntegralSecondTab4', 'value')],
     [Input('pointRightFirstTab4', 'children'),
      Input('pointRightSecondTab4', 'children'),
-     Input('secondChoosenValueTab4', 'value'),], )
+     Input('secondChoosenValueTab4', 'value'), ], )
 def display_hover_data4(leftchild1, rightchild1, secondchoosen):
     if leftchild1 == None or rightchild1 == None or leftchild1 == [] or rightchild1 == [] or secondchoosen == None:
         raise PreventUpdate
@@ -5098,7 +5288,8 @@ def display_hover_data4(leftchild1, rightchild1, secondchoosen):
                 return 'T ' + str(minchild), 'T ' + str(maxchild)
 
     else:
-        return no_update,no_update
+        return no_update, no_update
+
 
 @app.callback(Output('leftIntegral', 'value'),
               [Input('leftIntegralFirst', 'value'),
@@ -5128,8 +5319,8 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
-            for i in df.columns :
-                if i.startswith('Temps') :
+            for i in df.columns:
+                if i.startswith('Temps'):
                     dff1 = dff1.groupby(i).mean()
 
             c = dff1[valuechoosenleft]
@@ -5148,14 +5339,14 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
 @app.callback(Output('leftIntegraldb', 'value'),
               [Input('leftIntegralFirstdb', 'value'),
                Input('leftIntegralSeconddb', 'value'),
-               Input('firstChoosenValuedb', 'value'),],
+               Input('firstChoosenValuedb', 'value'), ],
               [State('memory-output', 'data'),
                State('dbvalchoosen', 'value'), State('db_name', 'value'), State('dbvaldate', 'value')]
               )
 def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbname, valdate):
     if st1left == None or st1right == None or valuechoosenleft == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
-    print('st1left',st1left)
+    print('st1left', st1left)
     print('st1left', st1right)
     if st1left.startswith('T') == 1 and st1right.startswith('T') == 1:
         st1left = st1left[2:]
@@ -5187,13 +5378,13 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbn
                 df1 = df1[df1.TIMESTAMP.str.startswith(valdate[0])]
             if dbch == 'received_variablevalues':
                 df1 = df1[df1.REMOTE_TIMESTAMP.str.startswith(valdate[0])]
-            else :
+            else:
                 df1 = df1[df1.TIMESTAMP.str.startswith(valdate[0])]
-            index = np.arange(0,len(df1['VARIABLE_NAME']))
+            index = np.arange(0, len(df1['VARIABLE_NAME']))
             df1.reset_index(drop=True, inplace=True)
-            df1.set_index(index, inplace = True)
+            df1.set_index(index, inplace=True)
             dff2 = df1[(df1.index >= float(st1left)) & (df1.index <= float(st1right)) |
-                      (df1.index >= float(st1right)) & (df1.index <= float(st1left))]
+                       (df1.index >= float(st1right)) & (df1.index <= float(st1left))]
             c = dff2['VARIABLE_NUM_VALUE']
             area1 = abs(trapz((abs(c)), dx=1))
 
@@ -5205,17 +5396,18 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbn
         elif st1left != '' and st1right != '' and valuechoosenleft == '':
             return 'total integration'
 
+
 @app.callback(Output('leftIntegralpr', 'value'),
               [Input('leftIntegralFirstpr', 'value'),
                Input('leftIntegralSecondpr', 'value'),
-               Input('firstChoosenValuepr', 'value'),],
+               Input('firstChoosenValuepr', 'value'), ],
               [State('memory-outputpr', 'data'),
                State('prvalchoosen', 'value'), State('prname', 'value'), State('prvaldate', 'value')]
               )
 def integralCalculationpr(st1left, st1right, valuechoosenleft, retrieve, prch, prname, valdate):
     if st1left == None or st1right == None or valuechoosenleft == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
-    print('st1left',st1left)
+    print('st1left', st1left)
     print('st1left', st1right)
     if st1left.startswith('T') == 1 and st1right.startswith('T') == 1:
         st1left = st1left[2:]
@@ -5247,13 +5439,13 @@ def integralCalculationpr(st1left, st1right, valuechoosenleft, retrieve, prch, p
                 df1 = df1[df1.TIMESTAMP.str.startswith(valdate[0])]
             if prch == 'received_variablevalues':
                 df1 = df1[df1.REMOTE_TIMESTAMP.str.startswith(valdate[0])]
-            else :
+            else:
                 df1 = df1[df1.TIMESTAMP.str.startswith(valdate[0])]
-            index = np.arange(0,len(df1['VARIABLE_NAME']))
+            index = np.arange(0, len(df1['VARIABLE_NAME']))
             df1.reset_index(drop=True, inplace=True)
-            df1.set_index(index, inplace = True)
+            df1.set_index(index, inplace=True)
             dff2 = df1[(df1.index >= float(st1left)) & (df1.index <= float(st1right)) |
-                      (df1.index >= float(st1right)) & (df1.index <= float(st1left))]
+                       (df1.index >= float(st1right)) & (df1.index <= float(st1left))]
             c = dff2['VARIABLE_NUM_VALUE']
             area1 = abs(trapz((abs(c)), dx=1))
 
@@ -5294,8 +5486,8 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
-            for i in df.columns :
-                if i.startswith('Temps') :
+            for i in df.columns:
+                if i.startswith('Temps'):
                     dff1 = dff1.groupby(i).mean()
             c = dff1[valuechoosenleft]
             area1 = abs(trapz(abs(c), dx=1))
@@ -5308,6 +5500,7 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
         elif st1left != '' and st1right != '' and valuechoosenleft == '':
             return 'total integration'
     # return no_update
+
 
 @app.callback(Output('rightIntegral', 'value'),
               [Input('rightIntegralFirst', 'value'),
@@ -5335,10 +5528,11 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
             df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
-            dff2 = df[(df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
-                      (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
-            for i in df.columns :
-                if i.startswith('Temps') :
+            dff2 = df[
+                (df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
+                (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
+            for i in df.columns:
+                if i.startswith('Temps'):
                     dff2 = dff2.groupby(i).mean()
 
             f = dff2[valuechoosenright]
@@ -5351,17 +5545,18 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
         elif st2left != '' and st2right != '' and valuechoosenright == '':
             return 'total integration'
 
+
 @app.callback(Output('rightIntegraldb', 'value'),
               [Input('rightIntegralFirstdb', 'value'),
                Input('rightIntegralSeconddb', 'value'),
-               Input('secondChoosenValuedb', 'value'),],
+               Input('secondChoosenValuedb', 'value'), ],
               [State('memory-output', 'data'),
                State('dbvalchoosen', 'value'), State('db_name', 'value'), State('dbvaldate', 'value')]
               )
 def integralCalculationdb(st2left, st2right, valuechoosenright, retrieve, dbch, dbname, valdate):
     if st2left == None or st2right == None or valuechoosenright == None or valuechoosenright == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
-    print('st1left',st2left)
+    print('st1left', st2left)
     print('st1left', st2right)
     if st2left.startswith('T') == 1 and st2right.startswith('T') == 1:
         st2left = st2left[2:]
@@ -5393,11 +5588,11 @@ def integralCalculationdb(st2left, st2right, valuechoosenright, retrieve, dbch, 
                 df1 = df1[df1.TIMESTAMP.str.startswith(valdate[0])]
             if dbch == 'received_variablevalues':
                 df1 = df1[df1.REMOTE_TIMESTAMP.str.startswith(valdate[0])]
-            index = np.arange(0,len(df1['VARIABLE_NAME']))
+            index = np.arange(0, len(df1['VARIABLE_NAME']))
             df1.reset_index(drop=True, inplace=True)
-            df1.set_index(index, inplace = True)
+            df1.set_index(index, inplace=True)
             dff2 = df1[(df1.index >= float(st2left)) & (df1.index <= float(st2right)) |
-                      (df1.index >= float(st2right)) & (df1.index <= float(st2left))]
+                       (df1.index >= float(st2right)) & (df1.index <= float(st2left))]
             c = dff2['VARIABLE_NUM_VALUE']
             area1 = abs(trapz((abs(c)), dx=1))
 
@@ -5409,17 +5604,18 @@ def integralCalculationdb(st2left, st2right, valuechoosenright, retrieve, dbch, 
         elif st2left != '' and st2right != '' and valuechoosenright == '':
             return 'total integration'
 
+
 @app.callback(Output('rightIntegralpr', 'value'),
               [Input('rightIntegralFirstpr', 'value'),
                Input('rightIntegralSecondpr', 'value'),
-               Input('secondChoosenValuepr', 'value'),],
+               Input('secondChoosenValuepr', 'value'), ],
               [State('memory-outputpr', 'data'),
                State('prvalchoosen', 'value'), State('prname', 'value'), State('prvaldate', 'value')]
               )
 def integralCalculationpr(st2left, st2right, valuechoosenright, retrieve, prch, prname, valdate):
     if st2left == None or st2right == None or valuechoosenright == None or valuechoosenright == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
-    print('st1left',st2left)
+    print('st1left', st2left)
     print('st1left', st2right)
     if st2left.startswith('T') == 1 and st2right.startswith('T') == 1:
         st2left = st2left[2:]
@@ -5451,11 +5647,11 @@ def integralCalculationpr(st2left, st2right, valuechoosenright, retrieve, prch, 
                 df1 = df1[df1.TIMESTAMP.str.startswith(valdate[0])]
             if prch == 'received_variablevalues':
                 df1 = df1[df1.REMOTE_TIMESTAMP.str.startswith(valdate[0])]
-            index = np.arange(0,len(df1['VARIABLE_NAME']))
+            index = np.arange(0, len(df1['VARIABLE_NAME']))
             df1.reset_index(drop=True, inplace=True)
-            df1.set_index(index, inplace = True)
+            df1.set_index(index, inplace=True)
             dff2 = df1[(df1.index >= float(st2left)) & (df1.index <= float(st2right)) |
-                      (df1.index >= float(st2right)) & (df1.index <= float(st2left))]
+                       (df1.index >= float(st2right)) & (df1.index <= float(st2left))]
             c = dff2['VARIABLE_NUM_VALUE']
             area1 = abs(trapz((abs(c)), dx=1))
 
@@ -5497,8 +5693,8 @@ def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
             dff2 = df[
                 (df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
                 (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
-            for i in df.columns :
-                if i.startswith('Temps') :
+            for i in df.columns:
+                if i.startswith('Temps'):
                     dff2 = dff2.groupby(i).mean()
             f = dff2[valuechoosenright]
             area2 = abs(trapz(abs(f), dx=1))
@@ -5509,6 +5705,7 @@ def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
             return 'total integration'
         elif st2left != '' and st2right != '' and valuechoosenright == '':
             return 'total integration'
+
 
 @app.callback(Output('operation', 'value'),
               [Input('leftIntegral', 'value'),
@@ -5529,6 +5726,7 @@ def differanceintegration(value1, value2, ops):
     elif ops == []:
         return []
 
+
 @app.callback(Output('operationTab4', 'value'),
               [Input('leftIntegralTab4', 'value'),
                Input('rightIntegralTab4', 'value'),
@@ -5547,6 +5745,7 @@ def differanceintegrationTab4(value1, value2, ops):
         return float(value1 / value2)
     elif ops == []:
         return []
+
 
 @app.callback(Output('operationdb', 'value'),
               [Input('leftIntegraldb', 'value'),
@@ -5567,6 +5766,7 @@ def differanceintegrationdb(value1, value2, ops):
     elif ops == []:
         return []
 
+
 @app.callback(Output('operationpr', 'value'),
               [Input('leftIntegralpr', 'value'),
                Input('rightIntegralpr', 'value'),
@@ -5585,6 +5785,8 @@ def differanceintegrationpr(value1, value2, ops):
         return float(value1 / value2)
     elif ops == []:
         return []
+
+
 @app.callback(Output('intersection', 'value'),
               [Input('hiddenDifferance', 'children'),
                Input('firstChoosenValue', 'value'),
@@ -5651,8 +5853,8 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
                State('dbvalchoosen', 'value'), State('db_name', 'value'), State('dbvaldate', 'value')
                ]
               )
-def differanceCalculationdb( valuechoosenleft, valuechoosenright, leftfirst, rightfirst,leftsecond, rightsecond,
-                             diff, retrieve, dbch, dbname, dbdate):
+def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, rightfirst, leftsecond, rightsecond,
+                            diff, retrieve, dbch, dbname, dbdate):
     if retrieve == None or retrieve == [] or leftfirst == None or rightfirst == None or leftsecond == None or rightsecond == None:
         raise PreventUpdate
 
@@ -5668,7 +5870,7 @@ def differanceCalculationdb( valuechoosenleft, valuechoosenright, leftfirst, rig
     #             a = hiddendif[1]
     #             b = hiddendif[0]
 
-    if valuechoosenright != None and valuechoosenleft != None :
+    if valuechoosenright != None and valuechoosenleft != None:
         differance = []
         print('leftfirst', leftfirst)
         print('leftfirst', leftsecond)
@@ -5721,13 +5923,13 @@ def differanceCalculationdb( valuechoosenleft, valuechoosenright, leftfirst, rig
         if dbname == 'rcckn':
             if dbch == 'send_variablevalues':
                 df1.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                 for col in df1['TIMESTAMP']:
                     dates.append(col[:10])
             if dbch == 'received_variablevalues':
                 df1.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                                  'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                                  'CONVERTED_NUM_VALUE']
+                               'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                               'CONVERTED_NUM_VALUE']
                 for col in df1['REMOTE_TIMESTAMP']:
                     dates.append(col[:10])
         if dbname == 'enerbat':
@@ -5756,10 +5958,10 @@ def differanceCalculationdb( valuechoosenleft, valuechoosenright, leftfirst, rig
         second_df = second_df['VARIABLE_NUM_VALUE']
         print('second_df', second_df)
         min_val = []
-        for i,j in zip(first_df,second_df ):
-            if i <= j :
+        for i, j in zip(first_df, second_df):
+            if i <= j:
                 min_val.append(i)
-            if j < i :
+            if j < i:
                 min_val.append(j)
 
         # dff2 = df1[(df1.index >= float(st2left)) & (df1.index <= float(st2right)) |
@@ -5787,6 +5989,7 @@ def differanceCalculationdb( valuechoosenleft, valuechoosenright, leftfirst, rig
     else:
         return ['intersection']
 
+
 @app.callback(Output('intersectionpr', 'value'),
               [Input('firstChoosenValuepr', 'value'),
                Input('secondChoosenValuepr', 'value'),
@@ -5799,11 +6002,11 @@ def differanceCalculationdb( valuechoosenleft, valuechoosenright, leftfirst, rig
                State('prvalchoosen', 'value'), State('prname', 'value'), State('prvaldate', 'value')
                ]
               )
-def differanceCalculationdb( valuechoosenleft, valuechoosenright, leftfirst, rightfirst,leftsecond, rightsecond,
-                             diff, retrieve, prch, prname, prdate):
+def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, rightfirst, leftsecond, rightsecond,
+                            diff, retrieve, prch, prname, prdate):
     if retrieve == None or retrieve == [] or leftfirst == None or rightfirst == None or leftsecond == None or rightsecond == None:
         raise PreventUpdate
-    if valuechoosenright != None and valuechoosenleft != None :
+    if valuechoosenright != None and valuechoosenleft != None:
         differance = []
         print('leftfirst', leftfirst)
         print('leftfirst', leftsecond)
@@ -5856,13 +6059,13 @@ def differanceCalculationdb( valuechoosenleft, valuechoosenright, leftfirst, rig
         if prname == 'rcckn':
             if prch == 'send_variablevalues':
                 df1.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                 for col in df1['TIMESTAMP']:
                     dates.append(col[:10])
             if prch == 'received_variablevalues':
                 df1.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                                  'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                                  'CONVERTED_NUM_VALUE']
+                               'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                               'CONVERTED_NUM_VALUE']
                 for col in df1['REMOTE_TIMESTAMP']:
                     dates.append(col[:10])
         if prname == 'enerbat':
@@ -5891,10 +6094,10 @@ def differanceCalculationdb( valuechoosenleft, valuechoosenright, leftfirst, rig
         second_df = second_df['VARIABLE_NUM_VALUE']
         print('second_df', second_df)
         min_val = []
-        for i,j in zip(first_df,second_df ):
-            if i <= j :
+        for i, j in zip(first_df, second_df):
+            if i <= j:
                 min_val.append(i)
-            if j < i :
+            if j < i:
                 min_val.append(j)
 
         diff = (abs(trapz(min_val, dx=1)))
@@ -5913,7 +6116,8 @@ def differanceCalculationdb( valuechoosenleft, valuechoosenright, leftfirst, rig
               [State('intersectionTab4', 'value'), State('retrieve', 'children'),
                ]
               )
-def differanceCalculation4(firstshape,secondshape, valuechoosenleft, valuechoosenright, leftfirst, rightfirst, diff, retrieve):
+def differanceCalculation4(firstshape, secondshape, valuechoosenleft, valuechoosenright, leftfirst, rightfirst, diff,
+                           retrieve):
     if retrieve == None or retrieve == []:
         raise PreventUpdate
     differance = []
@@ -5998,13 +6202,15 @@ def differanceCalculation4(firstshape,secondshape, valuechoosenleft, valuechoose
 def write_excel(nc, a, b, c, d, e, f, g, h, i, j):
     if nc > 0:
         now = datetime.datetime.now()
-        if i == [] :
-            i= None
+        if i == []:
+            i = None
         if j == ['intersection']:
             j = None
         x = (now, a, b, c, d, e, f, g, h, i, j)
 
-        if x != None : return x
+        if x != None: return x
+
+
 @app.callback(Output('writeexcelhiddenTab4', 'children'),
               [Input('write_excelTab4', 'n_clicks')],
               [State('firstChoosenValueTab4', 'value'),
@@ -6022,51 +6228,57 @@ def write_excel(nc, a, b, c, d, e, f, g, h, i, j):
 def write_excelTab4(nc, a, b, c, d, e, f, g, h, i, j):
     if nc > 0:
         now = datetime.datetime.now()
-        if i == [] :
-            i= None
+        if i == []:
+            i = None
         if j == ['intersection']:
             j = None
         x = (now, a, b, c, d, e, f, g, h, i, j)
 
-        if x != None : return x
+        if x != None: return x
+
+
 @app.callback(Output('hiddenrecord3', 'children'),
-              [Input('writeexcelhidden', 'children'),Input('writeexcelhiddenTab4', 'children')],
-                   )
-def pasfunc(hiddenvalchild,hiddenvalchild4):
+              [Input('writeexcelhidden', 'children'), Input('writeexcelhiddenTab4', 'children')],
+              )
+def pasfunc(hiddenvalchild, hiddenvalchild4):
     if hiddenvalchild == None and hiddenvalchild4 == None:
         raise PreventUpdate
-    if hiddenvalchild != None :
+    if hiddenvalchild != None:
         return hiddenvalchild
-    if hiddenvalchild4 != None :
+    if hiddenvalchild4 != None:
         return hiddenvalchild4
 
-@app.callback(Output('hiddenrecord4', 'children'),
-                  [Input('hiddenrecord3', 'children')],
-                  State('hiddenrecord4', 'children'),)
 
-def lastfunc(hiddenvalchild,lastvalchild):
-    lastvalchild=hiddenvalchild+lastvalchild
+@app.callback(Output('hiddenrecord4', 'children'),
+              [Input('hiddenrecord3', 'children')],
+              State('hiddenrecord4', 'children'), )
+def lastfunc(hiddenvalchild, lastvalchild):
+    lastvalchild = hiddenvalchild + lastvalchild
     return lastvalchild
 
-@app.callback(Output('hiddenrecord1', 'children'),
-             [Input('hiddenrecord4', 'children')],
-              )
 
+@app.callback(Output('hiddenrecord1', 'children'),
+              [Input('hiddenrecord4', 'children')],
+              )
 def exportdata(valueparse):
     a_parse = []
     t_parse = []
     for i in valueparse:
-        if i ==None:
+        if i == None:
             a_parse.append('None')
-        else : a_parse.append(i)
-        if len(a_parse)%11 ==0:
+        else:
+            a_parse.append(i)
+        if len(a_parse) % 11 == 0:
             t_parse.append(a_parse)
             a_parse = []
-    t_parse.insert(0,['time','firstChoosenValue','leftIntegralFirst','leftIntegralSecond','leftIntegral','secondChoosenValue',
-    'rightIntegralFirst','rightIntegralSecond','rightIntegral', 'operation','intersection'])
+    t_parse.insert(0, ['time', 'firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
+                       'secondChoosenValue',
+                       'rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation', 'intersection'])
 
     df = pd.DataFrame(t_parse)
     df.to_excel('new_fichier.xlsx')
+
+
 @app.callback(Output('writeexcelhiddendb', 'children'),
               [Input('write_exceldb', 'n_clicks')],
               [State('firstChoosenValuedb', 'value'),
@@ -6084,51 +6296,56 @@ def exportdata(valueparse):
 def write_exceldb(nc, a, b, c, d, e, f, g, h, i, j):
     if nc > 0:
         now = datetime.datetime.now()
-        if i == [] :
-            i= None
+        if i == []:
+            i = None
         if j == ['intersection']:
             j = None
         x = (now, a, b, c, d, e, f, g, h, i, j)
 
-        if x != None : return x
+        if x != None: return x
+
+
 @app.callback(Output('hiddenrecord3db', 'children'),
-              [Input('writeexcelhiddendb', 'children'),Input('writeexcelhiddendb', 'children')],
-                   )
-def pasfuncdb(hiddenvalchild,hiddenvalchild4):
+              [Input('writeexcelhiddendb', 'children'), Input('writeexcelhiddendb', 'children')],
+              )
+def pasfuncdb(hiddenvalchild, hiddenvalchild4):
     if hiddenvalchild == None and hiddenvalchild4 == None:
         raise PreventUpdate
-    if hiddenvalchild != None :
+    if hiddenvalchild != None:
         return hiddenvalchild
-    if hiddenvalchild4 != None :
+    if hiddenvalchild4 != None:
         return hiddenvalchild4
 
-@app.callback(Output('hiddenrecord4db', 'children'),
-                  [Input('hiddenrecord3db', 'children')],
-                  State('hiddenrecord4db', 'children'),)
 
-def lastfuncdb(hiddenvalchild,lastvalchild):
-    lastvalchild=hiddenvalchild+lastvalchild
+@app.callback(Output('hiddenrecord4db', 'children'),
+              [Input('hiddenrecord3db', 'children')],
+              State('hiddenrecord4db', 'children'), )
+def lastfuncdb(hiddenvalchild, lastvalchild):
+    lastvalchild = hiddenvalchild + lastvalchild
     return lastvalchild
 
-@app.callback(Output('hiddenrecord1db', 'children'),
-             [Input('hiddenrecord4db', 'children')],
-              )
 
+@app.callback(Output('hiddenrecord1db', 'children'),
+              [Input('hiddenrecord4db', 'children')],
+              )
 def exportdatadb(valueparse):
     a_parse = []
     t_parse = []
     for i in valueparse:
-        if i ==None:
+        if i == None:
             a_parse.append('None')
-        else : a_parse.append(i)
-        if len(a_parse)%11 ==0:
+        else:
+            a_parse.append(i)
+        if len(a_parse) % 11 == 0:
             t_parse.append(a_parse)
             a_parse = []
-    t_parse.insert(0,['time','firstChoosenValue','leftIntegralFirst','leftIntegralSecond','leftIntegral','secondChoosenValue',
-    'rightIntegralFirst','rightIntegralSecond','rightIntegral', 'operation','intersection'])
+    t_parse.insert(0, ['time', 'firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
+                       'secondChoosenValue',
+                       'rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation', 'intersection'])
 
     df = pd.DataFrame(t_parse)
     df.to_excel('new_fichier.xlsx')
+
 
 @app.server.route("/download_excel/")
 def download_excel():
@@ -6143,11 +6360,13 @@ def download_excel():
     buf.seek(0)
     return send_file(
         buf,
-        mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         attachment_filename="LERMAB.xlsx",
         as_attachment=True,
         cache_timeout=0
     )
+
+
 @app.server.route("/download_exceldb/")
 def download_exceldb():
     # Create DF
@@ -6161,17 +6380,17 @@ def download_exceldb():
     buf.seek(0)
     return send_file(
         buf,
-        mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         attachment_filename="LERMAB.xlsx",
         as_attachment=True,
         cache_timeout=0
     )
 
-@app.callback(Output('dbvalchoosen', 'options'),
-              [Input('db_name', 'value')],[State('db_Ip', 'value')])
 
-def relationdb(dbname,ipval) :
-    if dbname == None :
+@app.callback(Output('dbvalchoosen', 'options'),
+              [Input('db_name', 'value')], [State('db_Ip', 'value')])
+def relationdb(dbname, ipval):
+    if dbname == None:
         raise PreventUpdate
     ipadress = ''
     if ipval == '':
@@ -6197,23 +6416,29 @@ def relationdb(dbname,ipval) :
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
-    if dbname == 'rcckn' :
+    if dbname == 'rcckn':
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'rcckn'")
         val = cur.fetchall()
         print('valllll', val)
-        return [{'label': i[0], 'value': i[0]} for i in val if i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
-                 i[0] != 'received_ack' and i[0] != 'send_vw_variablerequestdestination' and i[0] != 'flyway_schema_history'
-                 and i[0] != 'app_vw_messaging_followup' and i[0] != 'received_variablerequest' and i[0] != 'received_controlvalues'
-                 and i[0] != 'app_system_properties' and i[0] != 'tbl_sites' and i[0] != 'tbl_inventory' and i[0] != 'send_messages'
-                 and i[0] != 'send_variablevaluesmessage']
-    elif dbname == 'enerbat' :
+        return [{'label': i[0], 'value': i[0]} for i in val if
+                i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
+                i[0] != 'received_ack' and i[0] != 'send_vw_variablerequestdestination' and i[
+                    0] != 'flyway_schema_history'
+                and i[0] != 'app_vw_messaging_followup' and i[0] != 'received_variablerequest' and i[
+                    0] != 'received_controlvalues'
+                and i[0] != 'app_system_properties' and i[0] != 'tbl_sites' and i[0] != 'tbl_inventory' and i[
+                    0] != 'send_messages'
+                and i[0] != 'send_variablevaluesmessage']
+    elif dbname == 'enerbat':
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'enerbat'")
         val = cur.fetchall()
         print('valllll', val)
         return [{'label': i[0], 'value': i[0]} for i in val]
-    else : no_update
+    else:
+        no_update
+
 
 #             # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
 #         b = f"select table_name from information_schema.tables where TABLE_SCHEMA= '{dbname}'"
@@ -6232,14 +6457,13 @@ def relationdb(dbname,ipval) :
 #                 and i != 'send_variablevaluesmessage']
 #
 #     # else:
-    #     return no_update
+#     return no_update
 
 
 @app.callback(Output('prvalchoosen', 'options'),
-              [Input('prname', 'value')],[State('pr_Ip', 'value')])
-
-def relationpr(prname,ipval) :
-    if prname == None :
+              [Input('prname', 'value')], [State('pr_Ip', 'value')])
+def relationpr(prname, ipval):
+    if prname == None:
         raise PreventUpdate
     ipadress = ''
     if ipval == '':
@@ -6265,38 +6489,43 @@ def relationpr(prname,ipval) :
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
-    if prname == 'rcckn' :
+    if prname == 'rcckn':
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'rcckn'")
         val = cur.fetchall()
         print('valllll', val)
-        return [{'label': i[0], 'value': i[0]} for i in val if i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
-                 i[0] != 'received_ack' and i[0] != 'send_vw_variablerequestdestination' and i[0] != 'flyway_schema_history'
-                 and i[0] != 'app_vw_messaging_followup' and i[0] != 'received_variablerequest' and i[0] != 'received_controlvalues'
-                 and i[0] != 'app_system_properties' and i[0] != 'tbl_sites' and i[0] != 'tbl_inventory' and i[0] != 'send_messages'
-                 and i[0] != 'send_variablevaluesmessage']
-    elif prname == 'enerbat' :
+        return [{'label': i[0], 'value': i[0]} for i in val if
+                i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
+                i[0] != 'received_ack' and i[0] != 'send_vw_variablerequestdestination' and i[
+                    0] != 'flyway_schema_history'
+                and i[0] != 'app_vw_messaging_followup' and i[0] != 'received_variablerequest' and i[
+                    0] != 'received_controlvalues'
+                and i[0] != 'app_system_properties' and i[0] != 'tbl_sites' and i[0] != 'tbl_inventory' and i[
+                    0] != 'send_messages'
+                and i[0] != 'send_variablevaluesmessage']
+    elif prname == 'enerbat':
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'enerbat'")
         val = cur.fetchall()
         print('valllll', val)
         return [{'label': i[0], 'value': i[0]} for i in val]
-    else : no_update
+    else:
+        no_update
 
 
-
-@app.callback([Output('dbvalname', 'options'),Output('dbvaldate', 'options')],
-              [Input('activatedb', 'n_clicks'),Input('deactivatedb', 'n_clicks')], [State('dbvalchoosen', 'value'),State('db_name', 'value'), State('db_Ip', 'value')])
-def dbname(nc,nc2, dbch,  dbname, ipval):
+@app.callback([Output('dbvalname', 'options'), Output('dbvaldate', 'options')],
+              [Input('activatedb', 'n_clicks'), Input('deactivatedb', 'n_clicks')],
+              [State('dbvalchoosen', 'value'), State('db_name', 'value'), State('db_Ip', 'value')])
+def dbname(nc, nc2, dbch, dbname, ipval):
     if dbname == None:
         raise PreventUpdate
     ipadress = ''
-    if ipval == '' :
+    if ipval == '':
         ipadress = "193.54.2.211"
-    else :
+    else:
         ipadress = ipval
     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-    if q1 == 'activatedb' :
+    if q1 == 'activatedb':
 
         server = SSHTunnelForwarder(
             (ipadress, 22),
@@ -6390,26 +6619,27 @@ def dbname(nc,nc2, dbch,  dbname, ipval):
                 str_list = [t.strftime("%Y-%m-%d") for t in b]
                 return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
 
-    if q1 == 'deactivatedb' :
+    if q1 == 'deactivatedb':
         kk = [{'label': i, 'value': i} for i in '']
-        print('kkkkkkkkk',kk)
-        return [{'label': i, 'value': i} for i in ''],[{'label': i, 'value': i} for i in '']
+        print('kkkkkkkkk', kk)
+        return [{'label': i, 'value': i} for i in ''], [{'label': i, 'value': i} for i in '']
     else:
         no_update, no_update
 
 
-@app.callback([Output('prvalname', 'options'),Output('prvaldate', 'options')],
-              [Input('activatepr', 'n_clicks'),Input('deactivatepr', 'n_clicks')], [State('prvalchoosen', 'value'),State('prname', 'value'), State('pr_Ip', 'value')])
-def prname(nc,nc2, prch,  prname, ipval):
+@app.callback([Output('prvalname', 'options'), Output('prvaldate', 'options')],
+              [Input('activatepr', 'n_clicks'), Input('deactivatepr', 'n_clicks')],
+              [State('prvalchoosen', 'value'), State('prname', 'value'), State('pr_Ip', 'value')])
+def prname(nc, nc2, prch, prname, ipval):
     if prname == None:
         raise PreventUpdate
     ipadress = ''
-    if ipval == '' :
+    if ipval == '':
         ipadress = "193.54.2.211"
-    else :
+    else:
         ipadress = ipval
     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-    if q1 == 'activatepr' :
+    if q1 == 'activatepr':
 
         server = SSHTunnelForwarder(
             (ipadress, 22),
@@ -6503,48 +6733,49 @@ def prname(nc,nc2, prch,  prname, ipval):
                 str_list = [t.strftime("%Y-%m-%d") for t in b]
                 return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
 
-    if q1 == 'deactivatepr' :
+    if q1 == 'deactivatepr':
         kk = [{'label': i, 'value': i} for i in '']
-        print('kkkkkkkkk',kk)
-        return [{'label': i, 'value': i} for i in ''],[{'label': i, 'value': i} for i in '']
+        print('kkkkkkkkk', kk)
+        return [{'label': i, 'value': i} for i in ''], [{'label': i, 'value': i} for i in '']
     else:
         no_update, no_update
 
 
 @app.callback(ServersideOutput('memory-output', 'data'),
-              [Input('dbvalname', 'value'), Input('dbvaldate', 'value')], [State('dbvalchoosen', 'value'),State('db_name', 'value'), State('db_Ip', 'value')])
-def dbname(valname,valdate, dbch,  dbname, ipval):
+              [Input('dbvalname', 'value'), Input('dbvaldate', 'value')],
+              [State('dbvalchoosen', 'value'), State('db_name', 'value'), State('db_Ip', 'value')])
+def dbname(valname, valdate, dbch, dbname, ipval):
     if dbname == None or valname == None or valdate == None:
         raise PreventUpdate
     ipadress = ''
-    if ipval == '' :
+    if ipval == '':
         ipadress = "193.54.2.211"
-    else :
+    else:
         ipadress = ipval
     server = SSHTunnelForwarder(
-            (ipadress, 22),
-            ssh_username='soudani',
-            ssh_password="univ484067152",
-            remote_bind_address=(ipadress, 3306))
+        (ipadress, 22),
+        ssh_username='soudani',
+        ssh_password="univ484067152",
+        remote_bind_address=(ipadress, 3306))
 
     server.start()
 
     try:
         conn = mariadb.connect(
-                user="dashapp",
-                password="dashapp",
-                host=ipadress,
-                port=3306,
-                database=dbname)
+            user="dashapp",
+            password="dashapp",
+            host=ipadress,
+            port=3306,
+            database=dbname)
 
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
-            # Get Cursor
+        # Get Cursor
 
-            # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-            # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-            #     'received_variablevalues')
+        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
+        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
+        #     'received_variablevalues')
 
         # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
     if dbname == 'rcckn':
@@ -6552,9 +6783,9 @@ def dbname(valname,valdate, dbch,  dbname, ipval):
             cur1 = conn.cursor()
 
             print('valname[0]', valname)
-            if len(valname) == 1 :
+            if len(valname) == 1:
                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
-            elif len(valname) > 1 :
+            elif len(valname) > 1:
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME IN {valname}")
             t1 = cur1.fetchall()
@@ -6587,40 +6818,42 @@ def dbname(valname,valdate, dbch,  dbname, ipval):
             print('bakalim olacak mi', df)
             return t1
 
+
 @app.callback(ServersideOutput('memory-outputpr', 'data'),
-              [Input('prvalname', 'value'), Input('prvaldate', 'value')], [State('prvalchoosen', 'value'),State('prname', 'value'), State('pr_Ip', 'value')])
-def prname2(valname,valdate, prch,  prname, ipval):
+              [Input('prvalname', 'value'), Input('prvaldate', 'value')],
+              [State('prvalchoosen', 'value'), State('prname', 'value'), State('pr_Ip', 'value')])
+def prname2(valname, valdate, prch, prname, ipval):
     if prname == None or valname == None or valdate == None:
         raise PreventUpdate
     ipadress = ''
-    if ipval == '' :
+    if ipval == '':
         ipadress = "193.54.2.211"
-    else :
+    else:
         ipadress = ipval
     server = SSHTunnelForwarder(
-            (ipadress, 22),
-            ssh_username='soudani',
-            ssh_password="univ484067152",
-            remote_bind_address=(ipadress, 3306))
+        (ipadress, 22),
+        ssh_username='soudani',
+        ssh_password="univ484067152",
+        remote_bind_address=(ipadress, 3306))
 
     server.start()
 
     try:
         conn = mariadb.connect(
-                user="dashapp",
-                password="dashapp",
-                host=ipadress,
-                port=3306,
-                database=prname)
+            user="dashapp",
+            password="dashapp",
+            host=ipadress,
+            port=3306,
+            database=prname)
 
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
-            # Get Cursor
+        # Get Cursor
 
-            # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-            # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-            #     'received_variablevalues')
+        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
+        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
+        #     'received_variablevalues')
 
         # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
     if prname == 'rcckn':
@@ -6628,9 +6861,9 @@ def prname2(valname,valdate, prch,  prname, ipval):
             cur1 = conn.cursor()
 
             print('valname[0]', valname)
-            if len(valname) == 1 :
+            if len(valname) == 1:
                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
-            elif len(valname) > 1 :
+            elif len(valname) > 1:
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME IN {valname}")
             t1 = cur1.fetchall()
@@ -6663,34 +6896,34 @@ def prname2(valname,valdate, prch,  prname, ipval):
             print('bakalim olacak mi', df)
             return t1
 
-@app.callback([Output('getdbtable', 'data'),
-               Output('getdbtable', 'columns'),],
-              [Input('memory-output', 'data'),Input('dbvalname', 'value'),
-               Input('dbvaldate', 'value'),Input('deactivatedb', 'n_clicks')],
-              [Input('dbvalchoosen', 'value'),State('db_name', 'value'), ]
-              )
 
-def on_data_set_table(data,valname, valdate,nc2, dbch, dbname):
+@app.callback([Output('getdbtable', 'data'),
+               Output('getdbtable', 'columns'), ],
+              [Input('memory-output', 'data'), Input('dbvalname', 'value'),
+               Input('dbvaldate', 'value'), Input('deactivatedb', 'n_clicks')],
+              [Input('dbvalchoosen', 'value'), State('db_name', 'value'), ]
+              )
+def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
     if data is None or valname == None or valdate == None or dbch == None or dbname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
     print(df.head(10))
-    if dbname == 'rcckn' :
+    if dbname == 'rcckn':
         if dbch == 'received_variablevalues':
             print('sikinti burda 1 ')
             if valdate != '' or valname != []:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                              'CONVERTED_NUM_VALUE']
+                                  'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                                  'CONVERTED_NUM_VALUE']
                     print('sikinti burda 2 ')
                     df['REMOTE_TIMESTAMP'] = df['REMOTE_TIMESTAMP'].astype('string')
                     a = []
-                    for col in df['REMOTE_TIMESTAMP'] :
+                    for col in df['REMOTE_TIMESTAMP']:
                         a.append(col[:10])
                     df['dates'] = a
                     valdate_new = []
-                    for i in range(len(valdate)) :
+                    for i in range(len(valdate)):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
                     a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
@@ -6698,23 +6931,23 @@ def on_data_set_table(data,valname, valdate,nc2, dbch, dbname):
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
-            else :
+            else:
                 raise PreventUpdate
         if dbch != None:
             print('sikinti burda 1send ')
             if valdate != '' or valname != []:
                 print('sikinti burda 2send ')
-                if df.empty != 1 :
+                if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                      'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                     print('sikinti burda 3send ')
                     df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
                     a = []
-                    for col in df['TIMESTAMP'] :
+                    for col in df['TIMESTAMP']:
                         a.append(col[:10])
                     df['dates'] = a
                     valdate_new = []
-                    for i in range(len(valdate)) :
+                    for i in range(len(valdate)):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
                     print('valname', valname)
@@ -6725,18 +6958,18 @@ def on_data_set_table(data,valname, valdate,nc2, dbch, dbname):
                     raise PreventUpdate
             else:
                 raise PreventUpdate
-    if dbname == 'enerbat' :
+    if dbname == 'enerbat':
         if dbch != None:
             if valdate != '' or valname != []:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                     df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
                     a = []
-                    for col in df['TIMESTAMP'] :
+                    for col in df['TIMESTAMP']:
                         a.append(col[:10])
                     df['dates'] = a
                     valdate_new = []
-                    for i in range(len(valdate)) :
+                    for i in range(len(valdate)):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
                     a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
@@ -6745,34 +6978,34 @@ def on_data_set_table(data,valname, valdate,nc2, dbch, dbname):
                 else:
                     raise PreventUpdate
 
-@app.callback([Output('getprtable', 'data'),
-               Output('getprtable', 'columns'),],
-              [Input('memory-outputpr', 'data'),Input('prvalname', 'value'),
-               Input('prvaldate', 'value'),Input('deactivatepr', 'n_clicks')],
-              [Input('prvalchoosen', 'value'),State('prname', 'value'), ]
-              )
 
-def on_data_set_tablepr(data,valname, valdate,nc2, prch, prname):
+@app.callback([Output('getprtable', 'data'),
+               Output('getprtable', 'columns'), ],
+              [Input('memory-outputpr', 'data'), Input('prvalname', 'value'),
+               Input('prvaldate', 'value'), Input('deactivatepr', 'n_clicks')],
+              [Input('prvalchoosen', 'value'), State('prname', 'value'), ]
+              )
+def on_data_set_tablepr(data, valname, valdate, nc2, prch, prname):
     if data is None or valname == None or valdate == None or prch == None or prname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
     print(df.head(10))
-    if prname == 'rcckn' :
+    if prname == 'rcckn':
         if prch == 'received_variablevalues':
             print('sikinti burda 1 ')
             if valdate != '' or valname != []:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                              'CONVERTED_NUM_VALUE']
+                                  'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                                  'CONVERTED_NUM_VALUE']
                     print('sikinti burda 2 ')
                     df['REMOTE_TIMESTAMP'] = df['REMOTE_TIMESTAMP'].astype('string')
                     a = []
-                    for col in df['REMOTE_TIMESTAMP'] :
+                    for col in df['REMOTE_TIMESTAMP']:
                         a.append(col[:10])
                     df['dates'] = a
                     valdate_new = []
-                    for i in range(len(valdate)) :
+                    for i in range(len(valdate)):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
                     a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
@@ -6780,23 +7013,23 @@ def on_data_set_tablepr(data,valname, valdate,nc2, prch, prname):
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
-            else :
+            else:
                 raise PreventUpdate
         if prch != None:
             print('sikinti burda 1send ')
             if valdate != '' or valname != []:
                 print('sikinti burda 2send ')
-                if df.empty != 1 :
+                if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                      'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                     print('sikinti burda 3send ')
                     df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
                     a = []
-                    for col in df['TIMESTAMP'] :
+                    for col in df['TIMESTAMP']:
                         a.append(col[:10])
                     df['dates'] = a
                     valdate_new = []
-                    for i in range(len(valdate)) :
+                    for i in range(len(valdate)):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
                     print('valname', valname)
@@ -6807,18 +7040,18 @@ def on_data_set_tablepr(data,valname, valdate,nc2, prch, prname):
                     raise PreventUpdate
             else:
                 raise PreventUpdate
-    if prname == 'enerbat' :
+    if prname == 'enerbat':
         if prch != None:
             if valdate != '' or valname != []:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                     df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
                     a = []
-                    for col in df['TIMESTAMP'] :
+                    for col in df['TIMESTAMP']:
                         a.append(col[:10])
                     df['dates'] = a
                     valdate_new = []
-                    for i in range(len(valdate)) :
+                    for i in range(len(valdate)):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
                     a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
@@ -6828,30 +7061,31 @@ def on_data_set_tablepr(data,valname, valdate,nc2, prch, prname):
                     raise PreventUpdate
 
 
-
 @app.callback(
-      [Output('firstChoosenValuedb', 'options'),
-       Output('secondChoosenValuedb', 'options')],
-      [Input('dbvalname', 'value')],)
-
-def containerdb (val1) :
-    if val1 == None or val1 == [] :
+    [Output('firstChoosenValuedb', 'options'),
+     Output('secondChoosenValuedb', 'options')],
+    [Input('dbvalname', 'value')], )
+def containerdb(val1):
+    if val1 == None or val1 == []:
         raise PreventUpdate
-    print('val1',val1)
+    print('val1', val1)
 
-    return [{'label' : i, 'value' : i} for i in val1],[{'label' : i, 'value' : i} for i in val1]
+    return [{'label': i, 'value': i} for i in val1], [{'label': i, 'value': i} for i in val1]
+
+
 #
 @app.callback(
-      [Output('firstChoosenValuepr', 'options'),
-       Output('secondChoosenValuepr', 'options')],
-      [Input('prvalname', 'value')],)
-
-def containerpr (val1) :
-    if val1 == None or val1 == [] :
+    [Output('firstChoosenValuepr', 'options'),
+     Output('secondChoosenValuepr', 'options')],
+    [Input('prvalname', 'value')], )
+def containerpr(val1):
+    if val1 == None or val1 == []:
         raise PreventUpdate
-    print('val1',val1)
+    print('val1', val1)
 
-    return [{'label' : i, 'value' : i} for i in val1],[{'label' : i, 'value' : i} for i in val1]
+    return [{'label': i, 'value': i} for i in val1], [{'label': i, 'value': i} for i in val1]
+
+
 #
 #
 @app.callback(Output('getdbgraph', 'figure'),
@@ -6859,10 +7093,10 @@ def containerpr (val1) :
                Input('dbvalname', 'value'),
                Input('dbvaldate', 'value'),
                Input('sliderWidthdb', 'value'),
-               Input('sliderHeightdb', 'value'),],
-              [State('dbvalchoosen', 'value'), State('db_name', 'value'),] )
-def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
-    if data is None or valy == [] or valdat == [] or valdat == None :
+               Input('sliderHeightdb', 'value'), ],
+              [State('dbvalchoosen', 'value'), State('db_name', 'value'), ])
+def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
+    if data is None or valy == [] or valdat == [] or valdat == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
     fig = go.Figure()
@@ -6870,7 +7104,8 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
     if dbname == 'rcckn':
         if dbch == 'received_variablevalues':
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                              'REMOTE_ID',
                               'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
                 a = []
                 for col in df['REMOTE_TIMESTAMP']:
@@ -6885,9 +7120,11 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        print('aaaaaaaaa',a)
+                        print('aaaaaaaaa', a)
                         print('bbbbbbbbb', b)
-                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',marker=dict(line=dict(width=0.2,color='white')),name="{}/{}".format(valy[j], valdate_new[k]))),
+                        fig.add_trace(
+                            go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
+                                         name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
                         autosize=True,
                         width=sliderw,
@@ -6906,7 +7143,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                 raise PreventUpdate
         else:
             if df.empty != 1:
-                df.columns = [ 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                 a = []
                 for col in df['TIMESTAMP']:
@@ -6927,7 +7164,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                                                        line=dict(
                                                            width=0.2,
                                                            color='white')),
-                                        name="{}/{}".format(valy[j], valdate_new[k]))),
+                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
                         fig.update_layout(
                             autosize=True,
                             width=sliderw,
@@ -6944,9 +7181,9 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                 return fig
             else:
                 raise PreventUpdate
-    if dbname == 'enerbat' :
+    if dbname == 'enerbat':
         if df.empty != 1:
-            df.columns = [ 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
             a = []
             for col in df['TIMESTAMP']:
                 a.append(col[:10])
@@ -6965,7 +7202,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                                                    line=dict(
                                                        width=0.2,
                                                        color='white')),
-                                name="{}/{}".format(valy[j], valdate_new[k]))),
+                                               name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
                         autosize=True,
                         width=sliderw,
@@ -6983,14 +7220,15 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
         else:
             raise PreventUpdate
 
+
 @app.callback(Output('getprgraph', 'figure'),
               [Input('memory-outputpr', 'data'),
                Input('prvalname', 'value'),
                Input('prvaldate', 'value'),
                Input('sliderWidthpr', 'value'),
-               Input('sliderHeightpr', 'value'),],
-              [State('prvalchoosen', 'value'), State('prname', 'value'),] )
-def on_data_set_graph(data, valy, valdat,sliderw, sliderh, prch, prname):
+               Input('sliderHeightpr', 'value'), ],
+              [State('prvalchoosen', 'value'), State('prname', 'value'), ])
+def on_data_set_graph(data, valy, valdat, sliderw, sliderh, prch, prname):
     if data is None or valy == [] or valdat == [] or valdat == None or prname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -6999,7 +7237,8 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, prch, prname):
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP', 'REMOTE_ID',
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                              'REMOTE_ID',
                               'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
                 a = []
                 for col in df['REMOTE_TIMESTAMP']:
@@ -7014,9 +7253,11 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, prch, prname):
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        print('aaaaaaaaa',a)
+                        print('aaaaaaaaa', a)
                         print('bbbbbbbbb', b)
-                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',marker=dict(line=dict(width=0.2,color='white')),name="{}/{}".format(valy[j], valdate_new[k]))),
+                        fig.add_trace(
+                            go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
+                                         name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
                         autosize=True,
                         width=sliderw,
@@ -7035,7 +7276,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, prch, prname):
                 raise PreventUpdate
         else:
             if df.empty != 1:
-                df.columns = [ 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                 a = []
                 for col in df['TIMESTAMP']:
@@ -7056,7 +7297,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, prch, prname):
                                                        line=dict(
                                                            width=0.2,
                                                            color='white')),
-                                        name="{}/{}".format(valy[j], valdate_new[k]))),
+                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
                         fig.update_layout(
                             autosize=True,
                             width=sliderw,
@@ -7073,9 +7314,9 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, prch, prname):
                 return fig
             else:
                 raise PreventUpdate
-    if prname == 'enerbat' :
+    if prname == 'enerbat':
         if df.empty != 1:
-            df.columns = [ 'ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
             a = []
             for col in df['TIMESTAMP']:
                 a.append(col[:10])
@@ -7094,7 +7335,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, prch, prname):
                                                    line=dict(
                                                        width=0.2,
                                                        color='white')),
-                                name="{}/{}".format(valy[j], valdate_new[k]))),
+                                               name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
                         autosize=True,
                         width=sliderw,
@@ -7112,6 +7353,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, prch, prname):
         else:
             raise PreventUpdate
 
-if __name__ == '__main__' :
+
+if __name__ == '__main__':
     # app.run_server(debug = True)
-    app.run_server(debug = True, host='0.0.0.0', port=8049)
+    app.run_server(debug=True, host='0.0.0.0', port=8049)
