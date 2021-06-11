@@ -4292,7 +4292,7 @@ def valintpr(clickData, firstchoosen,value, leftchild, rightchild, retrieve, prc
     spaceList2 = []
     if retrieve != []:
         df = pd.DataFrame(retrieve)
-        if dbname == 'rcckn' :
+        if prname == 'rcckn' :
             if prch == 'send_variablevalues' :
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
