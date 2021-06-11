@@ -6265,7 +6265,7 @@ def relationpr(prname,ipval) :
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
-    if dbname == 'rcckn' :
+    if prname == 'rcckn' :
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'rcckn'")
         val = cur.fetchall()
@@ -6991,7 +6991,7 @@ def on_data_set_graph(data, valy, valdat,sliderw, sliderh, dbch, dbname):
                Input('sliderHeightpr', 'value'),],
               [State('prvalchoosen', 'value'), State('prname', 'value'),] )
 def on_data_set_graph(data, valy, valdat,sliderw, sliderh, prch, prname):
-    if data is None or valy == [] or valdat == [] or valdat == None :
+    if data is None or valy == [] or valdat == [] or valdat == None or prname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
     fig = go.Figure()
