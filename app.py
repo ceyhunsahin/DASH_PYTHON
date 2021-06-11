@@ -1107,6 +1107,14 @@ def intervalcontrol(on):
     else:
         return True
 
+@app.callback(Output('interval_component_pr', 'disabled'),
+              [Input("my-toggle-switch-reel", "on")],
+              )
+def intervalcontrolpr(on):
+    if on == 1:
+        return False
+    else:
+        return True
 
 @app.callback(Output('interval_component', 'interval'),
               [Input("interval_value", "value")],
@@ -1145,6 +1153,33 @@ def values(on, n_intervals, id, val, qual, date):
     return id, val, qual, date
     return id, val, qual, date
 
+@app.callback([Output('data_to_store_id_pr', 'children'),
+               Output('data_to_store_value_pr', 'children'),
+               Output('data_to_store_qualite_pr', 'children'),
+               Output('data_to_store_date_pr', 'children'), ],
+              [Input("my-toggle-switch-pr", "on"), Input('interval_component_pr', 'n_intervals')],
+              [State('data_to_store_id_pr', 'children'),
+               State('data_to_store_value_pr', 'children'),
+               State('data_to_store_qualite_pr', 'children'),
+               State('data_to_store_date_pr', 'children'), ])
+def values_pr(on, n_intervals, id, val, qual, date):
+    # if from_modbus == None :
+    #     raise PreventUpdate
+    if on == 1:
+        opc = OpenOPC.client()
+        opc.servers()
+        opc.connect('Kepware.KEPServerEX.V6')
+        for ID, value, Quality, Timestamp in opc.iread(
+                ['sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2', 'sauter.EY6AS680.Tb3', 'sauter.EY6AS680.Tb4',
+                 'sauter.EY6AS680.Tec', 'sauter.EY6AS680.Teev', 'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
+                 'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg', ]):
+            # print('value', (ID, value, Quality, Timestamp))
+            id.append(ID[16:])
+            val.append(value)
+            qual.append(Quality)
+            date.append(Timestamp)
+
+    return id, val, qual, date
 
 #
 @app.callback([Output('get_data_from_modbus', 'data'), Output('realvalue', 'options')],
@@ -1161,6 +1196,21 @@ def storedata(id, val, qual, date):
     val = df['ID'].unique()
     return zipped_val, [{'label': i, 'value': i} for i in val]
 
+@app.callback([Output('get_data_from_modbus_pr', 'data'), Output('realvalue_pr', 'options')],
+              [Input('data_to_store_id_pr', 'children'),
+               Input('data_to_store_value_pr', 'children'),
+               Input('data_to_store_qualite_pr', 'children'),
+               Input('data_to_store_date_pr', 'children'), ], )
+def storedata_pr(id, val, qual, date):
+    # if store == None :
+    #     raise PreventUpdate
+    zipped_val = list(zip(id, val, qual, date))
+    df = pd.DataFrame(list(zip(id, val, qual, date)),
+                      columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
+    val = df['ID'].unique()
+    return zipped_val, [{'label': i, 'value': i} for i in val]
+
+
 
 @app.callback(Output('reelhidden1', 'children'),
               [Input("write_excel_reel", "n_clicks")],
@@ -1171,6 +1221,14 @@ def intervalcontrol2(nc, data):
         df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'Date'])
         df.to_excel('real.xlsx')
 
+@app.callback(Output('reelhidden1_pr', 'children'),
+              [Input("write_excel_pr", "n_clicks")],
+              [State('get_data_from_modbus_pr', 'data')],
+              )
+def intervalcontrol2_pr(nc, data):
+    if nc > 0:
+        df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'Date'])
+        df.to_excel('real.xlsx')
 
 @app.server.route("/download_excel_reel/")
 def download_excel_reel():
@@ -1191,10 +1249,72 @@ def download_excel_reel():
         cache_timeout=0
     )
 
+@app.server.route("/download_excel_pr/")
+def download_excel_pr():
+    # Create DF
+    dff = pd.read_excel("real.xlsx")
+    # Convert DF
+    buf = io.BytesIO()
+    excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
+    dff.to_excel(excel_writer, sheet_name="sheet1")
+    excel_writer.save()
+    excel_data = buf.getvalue()
+    buf.seek(0)
+    return send_file(
+        buf,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        attachment_filename="real.xlsx",
+        as_attachment=True,
+        cache_timeout=0
+    )
+
+
 
 @app.callback(Output('reelhidden2', 'children'),
               [Input("reelhidden3", "children"), ], [State('get_data_from_modbus', 'data')])
 def pandastosql(name, data):
+    if name == None:
+        raise PreventUpdate
+    print('name', name)
+    if name != None:
+        df = pd.DataFrame(data, columns=['variable_name', 'variable_num_value', 'quality', 'TIMESTAMP'])
+        a = [i for i in range(len(df.index))]  # for ID
+        b = [i for i in df['variable_name']]  # name of variable
+        c = [i for i in df['variable_num_value']]
+        d = [i for i in df['TIMESTAMP']]
+        df['TIMESTAMP'] = df['TIMESTAMP'].apply(lambda x: pd.Timestamp(x).strftime('%Y-%m-%d %H:%M:%S'))
+        sql_insert = list(zip(a, df['variable_name'], df['variable_num_value'], df['TIMESTAMP']))
+
+        try:
+            db_connection = mysql.connector.connect(
+                host="193.54.2.211",
+                user="dashapp",
+                passwd="dashapp",
+                database="enerbat",
+                port=3306, )
+            db_cursor = db_connection.cursor()
+            # +
+            # Here creating database table as student'
+            db_cursor.execute(
+                f"CREATE TABLE {name} (id BIGINT PRIMARY KEY, variable_name VARCHAR(255), variable_num_value DOUBLE, TIMESTAMP TIMESTAMP)")
+
+            sql_query = f" INSERT INTO {name} (id, variable_name,variable_num_value,TIMESTAMP) VALUES (%s, %s, %s, %s)"
+            # Get database table'
+            db_cursor.executemany(sql_query, sql_insert)
+            db_connection.commit()
+            print(db_cursor.rowcount, "Record inserted successfully into ENERBAT Database")
+        except mysql.connector.Error as error:
+            print("Failed to insert record into MARIADB table {}".format(error))
+        finally:
+            if db_connection.is_connected():
+                db_cursor.close()
+                db_connection.close()
+                print("MySQL connection is closed")
+
+
+@app.callback(Output('reelhidden2_pr', 'children'),
+              [Input("reelhidden3_pr", "children"), ], [State('get_data_from_modbus_pr', 'data')])
+def pandastosql_pr(name, data):
     if name == None:
         raise PreventUpdate
     print('name', name)
@@ -6392,11 +6512,7 @@ def download_exceldb():
 def relationdb(dbname, ipval):
     if dbname == None:
         raise PreventUpdate
-    ipadress = ''
-    if ipval == '':
-        ipadress = "193.54.2.211"
-    else:
-        ipadress = ipval
+    ipadress = "193.54.2.211"
     server = SSHTunnelForwarder(
         (ipadress, 22),
         ssh_username='soudani',
@@ -6465,11 +6581,7 @@ def relationdb(dbname, ipval):
 def relationpr(prname, ipval):
     if prname == None:
         raise PreventUpdate
-    ipadress = ''
-    if ipval == '':
-        ipadress = "193.54.2.211"
-    else:
-        ipadress = ipval
+    ipadress = "193.54.2.211"
     server = SSHTunnelForwarder(
         (ipadress, 22),
         ssh_username='soudani',
@@ -6519,11 +6631,7 @@ def relationpr(prname, ipval):
 def dbname(nc, nc2, dbch, dbname, ipval):
     if dbname == None:
         raise PreventUpdate
-    ipadress = ''
-    if ipval == '':
-        ipadress = "193.54.2.211"
-    else:
-        ipadress = ipval
+    ipadress = "193.54.2.211"
     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
     if q1 == 'activatedb':
 
@@ -6633,11 +6741,7 @@ def dbname(nc, nc2, dbch, dbname, ipval):
 def prname(nc, nc2, prch, prname, ipval):
     if prname == None:
         raise PreventUpdate
-    ipadress = ''
-    if ipval == '':
-        ipadress = "193.54.2.211"
-    else:
-        ipadress = ipval
+    ipadress = "193.54.2.211"
     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
     if q1 == 'activatepr':
 
@@ -6747,11 +6851,7 @@ def prname(nc, nc2, prch, prname, ipval):
 def dbname(valname, valdate, dbch, dbname, ipval):
     if dbname == None or valname == None or valdate == None:
         raise PreventUpdate
-    ipadress = ''
-    if ipval == '':
-        ipadress = "193.54.2.211"
-    else:
-        ipadress = ipval
+    ipadress = "193.54.2.211"
     server = SSHTunnelForwarder(
         (ipadress, 22),
         ssh_username='soudani',
@@ -6825,11 +6925,7 @@ def dbname(valname, valdate, dbch, dbname, ipval):
 def prname2(valname, valdate, prch, prname, ipval):
     if prname == None or valname == None or valdate == None:
         raise PreventUpdate
-    ipadress = ''
-    if ipval == '':
-        ipadress = "193.54.2.211"
-    else:
-        ipadress = ipval
+    ipadress = "193.54.2.211"
     server = SSHTunnelForwarder(
         (ipadress, 22),
         ssh_username='soudani',
