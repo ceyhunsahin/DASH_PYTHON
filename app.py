@@ -805,6 +805,11 @@ page_4_layout = html.Div(
                                 placeholder='Select your parameters...',
                                 ),
                    html.P('Enter interval value (Millisecond)'),
+                    dcc.Interval(
+                                 id='interval_component_pr_db',
+                                 disabled=True,
+                                 interval=1 * 1000,  # in milliseconds
+                                 n_intervals=0),
                    dbc.Input(id='interval_value_pr_db', type="text", value='1000',
                              min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
                                ], className='aadb'),
@@ -1146,6 +1151,15 @@ def intervalcontrolpr(on):
     else:
         return True
 
+@app.callback(Output('interval_component_pr_db', 'disabled'),
+              [Input("my-toggle-switch-pr-db", "on")],
+              )
+def intervalcontrolpr_db(on):
+    if on == 1:
+        return False
+    else:
+        return True
+
 @app.callback(Output('interval_component', 'interval'),
               [Input("interval_value", "value")],
               )
@@ -1160,6 +1174,12 @@ def intervalcontrol2_pr(val):
     val = int(val)
     return val
 
+@app.callback(Output('interval_component_pr_db', 'interval'),
+              [Input("interval_value_pr_db", "value")],
+              )
+def intervalcontrol2_pr_db(val):
+    val = int(val)
+    return val
 
 @app.callback([Output('data_to_store_id', 'children'),
                Output('data_to_store_value', 'children'),
@@ -1208,7 +1228,7 @@ def values_pr(on, n_intervals, id, val, qual, date):
         for ID, value, Quality, Timestamp in opc.iread(
                 ['sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2', 'sauter.EY6AS680.Tb3', 'sauter.EY6AS680.Tb4',
                  'sauter.EY6AS680.Tec', 'sauter.EY6AS680.Teev', 'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
-                 'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg', ]):
+                 'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg']):
             # print('value', (ID, value, Quality, Timestamp))
             id.append(ID[16:])
             val.append(value)
@@ -1314,7 +1334,6 @@ def pandastosql(name, data):
     if name == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
-    df.to_csv('project.csv')
     if name != None:
         df = pd.DataFrame(data, columns=['variable_name', 'variable_num_value', 'quality', 'TIMESTAMP'])
         a = [i for i in range(len(df.index))]  # for ID
@@ -1377,10 +1396,9 @@ def pandastosql_pr(on,interval, name, data):
                 db_cursor = db_connection.cursor()
                 # +
                 # Here creating database table as student'
-                db_cursor.execute(f"DROP TABLE IF EXISTS {name}")
-                # db_cursor.execute(f"REPAIR TABLE {name}")
-                db_cursor.execute(f"CREATE TABLE {name} (ID BIGINT PRIMARY KEY, VARIABLE_NAME VARCHAR(255), VARIABLE_NUM_VALUE DOUBLE, TIMESTAMP TIMESTAMP)")
 
+                # db_cursor.execute(f"REPAIR TABLE {name}")
+                db_cursor.execute(f"CREATE OR REPLACE TABLE  {name} (ID BIGINT PRIMARY KEY, VARIABLE_NAME VARCHAR(255), VARIABLE_NUM_VALUE DOUBLE, TIMESTAMP TIMESTAMP)")
                 sql_query = f" INSERT INTO {name} (id, variable_name, variable_num_value,TIMESTAMP) VALUES (%s, %s, %s, %s)"
                 # Get database table'
                 db_cursor.executemany(sql_query, sql_insert)
@@ -6577,6 +6595,7 @@ def relationdb(dbname, ipval):
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'rcckn'")
         val = cur.fetchall()
+        server.stop()
         print('valllll', val)
         return [{'label': i[0], 'value': i[0]} for i in val if
                 i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
@@ -6591,6 +6610,7 @@ def relationdb(dbname, ipval):
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'enerbat'")
         val = cur.fetchall()
+        server.stop()
         print('valllll', val)
         return [{'label': i[0], 'value': i[0]} for i in val]
     else:
@@ -6623,21 +6643,14 @@ def relationpr(prname, ipval):
     if prname == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
-    server = SSHTunnelForwarder(
-        (ipadress, 22),
-        ssh_username='soudani',
-        ssh_password="univ484067152",
-        remote_bind_address=(ipadress, 3306))
-
-    server.start()
-
     try:
-        conn = mariadb.connect(
+        conn = mysql.connector.connect(
+            host="193.54.2.211",
             user="dashapp",
-            password="dashapp",
-            host=ipadress,
-            port=3306,
-            database=prname)
+            passwd="dashapp",
+            database=prname,
+            port=3306, )
+        cur = conn.cursor()
 
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
@@ -6646,6 +6659,7 @@ def relationpr(prname, ipval):
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'rcckn'")
         val = cur.fetchall()
+
         print('valllll', val)
         return [{'label': i[0], 'value': i[0]} for i in val if
                 i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
@@ -6661,6 +6675,7 @@ def relationpr(prname, ipval):
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'enerbat'")
         val = cur.fetchall()
         print('valllll', val)
+
         return [{'label': i[0], 'value': i[0]} for i in val]
     else:
         no_update
@@ -6711,6 +6726,7 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 cur2 = conn.cursor()
                 cur2.execute("SELECT DISTINCT REMOTE_TIMESTAMP FROM received_variablevalues ")
                 t2 = cur2.fetchall()
+                server.stop()
                 str_list = [i[0] for i in t2]
                 df = pd.DataFrame(str_list)
                 df.columns = ['REMOTE_TIMESTAMP']
@@ -6732,6 +6748,7 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 cur2 = conn.cursor()
                 cur2.execute("SELECT DISTINCT TIMESTAMP FROM send_variablevalues ")
                 t2 = cur2.fetchall()
+                server.stop()
                 str_list = [i[0] for i in t2]
                 df = pd.DataFrame(str_list)
                 df.columns = ['TIMESTAMP']
@@ -6754,6 +6771,7 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 cur2 = conn.cursor()
                 cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {dbch}  ")
                 t2 = cur2.fetchall()
+                server.stop()
                 str_list = [i[0] for i in t2]
                 df = pd.DataFrame(str_list)
                 df.columns = ['TIMESTAMP']
@@ -6777,35 +6795,25 @@ def dbname(nc, nc2, dbch, dbname, ipval):
 
 
 @app.callback([Output('prvalname', 'options'), Output('prvaldate', 'options')],
-              [Input('activatepr', 'n_clicks'), Input('deactivatepr', 'n_clicks')],
+              [Input('interval_component_pr_db', 'n_intervals')],
               [State('prvalchoosen', 'value'), State('prname', 'value'), State('pr_Ip', 'value')])
-def prname(nc, nc2, prch, prname, ipval):
+def prname(interval, prch, prname, ipval):
     if prname == None:
         raise PreventUpdate
     print('prch',prch)
     ipadress = "193.54.2.211"
-    q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-    if q1 == 'activatepr':
-
-        server = SSHTunnelForwarder(
-            (ipadress, 22),
-            ssh_username='soudani',
-            ssh_password="univ484067152",
-            remote_bind_address=(ipadress, 3306))
-
-        server.start()
-
-        try:
-            conn = mariadb.connect(
+    try:
+        conn = mysql.connector.connect(
+                host="193.54.2.211",
                 user="dashapp",
-                password="dashapp",
-                host=ipadress,
-                port=3306,
-                database=prname)
+                passwd="dashapp",
+                database=prname,
+                port=3306, )
+        cur = conn.cursor()
 
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            sys.exit(1)
+    except mysql.connector.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+
             # Get Cursor
 
             # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
@@ -6813,97 +6821,111 @@ def prname(nc, nc2, prch, prname, ipval):
             #     'received_variablevalues')
 
         # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
-        if prname == 'rcckn':
-            if prch == 'received_variablevalues':
-                cur1 = conn.cursor()
-                cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues ")
-                t1 = cur1.fetchall()
-                name = [i[0] for i in t1]
-                cur2 = conn.cursor()
-                cur2.execute("SELECT DISTINCT REMOTE_TIMESTAMP FROM received_variablevalues ")
-                t2 = cur2.fetchall()
-                str_list = [i[0] for i in t2]
-                df = pd.DataFrame(str_list)
-                df.columns = ['REMOTE_TIMESTAMP']
-                df['REMOTE_TIMESTAMP'] = df.REMOTE_TIMESTAMP.apply(pd.to_datetime)
-                df["day"] = df.REMOTE_TIMESTAMP.dt.day
-                df["month"] = df.REMOTE_TIMESTAMP.dt.month
-                df["year"] = df.REMOTE_TIMESTAMP.dt.year
-                a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-                a = list(set(a))
-                b = pd.to_datetime(a)
-                b = sorted(b)
-                str_list = [t.strftime("%Y-%m-%d") for t in b]
-                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-            elif prch == "send_variablevalues" :
-                cur1 = conn.cursor()
-                cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM send_variablevalues ")
-                t1 = cur1.fetchall()
-                name = [i[0] for i in t1]
-                cur2 = conn.cursor()
-                cur2.execute("SELECT DISTINCT TIMESTAMP FROM send_variablevalues ")
-                t2 = cur2.fetchall()
-                str_list = [i[0] for i in t2]
-                df = pd.DataFrame(str_list)
-                df.columns = ['TIMESTAMP']
-                df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
-                df["day"] = df.TIMESTAMP.dt.day
-                df["month"] = df.TIMESTAMP.dt.month
-                df["year"] = df.TIMESTAMP.dt.year
-                a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-                a = list(set(a))
-                b = pd.to_datetime(a)
-                b = sorted(b)
-                str_list = [t.strftime("%Y-%m-%d") for t in b]
-                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-            else:
-                cur1 = conn.cursor()
-                cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {prch} ")
-                t1 = cur1.fetchall()
-                name = [i[0] for i in t1]
-                cur2 = conn.cursor()
-                cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {prch} ")
-                t2 = cur2.fetchall()
-                str_list = [i[0] for i in t2]
-                df = pd.DataFrame(t2)
-                df.columns = ['TIMESTAMP']
-                df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
-                df["day"] = df.TIMESTAMP.dt.day
-                df["month"] = df.TIMESTAMP.dt.month
-                df["year"] = df.TIMESTAMP.dt.year
-                a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-                a = list(set(a))
-                b = pd.to_datetime(a)
-                b = sorted(b)
-                str_list = [t.strftime("%Y-%m-%d") for t in b]
-                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-        if prname == 'enerbat':
-            if prch != None:
-                cur1 = conn.cursor()
-                cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {prch} ")
-                t1 = cur1.fetchall()
-                name = [i[0] for i in t1]
-                cur2 = conn.cursor()
-                cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {prch}  ")
-                t2 = cur2.fetchall()
-                str_list = [i[0] for i in t2]
-                df = pd.DataFrame(str_list)
-                df.columns = ['TIMESTAMP']
-                df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
-                df["day"] = df.TIMESTAMP.dt.day
-                df["month"] = df.TIMESTAMP.dt.month
-                df["year"] = df.TIMESTAMP.dt.year
-                a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-                a = list(set(a))
-                b = pd.to_datetime(a)
-                b = sorted(b)
-                str_list = [t.strftime("%Y-%m-%d") for t in b]
-                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+    if prname == 'rcckn':
+        if prch == 'received_variablevalues':
+            time.sleep(1)
+            cur1 = conn.cursor()
+            cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues ")
+            t1 = cur1.fetchall()
+            name = [i[0] for i in t1]
+            cur2 = conn.cursor()
+            cur2.execute("SELECT DISTINCT REMOTE_TIMESTAMP FROM received_variablevalues ")
+            t2 = cur2.fetchall()
+            server.stop()
+            str_list = [i[0] for i in t2]
+            df = pd.DataFrame(str_list)
+            df.columns = ['REMOTE_TIMESTAMP']
+            df['REMOTE_TIMESTAMP'] = df.REMOTE_TIMESTAMP.apply(pd.to_datetime)
+            df["day"] = df.REMOTE_TIMESTAMP.dt.day
+            df["month"] = df.REMOTE_TIMESTAMP.dt.month
+            df["year"] = df.REMOTE_TIMESTAMP.dt.year
+            a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+            a = list(set(a))
+            b = pd.to_datetime(a)
+            b = sorted(b)
+            str_list = [t.strftime("%Y-%m-%d") for t in b]
+            return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+        elif prch == "send_variablevalues" :
+            time.sleep(1)
+            cur1 = conn.cursor()
+            cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM send_variablevalues ")
+            t1 = cur1.fetchall()
+            name = [i[0] for i in t1]
+            cur2 = conn.cursor()
+            cur2.execute("SELECT DISTINCT TIMESTAMP FROM send_variablevalues ")
+            t2 = cur2.fetchall()
+            server.stop()
+            str_list = [i[0] for i in t2]
+            df = pd.DataFrame(str_list)
+            df.columns = ['TIMESTAMP']
+            df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
+            df["day"] = df.TIMESTAMP.dt.day
+            df["month"] = df.TIMESTAMP.dt.month
+            df["year"] = df.TIMESTAMP.dt.year
+            a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+            a = list(set(a))
+            b = pd.to_datetime(a)
+            b = sorted(b)
+            str_list = [t.strftime("%Y-%m-%d") for t in b]
+            return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+            # else:
+            #     time.sleep(1)
+            #     cur1 = conn.cursor()
+            #     cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {prch} ")
+            #     t1 = cur1.fetchall()
+            #     name = [i[0] for i in t1]
+            #     cur2 = conn.cursor()
+            #     cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {prch} ")
+            #     t2 = cur2.fetchall()
+            #     server.stop()
+            #     str_list = [i[0] for i in t2]
+            #     df = pd.DataFrame(t2)
+            #     df.columns = ['TIMESTAMP']
+            #     df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
+            #     df["day"] = df.TIMESTAMP.dt.day
+            #     df["month"] = df.TIMESTAMP.dt.month
+            #     df["year"] = df.TIMESTAMP.dt.year
+            #     a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+            #     a = list(set(a))
+            #     b = pd.to_datetime(a)
+            #     b = sorted(b)
+            #     str_list = [t.strftime("%Y-%m-%d") for t in b]
+            #     return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+    if prname == 'enerbat':
+        if prch != None:
+            time.sleep(1)
+            cur1 = conn.cursor()
+            cur1.execute(f"SELECT * FROM {prch} ")
+            t1 = cur1.fetchall()
 
-    if q1 == 'deactivatepr':
-        kk = [{'label': i, 'value': i} for i in '']
-        print('kkkkkkkkk', kk)
-        return [{'label': i, 'value': i} for i in ''], [{'label': i, 'value': i} for i in '']
+            df = pd.DataFrame(t1)
+
+
+            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+
+            df.to_csv('project.csv')
+            name = df['VARIABLE_NAME'].unique()
+                # cur2 = conn.cursor()
+                # cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {prch}  ")
+                # t2 = cur2.fetchall()
+                # str_list = [i[0] for i in t2]
+                # df = pd.DataFrame(str_list)
+                # df.columns = ['TIMESTAMP']
+            df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
+            df["day"] = df.TIMESTAMP.dt.day
+            df["month"] = df.TIMESTAMP.dt.month
+            df["year"] = df.TIMESTAMP.dt.year
+            a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+            a = list(set(a))
+            b = pd.to_datetime(a)
+            b = sorted(b)
+            str_list = [t.strftime("%Y-%m-%d") for t in b]
+            return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+
+    # if q1 == 'deactivatepr':
+    #     kk = [{'label': i, 'value': i} for i in '']
+    #     print('kkkkkkkkk', kk)
+    #     return [{'label': i, 'value': i} for i in ''], [{'label': i, 'value': i} for i in '']
     else:
         no_update, no_update
 
@@ -6952,6 +6974,7 @@ def dbname(valname, valdate, dbch, dbname, ipval):
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME IN {valname}")
             t1 = cur1.fetchall()
+
             df = pd.DataFrame(t1)
             print('bakalim olacak mi', df.head(10))
             return t1
@@ -6964,7 +6987,22 @@ def dbname(valname, valdate, dbch, dbname, ipval):
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
             t1 = cur1.fetchall()
+
             df = pd.DataFrame(t1)
+            print('bakalim olacak mi', df.head(10))
+            return t1
+        elif dbch != "send_variablevalues" or dbch != "received_variablevalues":
+            cur1 = conn.cursor()
+            print('valname[0]', valname)
+            if len(valname) == 1:
+                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
+            elif len(valname) > 1:
+                valname = tuple(valname)
+                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
+            t1 = cur1.fetchall()
+
+            df = pd.DataFrame(t1)
+
             print('bakalim olacak mi', df.head(10))
             return t1
     if dbname == 'enerbat':
@@ -6977,83 +7015,101 @@ def dbname(valname, valdate, dbch, dbname, ipval):
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
             t1 = cur1.fetchall()
+
             df = pd.DataFrame(t1)
             print('bakalim olacak mi', df)
             return t1
 
-
-@app.callback(ServersideOutput('memory-outputpr', 'data'),
-              [Input('prvalname', 'value'), Input('prvaldate', 'value')],
-              [State('prvalchoosen', 'value'), State('prname', 'value'), State('pr_Ip', 'value')])
-def prname2(valname, valdate, prch, prname, ipval):
-    if prname == None or valname == None or valdate == None:
-        raise PreventUpdate
-    ipadress = "193.54.2.211"
-    server = SSHTunnelForwarder(
-        (ipadress, 22),
-        ssh_username='soudani',
-        ssh_password="univ484067152",
-        remote_bind_address=(ipadress, 3306))
-
-    server.start()
-
-    try:
-        conn = mariadb.connect(
-            user="dashapp",
-            password="dashapp",
-            host=ipadress,
-            port=3306,
-            database=prname)
-
-    except mariadb.Error as e:
-        print(f"Error connecting to MariaDB Platform: {e}")
-        sys.exit(1)
-        # Get Cursor
-
-        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-        #     'received_variablevalues')
-
-        # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
-    if prname == 'rcckn':
-        if prch == 'received_variablevalues':
-            cur1 = conn.cursor()
-
-            print('valname[0]', valname)
-            if len(valname) == 1:
-                cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
-            elif len(valname) > 1:
-                valname = tuple(valname)
-                cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME IN {valname}")
-            t1 = cur1.fetchall()
-            df = pd.DataFrame(t1)
-            print('bakalim olacak mi', df.head(10))
-            return t1
-        elif prch == "send_variablevalues":
-            cur1 = conn.cursor()
-            print('valname[0]', valname)
-            if len(valname) == 1:
-                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
-            elif len(valname) > 1:
-                valname = tuple(valname)
-                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
-            t1 = cur1.fetchall()
-            df = pd.DataFrame(t1)
-            print('bakalim olacak mi', df.head(10))
-            return t1
-    if prname == 'enerbat':
-        if prch != None:
-            cur1 = conn.cursor()
-            print('valname[0]', valname)
-            if len(valname) == 1:
-                cur1.execute(f"SELECT * FROM {prch} WHERE VARIABLE_NAME = '{valname[0]}'")
-            elif len(valname) > 1:
-                valname = tuple(valname)
-                cur1.execute(f"SELECT * FROM {prch} WHERE VARIABLE_NAME IN {valname}")
-            t1 = cur1.fetchall()
-            df = pd.DataFrame(t1)
-            print('bakalim olacak mi', df)
-            return t1
+#
+# @app.callback(ServersideOutput('memory-outputpr', 'data'),
+#               [Input('prvalname', 'value'), Input('prvaldate', 'value')],
+#               [State('prvalchoosen', 'value'), State('prname', 'value'), State('pr_Ip', 'value')])
+# def prname2(valname, valdate, prch, prname, ipval):
+#     if prname == None or valname == None or valdate == None:
+#         raise PreventUpdate
+#     ipadress = "193.54.2.211"
+#     server = SSHTunnelForwarder(
+#         (ipadress, 22),
+#         ssh_username='soudani',
+#         ssh_password="univ484067152",
+#         remote_bind_address=(ipadress, 3306))
+#
+#     server.start()
+#
+#     try:
+#         conn = mariadb.connect(
+#             user="dashapp",
+#             password="dashapp",
+#             host=ipadress,
+#             port=3306,
+#             database=prname)
+#
+#     except mariadb.Error as e:
+#         print(f"Error connecting to MariaDB Platform: {e}")
+#         sys.exit(1)
+#         # Get Cursor
+#
+#         # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
+#         # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
+#         #     'received_variablevalues')
+#
+#         # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
+#     if prname == 'rcckn':
+#         if prch == 'received_variablevalues':
+#             cur1 = conn.cursor()
+#
+#             print('valname[0]', valname)
+#             if len(valname) == 1:
+#                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
+#             elif len(valname) > 1:
+#                 valname = tuple(valname)
+#                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME IN {valname}")
+#             t1 = cur1.fetchall()
+#             df = pd.DataFrame(t1)
+#             print('bakalim olacak mi', df.head(10))
+#             return t1
+#         elif prch == "send_variablevalues":
+#             cur1 = conn.cursor()
+#             print('valname[0]', valname)
+#             if len(valname) == 1:
+#                 cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
+#             elif len(valname) > 1:
+#                 valname = tuple(valname)
+#                 cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
+#             t1 = cur1.fetchall()
+#             df = pd.DataFrame(t1)
+#             print('bakalim olacak mi', df.head(10))
+#             return t1
+#         elif dbch != "send_variablevalues" or dbch != "received_variablevalues":
+#             cur1 = conn.cursor()
+#             print('valname[0]', valname)
+#             if len(valname) == 1:
+#                 cur1.execute(f"SELECT * FROM {prch} WHERE VARIABLE_NAME = '{valname[0]}'")
+#             elif len(valname) > 1:
+#                 valname = tuple(valname)
+#                 cur1.execute(f"SELECT * FROM {prch} WHERE VARIABLE_NAME IN {valname}")
+#             t1 = cur1.fetchall()
+#             df = pd.DataFrame(t1)
+#             print('bakalim olacak mi', df.head(10))
+#             return t1
+#     if prname == 'enerbat':
+#         if prch != None:
+#             cur1 = conn.cursor()
+#             print('valname[0]', valname)
+#             if len(valname) == 1:
+#                 print('bu islem oluyor mu 0')
+#                 cur1.execute(f"SELECT * FROM {prch} WHERE VARIABLE_NAME = '{valname[0]}'")
+#                 print('bu islem oluyor mu 1')
+#             elif len(valname) > 1:
+#                 valname = tuple(valname)
+#                 cur1.execute(f"SELECT * FROM {prch} WHERE VARIABLE_NAME IN {valname}")
+#             t1 = cur1.fetchall()
+#             print('bu islem oluyor mu 2')
+#             df = pd.DataFrame(t1)
+#             print('bu islem oluyor mu 4')
+#             print('bakalim olacak mi', df)
+#             df.to_csv('project.csv')
+#             return t1
 
 
 @app.callback([Output('getdbtable', 'data'),
@@ -7140,14 +7196,14 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
 
 @app.callback([Output('getprtable', 'data'),
                Output('getprtable', 'columns'), ],
-              [Input('memory-outputpr', 'data'), Input('prvalname', 'value'),
+              [ Input('prvalname', 'value'),
                Input('prvaldate', 'value'), Input('deactivatepr', 'n_clicks')],
               [Input('prvalchoosen', 'value'), State('prname', 'value'), ]
               )
-def on_data_set_tablepr(data, valname, valdate, nc2, prch, prname):
-    if data is None or valname == None or valdate == None or prch == None or prname == None:
+def on_data_set_tablepr( valname, valdate, nc2, prch, prname):
+    if valname == None or valdate == None or prch == None or prname == None:
         raise PreventUpdate
-    df = pd.DataFrame(data)
+    df = pd.read_csv('project.csv')
     print(df.head(10))
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
@@ -7203,7 +7259,7 @@ def on_data_set_tablepr(data, valname, valdate, nc2, prch, prname):
         if prch != None:
             if valdate != '' or valname != []:
                 if df.empty != 1:
-                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+                    # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                     df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
                     a = []
                     for col in df['TIMESTAMP']:
@@ -7381,16 +7437,16 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
 
 
 @app.callback(Output('getprgraph', 'figure'),
-              [Input('memory-outputpr', 'data'),
+              [
                Input('prvalname', 'value'),
                Input('prvaldate', 'value'),
                Input('sliderWidthpr', 'value'),
                Input('sliderHeightpr', 'value'), ],
               [State('prvalchoosen', 'value'), State('prname', 'value'), ])
-def on_data_set_graph(data, valy, valdat, sliderw, sliderh, prch, prname):
-    if data is None or valy == [] or valdat == [] or valdat == None or prname == None:
+def on_data_set_graph(valy, valdat, sliderw, sliderh, prch, prname):
+    if valy == [] or valdat == [] or valdat == None or prname == None:
         raise PreventUpdate
-    df = pd.DataFrame(data)
+    df = pd.read_csv('project.csv')
     fig = go.Figure()
     print('prname', prname)
     if prname == 'rcckn':
@@ -7475,7 +7531,7 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, prch, prname):
                 raise PreventUpdate
     if prname == 'enerbat':
         if df.empty != 1:
-            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
             a = []
             for col in df['TIMESTAMP']:
                 a.append(col[:10])
