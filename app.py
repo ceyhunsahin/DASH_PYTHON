@@ -726,16 +726,8 @@ page_3_layout = html.Div(
               html.Div(id='ok_click_hidden', children=[], style={'display': 'None'}),
               ])
 page_4_layout = html.Div(
-    [html.Div([html.Div([dbc.ButtonGroup([dbc.Button("Database Activate", id="activatepr", n_clicks=0,
-                                                     size="lg", className="mr-1", color="success",
-                                                     style={'width': '25rem'}
-                                                     ),
-                                          dbc.Button("Database Deactivate", id="deactivatepr", n_clicks=0,
-                                                     size="lg", className="mr-1", color="danger",
-                                                     style={'width': '25rem'}
-                                                     ),
-                                          ]),
-                         html.Div(dcc.Link('Go to Main Page', href='/page_1', id='link1'), style={'marginTop': '2rem'}),
+    [html.Div([html.Div([
+                        html.Div(dcc.Link('Go to Main Page', href='/page_1', id='link1'), style={'marginTop': '2rem'}),
                         html.Div([
                                                dbc.Checklist(id="calculintegralpr",
                                                              options=[
@@ -810,7 +802,7 @@ page_4_layout = html.Div(
                                  disabled=True,
                                  interval=1 * 1000,  # in milliseconds
                                  n_intervals=0),
-                   dbc.Input(id='interval_value_pr_db', type="text", value='1000',
+                   dbc.Input(id='interval_value_pr_db', type="text", value='5',
                              min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
                                ], className='aadb'),
 
@@ -843,6 +835,11 @@ page_4_layout = html.Div(
                                                    n_intervals=0), ]),
                                   html.Div([
                                       dcc.Dropdown(id='realvalue_pr',
+                                                   options = [{'label': i[16:], 'value': i} for i in ['sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2',
+                                                                                'sauter.EY6AS680.Tb3', 'sauter.EY6AS680.Tb4',
+                                                                                'sauter.EY6AS680.Tec', 'sauter.EY6AS680.Teev',
+                                                                                'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
+                                                                                'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg' ]],
                                                    multi=True,
                                                    style={"cursor": "pointer", 'margin': '5px 5px 10px 0',
                                                           'width': '40rem'},
@@ -852,7 +849,7 @@ page_4_layout = html.Div(
 
                                                    ),
                                       html.P('Enter interval value (Millisecond)'),
-                                      dbc.Input(id='interval_value_pr', type="text", value='1000',
+                                      dbc.Input(id='interval_value_pr', type="text", value='5',
                                                 min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
 
                                       html.Div([dbc.Button("Save", id="write_excel_pr", n_clicks=0, size="lg",
@@ -1001,7 +998,25 @@ page_4_layout = html.Div(
                           placeholder="Intersection")], className='aa')
       ], style={'display': 'None'},
               className="abdbase"),
-     html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph",
+     html.Div([html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='firstgraph_pr_real',
+                       options=[{'label': i, 'value': i} for i in
+                                []],
+                       multi=True,
+                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 10rem'},
+                       className='',
+                       clearable=True,
+                       placeholder='Values of Real Time',
+                       ),),
+                        html.Div(dcc.Dropdown(id='firstgraph_pr_db',
+                       options=[{'label': i, 'value': i} for i in
+                                []],
+                       multi=True,
+                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 10rem'},
+                       className='',
+                       clearable=True,
+                       placeholder='Values of Database',
+                       ),),
+                       html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph",
                                             config={'displayModeBar': True,
                                                     'scrollZoom': True,
                                                     'modeBarButtonsToAdd': [
@@ -1011,7 +1026,7 @@ page_4_layout = html.Div(
                                                         'select2d',
                                                         'eraseshape',
                                                     ]},
-                                            style={'marginTop': 20, },
+                                            style={'margin': '2rem 0 0 0', },
                                             figure={
                                                 'layout': {'legend': {'tracegroupgap': 0},
 
@@ -1027,16 +1042,191 @@ page_4_layout = html.Div(
                                              size=400,
                                              vertical=True,
                                              updatemode='drag'), style={'margin': '20px'})], className='abcdb'),
+                        html.Div(daq.Slider(id="sliderWidthpr",
+                                                     max=2000,
+                                                     min=600,
+                                                     value=1000,
+                                                     step=100,
+                                                     size=750,
 
-               html.Div([html.Div(daq.Slider(id="sliderWidthpr",
-                                             max=2000,
-                                             min=600,
-                                             value=1000,
-                                             step=100,
-                                             size=750,
+                                                     updatemode='drag'), style={'marginLeft': '5rem'}),
+                        ], className='aadb'),
 
-                                             updatemode='drag'), style={'marginLeft': '5rem'}),
+
                          ]),
+
+                        html.Div(dcc.Dropdown(id='secondgraph_pr_real',
+                               options=[{'label': i, 'value': i} for i in
+                                        []],
+                               multi=True,
+                               style={"cursor": "pointer", 'width': '30rem','margin' : '3rem 0 0 10rem'},
+                               className='',
+                               clearable=True,
+                               placeholder='Values of Real Time',
+                               ),),
+                                html.Div(dcc.Dropdown(id='secondgraph_pr_db',
+                               options=[{'label': i, 'value': i} for i in
+                                        []],
+                               multi=True,
+                               style={"cursor": "pointer", 'width': '30rem','margin' : '1rem 0 0 10rem'},
+                               className='',
+                               clearable=True,
+                               placeholder='Values of Database',
+                               ),),
+                               html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph2",
+                                                    config={'displayModeBar': True,
+                                                            'scrollZoom': True,
+                                                            'modeBarButtonsToAdd': [
+                                                                'drawline',
+                                                                'drawrect',
+                                                                'drawopenpath',
+                                                                'select2d',
+                                                                'eraseshape',
+                                                            ]},
+                                                    style={'marginTop': 20, },
+                                                    figure={
+                                                        'layout': {'legend': {'tracegroupgap': 0},
+
+                                                                   }
+                                                    }
+
+                                                    ), ),
+                                                 html.Div(daq.Slider(id="sliderHeightpr2",
+                                                                     max=2100,
+                                                                     min=400,
+                                                                     value=530,
+                                                                     step=100,
+                                                                     size=400,
+                                                                     vertical=True,
+                                                                     updatemode='drag'), style={'margin': '20px'})], className='abcdb'),
+                                                html.Div(daq.Slider(id="sliderWidthpr2",
+                                                                             max=2000,
+                                                                             min=600,
+                                                                             value=1000,
+                                                                             step=100,
+                                                                             size=750,
+
+                                                                             updatemode='drag'), style={'marginLeft': '4rem'}),
+                                                ], className='aadb'),
+
+
+                                                 ], className='aadb'), ]),
+
+                html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='thirdgraph_pr_real',
+                                       options=[{'label': i, 'value': i} for i in
+                                                []],
+                                       multi=True,
+                                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 10rem'},
+                                       className='',
+                                       clearable=True,
+                                       placeholder='Values of Real Time',
+                                       ),),
+                                        html.Div(dcc.Dropdown(id='thirdgraph_pr_db',
+                                       options=[{'label': i, 'value': i} for i in
+                                                []],
+                                       multi=True,
+                                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 10rem' },
+                                       className='',
+                                       clearable=True,
+                                       placeholder='Values of Database',
+                                       ),),
+                                       html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph3",
+                                                            config={'displayModeBar': True,
+                                                                    'scrollZoom': True,
+                                                                    'modeBarButtonsToAdd': [
+                                                                        'drawline',
+                                                                        'drawrect',
+                                                                        'drawopenpath',
+                                                                        'select2d',
+                                                                        'eraseshape',
+                                                                    ]},
+                                                            style={'marginTop': 20, },
+                                                            figure={
+                                                                'layout': {'legend': {'tracegroupgap': 0},
+
+                                                                           }
+                                                            }
+
+                                                            ), ),
+                                         html.Div(daq.Slider(id="sliderHeightpr3",
+                                                             max=2100,
+                                                             min=400,
+                                                             value=530,
+                                                             step=100,
+                                                             size=400,
+                                                             vertical=True,
+                                                             updatemode='drag'), style={'margin': '20px'})], className='abcdb'),
+                                        html.Div(daq.Slider(id="sliderWidthpr3",
+                                                                     max=2000,
+                                                                     min=600,
+                                                                     value=1000,
+                                                                     step=100,
+                                                                     size=750,
+
+                                                                     updatemode='drag'), style={'marginLeft': '5rem'}),
+                                        ], className='aadb'),
+
+
+                                         ]),
+
+                                        html.Div(dcc.Dropdown(id='fourgraph_pr_real',
+                                               options=[{'label': i, 'value': i} for i in
+                                                        []],
+                                               multi=True,
+                                               style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 10rem'},
+                                               className='',
+                                               clearable=True,
+                                               placeholder='Values of Real Time',
+                                               ),),
+                                                html.Div(dcc.Dropdown(id='fourgraph_pr_db',
+                                               options=[{'label': i, 'value': i} for i in
+                                                        []],
+                                               multi=True,
+                                               style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 10rem'},
+                                               className='',
+                                               clearable=True,
+                                               placeholder='Values of Database',
+                                               ),),
+                                               html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph4",
+                                                                    config={'displayModeBar': True,
+                                                                            'scrollZoom': True,
+                                                                            'modeBarButtonsToAdd': [
+                                                                                'drawline',
+                                                                                'drawrect',
+                                                                                'drawopenpath',
+                                                                                'select2d',
+                                                                                'eraseshape',
+                                                                            ]},
+                                                                    style={'marginTop': 20, },
+                                                                    figure={
+                                                                        'layout': {'legend': {'tracegroupgap': 0},
+
+                                                                                   }
+                                                                    }
+
+                                                                    ), ),
+                                                                 html.Div(daq.Slider(id="sliderHeightpr4",
+                                                                                     max=2100,
+                                                                                     min=400,
+                                                                                     value=530,
+                                                                                     step=100,
+                                                                                     size=400,
+                                                                                     vertical=True,
+                                                                                     updatemode='drag'), style={'margin': '10px'})], className='abcdb'),
+                                                                html.Div(daq.Slider(id="sliderWidthpr4",
+                                                                                             max=2000,
+                                                                                             min=600,
+                                                                                             value=1000,
+                                                                                             step=100,
+                                                                                             size=750,
+
+                                                                                             updatemode='drag'), style={'marginLeft': '5rem'}),
+                                                                ], className='aadb'),
+
+
+                                                                 ], className='aadb'), ]),], className='abcdb_pr'),
+
+
                html.Div(dash_table.DataTable(id="getprtable",
                                              editable=True,
                                              page_size=50,
@@ -1095,7 +1285,7 @@ page_4_layout = html.Div(
                html.Div(id='hiddenrecord4pr', children=[], style={'display': 'None'}),
                html.Div(id='writeexcelhiddenpr', children=[], style={'display': 'None'}),
 
-               ], ), ], ),
+               ], ),
 
 
 @app.callback(
@@ -1171,14 +1361,14 @@ def intervalcontrol2(val):
               [Input("interval_value_pr", "value")],
               )
 def intervalcontrol2_pr(val):
-    val = int(val)
+    val = int(val)*1000
     return val
 
 @app.callback(Output('interval_component_pr_db', 'interval'),
               [Input("interval_value_pr_db", "value")],
               )
 def intervalcontrol2_pr_db(val):
-    val = int(val)
+    val = int(val)*1000
     return val
 
 @app.callback([Output('data_to_store_id', 'children'),
@@ -1200,7 +1390,7 @@ def values(on, n_intervals, id, val, qual, date):
         for ID, value, Quality, Timestamp in opc.iread(
                 ['sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2', 'sauter.EY6AS680.Tb3', 'sauter.EY6AS680.Tb4',
                  'sauter.EY6AS680.Tec', 'sauter.EY6AS680.Teev', 'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
-                 'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg', ]):
+                 'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg' ]):
             # print('value', (ID, value, Quality, Timestamp))
             id.append(ID[16:])
             val.append(value)
@@ -1212,29 +1402,27 @@ def values(on, n_intervals, id, val, qual, date):
 @app.callback([Output('data_to_store_id_pr', 'children'),
                Output('data_to_store_value_pr', 'children'),
                Output('data_to_store_qualite_pr', 'children'),
-               Output('data_to_store_date_pr', 'children'), ],
-              [Input("my-toggle-switch-pr", "on"), Input('interval_component_pr', 'n_intervals')],
+               Output('data_to_store_date_pr', 'children'),
+               ],
+              [Input("my-toggle-switch-pr", "on"),Input('realvalue_pr', 'value'), Input('interval_component_pr', 'n_intervals')],
               [State('data_to_store_id_pr', 'children'),
                State('data_to_store_value_pr', 'children'),
                State('data_to_store_qualite_pr', 'children'),
                State('data_to_store_date_pr', 'children'), ])
-def values_pr(on, n_intervals, id, val, qual, date):
-    # if from_modbus == None :
-    #     raise PreventUpdate
+def values_pr(on,realval, n_intervals, id, val, qual, date):
+    if realval == None :
+        raise PreventUpdate
     if on == 1:
         opc = OpenOPC.client()
         opc.servers()
         opc.connect('Kepware.KEPServerEX.V6')
-        for ID, value, Quality, Timestamp in opc.iread(
-                ['sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2', 'sauter.EY6AS680.Tb3', 'sauter.EY6AS680.Tb4',
-                 'sauter.EY6AS680.Tec', 'sauter.EY6AS680.Teev', 'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
-                 'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg']):
+        print(realval)
+        for ID, value, Quality, Timestamp in opc.iread(realval):
             # print('value', (ID, value, Quality, Timestamp))
             id.append(ID[16:])
             val.append(value)
             qual.append(Quality)
             date.append(Timestamp)
-
     return id, val, qual, date
 
 #
@@ -1252,7 +1440,7 @@ def storedata(id, val, qual, date):
     val = df['ID'].unique()
     return zipped_val, [{'label': i, 'value': i} for i in val]
 
-@app.callback([Output('get_data_from_modbus_pr', 'data'), Output('realvalue_pr', 'options')],
+@app.callback( Output('get_data_from_modbus_pr', 'data'),
               [Input('data_to_store_id_pr', 'children'),
                Input('data_to_store_value_pr', 'children'),
                Input('data_to_store_qualite_pr', 'children'),
@@ -1261,13 +1449,24 @@ def storedata_pr(id, val, qual, date):
     # if store == None :
     #     raise PreventUpdate
     zipped_val = list(zip(id, val, qual, date))
-    df = pd.DataFrame(list(zip(id, val, qual, date)),
-                      columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-    val = df['ID'].unique()
-    print(list(zip(id, val, qual, date)))
+    print('buradan cikan value bu',list(zip(id, val, qual, date)))
 
-    return zipped_val, [{'label': i, 'value': i} for i in val]
+    return zipped_val
 
+# @app.callback(Output('get_data_from_modbus_pr', 'data'),
+#               [Input('data_to_store_id_pr', 'children'),
+#                Input('data_to_store_value_pr', 'children'),
+#                Input('data_to_store_qualite_pr', 'children'),
+#                Input('data_to_store_date_pr', 'children'),
+#
+#                ], )
+# def storedata_pr(id, val, qual, date):
+#     # if realval == None :
+#     #     raise PreventUpdate
+#     print('realval', val)
+#     print('realval', qual)
+#     zipped_val=(list(zip(id, val, qual, date))),
+#     return zipped_val
 
 
 @app.callback(Output('reelhidden1', 'children'),
@@ -1373,7 +1572,7 @@ def pandastosql(name, data):
 @app.callback(Output('reelhidden2pr', 'children'),
               [Input("my-toggle-switch-pr", "on"),Input('interval_component_pr', 'n_intervals')], [State("reelhidden3pr", "children"),State('get_data_from_modbus_pr', 'data')])
 def pandastosql_pr(on,interval, name, data):
-    if name == None:
+    if name == None :
         raise PreventUpdate
     print('name', name)
     print('data', data)
@@ -1420,40 +1619,6 @@ def pandastosql_pr(on,interval, name, data):
 #     df = pd.DataFrame(data,columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
 #     print('df bakalim olacak mi', df)
 
-
-@app.callback(Output('graphreal', 'figure'),
-              [Input('get_data_from_modbus', 'data'),
-               Input('realvalue', 'value'),
-               Input('sliderWidthreel', 'value'),
-               Input('sliderHeightreel', 'value')])
-def graphreelTime(data, val, sliderwidth, sliderheight):
-    if val == None:
-        raise PreventUpdate
-    df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-    df1 = df[df['ID'].isin(val)]
-    a = df1.loc[df1['ID'].isin(val)]
-    fig = go.Figure()
-    for i in val:
-        fig.add_trace(go.Scattergl(x=a[a['ID'] == i]['TIMESTAMP'], y=a[a['ID'] == i]['Value'], mode='lines',
-                                   marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
-                                   ))
-    fig.update_layout(
-        autosize=False,
-        width=sliderwidth,
-        height=sliderheight,
-
-        margin=dict(
-            l=50,
-            r=50,
-            b=100,
-            t=50,
-            pad=4
-
-        ),
-        paper_bgcolor="LightSteelBlue",
-    )
-
-    return fig
 
 
 # surf between pages
@@ -4574,7 +4739,6 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
             zero += 1
             spaceList2.append(value[i])
         zippedval = [i for i in list(zip(spaceList1, spaceList2))]
-        print('zippedval', zippedval)
         curvenumber = clickData['points'][0]['curveNumber']
         for k in zippedval:
             if k[1] == firstchoosen:
@@ -4589,21 +4753,18 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
                         dff = dff[(dff['TIMESTAMP'] == x_val)]
                     if dbch == 'received_variablevalues':
                         dff = dff[dff.REMOTE_TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
                         dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
                     else:
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
                         dff = dff[(dff['TIMESTAMP'] == x_val)]
                     a = []
                     a.append(dff.index)
@@ -4641,24 +4802,23 @@ def valintpr(clickData, firstchoosen, value, leftchild, rightchild, retrieve, pr
     zero = 0
     spaceList2 = []
     if retrieve != []:
-        df = pd.DataFrame(retrieve)
-        if prname == 'rcckn':
-            if prch == 'send_variablevalues':
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-            if prch == 'received_variablevalues':
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                              'CONVERTED_NUM_VALUE']
-        if prname == 'enerbat':
-            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+        df = pd.read_csv('project.csv')
+        # if prname == 'rcckn':
+        #     if prch == 'send_variablevalues':
+        #         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+        #                       'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+        #     if prch == 'received_variablevalues':
+        #         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+        #                       'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+        #                       'CONVERTED_NUM_VALUE']
+        # if prname == 'enerbat':
+        #     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
 
         for i in range(len(value)):
             spaceList1.append(zero)
             zero += 1
             spaceList2.append(value[i])
         zippedval = [i for i in list(zip(spaceList1, spaceList2))]
-        print('zippedval', zippedval)
         curvenumber = clickData['points'][0]['curveNumber']
         for k in zippedval:
             if k[1] == firstchoosen:
@@ -5148,17 +5308,17 @@ def valintdb2(clickData, secondchoosen, value, leftchild, rightchild, retrieve, 
     zero = 0
     spaceList2 = []
     if retrieve != []:
-        df = pd.DataFrame(retrieve)
-        if prname == 'rcckn':
-            if prch == 'send_variablevalues':
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-            if prch == 'received_variablevalues':
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                              'CONVERTED_NUM_VALUE']
-        if prname == 'enerbat':
-            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+        df = pd.read_csv('project.csv')
+        # if prname == 'rcckn':
+        #     if prch == 'send_variablevalues':
+        #         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+        #                       'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+        #     if prch == 'received_variablevalues':
+        #         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+        #                       'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+        #                       'CONVERTED_NUM_VALUE']
+        # if prname == 'enerbat':
+        #     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
 
         df['index'] = df.index
 
@@ -6595,7 +6755,7 @@ def relationdb(dbname, ipval):
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'rcckn'")
         val = cur.fetchall()
-        server.stop()
+
         print('valllll', val)
         return [{'label': i[0], 'value': i[0]} for i in val if
                 i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
@@ -6610,7 +6770,7 @@ def relationdb(dbname, ipval):
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'enerbat'")
         val = cur.fetchall()
-        server.stop()
+
         print('valllll', val)
         return [{'label': i[0], 'value': i[0]} for i in val]
     else:
@@ -6726,7 +6886,7 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 cur2 = conn.cursor()
                 cur2.execute("SELECT DISTINCT REMOTE_TIMESTAMP FROM received_variablevalues ")
                 t2 = cur2.fetchall()
-                server.stop()
+
                 str_list = [i[0] for i in t2]
                 df = pd.DataFrame(str_list)
                 df.columns = ['REMOTE_TIMESTAMP']
@@ -6748,7 +6908,7 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 cur2 = conn.cursor()
                 cur2.execute("SELECT DISTINCT TIMESTAMP FROM send_variablevalues ")
                 t2 = cur2.fetchall()
-                server.stop()
+
                 str_list = [i[0] for i in t2]
                 df = pd.DataFrame(str_list)
                 df.columns = ['TIMESTAMP']
@@ -6771,7 +6931,7 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 cur2 = conn.cursor()
                 cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {dbch}  ")
                 t2 = cur2.fetchall()
-                server.stop()
+
                 str_list = [i[0] for i in t2]
                 df = pd.DataFrame(str_list)
                 df.columns = ['TIMESTAMP']
@@ -6823,7 +6983,7 @@ def prname(interval, prch, prname, ipval):
         # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
-            time.sleep(1)
+
             cur1 = conn.cursor()
             cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues ")
             t1 = cur1.fetchall()
@@ -6831,7 +6991,7 @@ def prname(interval, prch, prname, ipval):
             cur2 = conn.cursor()
             cur2.execute("SELECT DISTINCT REMOTE_TIMESTAMP FROM received_variablevalues ")
             t2 = cur2.fetchall()
-            server.stop()
+
             str_list = [i[0] for i in t2]
             df = pd.DataFrame(str_list)
             df.columns = ['REMOTE_TIMESTAMP']
@@ -6846,7 +7006,7 @@ def prname(interval, prch, prname, ipval):
             str_list = [t.strftime("%Y-%m-%d") for t in b]
             return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
         elif prch == "send_variablevalues" :
-            time.sleep(1)
+
             cur1 = conn.cursor()
             cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM send_variablevalues ")
             t1 = cur1.fetchall()
@@ -6854,7 +7014,7 @@ def prname(interval, prch, prname, ipval):
             cur2 = conn.cursor()
             cur2.execute("SELECT DISTINCT TIMESTAMP FROM send_variablevalues ")
             t2 = cur2.fetchall()
-            server.stop()
+
             str_list = [i[0] for i in t2]
             df = pd.DataFrame(str_list)
             df.columns = ['TIMESTAMP']
@@ -6893,12 +7053,13 @@ def prname(interval, prch, prname, ipval):
             #     return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
     if prname == 'enerbat':
         if prch != None:
-            time.sleep(1)
+
             cur1 = conn.cursor()
             cur1.execute(f"SELECT * FROM {prch} ")
             t1 = cur1.fetchall()
 
             df = pd.DataFrame(t1)
+            print('dffff', df)
 
 
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
@@ -7197,22 +7358,20 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
 @app.callback([Output('getprtable', 'data'),
                Output('getprtable', 'columns'), ],
               [ Input('prvalname', 'value'),
-               Input('prvaldate', 'value'), Input('deactivatepr', 'n_clicks')],
+               Input('prvaldate', 'value'),Input('interval_component_pr_db', 'n_intervals')],
               [Input('prvalchoosen', 'value'), State('prname', 'value'), ]
               )
-def on_data_set_tablepr( valname, valdate, nc2, prch, prname):
+def on_data_set_tablepr( valname, valdate,interval, prch, prname):
     if valname == None or valdate == None or prch == None or prname == None:
         raise PreventUpdate
     df = pd.read_csv('project.csv')
-    print(df.head(10))
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
-            print('sikinti burda 1 ')
             if valdate != '' or valname != []:
                 if df.empty != 1:
-                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                                  'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                                  'CONVERTED_NUM_VALUE']
+                    # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                    #               'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                    #               'CONVERTED_NUM_VALUE']
                     print('sikinti burda 2 ')
                     df['REMOTE_TIMESTAMP'] = df['REMOTE_TIMESTAMP'].astype('string')
                     a = []
@@ -7230,13 +7389,13 @@ def on_data_set_tablepr( valname, valdate, nc2, prch, prname):
                     raise PreventUpdate
             else:
                 raise PreventUpdate
-        if prch != None:
+        if prch == 'send_variablevalues':
             print('sikinti burda 1send ')
             if valdate != '' or valname != []:
                 print('sikinti burda 2send ')
                 if df.empty != 1:
-                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                    # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                    #               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                     print('sikinti burda 3send ')
                     df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
                     a = []
@@ -7253,6 +7412,28 @@ def on_data_set_tablepr( valname, valdate, nc2, prch, prname):
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
+            if prch != 'send_variablevalues' or prch != 'received_variablevalues':
+                print('sikinti burda 1send ')
+                if valdate != '' or valname != []:
+                    print('sikinti burda 2send ')
+                    if df.empty != 1:
+                        # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+                        print('sikinti burda 3send ')
+                        df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
+                        a = []
+                        for col in df['TIMESTAMP']:
+                            a.append(col[:10])
+                        df['dates'] = a
+                        valdate_new = []
+                        for i in range(len(valdate)):
+                            valdate_new.append(valdate[i][:10])
+                        df1 = df[df['dates'].isin(valdate_new)]
+                        print('valname', valname)
+                        a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
+                        x = a.to_dict('record')
+                        return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
+                    else:
+                        raise PreventUpdate
             else:
                 raise PreventUpdate
     if prname == 'enerbat':
@@ -7434,20 +7615,80 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
             return fig
         else:
             raise PreventUpdate
+@app.callback(Output('graphreal', 'figure'),
+              [Input('get_data_from_modbus', 'data'),
+               Input('realvalue', 'value'),
+               Input('sliderWidthreel', 'value'),
+               Input('sliderHeightreel', 'value')])
+def graphreelTime(data, val, sliderwidth, sliderheight):
+    if val == None:
+        raise PreventUpdate
+    df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
+    df1 = df[df['ID'].isin(val)]
+    a = df1.loc[df1['ID'].isin(val)]
+    fig = go.Figure()
+    for i in val:
+        fig.add_trace(go.Scattergl(x=a[a['ID'] == i]['TIMESTAMP'], y=a[a['ID'] == i]['Value'], mode='lines',
+                                   marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
+                                   ))
+    fig.update_layout(
+        autosize=False,
+        width=sliderwidth,
+        height=sliderheight,
 
+        margin=dict(
+            l=50,
+            r=50,
+            b=100,
+            t=50,
+            pad=4
+
+        ),
+        paper_bgcolor="LightSteelBlue",
+    )
+
+    return fig
+
+@app.callback([Output('firstgraph_pr_real', 'options'), Output('secondgraph_pr_real', 'options'),
+               Output('thirdgraph_pr_real', 'options'),Output('fourgraph_pr_real', 'options')],
+              [Input('realvalue_pr', 'value')])
+
+def delivre_dropdown(values) :
+    if values == None :
+        raise PreventUpdate
+    return  [{'label' : i[16:], 'value' : i} for i in values], [{'label' :i[16:], 'value' : i} for i in values],[{'label' : i[16:], 'value' : i} for i in values],[{'label' : i[16:], 'value' : i} for i in values]
+
+@app.callback([Output('firstgraph_pr_db', 'options'), Output('secondgraph_pr_db', 'options'),
+               Output('thirdgraph_pr_db', 'options'),Output('fourgraph_pr_db', 'options')],
+              [Input('prvalname', 'value')])
+
+def delivre_dropdown_db(values) :
+    if values == None :
+        raise PreventUpdate
+    return  [{'label' : i, 'value' : i} for i in values],[{'label' : i, 'value' : i} for i in values],[{'label': i, 'value': i} for i in values],[{'label' : i, 'value' : i} for i in values]
 
 @app.callback(Output('getprgraph', 'figure'),
-              [
-               Input('prvalname', 'value'),
+              [Input('get_data_from_modbus_pr', 'data'),
+               Input('firstgraph_pr_real', 'value'),
+               Input('firstgraph_pr_db', 'value'),
                Input('prvaldate', 'value'),
                Input('sliderWidthpr', 'value'),
-               Input('sliderHeightpr', 'value'), ],
+               Input('sliderHeightpr', 'value'),Input('interval_component_pr_db', 'n_intervals') ],
               [State('prvalchoosen', 'value'), State('prname', 'value'), ])
-def on_data_set_graph(valy, valdat, sliderw, sliderh, prch, prname):
-    if valy == [] or valdat == [] or valdat == None or prname == None:
+def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname):
+    if valy == None or valy == [] or valdat == [] or valdat == None or prname == None or  realval == None :
         raise PreventUpdate
     df = pd.read_csv('project.csv')
+    df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
+    # df3 = df2[df2['ID'].isin(realval)]
+    # pr_reel = df2.loc[df2['ID'].isin(realval)]
+    print('df pr_reel',df2[df2['ID'] == 'Tb1']['TIMESTAMP'])
     fig = go.Figure()
+    for i in realval:
+        print('iiiiiiiiiiii', i)
+        fig.add_trace(go.Scattergl(x=df2[df2['ID'] == i[16:]]['TIMESTAMP'], y=df2[df2['ID'] == i[16:]]['Value'], mode='lines',
+                                   marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
+                                   ))
     print('prname', prname)
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
@@ -7489,7 +7730,7 @@ def on_data_set_graph(valy, valdat, sliderw, sliderh, prch, prname):
                 return fig
             else:
                 raise PreventUpdate
-        else:
+        elif prch == 'send_variablevalues':
             if df.empty != 1:
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
@@ -7529,6 +7770,47 @@ def on_data_set_graph(valy, valdat, sliderw, sliderh, prch, prname):
                 return fig
             else:
                 raise PreventUpdate
+        else :
+            if df.empty != 1:
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                a = []
+                for col in df['TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i])
+                print('valdattttt', valdate_new)
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                                   marker=dict(
+                                                       line=dict(
+                                                           width=0.2,
+                                                           color='white')),
+                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
+                        fig.update_layout(
+                            autosize=True,
+                            width=sliderw,
+                            height=sliderh,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=50,
+                                t=50,
+                                pad=4
+                            ),
+
+                            uirevision=valy[j], ),
+                return fig
+            else:
+                raise PreventUpdate
+
     if prname == 'enerbat':
         if df.empty != 1:
             # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
@@ -7565,9 +7847,559 @@ def on_data_set_graph(valy, valdat, sliderw, sliderh, prch, prname):
 
                         uirevision=valy[j], ),
             return fig
-        else:
+        else :
             raise PreventUpdate
 
+
+@app.callback(Output('getprgraph2', 'figure'),
+              [Input('get_data_from_modbus_pr', 'data'),
+               Input('secondgraph_pr_real', 'value'),
+               Input('secondgraph_pr_db', 'value'),
+               Input('prvaldate', 'value'),
+               Input('sliderWidthpr2', 'value'),
+               Input('sliderHeightpr2', 'value'),Input('interval_component_pr_db', 'n_intervals') ],
+              [State('prvalchoosen', 'value'), State('prname', 'value'), ])
+def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname):
+    if  valy == None or valdat == [] or valdat == None or prname == None or realval == None :
+        raise PreventUpdate
+    df = pd.read_csv('project.csv')
+    df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
+    # df3 = df2[df2['ID'].isin(realval)]
+    # pr_reel = df2.loc[df2['ID'].isin(realval)]
+    print('df pr_reel',df2[df2['ID'] == 'Tb1']['TIMESTAMP'])
+    fig = go.Figure()
+    for i in realval:
+        print('iiiiiiiiiiii', i)
+        fig.add_trace(go.Scattergl(x=df2[df2['ID'] == i[16:]]['TIMESTAMP'], y=df2[df2['ID'] == i[16:]]['Value'], mode='lines',
+                                   marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
+                                   ))
+    print('prname', prname)
+    if prname == 'rcckn':
+        if prch == 'received_variablevalues':
+            if df.empty != 1:
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                              'REMOTE_ID',
+                              'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+                a = []
+                for col in df['REMOTE_TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i][:10])
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
+                        print('aaaaaaaaa', a)
+                        print('bbbbbbbbb', b)
+                        fig.add_trace(
+                            go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
+                                         name="{}/{}".format(valy[j], valdate_new[k]))),
+                    fig.update_layout(
+                        autosize=True,
+                        width=sliderw,
+                        height=sliderh,
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=50,
+                            t=50,
+                            pad=4
+                        ),
+
+                        uirevision=valy[j]),
+                return fig
+            else:
+                raise PreventUpdate
+        elif prch == 'send_variablevalues':
+            if df.empty != 1:
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                a = []
+                for col in df['TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i])
+                print('valdattttt', valdate_new)
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                                   marker=dict(
+                                                       line=dict(
+                                                           width=0.2,
+                                                           color='white')),
+                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
+                        fig.update_layout(
+                            autosize=True,
+                            width=sliderw,
+                            height=sliderh,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=50,
+                                t=50,
+                                pad=4
+                            ),
+
+                            uirevision=valy[j], ),
+                return fig
+            else:
+                raise PreventUpdate
+        else :
+            if df.empty != 1:
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                a = []
+                for col in df['TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i])
+                print('valdattttt', valdate_new)
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                                   marker=dict(
+                                                       line=dict(
+                                                           width=0.2,
+                                                           color='white')),
+                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
+                        fig.update_layout(
+                            autosize=True,
+                            width=sliderw,
+                            height=sliderh,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=50,
+                                t=50,
+                                pad=4
+                            ),
+
+                            uirevision=valy[j], ),
+                return fig
+            else:
+                raise PreventUpdate
+
+    if prname == 'enerbat':
+        if df.empty != 1:
+            # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            a = []
+            for col in df['TIMESTAMP']:
+                a.append(col[:10])
+            df['dates'] = a
+            valdate_new = []
+            for i in range(len(valdat)):
+                valdate_new.append(valdat[i][:10])
+            for j in range(len(valy)):
+                for k in range(len(valdate_new)):
+                    a = df[df['VARIABLE_NAME'] == valy[j]]
+                    a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                    b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                    b = [i for i in b if i.startswith(valdate_new[k])]
+                    fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                               marker=dict(
+                                                   line=dict(
+                                                       width=0.2,
+                                                       color='white')),
+                                               name="{}/{}".format(valy[j], valdate_new[k]))),
+                    fig.update_layout(
+                        autosize=True,
+                        width=sliderw,
+                        height=sliderh,
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=50,
+                            t=50,
+                            pad=4
+                        ),
+
+                        uirevision=valy[j], ),
+            return fig
+        else :
+            raise PreventUpdate
+
+@app.callback(Output('getprgraph3', 'figure'),
+              [Input('get_data_from_modbus_pr', 'data'),
+               Input('thirdgraph_pr_real', 'value'),
+               Input('thirdgraph_pr_db', 'value'),
+               Input('prvaldate', 'value'),
+               Input('sliderWidthpr3', 'value'),
+               Input('sliderHeightpr3', 'value'),Input('interval_component_pr_db', 'n_intervals') ],
+              [State('prvalchoosen', 'value'), State('prname', 'value'), ])
+def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname):
+    if  valy == None or valdat == [] or valdat == None or prname == None or realval == None :
+        raise PreventUpdate
+    df = pd.read_csv('project.csv')
+    df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
+    # df3 = df2[df2['ID'].isin(realval)]
+    # pr_reel = df2.loc[df2['ID'].isin(realval)]
+    print('df pr_reel',df2[df2['ID'] == 'Tb1']['TIMESTAMP'])
+    fig = go.Figure()
+    for i in realval:
+        print('iiiiiiiiiiii', i)
+        fig.add_trace(go.Scattergl(x=df2[df2['ID'] == i[16:]]['TIMESTAMP'], y=df2[df2['ID'] == i[16:]]['Value'], mode='lines',
+                                   marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
+                                   ))
+    print('prname', prname)
+    if prname == 'rcckn':
+        if prch == 'received_variablevalues':
+            if df.empty != 1:
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                              'REMOTE_ID',
+                              'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+                a = []
+                for col in df['REMOTE_TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i][:10])
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
+                        print('aaaaaaaaa', a)
+                        print('bbbbbbbbb', b)
+                        fig.add_trace(
+                            go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
+                                         name="{}/{}".format(valy[j], valdate_new[k]))),
+                    fig.update_layout(
+                        autosize=True,
+                        width=sliderw,
+                        height=sliderh,
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=50,
+                            t=50,
+                            pad=4
+                        ),
+
+                        uirevision=valy[j]),
+                return fig
+            else:
+                raise PreventUpdate
+        elif prch == 'send_variablevalues':
+            if df.empty != 1:
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                a = []
+                for col in df['TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i])
+                print('valdattttt', valdate_new)
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                                   marker=dict(
+                                                       line=dict(
+                                                           width=0.2,
+                                                           color='white')),
+                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
+                        fig.update_layout(
+                            autosize=True,
+                            width=sliderw,
+                            height=sliderh,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=50,
+                                t=50,
+                                pad=4
+                            ),
+
+                            uirevision=valy[j], ),
+                return fig
+            else:
+                raise PreventUpdate
+        else :
+            if df.empty != 1:
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                a = []
+                for col in df['TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i])
+                print('valdattttt', valdate_new)
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                                   marker=dict(
+                                                       line=dict(
+                                                           width=0.2,
+                                                           color='white')),
+                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
+                        fig.update_layout(
+                            autosize=True,
+                            width=sliderw,
+                            height=sliderh,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=50,
+                                t=50,
+                                pad=4
+                            ),
+
+                            uirevision=valy[j], ),
+                return fig
+            else:
+                raise PreventUpdate
+
+
+    if prname == 'enerbat':
+        if df.empty != 1:
+            # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            a = []
+            for col in df['TIMESTAMP']:
+                a.append(col[:10])
+            df['dates'] = a
+            valdate_new = []
+            for i in range(len(valdat)):
+                valdate_new.append(valdat[i][:10])
+            for j in range(len(valy)):
+                for k in range(len(valdate_new)):
+                    a = df[df['VARIABLE_NAME'] == valy[j]]
+                    a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                    b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                    b = [i for i in b if i.startswith(valdate_new[k])]
+                    fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                               marker=dict(
+                                                   line=dict(
+                                                       width=0.2,
+                                                       color='white')),
+                                               name="{}/{}".format(valy[j], valdate_new[k]))),
+                    fig.update_layout(
+                        autosize=True,
+                        width=sliderw,
+                        height=sliderh,
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=50,
+                            t=50,
+                            pad=4
+                        ),
+
+                        uirevision=valy[j], ),
+            return fig
+        else :
+            raise PreventUpdate
+@app.callback(Output('getprgraph4', 'figure'),
+              [Input('get_data_from_modbus_pr', 'data'),
+               Input('fourgraph_pr_real', 'value'),
+               Input('fourgraph_pr_db', 'value'),
+               Input('prvaldate', 'value'),
+               Input('sliderWidthpr4', 'value'),
+               Input('sliderHeightpr4', 'value'),Input('interval_component_pr_db', 'n_intervals') ],
+              [State('prvalchoosen', 'value'), State('prname', 'value'), ])
+def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname):
+    if  valy == None or valdat == [] or valdat == None or prname == None or realval == None :
+        raise PreventUpdate
+    df = pd.read_csv('project.csv')
+    df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
+    # df3 = df2[df2['ID'].isin(realval)]
+    # pr_reel = df2.loc[df2['ID'].isin(realval)]
+    print('df pr_reel',df2[df2['ID'] == 'Tb1']['TIMESTAMP'])
+    fig = go.Figure()
+    for i in realval:
+        print('iiiiiiiiiiii', i)
+        fig.add_trace(go.Scattergl(x=df2[df2['ID'] == i[16:]]['TIMESTAMP'], y=df2[df2['ID'] == i[16:]]['Value'], mode='lines',
+                                   marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
+                                   ))
+    print('prname', prname)
+    if prname == 'rcckn':
+        if prch == 'received_variablevalues':
+            if df.empty != 1:
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                              'REMOTE_ID',
+                              'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+                a = []
+                for col in df['REMOTE_TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i][:10])
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
+                        print('aaaaaaaaa', a)
+                        print('bbbbbbbbb', b)
+                        fig.add_trace(
+                            go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
+                                         name="{}/{}".format(valy[j], valdate_new[k]))),
+                    fig.update_layout(
+                        autosize=True,
+                        width=sliderw,
+                        height=sliderh,
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=50,
+                            t=50,
+                            pad=4
+                        ),
+
+                        uirevision=valy[j]),
+                return fig
+            else:
+                raise PreventUpdate
+        elif prch == 'send_variablevalues':
+            if df.empty != 1:
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                a = []
+                for col in df['TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i])
+                print('valdattttt', valdate_new)
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                                   marker=dict(
+                                                       line=dict(
+                                                           width=0.2,
+                                                           color='white')),
+                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
+                        fig.update_layout(
+                            autosize=True,
+                            width=sliderw,
+                            height=sliderh,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=50,
+                                t=50,
+                                pad=4
+                            ),
+
+                            uirevision=valy[j], ),
+                return fig
+            else:
+                raise PreventUpdate
+        else :
+            if df.empty != 1:
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                a = []
+                for col in df['TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i])
+                print('valdattttt', valdate_new)
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                                   marker=dict(
+                                                       line=dict(
+                                                           width=0.2,
+                                                           color='white')),
+                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
+                        fig.update_layout(
+                            autosize=True,
+                            width=sliderw,
+                            height=sliderh,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=50,
+                                t=50,
+                                pad=4
+                            ),
+
+                            uirevision=valy[j], ),
+                return fig
+            else:
+                raise PreventUpdate
+
+
+    if prname == 'enerbat':
+        if df.empty != 1:
+            # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            a = []
+            for col in df['TIMESTAMP']:
+                a.append(col[:10])
+            df['dates'] = a
+            valdate_new = []
+            for i in range(len(valdat)):
+                valdate_new.append(valdat[i][:10])
+            for j in range(len(valy)):
+                for k in range(len(valdate_new)):
+                    a = df[df['VARIABLE_NAME'] == valy[j]]
+                    a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                    b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                    b = [i for i in b if i.startswith(valdate_new[k])]
+                    fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                                               marker=dict(
+                                                   line=dict(
+                                                       width=0.2,
+                                                       color='white')),
+                                               name="{}/{}".format(valy[j], valdate_new[k]))),
+                    fig.update_layout(
+                        autosize=True,
+                        width=sliderw,
+                        height=sliderh,
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=50,
+                            t=50,
+                            pad=4
+                        ),
+
+                        uirevision=valy[j], ),
+            return fig
+        else :
+            raise PreventUpdate
 
 if __name__ == '__main__':
     # app.run_server(debug = True)
