@@ -99,12 +99,16 @@ page_1_layout = html.Div(
     children=[
         html.Div(id='fourcolumnsdivusercontrols', className="four-columns-div-user-controls",
                  children=[
-                     html.Div([daq.PowerButton(id='my-toggle-switch',
+                     html.Div([html.Div([daq.PowerButton(id='my-toggle-switch',
                                                label={'label': 'Open page',
-                                                      'style': {'fontSize': '22px', 'fontWeight': "bold"}},
-                                               labelPosition='bottom', on=False, size=100, color="green",
-                                               className='dark-theme-control'),
-                               dcc.Link('Go to Main Page', href='/page_1', id='link1'), ], className='abpower'),
+                                                      'style': {'fontSize': '22px', 'fontWeight': "bold",},},
+                                               labelPosition='bottom', on=False, size=100, color="green",style = {'marginTop':'1rem'},
+                                               className='dark-theme-control'),]),
+                               html.Div([html.Div(dcc.Link('Go to Main Page', href='/', id='link1') ),
+                                         html.Div(dcc.Link('Go to Database Page', href='/Database', id='link2'),),
+                                         html.Div(dcc.Link('Go to Real-Time Page', href='/reelTime', id='link3'),),
+                                          html.Div(dcc.Link('Go to Project Page', href='/project', id='link4'),),], style = {'margin' : '2rem 2rem 0 2rem'})
+                               ], className='abpower'),
                      html.Div(
                          dcc.Upload(
                              id='upload-data',
@@ -339,7 +343,11 @@ page_2_layout = html.Div(
                                                      size="lg", className="mr-1", color="danger",
                                                      style={'width': '25rem'}
                                                      )]),
-                         html.Div(dcc.Link('Go to Main Page', href='/page_1', id='link1'), style={'marginTop': '2rem'}),
+                         html.Div([html.Div(dcc.Link('Go to Main Page', href='/', id='link5')),
+                                   html.Div(dcc.Link('Go to File Page', href='/page_1', id='link6'), ),
+                                   html.Div(dcc.Link('Go to Real-Time Page', href='reelTime', id='link7'), ),
+                                   html.Div(dcc.Link('Go to Project Page', href='/project', id='link8'), ), ],
+                                  style={'margin': '2rem 2rem 0 2rem'}),
                          dbc.Input(id='db_Ip',
                                    type="text",
                                    debounce=True,
@@ -611,13 +619,16 @@ page_3_layout = html.Div(
     className='main_container',
     children=[html.Div(id='fourcolumnsdivusercontrolsreel', className="four-columns-div-user-controlsreel",
                        children=[
-                           html.Div([dcc.Link('Go to Main Page', href='/page_1', id='link1'),
-                                     daq.PowerButton(id='my-toggle-switch-reel',
-                                                     label={'label': 'Connection',
-                                                            'style': {'fontSize': '22px', 'fontWeight': "bold"}},
-                                                     labelPosition='bottom', on=False, size=100, color="green",
-                                                     className='dark-theme-control'),
-                                     ], className='abpower'),
+                           html.Div([html.Div([daq.PowerButton(id='my-toggle-switch-reel',
+                                               label={'label': 'Open page',
+                                                      'style': {'fontSize': '22px', 'fontWeight': "bold",},},
+                                               labelPosition='bottom', on=False, size=100, color="green",style = {'marginTop':'1rem'},
+                                               className='dark-theme-control'),]),
+                               html.Div([html.Div(dcc.Link('Go to Main Page', href='/', id='link1') ),
+                                         html.Div(dcc.Link('Go to File Page', href='/page-1', id='link2'),),
+                                         html.Div(dcc.Link('Go to database Page', href='/Database', id='link3'),),
+                                          html.Div(dcc.Link('Go to Project Page', href='/project', id='link4'),),], style = {'margin' : '2rem 2rem 0 2rem'})
+                               ], className='abpower'),
                            dcc.Store(id='get_data_from_modbus'),
                            html.Div(id='data_to_store_id', children=[], style={'display': 'None'}),
                            html.Div(id='data_to_store_value', children=[], style={'display': 'None'}),
@@ -727,16 +738,20 @@ page_3_layout = html.Div(
               ])
 page_4_layout = html.Div(
     [html.Div([html.Div([
-                        html.Div(dcc.Link('Go to Main Page', href='/page_1', id='link1'), style={'marginTop': '2rem'}),
+        html.Div([html.Div(dcc.Link('Go to Main Page', href='/', id='link1')),
+                  html.Div(dcc.Link('Go to Database Page', href='/Database', id='link2'), ),
+                  html.Div(dcc.Link('Go to Real-Time Page', href='/reelTime', id='link3'), ),
+                  html.Div(dcc.Link('Go to Project Page', href='/project', id='link4'), ), ],
+                  className = 'abcdbpr' ),
                         html.Div([
-                                               dbc.Checklist(id="calculintegralpr",
-                                                             options=[
-                                                                 {'label': "Calculate Integral", 'value': 'calculpr'}, ]
-                                                             ,
-                                                             value='',
-                                                             labelClassName='groupgraph',
-                                                             labelStyle={'margin': '10px', },
-                                                             inputStyle={'margin': '10px', }),
+                                               # dbc.Checklist(id="calculintegralpr",
+                                               #               options=[
+                                               #                   {'label': "Calculate Integral", 'value': 'calculpr'}, ]
+                                               #               ,
+                                               #               value='',
+                                               #               labelClassName='groupgraph',
+                                               #               labelStyle={'margin': '10px', },
+                                               #               inputStyle={'margin': '10px', }),
                                            ]),
                          dbc.Input(id='pr_Ip',
                                    type="text",
@@ -819,7 +834,7 @@ page_4_layout = html.Div(
                                                                          labelPosition='bottom', on=False, size=100,
                                                                          color="green",
                                                                          className='dark-theme-control'),
-                                                         ], className='abpower',style = {'marginLeft':'10rem'}),
+                                                         ], className='abpower',style = {'margin':'1rem 30rem 0 10rem'}),
                                                dcc.Store(id='get_data_from_modbus_pr'),
                                                html.Div(id='data_to_store_id_pr', children=[], style={'display': 'None'}),
                                                html.Div(id='data_to_store_value_pr', children=[],
@@ -873,14 +888,18 @@ page_4_layout = html.Div(
                                                                    style={'margin': '1rem 1rem 1rem 0'}),
                                                         ]),
                                                 ], className='abcd'),
-                                      html.P(''),
-                                      dbc.Input(id='filenametodb', type="text", value='',
-                                                min=0, max=1000000000, step=1, bs_size="lg", style={'width': '10rem'}, ),
+                                      html.Div([html.Div([html.P('Enter Table Name'),
+                                                        dbc.Input(id='filenametodb', type="text", value='',
+                                                        min=0, max=1000000000, step=1, bs_size="lg", style={'width': '10rem'}, ),]),
+                                                html.Div([html.P('Enter Database Name', style={'marginLeft': '1rem', }),
+                                                        dbc.Input(id='nametodb', type="text", value='',
+                                                        min=0, max=1000000000, step=1, bs_size="lg", style={'width': '10rem', 'marginLeft': '1rem', }, ),])],className='abcd',),
                                   ], className='aadb', ),
 
                                   html.Div(id='reelhidden1pr', children=[], style={'display': 'None'}),
                                   html.Div(id='reelhidden2pr', children=[], style={'display': 'None'}),
                                   html.Div(id='reelhidden3pr', children=[], style={'display': 'None'}),
+                                  html.Div(id='reelhidden4pr', children=[], style={'display': 'None'}),
                                   html.Div(id='ok_click_hiddenpr', children=[], style={'display': 'None'}),
                                   ])
                 ],className="prstyle")
@@ -890,119 +909,11 @@ page_4_layout = html.Div(
 
                ], className='abcdb'),
      dcc.Store(id='memory-outputpr'),
-     html.Div(id='prcheck', children=
-     [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValuepr',
-                                       options=[{'label': i, 'value': i} for i in
-                                                []],
-                                       multi=False,
-                                       style={"cursor": "pointer", 'width': '180px'},
-                                       className='',
-                                       clearable=True,
-                                       placeholder='First Value...',
-                                       ),
-                          dbc.Input(id='leftIntegralFirstpr',
-                                    type="text",
-                                    debounce=True,
-                                    min=-10000, max=10000, step=1,
-                                    bs_size="sm",
-                                    style={'width': '8rem', "marginTop": "1.5rem"},
-                                    autoFocus=True,
-                                    placeholder="first point"),
-                          dbc.Input(id='leftIntegralSecondpr',
-                                    type="text",
-                                    debounce=True,
-                                    min=-10000, max=10000, step=1,
-                                    bs_size="sm",
-                                    style={'width': '8rem', "marginTop": "1.5rem"},
-                                    autoFocus=True,
-                                    placeholder="second point"),
-                          dbc.Input(id='leftIntegralpr',
-                                    type="text",
-                                    min=-10000, max=10000, step=1,
-                                    bs_size="sm",
-                                    style={'width': '9rem', "marginTop": "1.5rem"},
-                                    autoFocus=True,
-                                    placeholder="total integration"),
-                          ]), html.Div([html.Button("Save", id="write_excelpr", n_clicks=0,
-                                                    style={'fontSize': '1rem', 'width': '4rem',
-                                                           'margin': '1rem'},
-                                                    ),
-                                        html.A(html.Button("Download Data",
-                                                           id='download_datapr',
-                                                           n_clicks=0,
-                                                           style={'fontSize': '1rem',
-                                                                  'width': '9rem',
-                                                                  'margin': '1rem'}, ),
-                                               id='download_excelpr',
-                                               # # download="rawdata.csv",
-                                               href="/download_excelpr/",
-                                               # target="_blank"
-                                               )
-                                        ], className='ad')
-
-                ]),
-      html.Div([dbc.Checklist(
-          id='operateurpr',
-          options=[{'label': i, 'value': i} for i in
-                   ['Plus', 'Moins', 'Multiplie', 'Division']],
-          value=[],
-          labelStyle={"display": "Block"},
-      ), ]),
-      html.Div([
-          dcc.Dropdown(id='secondChoosenValuepr',
-                       options=[{'label': i, 'value': i} for i in
-                                []],
-                       multi=False,
-                       style={"cursor": "pointer", 'width': '180px'},
-                       className='',
-                       clearable=True,
-                       placeholder='Second Value...',
-                       ),
-          dbc.Input(id='rightIntegralFirstpr',
-                    type="text",
-                    min=-10000, max=10000, step=1,
-                    bs_size="sm",
-                    style={'width': '8rem', "marginTop": "1.5rem"},
-                    autoFocus=True,
-                    placeholder="first point"),
-          dbc.Input(id='rightIntegralSecondpr',
-                    type="text",
-                    min=-10000, max=10000, step=1,
-                    bs_size="sm",
-                    style={'width': '8rem', "marginTop": "1.5rem"},
-                    autoFocus=True,
-                    placeholder="second point"),
-          dbc.Input(id='rightIntegralpr',
-                    type="text",
-                    min=-10000, max=10000, step=1,
-                    bs_size="sm",
-                    style={'width': '9rem', "marginTop": "1.5rem"},
-                    autoFocus=True,
-                    placeholder="total integration")
-      ]),
-      html.Div([dbc.Input(id='operationpr',
-                          type="text",
-                          min=-10000, max=10000, step=1,
-                          bs_size="sm",
-                          style={'width': '10rem', "marginTop": "2rem",
-                                 'height': '5rem', 'textAlign': 'center'},
-                          autoFocus=True,
-                          placeholder="result"),
-                dbc.Input(id='intersectionpr',
-                          type="text",
-                          min=-10000, max=10000, step=1,
-                          bs_size="sm",
-                          style={'width': '10rem', "marginTop": "2rem",
-                                 'height': '2rem', 'textAlign': 'center'},
-                          autoFocus=True,
-                          placeholder="Intersection")], className='aa')
-      ], style={'display': 'None'},
-              className="abdbase"),
      html.Div([html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='firstgraph_pr_real',
                        options=[{'label': i, 'value': i} for i in
                                 []],
                        multi=True,
-                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 10rem'},
+                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 5rem'},
                        className='',
                        clearable=True,
                        placeholder='Values of Real Time',
@@ -1011,7 +922,7 @@ page_4_layout = html.Div(
                        options=[{'label': i, 'value': i} for i in
                                 []],
                        multi=True,
-                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 10rem'},
+                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
                        className='',
                        clearable=True,
                        placeholder='Values of Database',
@@ -1026,7 +937,7 @@ page_4_layout = html.Div(
                                                         'select2d',
                                                         'eraseshape',
                                                     ]},
-                                            style={'margin': '2rem 0 0 0', },
+                                            style={'marginTop': '20px', },
                                             figure={
                                                 'layout': {'legend': {'tracegroupgap': 0},
 
@@ -1035,21 +946,21 @@ page_4_layout = html.Div(
 
                                             ), ),
                          html.Div(daq.Slider(id="sliderHeightpr",
-                                             max=2100,
-                                             min=400,
-                                             value=530,
+                                             max=1200,
+                                             min=200,
+                                             value=400,
                                              step=100,
-                                             size=400,
+                                             size=300,
                                              vertical=True,
-                                             updatemode='drag'), style={'margin': '20px'})], className='abcdb'),
+                                             updatemode='drag'), style={'marginRight': '20px'})],style = {'margin' : '1rem 1rem 1rem 5rem'}, className='abcdb'),
                         html.Div(daq.Slider(id="sliderWidthpr",
-                                                     max=2000,
-                                                     min=600,
-                                                     value=1000,
-                                                     step=100,
-                                                     size=750,
+                                            max=1600,
+                                            min=500,
+                                            value=800,
+                                            step=100,
+                                            size=500,
 
-                                                     updatemode='drag'), style={'marginLeft': '5rem'}),
+                                                     updatemode='drag'), style={'marginLeft': '7rem'}),
                         ], className='aadb'),
 
 
@@ -1059,7 +970,7 @@ page_4_layout = html.Div(
                                options=[{'label': i, 'value': i} for i in
                                         []],
                                multi=True,
-                               style={"cursor": "pointer", 'width': '30rem','margin' : '3rem 0 0 10rem'},
+                               style={"cursor": "pointer", 'width': '30rem','margin' : '3rem 0 0 5rem'},
                                className='',
                                clearable=True,
                                placeholder='Values of Real Time',
@@ -1068,7 +979,7 @@ page_4_layout = html.Div(
                                options=[{'label': i, 'value': i} for i in
                                         []],
                                multi=True,
-                               style={"cursor": "pointer", 'width': '30rem','margin' : '1rem 0 0 10rem'},
+                               style={"cursor": "pointer", 'width': '30rem','margin' : '1rem 0 0 5rem'},
                                className='',
                                clearable=True,
                                placeholder='Values of Database',
@@ -1083,7 +994,7 @@ page_4_layout = html.Div(
                                                                 'select2d',
                                                                 'eraseshape',
                                                             ]},
-                                                    style={'marginTop': 20, },
+                                                    style={'marginTop': '20px' },
                                                     figure={
                                                         'layout': {'legend': {'tracegroupgap': 0},
 
@@ -1092,21 +1003,21 @@ page_4_layout = html.Div(
 
                                                     ), ),
                                                  html.Div(daq.Slider(id="sliderHeightpr2",
-                                                                     max=2100,
-                                                                     min=400,
-                                                                     value=530,
+                                                                     max=1200,
+                                                                     min=200,
+                                                                     value=400,
                                                                      step=100,
-                                                                     size=400,
+                                                                     size=300,
                                                                      vertical=True,
-                                                                     updatemode='drag'), style={'margin': '20px'})], className='abcdb'),
+                                                                     updatemode='drag'), style={'margin': '20px'})],style = {'margin' : '1rem 1rem 1rem 5rem'}, className='abcdb'),
                                                 html.Div(daq.Slider(id="sliderWidthpr2",
-                                                                             max=2000,
-                                                                             min=600,
-                                                                             value=1000,
-                                                                             step=100,
-                                                                             size=750,
+                                                                    max=1600,
+                                                                    min=500,
+                                                                    value=800,
+                                                                    step=100,
+                                                                    size=500,
 
-                                                                             updatemode='drag'), style={'marginLeft': '4rem'}),
+                                                                             updatemode='drag'), style={'marginLeft': '6rem'}),
                                                 ], className='aadb'),
 
 
@@ -1116,7 +1027,7 @@ page_4_layout = html.Div(
                                        options=[{'label': i, 'value': i} for i in
                                                 []],
                                        multi=True,
-                                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 10rem'},
+                                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 5rem'},
                                        className='',
                                        clearable=True,
                                        placeholder='Values of Real Time',
@@ -1125,7 +1036,7 @@ page_4_layout = html.Div(
                                        options=[{'label': i, 'value': i} for i in
                                                 []],
                                        multi=True,
-                                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 10rem' },
+                                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 5rem' },
                                        className='',
                                        clearable=True,
                                        placeholder='Values of Database',
@@ -1140,7 +1051,7 @@ page_4_layout = html.Div(
                                                                         'select2d',
                                                                         'eraseshape',
                                                                     ]},
-                                                            style={'marginTop': 20, },
+                                                            style={'marginTop': '20px', },
                                                             figure={
                                                                 'layout': {'legend': {'tracegroupgap': 0},
 
@@ -1149,19 +1060,19 @@ page_4_layout = html.Div(
 
                                                             ), ),
                                          html.Div(daq.Slider(id="sliderHeightpr3",
-                                                             max=2100,
-                                                             min=400,
-                                                             value=530,
+                                                             max=1200,
+                                                             min=200,
+                                                             value=400,
                                                              step=100,
-                                                             size=400,
+                                                             size=300,
                                                              vertical=True,
-                                                             updatemode='drag'), style={'margin': '20px'})], className='abcdb'),
+                                                             updatemode='drag'), style={'marginLeft': '20px'})],style = {'margin':'1rem 3rem 1rem 1rem'}, className='abcdb'),
                                         html.Div(daq.Slider(id="sliderWidthpr3",
-                                                                     max=2000,
-                                                                     min=600,
-                                                                     value=1000,
-                                                                     step=100,
-                                                                     size=750,
+                                                            max=1600,
+                                                            min=500,
+                                                            value=800,
+                                                            step=100,
+                                                            size=500,
 
                                                                      updatemode='drag'), style={'marginLeft': '5rem'}),
                                         ], className='aadb'),
@@ -1173,7 +1084,7 @@ page_4_layout = html.Div(
                                                options=[{'label': i, 'value': i} for i in
                                                         []],
                                                multi=True,
-                                               style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 10rem'},
+                                               style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 5rem'},
                                                className='',
                                                clearable=True,
                                                placeholder='Values of Real Time',
@@ -1182,7 +1093,7 @@ page_4_layout = html.Div(
                                                options=[{'label': i, 'value': i} for i in
                                                         []],
                                                multi=True,
-                                               style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 10rem'},
+                                               style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
                                                className='',
                                                clearable=True,
                                                placeholder='Values of Database',
@@ -1197,7 +1108,7 @@ page_4_layout = html.Div(
                                                                                 'select2d',
                                                                                 'eraseshape',
                                                                             ]},
-                                                                    style={'marginTop': 20, },
+                                                                    style={'margin': '20px ' },
                                                                     figure={
                                                                         'layout': {'legend': {'tracegroupgap': 0},
 
@@ -1206,19 +1117,19 @@ page_4_layout = html.Div(
 
                                                                     ), ),
                                                                  html.Div(daq.Slider(id="sliderHeightpr4",
-                                                                                     max=2100,
-                                                                                     min=400,
-                                                                                     value=530,
+                                                                                     max=1200,
+                                                                                     min=200,
+                                                                                     value=400,
                                                                                      step=100,
-                                                                                     size=400,
+                                                                                     size=300,
                                                                                      vertical=True,
-                                                                                     updatemode='drag'), style={'margin': '10px'})], className='abcdb'),
+                                                                                     updatemode='drag'), style={'margin': '10px'})],style = {'margin':'0 3rem 0 0'}, className='abcdb'),
                                                                 html.Div(daq.Slider(id="sliderWidthpr4",
-                                                                                             max=2000,
-                                                                                             min=600,
-                                                                                             value=1000,
+                                                                                             max=1600,
+                                                                                             min=500,
+                                                                                             value=800,
                                                                                              step=100,
-                                                                                             size=750,
+                                                                                             size=500,
 
                                                                                              updatemode='drag'), style={'marginLeft': '5rem'}),
                                                                 ], className='aadb'),
@@ -1285,7 +1196,7 @@ page_4_layout = html.Div(
                html.Div(id='hiddenrecord4pr', children=[], style={'display': 'None'}),
                html.Div(id='writeexcelhiddenpr', children=[], style={'display': 'None'}),
 
-               ], ),
+               ], style = {'overflow' : 'visible'} ),
 
 
 @app.callback(
@@ -1310,17 +1221,24 @@ def toggle_modal(n1, n2, n3, is_open):
     return is_open
 
 @app.callback(
-    Output("reelhidden3pr", "children"),
-    [Input("download_pr", "n_clicks")],
-    [State("filenametodb", "value")],
+    [Output("reelhidden3pr", "children"),Output("reelhidden4pr", "children")],
+    [Input('download_pr', 'n_clicks')],
+    [State("filenametodb", "value"),
+     State("nametodb", "value")],
 )
-def toggle_modal(n1, value):
-    if n1 == None :
-        raise PreventUpdate
+def toggle_modal(n1, name, nametodb):
+    # if n1 == None :
+    #     raise PreventUpdate
     if n1 > 0 :
-        return value
-    else :
-        return 'LERMAB_test'
+        if name != '' and nametodb == '' :
+            return name , 'enerbat'
+        elif name == '' and nametodb != '' :
+            return 'LERMAB_test' , nametodb
+        elif name != '' and nametodb != '' :
+            return name , nametodb
+        else :
+            return 'LERMAB_test', 'enerbat'
+    else : return no_update
 
 
 @app.callback(Output('interval_component', 'disabled'),
@@ -1570,8 +1488,9 @@ def pandastosql(name, data):
 
 
 @app.callback(Output('reelhidden2pr', 'children'),
-              [Input("my-toggle-switch-pr", "on"),Input('interval_component_pr', 'n_intervals')], [State("reelhidden3pr", "children"),State('get_data_from_modbus_pr', 'data')])
-def pandastosql_pr(on,interval, name, data):
+              [Input("my-toggle-switch-pr", "on"),Input('interval_component_pr', 'n_intervals')],
+              [State("reelhidden3pr", "children"),State("reelhidden4pr", "children"), State('get_data_from_modbus_pr', 'data')])
+def pandastosql_pr(on,interval, name,nametodb, data):
     if name == None :
         raise PreventUpdate
     print('name', name)
@@ -1591,7 +1510,7 @@ def pandastosql_pr(on,interval, name, data):
                     host="193.54.2.211",
                     user="dashapp",
                     passwd="dashapp",
-                    database="enerbat")
+                    database=nametodb)
                 db_cursor = db_connection.cursor()
                 # +
                 # Here creating database table as student'
@@ -1602,7 +1521,7 @@ def pandastosql_pr(on,interval, name, data):
                 # Get database table'
                 db_cursor.executemany(sql_query, sql_insert)
                 db_connection.commit()
-                print(db_cursor.rowcount, "Record inserted successfully into ENERBAT Database")
+                print(db_cursor.rowcount, f"Record inserted successfully into {nametodb} Database")
             except mysql.connector.Error as error:
                 print("Failed to insert record into MARIADB table {}".format(error))
             finally:
@@ -1626,16 +1545,16 @@ def pandastosql_pr(on,interval, name, data):
 @app.callback(dash.dependencies.Output('page-content', 'children'),
               [dash.dependencies.Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname == '/page-1':
-        return page_1_layout
+    if pathname == '/':
+        return index_page
     elif pathname == '/Database':
         return page_2_layout
     elif pathname == '/reelTime':
         return page_3_layout
     elif pathname == '/project':
         return page_4_layout
-    else:
-        return index_page
+    elif pathname == '/page-1':
+        return page_1_layout
 
 
 def parse_contents(contents, filename, date):
@@ -3602,17 +3521,6 @@ def showintegral(show):
     if show == ['calculdb']:
         return {'visibility': 'visible'}
     return {'display': 'None'}
-
-
-@app.callback(Output('prcheck', 'style'),
-              [Input("calculintegralpr", "value")],
-              )
-def showintegralpr(show):
-    if show == ['calculpr']:
-        return {'visibility': 'visible'}
-    return {'display': 'None'}
-
-
 @app.callback([Output("tabDropdownTop", "options"), Output("tabDropdownDown", "options")],
               [Input("datastore", "data")])
 def dropdownlistcontrol(retrieve):
@@ -4783,89 +4691,6 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
             return (no_update, no_update)
 
 
-@app.callback(
-    [Output('pointLeftFirstpr', 'children'),
-     Output('pointLeftSecondpr', 'children')],
-    [Input('getprgraph', 'clickData'),
-     Input('firstChoosenValuepr', 'value'), ],
-    [State('prvalname', 'value'), State('pointLeftFirstpr', 'children'),
-     State('pointLeftSecondpr', 'children'),
-     State('memory-outputpr', 'data'),
-     State('prvalchoosen', 'value'), State('prname', 'value')
-     ]
-)
-def valintpr(clickData, firstchoosen, value, leftchild, rightchild, retrieve, prch, prname):
-    if value == [] or value == None or firstchoosen == None or clickData == None or clickData == [] or \
-            retrieve == None or retrieve == []:
-        raise PreventUpdate
-    spaceList1 = []
-    zero = 0
-    spaceList2 = []
-    if retrieve != []:
-        df = pd.read_csv('project.csv')
-        # if prname == 'rcckn':
-        #     if prch == 'send_variablevalues':
-        #         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-        #                       'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-        #     if prch == 'received_variablevalues':
-        #         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-        #                       'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-        #                       'CONVERTED_NUM_VALUE']
-        # if prname == 'enerbat':
-        #     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-
-        for i in range(len(value)):
-            spaceList1.append(zero)
-            zero += 1
-            spaceList2.append(value[i])
-        zippedval = [i for i in list(zip(spaceList1, spaceList2))]
-        curvenumber = clickData['points'][0]['curveNumber']
-        for k in zippedval:
-            if k[1] == firstchoosen:
-                if k[0] == curvenumber:
-                    x_val = clickData['points'][0]['x']
-                    x_val = x_val[:10] + 'T' + x_val[11:]
-                    print('x_val', x_val)
-
-                    dff = df[df['VARIABLE_NAME'] == firstchoosen]
-                    if prch == 'send_variablevalues':
-                        dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
-                        index = np.arange(0, len(dff['VARIABLE_NAME']))
-                        dff.reset_index(drop=True, inplace=True)
-                        dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
-                        dff = dff[(dff['TIMESTAMP'] == x_val)]
-                    if prch == 'received_variablevalues':
-                        dff = dff[dff.REMOTE_TIMESTAMP.str.startswith(x_val[:10])]
-                        index = np.arange(0, len(dff['VARIABLE_NAME']))
-                        dff.reset_index(drop=True, inplace=True)
-                        dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
-                        dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
-                    else:
-                        dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
-                        index = np.arange(0, len(dff['VARIABLE_NAME']))
-                        dff.reset_index(drop=True, inplace=True)
-                        dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
-                        dff = dff[(dff['TIMESTAMP'] == x_val)]
-                    a = []
-                    a.append(dff.index)
-                    for i in range(len(a)):
-                        for j in a:
-                            leftchild.append(j[i])
-                            print('leftchild', leftchild)
-                    if len(leftchild) > 2:
-                        leftchild.pop(0)
-                    print('left2', leftchild)
-                    return (leftchild, leftchild)
-                    # else: return (no_update, no_update)
-                else:
-                    return (no_update, no_update)
-        else:
-            return (no_update, no_update)
-
-
 @app.callback([Output('leftIntegralFirst', 'value'), Output('leftIntegralSecond', 'value')],
               [Input('pointLeftFirst', 'children'), Input('pointLeftSecond', 'children')],
               [State('firstChoosenValue', 'value')], )
@@ -5288,95 +5113,6 @@ def valintdb2(clickData, secondchoosen, value, leftchild, rightchild, retrieve, 
             return (no_update, no_update)
 
 
-@app.callback(
-    [Output('pointRightFirstpr', 'children'),
-     Output('pointRightSecondpr', 'children')],
-    [Input('getprgraph', 'clickData'),
-     Input('secondChoosenValuepr', 'value'), ],
-    [State('prvalname', 'value'), State('pointRightFirstpr', 'children'),
-     State('pointRightSecondpr', 'children'),
-     State('memory-outputpr', 'data'),
-     State('prvalchoosen', 'value'), State('prname', 'value')
-     ]
-)
-def valintdb2(clickData, secondchoosen, value, leftchild, rightchild, retrieve, prch, prname):
-    if value == [] or value == None or clickData == None or clickData == [] or secondchoosen == None or \
-            retrieve == None or retrieve == []:
-        raise PreventUpdate
-    print('secondchoosen', secondchoosen)
-    spaceList1 = []
-    zero = 0
-    spaceList2 = []
-    if retrieve != []:
-        df = pd.read_csv('project.csv')
-        # if prname == 'rcckn':
-        #     if prch == 'send_variablevalues':
-        #         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-        #                       'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-        #     if prch == 'received_variablevalues':
-        #         df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-        #                       'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-        #                       'CONVERTED_NUM_VALUE']
-        # if prname == 'enerbat':
-        #     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-
-        df['index'] = df.index
-
-        for i in range(len(value)):
-            spaceList1.append(zero)
-            zero += 1
-            spaceList2.append(value[i])
-        zippedval = [i for i in list(zip(spaceList1, spaceList2))]
-        print('zippedval', zippedval)
-        curvenumber = clickData['points'][0]['curveNumber']
-        for k in zippedval:
-            if k[1] == secondchoosen:
-                if k[0] == curvenumber:
-                    x_val = clickData['points'][0]['x']
-
-                    x_val = x_val[:10] + 'T' + x_val[11:]
-                    print('x_val', x_val)
-                    dff = df[df['VARIABLE_NAME'] == secondchoosen]
-                    if prch == 'send_variablevalues':
-                        dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
-                        index = np.arange(0, len(dff['VARIABLE_NAME']))
-                        dff.reset_index(drop=True, inplace=True)
-                        dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
-                        dff = dff[(dff['TIMESTAMP'] == x_val)]
-                    if prch == 'received_variablevalues':
-                        dff = dff[dff.REMOTE_TIMESTAMP.str.startswith(x_val[:10])]
-                        index = np.arange(0, len(dff['VARIABLE_NAME']))
-                        dff.reset_index(drop=True, inplace=True)
-                        dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
-                        dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
-                    else:
-                        dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
-                        index = np.arange(0, len(dff['VARIABLE_NAME']))
-                        dff.reset_index(drop=True, inplace=True)
-                        dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
-                        dff = dff[(dff['TIMESTAMP'] == x_val)]
-
-                    a = []
-                    a.append(dff.index)
-                    print('aaaaaaaaa', a)
-                    for i in range(len(a)):
-                        for j in a:
-                            leftchild.append(j[i])
-                            print('leftchild', leftchild)
-                    if len(leftchild) > 2:
-                        leftchild.pop(0)
-                    print('left2', leftchild)
-                    return (leftchild, leftchild)
-                    # else: return (no_update, no_update)
-                else:
-                    return (no_update, no_update)
-        else:
-            return (no_update, no_update)
-
-
 @app.callback([Output('rightIntegralFirstdb', 'value'), Output('rightIntegralSeconddb', 'value')],
               [Input('pointRightFirstdb', 'children'), Input('pointRightSeconddb', 'children')],
               )
@@ -5736,66 +5472,6 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbn
             return 'total integration'
 
 
-@app.callback(Output('leftIntegralpr', 'value'),
-              [Input('leftIntegralFirstpr', 'value'),
-               Input('leftIntegralSecondpr', 'value'),
-               Input('firstChoosenValuepr', 'value'), ],
-              [State('memory-outputpr', 'data'),
-               State('prvalchoosen', 'value'), State('prname', 'value'), State('prvaldate', 'value')]
-              )
-def integralCalculationpr(st1left, st1right, valuechoosenleft, retrieve, prch, prname, valdate):
-    if st1left == None or st1right == None or valuechoosenleft == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
-        raise PreventUpdate
-    print('st1left', st1left)
-    print('st1left', st1right)
-    if st1left.startswith('T') == 1 and st1right.startswith('T') == 1:
-        st1left = st1left[2:]
-        st1right = st1right[2:]
-    elif st1left.startswith('T') == 1 and st1right.isnumeric() == 1:
-        st1left = st1left[2:]
-        st1right = st1right
-    elif st1left.isnumeric() == 1 and st1right.isnumeric() == 1:
-        st1left = st1left
-        st1right = st1right
-    elif st1left.isnumeric() == 1 and st1right.startswith('T') == 1:
-        st1left = st1left
-        st1right = st1right[2:]
-    if retrieve != []:
-        if st1left != '' and st1right != '':
-            df = pd.DataFrame(retrieve)
-            if prname == 'rcckn':
-                if prch == 'send_variablevalues':
-                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-                if prch == 'received_variablevalues':
-                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                                  'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                                  'CONVERTED_NUM_VALUE']
-            if prname == 'enerbat':
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-            df1 = df[df['VARIABLE_NAME'] == valuechoosenleft]
-            if prch == 'send_variablevalues':
-                df1 = df1[df1.TIMESTAMP.str.startswith(valdate[0])]
-            if prch == 'received_variablevalues':
-                df1 = df1[df1.REMOTE_TIMESTAMP.str.startswith(valdate[0])]
-            else:
-                df1 = df1[df1.TIMESTAMP.str.startswith(valdate[0])]
-            index = np.arange(0, len(df1['VARIABLE_NAME']))
-            df1.reset_index(drop=True, inplace=True)
-            df1.set_index(index, inplace=True)
-            dff2 = df1[(df1.index >= float(st1left)) & (df1.index <= float(st1right)) |
-                       (df1.index >= float(st1right)) & (df1.index <= float(st1left))]
-            c = dff2['VARIABLE_NUM_VALUE']
-            area1 = abs(trapz((abs(c)), dx=1))
-
-            return area1
-        elif (st1left == '' and st1right != '') or (st1left != '' and st1right == ''):
-            return 'total integration'
-        elif (st1left == '' and st1right == '') and valuechoosenleft != '':
-            return 'total integration'
-        elif st1left != '' and st1right != '' and valuechoosenleft == '':
-            return 'total integration'
-
 
 @app.callback(Output('leftIntegralTab4', 'value'),
               [Input('leftIntegralFirstTab4', 'value'),
@@ -5944,64 +5620,6 @@ def integralCalculationdb(st2left, st2right, valuechoosenright, retrieve, dbch, 
             return 'total integration'
 
 
-@app.callback(Output('rightIntegralpr', 'value'),
-              [Input('rightIntegralFirstpr', 'value'),
-               Input('rightIntegralSecondpr', 'value'),
-               Input('secondChoosenValuepr', 'value'), ],
-              [State('memory-outputpr', 'data'),
-               State('prvalchoosen', 'value'), State('prname', 'value'), State('prvaldate', 'value')]
-              )
-def integralCalculationpr(st2left, st2right, valuechoosenright, retrieve, prch, prname, valdate):
-    if st2left == None or st2right == None or valuechoosenright == None or valuechoosenright == [] or retrieve == None or retrieve == []:
-        raise PreventUpdate
-    print('st1left', st2left)
-    print('st1left', st2right)
-    if st2left.startswith('T') == 1 and st2right.startswith('T') == 1:
-        st2left = st2left[2:]
-        st2right = st2right[2:]
-    elif st2left.startswith('T') == 1 and st2right.isnumeric() == 1:
-        st2left = st2left[2:]
-        st2right = st2right
-    elif st2left.isnumeric() == 1 and st2right.isnumeric() == 1:
-        st2left = st2left
-        st2right = st2right
-    elif st2left.isnumeric() == 1 and st2right.startswith('T') == 1:
-        st2left = st2left
-        st2right = st2right[2:]
-    if retrieve != []:
-        if st2left != '' and st2right != '':
-            df = pd.DataFrame(retrieve)
-            if prname == 'rcckn':
-                if prch == 'send_variablevalues':
-                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-                if prch == 'received_variablevalues':
-                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                                  'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                                  'CONVERTED_NUM_VALUE']
-            if prname == 'enerbat':
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-            df1 = df[df['VARIABLE_NAME'] == valuechoosenright]
-            if prch == 'send_variablevalues':
-                df1 = df1[df1.TIMESTAMP.str.startswith(valdate[0])]
-            if prch == 'received_variablevalues':
-                df1 = df1[df1.REMOTE_TIMESTAMP.str.startswith(valdate[0])]
-            index = np.arange(0, len(df1['VARIABLE_NAME']))
-            df1.reset_index(drop=True, inplace=True)
-            df1.set_index(index, inplace=True)
-            dff2 = df1[(df1.index >= float(st2left)) & (df1.index <= float(st2right)) |
-                       (df1.index >= float(st2right)) & (df1.index <= float(st2left))]
-            c = dff2['VARIABLE_NUM_VALUE']
-            area1 = abs(trapz((abs(c)), dx=1))
-
-            return area1
-        elif (st2left == '' and st2right != '') or (st2left != '' and st2right == ''):
-            return 'total integration'
-        elif (st2left == '' and st2right == '') and valuechoosenright != '':
-            return 'total integration'
-        elif st2left != '' and st2right != '' and valuechoosenright == '':
-            return 'total integration'
-
 
 @app.callback(Output('rightIntegralTab4', 'value'),
               [Input('rightIntegralFirstTab4', 'value'),
@@ -6104,27 +5722,6 @@ def differanceintegrationdb(value1, value2, ops):
         return float(value1 / value2)
     elif ops == []:
         return []
-
-
-@app.callback(Output('operationpr', 'value'),
-              [Input('leftIntegralpr', 'value'),
-               Input('rightIntegralpr', 'value'),
-               Input('operateurpr', 'value')],
-              )
-def differanceintegrationpr(value1, value2, ops):
-    if value1 == None or value2 == None:
-        raise PreventUpdate
-    if ops == ['Plus']:
-        return float(value1 + value2)
-    elif ops == ['Moins']:
-        return float(value1 - value2)
-    elif ops == ['Multiplie']:
-        return float(value1 * value2)
-    elif ops == ['Division']:
-        return float(value1 / value2)
-    elif ops == []:
-        return []
-
 
 @app.callback(Output('intersection', 'value'),
               [Input('hiddenDifferance', 'children'),
@@ -6328,121 +5925,6 @@ def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, righ
     else:
         return ['intersection']
 
-
-@app.callback(Output('intersectionpr', 'value'),
-              [Input('firstChoosenValuepr', 'value'),
-               Input('secondChoosenValuepr', 'value'),
-               Input('leftIntegralFirstpr', 'value'),
-               Input('rightIntegralFirstpr', 'value'),
-               Input('leftIntegralSecondpr', 'value'),
-               Input('rightIntegralSecondpr', 'value'),
-               ],
-              [State('intersectionpr', 'value'), State('memory-outputpr', 'data'),
-               State('prvalchoosen', 'value'), State('prname', 'value'), State('prvaldate', 'value')
-               ]
-              )
-def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, rightfirst, leftsecond, rightsecond,
-                            diff, retrieve, prch, prname, prdate):
-    if retrieve == None or retrieve == [] or leftfirst == None or rightfirst == None or leftsecond == None or rightsecond == None:
-        raise PreventUpdate
-    if valuechoosenright != None and valuechoosenleft != None:
-        differance = []
-        print('leftfirst', leftfirst)
-        print('leftfirst', leftsecond)
-        print('rightfirst', rightfirst)
-        print('rightfirst', rightsecond)
-        st1left = leftfirst[2:]
-        a = int(st1left)
-        st1right = leftsecond[2:]
-        b = int(st1right)
-        st2left = rightfirst[2:]
-        c = int(st2left)
-        st2right = rightsecond[2:]
-        d = int(st2right)
-        if set(range(a, b)).issuperset(set(range(c, d))) == 1:
-            differance.append(c)
-            differance.append(d)
-            print('differance1', differance)
-        elif set(range(c, d)).issuperset(set(range(a, b))) == 1:
-            differance.append(a)
-            differance.append(b)
-            print('differance2', differance)
-        elif len(set(range(a, b)).intersection(set(range(c, d)))) >= 1 or len(
-                set(range(c, d)).intersection(set(range(a, b)))) >= 1:
-            if a <= c:
-                if len(differance) == 2:
-                    differance.pop(0)
-                    differance.append(b)
-                differance.append(b)
-            if a >= c:
-                if len(differance) == 2:
-                    differance.pop(0)
-                    differance.append(a)
-                differance.append(a)
-            if b <= d:
-                if len(differance) == 2:
-                    differance.pop(0)
-                    differance.append(c)
-                differance.append(c)
-            if b >= d:
-                if len(differance) == 2:
-                    differance.pop(0)
-                    differance.append(d)
-                differance.append(d)
-            print('differance3', differance)
-        else:
-            return ['intersection']
-        print('buralarda miyiz')
-        df1 = pd.DataFrame(retrieve)
-        dates = []
-        if prname == 'rcckn':
-            if prch == 'send_variablevalues':
-                df1.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-                for col in df1['TIMESTAMP']:
-                    dates.append(col[:10])
-            if prch == 'received_variablevalues':
-                df1.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                               'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                               'CONVERTED_NUM_VALUE']
-                for col in df1['REMOTE_TIMESTAMP']:
-                    dates.append(col[:10])
-        if prname == 'enerbat':
-            df1.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-            for col in df1['TIMESTAMP']:
-                dates.append(col[:10])
-        #
-
-        df1['dates'] = dates
-        first_df = df1[df1['VARIABLE_NAME'] == valuechoosenleft]
-        second_df = df1[df1['VARIABLE_NAME'] == valuechoosenright]
-
-        print('first_df1', first_df)
-        first_df = first_df[first_df['dates'].isin(prdate)]
-        index = np.arange(0, len(first_df['VARIABLE_NAME']))
-        first_df.reset_index(drop=True, inplace=True)
-        first_df.set_index(index, inplace=True)
-        first_df = first_df[(first_df.index >= float(differance[0])) & (first_df.index <= float(differance[1]))]
-        first_df = first_df['VARIABLE_NUM_VALUE']
-        print('first_df2', first_df)
-        second_df = second_df[second_df['dates'].isin(prdate)]
-        index = np.arange(0, len(second_df['VARIABLE_NAME']))
-        second_df.reset_index(drop=True, inplace=True)
-        second_df.set_index(index, inplace=True)
-        second_df = second_df[(second_df.index >= float(differance[0])) & (second_df.index <= float(differance[1]))]
-        second_df = second_df['VARIABLE_NUM_VALUE']
-        print('second_df', second_df)
-        min_val = []
-        for i, j in zip(first_df, second_df):
-            if i <= j:
-                min_val.append(i)
-            if j < i:
-                min_val.append(j)
-
-        diff = (abs(trapz(min_val, dx=1)))
-        return diff
-    else:
-        return ['intersection']
 
 
 @app.callback(Output('intersectionTab4', 'value'),
@@ -6962,17 +6444,25 @@ def prname(interval, prch, prname, ipval):
         raise PreventUpdate
     print('prch',prch)
     ipadress = "193.54.2.211"
+    # server = SSHTunnelForwarder(
+    #     (ipadress, 22),
+    #     ssh_username='soudani',
+    #     ssh_password="univ484067152",
+    #     remote_bind_address=(ipadress, 3306))
+    #
+    # server.start()
+
     try:
         conn = mysql.connector.connect(
-                host="193.54.2.211",
-                user="dashapp",
-                passwd="dashapp",
-                database=prname,
-                port=3306, )
-        cur = conn.cursor()
+            user="dashapp",
+            password="dashapp",
+            host=ipadress,
+            port=3306,
+            database=prname)
 
     except mysql.connector.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
 
             # Get Cursor
 
@@ -6983,18 +6473,15 @@ def prname(interval, prch, prname, ipval):
         # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
-
             cur1 = conn.cursor()
-            cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues ")
+            cur1.execute(f"SELECT * FROM {prch} ")
             t1 = cur1.fetchall()
-            name = [i[0] for i in t1]
-            cur2 = conn.cursor()
-            cur2.execute("SELECT DISTINCT REMOTE_TIMESTAMP FROM received_variablevalues ")
-            t2 = cur2.fetchall()
-
-            str_list = [i[0] for i in t2]
-            df = pd.DataFrame(str_list)
-            df.columns = ['REMOTE_TIMESTAMP']
+            df = pd.DataFrame(t1)
+            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                          'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
+                          'CONVERTED_NUM_VALUE']
+            df.to_csv('project.csv')
+            name = df['VARIABLE_NAME'].unique()
             df['REMOTE_TIMESTAMP'] = df.REMOTE_TIMESTAMP.apply(pd.to_datetime)
             df["day"] = df.REMOTE_TIMESTAMP.dt.day
             df["month"] = df.REMOTE_TIMESTAMP.dt.month
@@ -7008,16 +6495,13 @@ def prname(interval, prch, prname, ipval):
         elif prch == "send_variablevalues" :
 
             cur1 = conn.cursor()
-            cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM send_variablevalues ")
+            cur1.execute(f"SELECT * FROM {prch} ")
             t1 = cur1.fetchall()
-            name = [i[0] for i in t1]
-            cur2 = conn.cursor()
-            cur2.execute("SELECT DISTINCT TIMESTAMP FROM send_variablevalues ")
-            t2 = cur2.fetchall()
-
-            str_list = [i[0] for i in t2]
-            df = pd.DataFrame(str_list)
-            df.columns = ['TIMESTAMP']
+            df = pd.DataFrame(t1)
+            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+             'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+            df.to_csv('project.csv')
+            name = df['VARIABLE_NAME'].unique()
             df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
             df["day"] = df.TIMESTAMP.dt.day
             df["month"] = df.TIMESTAMP.dt.month
@@ -7028,50 +6512,33 @@ def prname(interval, prch, prname, ipval):
             b = sorted(b)
             str_list = [t.strftime("%Y-%m-%d") for t in b]
             return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-            # else:
-            #     time.sleep(1)
-            #     cur1 = conn.cursor()
-            #     cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {prch} ")
-            #     t1 = cur1.fetchall()
-            #     name = [i[0] for i in t1]
-            #     cur2 = conn.cursor()
-            #     cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {prch} ")
-            #     t2 = cur2.fetchall()
-            #     server.stop()
-            #     str_list = [i[0] for i in t2]
-            #     df = pd.DataFrame(t2)
-            #     df.columns = ['TIMESTAMP']
-            #     df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
-            #     df["day"] = df.TIMESTAMP.dt.day
-            #     df["month"] = df.TIMESTAMP.dt.month
-            #     df["year"] = df.TIMESTAMP.dt.year
-            #     a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-            #     a = list(set(a))
-            #     b = pd.to_datetime(a)
-            #     b = sorted(b)
-            #     str_list = [t.strftime("%Y-%m-%d") for t in b]
-            #     return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-    if prname == 'enerbat':
-        if prch != None:
-
+        else:
             cur1 = conn.cursor()
             cur1.execute(f"SELECT * FROM {prch} ")
             t1 = cur1.fetchall()
-
             df = pd.DataFrame(t1)
-            print('dffff', df)
-
-
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-
             df.to_csv('project.csv')
             name = df['VARIABLE_NAME'].unique()
-                # cur2 = conn.cursor()
-                # cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {prch}  ")
-                # t2 = cur2.fetchall()
-                # str_list = [i[0] for i in t2]
-                # df = pd.DataFrame(str_list)
-                # df.columns = ['TIMESTAMP']
+            df["day"] = df.TIMESTAMP.dt.day
+            df["month"] = df.TIMESTAMP.dt.month
+            df["year"] = df.TIMESTAMP.dt.year
+            a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+            a = list(set(a))
+            b = pd.to_datetime(a)
+            b = sorted(b)
+            str_list = [t.strftime("%Y-%m-%d") for t in b]
+            return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+    if prname == 'enerbat':
+        if prch != None:
+            cur1 = conn.cursor()
+            cur1.execute(f"SELECT * FROM {prch} ")
+            t1 = cur1.fetchall()
+            df = pd.DataFrame(t1)
+
+            df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            df.to_csv('project.csv')
+            name = df['VARIABLE_NAME'].unique()
             df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
             df["day"] = df.TIMESTAMP.dt.day
             df["month"] = df.TIMESTAMP.dt.month
@@ -7362,13 +6829,14 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
               [Input('prvalchoosen', 'value'), State('prname', 'value'), ]
               )
 def on_data_set_tablepr( valname, valdate,interval, prch, prname):
-    if valname == None or valdate == None or prch == None or prname == None:
+    if valname == None or valdate == None or prch == None or prname == None :
         raise PreventUpdate
     df = pd.read_csv('project.csv')
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
             if valdate != '' or valname != []:
                 if df.empty != 1:
+                    df = df[df['VARIABLE_NAME'].isin(valname)]
                     # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
                     #               'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
                     #               'CONVERTED_NUM_VALUE']
@@ -7394,6 +6862,7 @@ def on_data_set_tablepr( valname, valdate,interval, prch, prname):
             if valdate != '' or valname != []:
                 print('sikinti burda 2send ')
                 if df.empty != 1:
+                    df = df[df['VARIABLE_NAME'].isin(valname)]
                     # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                     #               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                     print('sikinti burda 3send ')
@@ -7412,34 +6881,36 @@ def on_data_set_tablepr( valname, valdate,interval, prch, prname):
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
-            if prch != 'send_variablevalues' or prch != 'received_variablevalues':
-                print('sikinti burda 1send ')
-                if valdate != '' or valname != []:
-                    print('sikinti burda 2send ')
-                    if df.empty != 1:
+        if prch != 'send_variablevalues' or prch != 'received_variablevalues':
+            print('sikinti burda 1send ')
+            if valdate != '' or valname != []:
+                print('sikinti burda 2send ')
+                if df.empty != 1:
+                    df = df[df['VARIABLE_NAME'].isin(valname)]
                         # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-                        print('sikinti burda 3send ')
-                        df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
-                        a = []
-                        for col in df['TIMESTAMP']:
-                            a.append(col[:10])
-                        df['dates'] = a
-                        valdate_new = []
-                        for i in range(len(valdate)):
-                            valdate_new.append(valdate[i][:10])
-                        df1 = df[df['dates'].isin(valdate_new)]
-                        print('valname', valname)
-                        a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
-                        x = a.to_dict('record')
-                        return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
-                    else:
-                        raise PreventUpdate
+                    print('sikinti burda 3send ')
+                    df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
+                    a = []
+                    for col in df['TIMESTAMP']:
+                        a.append(col[:10])
+                    df['dates'] = a
+                    valdate_new = []
+                    for i in range(len(valdate)):
+                        valdate_new.append(valdate[i][:10])
+                    df1 = df[df['dates'].isin(valdate_new)]
+                    print('valname', valname)
+                    a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
+                    x = a.to_dict('record')
+                    return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
+                else:
+                    raise PreventUpdate
             else:
                 raise PreventUpdate
     if prname == 'enerbat':
         if prch != None:
             if valdate != '' or valname != []:
                 if df.empty != 1:
+                    df = df[df['VARIABLE_NAME'].isin(valname)]
                     # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                     df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
                     a = []
@@ -7470,19 +6941,7 @@ def containerdb(val1):
 
 
 #
-@app.callback(
-    [Output('firstChoosenValuepr', 'options'),
-     Output('secondChoosenValuepr', 'options')],
-    [Input('prvalname', 'value')], )
-def containerpr(val1):
-    if val1 == None or val1 == []:
-        raise PreventUpdate
-    print('val1', val1)
 
-    return [{'label': i, 'value': i} for i in val1], [{'label': i, 'value': i} for i in val1]
-
-
-#
 #
 @app.callback(Output('getdbgraph', 'figure'),
               [Input('memory-output', 'data'),
@@ -7642,7 +7101,6 @@ def graphreelTime(data, val, sliderwidth, sliderheight):
             b=100,
             t=50,
             pad=4
-
         ),
         paper_bgcolor="LightSteelBlue",
     )
@@ -7674,28 +7132,28 @@ def delivre_dropdown_db(values) :
                Input('prvaldate', 'value'),
                Input('sliderWidthpr', 'value'),
                Input('sliderHeightpr', 'value'),Input('interval_component_pr_db', 'n_intervals') ],
-              [State('prvalchoosen', 'value'), State('prname', 'value'), ])
-def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname):
+              [State('prvalchoosen', 'value'), State('prname', 'value'),State('prvalname', 'value') ])
+def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname, prvalname):
     if valy == None or valy == [] or valdat == [] or valdat == None or prname == None or  realval == None :
         raise PreventUpdate
     df = pd.read_csv('project.csv')
     df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
     # df3 = df2[df2['ID'].isin(realval)]
     # pr_reel = df2.loc[df2['ID'].isin(realval)]
-    print('df pr_reel',df2[df2['ID'] == 'Tb1']['TIMESTAMP'])
     fig = go.Figure()
     for i in realval:
         print('iiiiiiiiiiii', i)
         fig.add_trace(go.Scattergl(x=df2[df2['ID'] == i[16:]]['TIMESTAMP'], y=df2[df2['ID'] == i[16:]]['Value'], mode='lines',
                                    marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
                                    ))
-    print('prname', prname)
+    print('prch', prch)
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID',
-                              'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+                df = df[df['VARIABLE_NAME'].isin(prvalname)]
+                # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
+                #               'REMOTE_ID',
+                #               'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
                 a = []
                 for col in df['REMOTE_TIMESTAMP']:
                     a.append(col[:10])
@@ -7709,8 +7167,6 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        print('aaaaaaaaa', a)
-                        print('bbbbbbbbb', b)
                         fig.add_trace(
                             go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
                                          name="{}/{}".format(valy[j], valdate_new[k]))),
@@ -7719,11 +7175,11 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
                         width=sliderw,
                         height=sliderh,
                         margin=dict(
-                            l=50,
-                            r=50,
-                            b=50,
-                            t=50,
-                            pad=4
+                            l=100,
+                            r=60,
+                            b=40,
+                            t=40,
+                            pad=2
                         ),
 
                         uirevision=valy[j]),
@@ -7732,12 +7188,15 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
                 raise PreventUpdate
         elif prch == 'send_variablevalues':
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                df = df[df['VARIABLE_NAME'].isin(prvalname)]
+                print('dfff bu mi baktigimiz', df.head(5))
+                # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                #               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
                 df['dates'] = a
+                print(type(a[0]))
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i])
@@ -7759,11 +7218,11 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
                             width=sliderw,
                             height=sliderh,
                             margin=dict(
-                                l=50,
-                                r=50,
-                                b=50,
-                                t=50,
-                                pad=4
+                                l=100,
+                                r=60,
+                                b=40,
+                                t=40,
+                                pad=2
                             ),
 
                             uirevision=valy[j], ),
@@ -7772,8 +7231,9 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
                 raise PreventUpdate
         else :
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                df = df[df['VARIABLE_NAME'].isin(prvalname)]
+                # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
+                #               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
@@ -7799,11 +7259,11 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
                             width=sliderw,
                             height=sliderh,
                             margin=dict(
-                                l=50,
-                                r=50,
-                                b=50,
-                                t=50,
-                                pad=4
+                                l=100,
+                                r=60,
+                                b=40,
+                                t=40,
+                                pad=2
                             ),
 
                             uirevision=valy[j], ),
@@ -7813,6 +7273,7 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
 
     if prname == 'enerbat':
         if df.empty != 1:
+            df = df[df['VARIABLE_NAME'].isin(prvalname)]
             # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
             a = []
             for col in df['TIMESTAMP']:
@@ -7834,15 +7295,15 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
                                                        color='white')),
                                                name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
-                        autosize=True,
+
                         width=sliderw,
                         height=sliderh,
                         margin=dict(
-                            l=50,
-                            r=50,
-                            b=50,
-                            t=50,
-                            pad=4
+                            l=100,
+                            r=60,
+                            b=40,
+                            t=40,
+                            pad=2
                         ),
 
                         uirevision=valy[j], ),
@@ -7858,8 +7319,8 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
                Input('prvaldate', 'value'),
                Input('sliderWidthpr2', 'value'),
                Input('sliderHeightpr2', 'value'),Input('interval_component_pr_db', 'n_intervals') ],
-              [State('prvalchoosen', 'value'), State('prname', 'value'), ])
-def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname):
+              [State('prvalchoosen', 'value'), State('prname', 'value'),State('prvalname', 'value')  ])
+def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname,prvalname):
     if  valy == None or valdat == [] or valdat == None or prname == None or realval == None :
         raise PreventUpdate
     df = pd.read_csv('project.csv')
@@ -7903,11 +7364,11 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                         width=sliderw,
                         height=sliderh,
                         margin=dict(
-                            l=50,
-                            r=50,
-                            b=50,
-                            t=50,
-                            pad=4
+                            l=100,
+                            r=60,
+                            b=40,
+                            t=40,
+                            pad=2
                         ),
 
                         uirevision=valy[j]),
@@ -7916,8 +7377,7 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 raise PreventUpdate
         elif prch == 'send_variablevalues':
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                df = df[df['VARIABLE_NAME'].isin(prvalname)]
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
@@ -7943,11 +7403,11 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                             width=sliderw,
                             height=sliderh,
                             margin=dict(
-                                l=50,
-                                r=50,
-                                b=50,
-                                t=50,
-                                pad=4
+                                l=100,
+                                r=60,
+                                b=40,
+                                t=40,
+                                pad=2
                             ),
 
                             uirevision=valy[j], ),
@@ -7956,12 +7416,12 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 raise PreventUpdate
         else :
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                df = df[df['VARIABLE_NAME'].isin(prvalname)]
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
                 df['dates'] = a
+                print('aaaaaaaa', a)
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i])
@@ -7983,11 +7443,11 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                             width=sliderw,
                             height=sliderh,
                             margin=dict(
-                                l=50,
-                                r=50,
-                                b=50,
-                                t=50,
-                                pad=4
+                                l=100,
+                                r=60,
+                                b=40,
+                                t=40,
+                                pad=2
                             ),
 
                             uirevision=valy[j], ),
@@ -7997,11 +7457,12 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
 
     if prname == 'enerbat':
         if df.empty != 1:
-            # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            df = df[df['VARIABLE_NAME'].isin(prvalname)]
             a = []
             for col in df['TIMESTAMP']:
                 a.append(col[:10])
             df['dates'] = a
+            print('aaaaaaaa', a)
             valdate_new = []
             for i in range(len(valdat)):
                 valdate_new.append(valdat[i][:10])
@@ -8022,11 +7483,11 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                         width=sliderw,
                         height=sliderh,
                         margin=dict(
-                            l=50,
-                            r=50,
-                            b=50,
-                            t=50,
-                            pad=4
+                            l=100,
+                            r=60,
+                            b=40,
+                            t=40,
+                            pad=2
                         ),
 
                         uirevision=valy[j], ),
@@ -8041,8 +7502,8 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                Input('prvaldate', 'value'),
                Input('sliderWidthpr3', 'value'),
                Input('sliderHeightpr3', 'value'),Input('interval_component_pr_db', 'n_intervals') ],
-              [State('prvalchoosen', 'value'), State('prname', 'value'), ])
-def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname):
+              [State('prvalchoosen', 'value'), State('prname', 'value'),State('prvalname', 'value')  ])
+def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname,prvalname):
     if  valy == None or valdat == [] or valdat == None or prname == None or realval == None :
         raise PreventUpdate
     df = pd.read_csv('project.csv')
@@ -8060,9 +7521,7 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID',
-                              'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+                df = df[df['VARIABLE_NAME'].isin(prvalname)]
                 a = []
                 for col in df['REMOTE_TIMESTAMP']:
                     a.append(col[:10])
@@ -8082,15 +7541,15 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                             go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
                                          name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
-                        autosize=True,
+
                         width=sliderw,
                         height=sliderh,
                         margin=dict(
-                            l=50,
-                            r=50,
-                            b=50,
-                            t=50,
-                            pad=4
+                            l=10,
+                            r=100,
+                            b=40,
+                            t=40,
+                            pad=2
                         ),
 
                         uirevision=valy[j]),
@@ -8099,8 +7558,7 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 raise PreventUpdate
         elif prch == 'send_variablevalues':
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                df = df[df['VARIABLE_NAME'].isin(prvalname)]
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
@@ -8126,11 +7584,11 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                             width=sliderw,
                             height=sliderh,
                             margin=dict(
-                                l=50,
-                                r=50,
-                                b=50,
-                                t=50,
-                                pad=4
+                                l=10,
+                                r=100,
+                                b=40,
+                                t=40,
+                                pad=2
                             ),
 
                             uirevision=valy[j], ),
@@ -8139,8 +7597,7 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 raise PreventUpdate
         else :
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                df = df[df['VARIABLE_NAME'].isin(prvalname)]
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
@@ -8166,11 +7623,11 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                             width=sliderw,
                             height=sliderh,
                             margin=dict(
-                                l=50,
-                                r=50,
-                                b=50,
-                                t=50,
-                                pad=4
+                                l=10,
+                                r=100,
+                                b=40,
+                                t=40,
+                                pad=2
                             ),
 
                             uirevision=valy[j], ),
@@ -8181,7 +7638,7 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
 
     if prname == 'enerbat':
         if df.empty != 1:
-            # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            df = df[df['VARIABLE_NAME'].isin(prvalname)]
             a = []
             for col in df['TIMESTAMP']:
                 a.append(col[:10])
@@ -8202,15 +7659,15 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                                                        color='white')),
                                                name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
-                        autosize=True,
+
                         width=sliderw,
                         height=sliderh,
                         margin=dict(
-                            l=50,
-                            r=50,
-                            b=50,
-                            t=50,
-                            pad=4
+                            l=0,
+                            r=100,
+                            b=20,
+                            t=20,
+                            pad=5
                         ),
 
                         uirevision=valy[j], ),
@@ -8224,15 +7681,14 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                Input('prvaldate', 'value'),
                Input('sliderWidthpr4', 'value'),
                Input('sliderHeightpr4', 'value'),Input('interval_component_pr_db', 'n_intervals') ],
-              [State('prvalchoosen', 'value'), State('prname', 'value'), ])
-def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname):
+              [State('prvalchoosen', 'value'), State('prname', 'value'),State('prvalname', 'value')  ])
+def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, prch, prname, prvalname):
     if  valy == None or valdat == [] or valdat == None or prname == None or realval == None :
         raise PreventUpdate
     df = pd.read_csv('project.csv')
     df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
     # df3 = df2[df2['ID'].isin(realval)]
     # pr_reel = df2.loc[df2['ID'].isin(realval)]
-    print('df pr_reel',df2[df2['ID'] == 'Tb1']['TIMESTAMP'])
     fig = go.Figure()
     for i in realval:
         print('iiiiiiiiiiii', i)
@@ -8243,9 +7699,7 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID',
-                              'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+                df = df[df['VARIABLE_NAME'].isin(prvalname)]
                 a = []
                 for col in df['REMOTE_TIMESTAMP']:
                     a.append(col[:10])
@@ -8269,11 +7723,11 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                         width=sliderw,
                         height=sliderh,
                         margin=dict(
-                            l=50,
-                            r=50,
-                            b=50,
-                            t=50,
-                            pad=4
+                            l=10,
+                            r=100,
+                            b=40,
+                            t=40,
+                            pad=2
                         ),
 
                         uirevision=valy[j]),
@@ -8282,8 +7736,7 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 raise PreventUpdate
         elif prch == 'send_variablevalues':
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                df = df[df['VARIABLE_NAME'].isin(prvalname)]
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
@@ -8309,11 +7762,11 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                             width=sliderw,
                             height=sliderh,
                             margin=dict(
-                                l=50,
-                                r=50,
-                                b=50,
-                                t=50,
-                                pad=4
+                                l=10,
+                                r=100,
+                                b=40,
+                                t=40,
+                                pad=2
                             ),
 
                             uirevision=valy[j], ),
@@ -8322,8 +7775,7 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 raise PreventUpdate
         else :
             if df.empty != 1:
-                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                              'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                df = df[df['VARIABLE_NAME'].isin(prvalname)]
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
@@ -8349,11 +7801,11 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                             width=sliderw,
                             height=sliderh,
                             margin=dict(
-                                l=50,
-                                r=50,
-                                b=50,
-                                t=50,
-                                pad=4
+                                l=10,
+                                r=100,
+                                b=40,
+                                t=40,
+                                pad=2
                             ),
 
                             uirevision=valy[j], ),
@@ -8364,7 +7816,7 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
 
     if prname == 'enerbat':
         if df.empty != 1:
-            # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+            df = df[df['VARIABLE_NAME'].isin(prvalname)]
             a = []
             for col in df['TIMESTAMP']:
                 a.append(col[:10])
@@ -8389,11 +7841,11 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                         width=sliderw,
                         height=sliderh,
                         margin=dict(
-                            l=50,
-                            r=50,
-                            b=50,
-                            t=50,
-                            pad=4
+                            l=10,
+                            r=100,
+                            b=40,
+                            t=40,
+                            pad=2
                         ),
 
                         uirevision=valy[j], ),
