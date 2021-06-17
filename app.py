@@ -335,96 +335,90 @@ page_1_layout = html.Div(
     ]),
 
 page_2_layout = html.Div(
-    [html.Div([html.Div([dbc.ButtonGroup([dbc.Button("Database Activate", id="activatedb", n_clicks=0,
+                    [html.Div(
+                        [html.Div([dbc.ButtonGroup([dbc.Button("Database Activate", id="activatedb", n_clicks=0,
                                                      size="lg", className="mr-1", color="success",
                                                      style={'width': '25rem'}
                                                      ),
-                                          dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
-                                                     size="lg", className="mr-1", color="danger",
-                                                     style={'width': '25rem'}
-                                                     )]),
-                         html.Div([html.Div(dcc.Link('Main Page', href='/', id='link5')),
-                                   html.Div(dcc.Link('File Page', href='/page-1', id='link6'), ),
-                                   html.Div(dcc.Link('Real-Time Page', href='reelTime', id='link7'), ),
-                                   html.Div(dcc.Link('Project Page', href='/project', id='link8'), ), ],
-                                  style={'margin': '2rem 2rem 0 2rem'}),
-                         html.Div([dbc.Input(id='db_Ip',
-                                   type="text",
-                                   debounce=True,
-                                   min=-10000, max=10000, step=1,
-                                   bs_size="mr",
-                                   style={'width': '11rem', "marginTop": "1.5rem"},
-                                   autoFocus=True,
-                                   placeholder="Enter IP number"),
-                         dbc.Input(id='givendb_name',
-                                   type="text",
-                                   debounce=True,
-                                   min=-10000, max=10000, step=1,
-                                   bs_size="mr",
-                                   style={'width': '11rem', "marginTop": "1.5rem"},
-                                   autoFocus=True,
-                                   placeholder="Enter Database Name"),], className = 'ab'),
+                                                     dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
+                                                             size="lg", className="mr-1", color="danger",
+                                                             style={'width': '25rem'}
+                                                             )]),
+                                 html.Div([html.Div(dcc.Link('Main Page', href='/', id='link5')),
+                                           html.Div(dcc.Link('File Page', href='/page-1', id='link6'), ),
+                                           html.Div(dcc.Link('Real-Time Page', href='reelTime', id='link7'), ),
+                                           html.Div(dcc.Link('Project Page', href='/project', id='link8'), ), ]
+                                          ,style = {'marginTop':'1rem'},className='abpage2'),
+                                 html.Div([dbc.Input(id='db_Ip',
+                                           type="text",
+                                           debounce=True,
+                                           min=-10000, max=10000, step=1,
+                                           bs_size="mr",
+                                           style={'width': '11rem', "marginTop": "1.5rem"},
+                                           autoFocus=True,
+                                           placeholder="Enter IP number"),
+                                         dbc.Input(id='givendb_name',
+                                                   type="text",
+                                                   debounce=True,
+                                                   min=-10000, max=10000, step=1,
+                                                   bs_size="mr",
+                                                   style={'width': '11rem', "marginTop": "1.5rem"},
+                                                   autoFocus=True,
+                                                   placeholder="Enter Database"),], className = 'ab'),
 
-                         ], className="aadb"),
-               html.Div([
-                   dcc.Dropdown(id='db_name',
-                                options=[{'label': i, 'value': i}
-                                         for i in ['rcckn', 'enerbat']],
-                                multi=False,
-                                style={"cursor": "pointer", 'marginTop': '5px'},
-                                className='stockSelectorClass3',
-                                clearable=True,
-                                placeholder='Select Database',
+                                ], className="page2design1"),
+                   html.Div([
+                       dcc.Dropdown(id='db_name',
+                                    options=[{'label': i, 'value': i}
+                                             for i in ['rcckn', 'enerbat']],
+                                    multi=False,
+                                    style={"cursor": "pointer", 'marginTop': '5px'},
+                                    className='stockSelectorClass3',
+                                    clearable=True,
+                                    placeholder='Select Database',
 
-                                ),
-                   dcc.Dropdown(id='dbvalchoosen',
-                                # options=[{'label': i, 'value': i}
-                                #          for i in df.columns],
-                                multi=False,
-                                style={"cursor": "pointer", 'marginTop': '5px'},
-                                className='stockSelectorClass3',
-                                clearable=True,
-                                placeholder='Select Table ...',
+                                    ),
+                       dcc.Dropdown(id='dbvalchoosen',
+                                    # options=[{'label': i, 'value': i}
+                                    #          for i in df.columns],
+                                    multi=False,
+                                    style={"cursor": "pointer", 'marginTop': '5px'},
+                                    className='stockSelectorClass3',
+                                    clearable=True,
+                                    placeholder='Select Table ...',
 
-                                ),
+                                    ),
 
-                   dcc.Dropdown(id='dbvalname',
-                                # options=[{'label': i, 'value': i}
-                                #          for i in df.columns],
-                                multi=True,
-                                style={"cursor": "pointer", 'marginTop': '13px'},
-                                className='stockSelectorClass3',
-                                clearable=True,
-                                placeholder='Select your parameters...',
-                                ),
+                       dcc.Dropdown(id='dbvalname',
+                                    # options=[{'label': i, 'value': i}
+                                    #          for i in df.columns],
+                                    multi=True,
+                                    style={"cursor": "pointer", 'marginTop': '13px'},
+                                    className='stockSelectorClass3',
+                                    clearable=True,
+                                    placeholder='Select your parameters...',
+                                    ),
 
-                   dcc.Dropdown(id='dbvaldate',
-                                # options=[{'label': i, 'value': i}
-                                #          for i in df.columns],
-                                multi=True,
-                                style={"cursor": "pointer", 'marginTop': '13px'},
-                                className='stockSelectorClass3',
-                                clearable=False,
-                                placeholder='Select your parameters...',
-                                ), ], className='aadb'),
-               html.Div([
-                        daq.BooleanSwitch(
-                              id="calculintegraldb",
-                              on=False,
-                              label="Calculate Integral",
-                              color= '#1f78b4',
-                              labelPosition="right"
-                        )
-                   # dbc.Checklist(id="calculintegraldb",
-                   #               options=[
-                   #                   {'label': "Calculate Integral", 'value': 'calculdb'}, ]
-                   #               ,
-                   #               value='',
-                   #               labelClassName='groupgraph',
-                   #               labelStyle={'margin': '10px', },
-                   #               inputStyle={'margin': '10px', }),
-               ])
-               ], className='abcdb'),
+                       dcc.Dropdown(id='dbvaldate',
+                                    # options=[{'label': i, 'value': i}
+                                    #          for i in df.columns],
+                                    multi=True,
+                                    style={"cursor": "pointer", 'marginTop': '13px'},
+                                    className='stockSelectorClass3',
+                                    clearable=False,
+                                    placeholder='Select your parameters...',
+                                    ), ], className='aadb'),
+                   html.Div([
+                            daq.BooleanSwitch(
+                                  id="calculintegraldb",
+                                  on=False,
+                                  label="Calculate Integral",
+                                  color= '#1f78b4',
+                                  labelPosition="right",
+                                style = {'margin': '5rem'}
+                            )
+                        ])
+                ], className='abcdb'),
      dcc.Store(id='memory-output'),
      html.Div(id='dbcheck', children=
      [html.Div([html.Div([dcc.Dropdown(id='firstChoosenValuedb',
@@ -559,7 +553,7 @@ page_2_layout = html.Div(
                                              step=100,
                                              size=400,
                                              vertical=True,
-                                             updatemode='drag'), style={'margin': '20px'})], className='abcdb'),
+                                             updatemode='drag'), style={'margin': '20px'})], className='abcdb_graph'),
 
                html.Div([html.Div(daq.Slider(id="sliderWidthdb",
                                              max=2000,
@@ -568,7 +562,7 @@ page_2_layout = html.Div(
                                              step=100,
                                              size=750,
 
-                                             updatemode='drag'), style={'marginLeft': '5rem'}),
+                                             updatemode='drag'), style={'marginLeft': '35rem'}),
                          ]),
                html.Div(dash_table.DataTable(id="getdbtable",
                                              editable=True,
@@ -630,134 +624,122 @@ page_2_layout = html.Div(
 
                ], ), ], ),
 
-page_3_layout = html.Div(
-    className='main_container',
-    children=[html.Div(id='fourcolumnsdivusercontrolsreel', className="four-columns-div-user-controlsreel",
-                       children=[
-                           html.Div([html.Div([daq.PowerButton(id='my-toggle-switch-reel',
-                                               label={'label': 'Open page',
-                                                      'style': {'fontSize': '22px', 'fontWeight': "bold",},},
-                                               labelPosition='bottom', on=False, size=100, color="green",style = {'marginTop':'1rem'},
-                                               className='dark-theme-control'),]),
-
-                               html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
-                                         html.Div(dcc.Link('File Page', href='/page-1', id='link2'),),
-                                         html.Div(dcc.Link('Database Page', href='/Database', id='link3'),),
-                                          html.Div(dcc.Link('Project Page', href='/project', id='link4'),),], style = {'margin' : '2rem 2rem 0 2rem'}),
-                                html.Div([daq.Knob(id='vanne_knob',label="Valve Ranges", value=2,labelPosition = 'bottom'), ]),
-                                     ], className='abc'),
-                           dcc.Store(id='get_data_from_modbus'),
-                           html.Div(id='data_to_store_id', children=[], style={'display': 'None'}),
-                           html.Div(id='data_to_store_value', children=[], style={'display': 'None'}),
-                           html.Div(id='data_to_store_qualite', children=[], style={'display': 'None'}),
-                           html.Div(id='data_to_store_date', children=[], style={'display': 'None'}),
-                           dcc.Interval(
-                               id='interval_component',
-                               disabled=True,
-                               interval=1 * 1000,  # in milliseconds
-                               n_intervals=0),
+page_3_layout = html.Div([
+                            html.Div([html.Div([html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
+                                                         html.Div(dcc.Link('File Page', href='/page-1', id='link2'),),
+                                                         html.Div(dcc.Link('Database Page', href='/Database', id='link3'),),
+                                                         html.Div(dcc.Link('Project Page', href='/project', id='link4'),),],style = {'marginTop':'1rem'},className='ab'),
+                                                daq.PowerButton(id='my-toggle-switch-reel',
+                                                                       label={'label': 'Open page',
+                                                                              'style': {'fontSize': '22px', 'fontWeight': "bold",},},
+                                                                       labelPosition='bottom', on=False, size=100, color="green",style = {'margin':'3rem 0'},
+                                                                       className='dark-theme-control'),]),
 
 
-                       ]),
-              html.Div([
-                  dcc.Dropdown(id='realvalue',
-                               multi=True,
-                               style={"cursor": "pointer", 'margin': '5px 5px 10px 0', 'width': '40rem'},
-                               className='stockSelectorClass3',
-                               clearable=True,
-                               placeholder='Select Value',
 
-                               ),
-                  html.P('Enter interval value (Millisecond)'),
-                  dbc.Input(id='interval_value', type="text", value='1000',
-                            min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
-
-                  # dcc.Dropdown(id='realdate',
-                  #              # options=[{'label': i, 'value': i}
-                  #              #          for i in df.columns],
-                  #              multi=True,
-                  #              style={"cursor": "pointer", 'marginTop': '13px'},
-                  #              className='stockSelectorClass3',
-                  #              clearable=False,
-                  #              placeholder='Select your parameters...',
-                  #              ),
-                  html.Div([dbc.Button("Save", id="write_excel_reel", n_clicks=0, size="lg", className="mr-1",
-                                       color="primary", style={'margin': '1rem 1rem 1rem 0'}),
-                            html.A(dbc.Button("Download As Excel", id='download_data_reel', n_clicks=0, size="lg",
-                                              className="mr-1", color="primary",
-                                              style={'margin': '1rem 1rem 1rem 0'}),
-                                   id='excel_for_reel',
-                                   # # download="rawdata.csv",
-                                   href="/download_excel_reel/",
-                                   # target="_blank"
-                                   ),
-                            html.Div(
-                                [
-                                    dbc.Button("Send to Database", id='download_reel_db', n_clicks=0, size="lg",
-                                               className="mr-1", color="primary", style={'margin': '1rem 1rem 1rem 0'}),
-                                    dbc.Modal(
-                                        [
-                                            dbc.ModalHeader("Save Your Table As"),
-                                            dbc.Input(id='input_tablename',
-                                                      type="text",
-                                                      min=-10000, max=10000, step=1, bs_size="sm",
-                                                      style={'width': '31rem', },
-                                                      autoFocus=True, ),
-                                            dbc.ModalFooter([
-                                                dbc.Button("Okey", id="ok_reel", className="ml-auto"),
-                                                dbc.Button("Close", id="close_reel", className="ml-auto")]
-                                            ),
-                                        ],
-                                        id="modal_reel",
-                                    ), ]),
-                            ], className='abcd'),
-
-                  ], className='aadb'),
+                                               dcc.Store(id='get_data_from_modbus'),
+                                               html.Div(id='data_to_store_id', children=[], style={'display': 'None'}),
+                                               html.Div(id='data_to_store_value', children=[], style={'display': 'None'}),
+                                               html.Div(id='data_to_store_qualite', children=[], style={'display': 'None'}),
+                                               html.Div(id='data_to_store_date', children=[], style={'display': 'None'}),
+                                               dcc.Interval(
+                                                   id='interval_component',
+                                                   disabled=True,
+                                                   interval=1 * 1000,  # in milliseconds
+                                                   n_intervals=0),
 
 
-              html.Div([html.Div([dcc.Graph(id='graphreal',
-                                            config={'displayModeBar': True,
-                                                    'scrollZoom': True,
-                                                    'modeBarButtonsToAdd': [
-                                                        'drawline',
-                                                        'drawrect',
-                                                        'drawopenpath',
-                                                        'select2d',
-                                                        'eraseshape',
-                                                    ]},
-                                            style={'marginTop': 20},
-                                            figure={
-                                                'layout': {'legend': {'tracegroupgap': 0},
+                            html.Div([
+                                     dcc.Dropdown(id='realvalue',
+                                                       multi=True,
+                                                       style={"cursor": "pointer", 'margin': 'auto', 'width': '30rem'},
+                                                       className='stockSelectorClass3',
+                                                       clearable=True,
+                                                       placeholder='Select Value',
 
-                                                           }
-                                            }
+                                                       ),
+                                          html.Div([html.P('Enter interval value (Millisecond)', style={'margin':'2em 2em 2em 5em'}),
+                                                  dbc.Input(id='interval_value', type="text", value='1000',
+                                                            min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem', 'margin':'2em'}, ),], className='acsecond'),
 
-                                            ),
-                                  html.Div(daq.Slider(id="sliderHeightreel",
+                                      html.Div([dbc.Button("Save", id="write_excel_reel", n_clicks=0, size="lg", className="mr-1",
+                                                           color="primary", style={'margin': '1rem 1rem 1rem 0'}),
+                                                html.A(dbc.Button("Download As Excel", id='download_data_reel', n_clicks=0, size="lg",
+                                                                  className="mr-1", color="primary",
+                                                                  style={'margin': '1rem 1rem 1rem 0'}),
+                                                       id='excel_for_reel',
+                                                       # # download="rawdata.csv",
+                                                       href="/download_excel_reel/",
+                                                       # target="_blank"
+                                                       ),
+                                                html.Div(
+                                                    [
+                                                        dbc.Button("Send to Database", id='download_reel_db', n_clicks=0, size="lg",
+                                                                   className="mr-1", color="primary", style={'margin': '1rem 1rem 1rem 0'}),
+                                                        dbc.Modal(
+                                                            [
+                                                                dbc.ModalHeader("Save Your Table As"),
+                                                                dbc.Input(id='input_tablename',
+                                                                          type="text",
+                                                                          min=-10000, max=10000, step=1, bs_size="sm",
+                                                                          style={'width': '31rem', },
+                                                                          autoFocus=True, ),
+                                                                dbc.ModalFooter([
+                                                                    dbc.Button("Okey", id="ok_reel", className="ml-auto"),
+                                                                    dbc.Button("Close", id="close_reel", className="ml-auto")]
+                                                                ),
+                                                            ],
+                                                            id="modal_reel",
+                                                        ), ]),
+
+                                                ],style = {'margin':'3rem'}, className='abcd'),
+
+                                      ]),html.Div([daq.Knob(id='vanne_knob',label="Valve Ranges", value=2,labelPosition = 'bottom'), ]),], className='acreel'),
+
+              html.Div([html.Div([dcc.Graph(id="graphreal",
+                                                     config={'displayModeBar': True,
+                                                             'scrollZoom': True,
+                                                             'modeBarButtonsToAdd': [
+                                                                 'drawline',
+                                                                 'drawrect',
+                                                                 'drawopenpath',
+                                                                 'select2d',
+                                                                 'eraseshape',
+                                                             ]},
+                                                     style={'marginTop': 20, },
+                                                     figure={
+                                                         'layout': {'legend': {'tracegroupgap': 0},
+
+                                                                    }
+                                                     }
+
+                                                     ),
+                                  daq.Slider(id="sliderHeightreel",
                                                       max=2100,
                                                       min=400,
                                                       value=530,
                                                       step=100,
                                                       size=400,
                                                       vertical=True,
-                                                      updatemode='drag'), style={'margin': '20px'})],
-                                 className='abcdb'),
+                                                      updatemode='drag'), ],className='abcdb_graph'),
 
-                        html.Div([daq.Slider(id="sliderWidthreel",
-                                             max=2000,
-                                             min=600,
-                                             value=1000,
-                                             step=100,
-                                             size=750,
-                                             updatemode='drag'),
-                                  ], style={'marginLeft': "3rem"}),
-                        ],style = {'margin' : '10rem'}, className='aa'),
+
+                        html.Div([html.Div(daq.Slider(id="sliderWidthreel",
+                                                      max=2000,
+                                                      min=600,
+                                                      value=1000,
+                                                      step=100,
+                                                      size=750,
+
+                                                      updatemode='drag'), style={'marginLeft': '15rem'}),
+                                  ]),],className='className="four-columns-div-user-controlsreel",'),
+
 
               html.Div(id='reelhidden1', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden2', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden3', children=[], style={'display': 'None'}),
               html.Div(id='ok_click_hidden', children=[], style={'display': 'None'}),
-              ])
+              ],className='main_container',)
 page_4_layout = html.Div(
     [html.Div([html.Div([
         html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1')),
@@ -831,7 +813,7 @@ page_4_layout = html.Div(
                                  n_intervals=0),
                    dbc.Input(id='interval_value_pr_db', type="text", value='5',
                              min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
-                               ], className='aadb'),
+                               ], className='page4reel'),
 
                 ],className='abcdb'),
                     html.Div(
@@ -846,7 +828,7 @@ page_4_layout = html.Div(
                                                                          labelPosition='bottom', on=False, size=100,
                                                                          color="green",
                                                                          className='dark-theme-control'),
-                                                         ], className='abpower',style = {'margin':'2rem 0 0 5rem'}),
+                                                         ], className='abpower',style = {'margin':'0 1rem 0 5rem'}),
                                                dcc.Store(id='get_data_from_modbus_pr'),
                                                html.Div(id='data_to_store_id_pr', children=[], style={'display': 'None'}),
                                                html.Div(id='data_to_store_value_pr', children=[],
@@ -906,7 +888,7 @@ page_4_layout = html.Div(
                                                 html.Div([html.P('Enter Database Name', style={'marginLeft': '1rem', }),
                                                         dbc.Input(id='nametodb', type="text", value='',
                                                         min=0, max=1000000000, step=1, bs_size="lg", style={'width': '10rem', 'marginLeft': '1rem', }, ),])],className='abcd',),
-                                  ], className='aadb', ),
+                                  ], className='page4reel', ),
 
                                   html.Div(id='reelhidden1pr', children=[], style={'display': 'None'}),
                                   html.Div(id='reelhidden2pr', children=[], style={'display': 'None'}),
@@ -916,10 +898,10 @@ page_4_layout = html.Div(
                                   ])
                 ],className="prstyle")
 
-                         ], className="aadb"),
+                         ], className="page4reel"),
 
 
-               ], className='abcdb',),
+               ], className='abcdbpage4',),
      dcc.Store(id='memory-outputpr'),
      html.Div([html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='firstgraph_pr_real',
                        options=[{'label': i, 'value': i} for i in
@@ -963,7 +945,7 @@ page_4_layout = html.Div(
                                              step=100,
                                              size=300,
                                              vertical=True,
-                                             updatemode='drag'), style={'marginRight': '20px'})],style = {'margin' : '1rem 1rem 1rem 5rem'}, className='abcdb'),
+                                             updatemode='drag'), style={'marginRight': '20px'})],style = {'margin' : '1rem 1rem 1rem 5rem'}, className='page4graph1'),
                         html.Div(daq.Slider(id="sliderWidthpr",
                                             max=1600,
                                             min=500,
@@ -972,7 +954,7 @@ page_4_layout = html.Div(
                                             size=500,
 
                                                      updatemode='drag'), style={'marginLeft': '7rem'}),
-                        ], className='aadb'),
+                        ], className='aadbpage4'),
 
 
                          ]),
@@ -1020,7 +1002,7 @@ page_4_layout = html.Div(
                                                                      step=100,
                                                                      size=300,
                                                                      vertical=True,
-                                                                     updatemode='drag'), style={'margin': '20px'})],style = {'margin' : '1rem 1rem 1rem 5rem'}, className='abcdb'),
+                                                                     updatemode='drag'), style={'margin': '20px'})],style = {'margin' : '1rem 1rem 1rem 5rem'}, className='page4graph1'),
                                                 html.Div(daq.Slider(id="sliderWidthpr2",
                                                                     max=1600,
                                                                     min=500,
@@ -1029,10 +1011,10 @@ page_4_layout = html.Div(
                                                                     size=500,
 
                                                                              updatemode='drag'), style={'marginLeft': '6rem'}),
-                                                ], className='aadb'),
+                                                ], className='aadbpage4'),
 
 
-                                                 ], className='aadb'), ]),
+                                                 ], className='aadbpage4'), ]),
 
                 html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='thirdgraph_pr_real',
                                        options=[{'label': i, 'value': i} for i in
@@ -1077,7 +1059,7 @@ page_4_layout = html.Div(
                                                              step=100,
                                                              size=300,
                                                              vertical=True,
-                                                             updatemode='drag'), style={'marginLeft': '20px'})],style = {'margin':'1rem 3rem 1rem 1rem'}, className='abcdb'),
+                                                             updatemode='drag'), style={'marginLeft': '20px'})],style = {'margin':'1rem 3rem 1rem 1rem'}, className='page4graph1'),
                                         html.Div(daq.Slider(id="sliderWidthpr3",
                                                             max=1600,
                                                             min=500,
@@ -1086,7 +1068,7 @@ page_4_layout = html.Div(
                                                             size=500,
 
                                                                      updatemode='drag'), style={'marginLeft': '5rem'}),
-                                        ], className='aadb'),
+                                        ], className='aadbpage4'),
 
 
                                          ]),
@@ -1134,7 +1116,7 @@ page_4_layout = html.Div(
                                                                                      step=100,
                                                                                      size=300,
                                                                                      vertical=True,
-                                                                                     updatemode='drag'), style={'margin': '10px'})],style = {'margin':'0 3rem 0 0'}, className='abcdb'),
+                                                                                     updatemode='drag'), style={'margin': '10px'})],style = {'margin':'0 3rem 0 0'}, className='page4graph1'),
                                                                 html.Div(daq.Slider(id="sliderWidthpr4",
                                                                                              max=1600,
                                                                                              min=500,
@@ -1143,10 +1125,10 @@ page_4_layout = html.Div(
                                                                                              size=500,
 
                                                                                              updatemode='drag'), style={'marginLeft': '5rem'}),
-                                                                ], className='aadb'),
+                                                                ], className='aadbpage4'),
 
 
-                                                                 ], className='aadb'), ]),], className='abcdb_pr'),
+                                                                 ], className='aadbpage4'), ]),], className='abcdbpr'),
 
 
                html.Div(dash_table.DataTable(id="getprtable",
@@ -4635,13 +4617,13 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
      ]
 )
 def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, dbch, dbname):
-    if value == [] or value == None or firstchoosen == None or clickData == None or clickData == [] or \
+    if value == [] or value == None or clickData == None or clickData == [] or \
             retrieve == None or retrieve == []:
         raise PreventUpdate
     spaceList1 = []
     zero = 0
     spaceList2 = []
-    if retrieve != []:
+    if retrieve != None:
         df = pd.DataFrame(retrieve)
         if dbname == 'rcckn':
             if dbch == 'send_variablevalues':
@@ -4653,7 +4635,7 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
                               'CONVERTED_NUM_VALUE']
         if dbname == 'enerbat':
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-
+        print('dffffffff',df)
         for i in range(len(value)):
             spaceList1.append(zero)
             zero += 1
@@ -4674,20 +4656,25 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
                         dff = dff[(dff['TIMESTAMP'] == x_val)]
+
+                        print('dfff2', dff)
                     if dbch == 'received_variablevalues':
                         dff = dff[dff.REMOTE_TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
                         dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
-                    else:
+                    elif dbch != 'received_variablevalues' and dbch != 'send_variablevalues':
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
+                        print('aaaaa',index)
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
+                        print('aaaaa',dff.index)
                         dff = dff[(dff['TIMESTAMP'] == x_val)]
                     a = []
                     a.append(dff.index)
+
                     for i in range(len(a)):
                         for j in a:
                             leftchild.append(j[i])
@@ -5100,7 +5087,7 @@ def valintdb2(clickData, secondchoosen, value, leftchild, rightchild, retrieve, 
                         dff.set_index(index, inplace=True)
                         print('dffff', dff.tail(5))
                         dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
-                    else:
+                    elif dbch != 'received_variablevalues' and dbch != 'send_variablevalues':
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
@@ -6653,9 +6640,6 @@ def dbname(valname, valdate, dbch, dbname, ipval):
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
             t1 = cur1.fetchall()
-
-            df = pd.DataFrame(t1)
-            print('bakalim olacak mi', df)
             return t1
 
 #
@@ -6760,7 +6744,6 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
     if data is None or valname == None or valdate == None or dbch == None or dbname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
-    print(df.head(10))
     if dbname == 'rcckn':
         if dbch == 'received_variablevalues':
             print('sikinti burda 1 ')
