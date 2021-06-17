@@ -104,10 +104,10 @@ page_1_layout = html.Div(
                                                       'style': {'fontSize': '22px', 'fontWeight': "bold",},},
                                                labelPosition='bottom', on=False, size=100, color="green",style = {'marginTop':'1rem'},
                                                className='dark-theme-control'),]),
-                               html.Div([html.Div(dcc.Link('Go to Main Page', href='/', id='link1') ),
-                                         html.Div(dcc.Link('Go to Database Page', href='/Database', id='link2'),),
-                                         html.Div(dcc.Link('Go to Real-Time Page', href='/reelTime', id='link3'),),
-                                          html.Div(dcc.Link('Go to Project Page', href='/project', id='link4'),),], style = {'margin' : '2rem 2rem 0 2rem'})
+                               html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
+                                         html.Div(dcc.Link('Database Page', href='/Database', id='link2'),),
+                                         html.Div(dcc.Link('Real-Time Page', href='/reelTime', id='link3'),),
+                                          html.Div(dcc.Link('Project Page', href='/project', id='link4'),),], style = {'margin' : '2rem 2rem 0 2rem'})
                                ], className='abpower'),
                      html.Div(
                          dcc.Upload(
@@ -343,19 +343,27 @@ page_2_layout = html.Div(
                                                      size="lg", className="mr-1", color="danger",
                                                      style={'width': '25rem'}
                                                      )]),
-                         html.Div([html.Div(dcc.Link('Go to Main Page', href='/', id='link5')),
-                                   html.Div(dcc.Link('Go to File Page', href='/page_1', id='link6'), ),
-                                   html.Div(dcc.Link('Go to Real-Time Page', href='reelTime', id='link7'), ),
-                                   html.Div(dcc.Link('Go to Project Page', href='/project', id='link8'), ), ],
+                         html.Div([html.Div(dcc.Link('Main Page', href='/', id='link5')),
+                                   html.Div(dcc.Link('File Page', href='/page-1', id='link6'), ),
+                                   html.Div(dcc.Link('Real-Time Page', href='reelTime', id='link7'), ),
+                                   html.Div(dcc.Link('Project Page', href='/project', id='link8'), ), ],
                                   style={'margin': '2rem 2rem 0 2rem'}),
-                         dbc.Input(id='db_Ip',
+                         html.Div([dbc.Input(id='db_Ip',
                                    type="text",
                                    debounce=True,
                                    min=-10000, max=10000, step=1,
                                    bs_size="mr",
                                    style={'width': '11rem', "marginTop": "1.5rem"},
                                    autoFocus=True,
-                                   placeholder="Enter your IP number ..."),
+                                   placeholder="Enter IP number"),
+                         dbc.Input(id='givendb_name',
+                                   type="text",
+                                   debounce=True,
+                                   min=-10000, max=10000, step=1,
+                                   bs_size="mr",
+                                   style={'width': '11rem', "marginTop": "1.5rem"},
+                                   autoFocus=True,
+                                   placeholder="Enter Database Name"),], className = 'ab'),
 
                          ], className="aadb"),
                html.Div([
@@ -400,14 +408,21 @@ page_2_layout = html.Div(
                                 placeholder='Select your parameters...',
                                 ), ], className='aadb'),
                html.Div([
-                   dbc.Checklist(id="calculintegraldb",
-                                 options=[
-                                     {'label': "Calculate Integral", 'value': 'calculdb'}, ]
-                                 ,
-                                 value='',
-                                 labelClassName='groupgraph',
-                                 labelStyle={'margin': '10px', },
-                                 inputStyle={'margin': '10px', }),
+                        daq.BooleanSwitch(
+                              id="calculintegraldb",
+                              on=False,
+                              label="Calculate Integral",
+                              color= '#1f78b4',
+                              labelPosition="right"
+                        )
+                   # dbc.Checklist(id="calculintegraldb",
+                   #               options=[
+                   #                   {'label': "Calculate Integral", 'value': 'calculdb'}, ]
+                   #               ,
+                   #               value='',
+                   #               labelClassName='groupgraph',
+                   #               labelStyle={'margin': '10px', },
+                   #               inputStyle={'margin': '10px', }),
                ])
                ], className='abcdb'),
      dcc.Store(id='memory-output'),
@@ -624,11 +639,13 @@ page_3_layout = html.Div(
                                                       'style': {'fontSize': '22px', 'fontWeight': "bold",},},
                                                labelPosition='bottom', on=False, size=100, color="green",style = {'marginTop':'1rem'},
                                                className='dark-theme-control'),]),
-                               html.Div([html.Div(dcc.Link('Go to Main Page', href='/', id='link1') ),
-                                         html.Div(dcc.Link('Go to File Page', href='/page-1', id='link2'),),
-                                         html.Div(dcc.Link('Go to database Page', href='/Database', id='link3'),),
-                                          html.Div(dcc.Link('Go to Project Page', href='/project', id='link4'),),], style = {'margin' : '2rem 2rem 0 2rem'})
-                               ], className='abpower'),
+
+                               html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
+                                         html.Div(dcc.Link('File Page', href='/page-1', id='link2'),),
+                                         html.Div(dcc.Link('Database Page', href='/Database', id='link3'),),
+                                          html.Div(dcc.Link('Project Page', href='/project', id='link4'),),], style = {'margin' : '2rem 2rem 0 2rem'}),
+                                html.Div([daq.Knob(id='vanne_knob',label="Valve Ranges", value=2,labelPosition = 'bottom'), ]),
+                                     ], className='abc'),
                            dcc.Store(id='get_data_from_modbus'),
                            html.Div(id='data_to_store_id', children=[], style={'display': 'None'}),
                            html.Div(id='data_to_store_value', children=[], style={'display': 'None'}),
@@ -638,7 +655,10 @@ page_3_layout = html.Div(
                                id='interval_component',
                                disabled=True,
                                interval=1 * 1000,  # in milliseconds
-                               n_intervals=0), ]),
+                               n_intervals=0),
+
+
+                       ]),
               html.Div([
                   dcc.Dropdown(id='realvalue',
                                multi=True,
@@ -690,8 +710,10 @@ page_3_layout = html.Div(
                                         ],
                                         id="modal_reel",
                                     ), ]),
-                            ], className='abcd')
-              ], className='aadb'),
+                            ], className='abcd'),
+
+                  ], className='aadb'),
+
 
               html.Div([html.Div([dcc.Graph(id='graphreal',
                                             config={'displayModeBar': True,
@@ -729,7 +751,7 @@ page_3_layout = html.Div(
                                              size=750,
                                              updatemode='drag'),
                                   ], style={'marginLeft': "3rem"}),
-                        ], className='aa'),
+                        ],style = {'margin' : '10rem'}, className='aa'),
 
               html.Div(id='reelhidden1', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden2', children=[], style={'display': 'None'}),
@@ -738,21 +760,11 @@ page_3_layout = html.Div(
               ])
 page_4_layout = html.Div(
     [html.Div([html.Div([
-        html.Div([html.Div(dcc.Link('Go to Main Page', href='/', id='link1')),
-                  html.Div(dcc.Link('Go to Database Page', href='/Database', id='link2'), ),
-                  html.Div(dcc.Link('Go to Real-Time Page', href='/reelTime', id='link3'), ),
-                  html.Div(dcc.Link('Go to Project Page', href='/project', id='link4'), ), ],
+        html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1')),
+                  html.Div(dcc.Link('Database Page', href='/Database', id='link2'), ),
+                  html.Div(dcc.Link('Real-Time Page', href='/reelTime', id='link3'), ),
+                  html.Div(dcc.Link('Project Page', href='/project', id='link4'), ), ],
                   className = 'abcdbpr' ),
-                        html.Div([
-                                               # dbc.Checklist(id="calculintegralpr",
-                                               #               options=[
-                                               #                   {'label': "Calculate Integral", 'value': 'calculpr'}, ]
-                                               #               ,
-                                               #               value='',
-                                               #               labelClassName='groupgraph',
-                                               #               labelStyle={'margin': '10px', },
-                                               #               inputStyle={'margin': '10px', }),
-                                           ]),
                          dbc.Input(id='pr_Ip',
                                    type="text",
                                    debounce=True,
@@ -834,7 +846,7 @@ page_4_layout = html.Div(
                                                                          labelPosition='bottom', on=False, size=100,
                                                                          color="green",
                                                                          className='dark-theme-control'),
-                                                         ], className='abpower',style = {'margin':'1rem 30rem 0 10rem'}),
+                                                         ], className='abpower',style = {'margin':'2rem 0 0 5rem'}),
                                                dcc.Store(id='get_data_from_modbus_pr'),
                                                html.Div(id='data_to_store_id_pr', children=[], style={'display': 'None'}),
                                                html.Div(id='data_to_store_value_pr', children=[],
@@ -857,7 +869,7 @@ page_4_layout = html.Div(
                                                                                 'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg' ]],
                                                    multi=True,
                                                    style={"cursor": "pointer", 'margin': '5px 5px 10px 0',
-                                                          'width': '40rem'},
+                                                          'width': '30rem'},
                                                    className='stockSelectorClass3',
                                                    clearable=True,
                                                    placeholder='Select Value',
@@ -907,14 +919,13 @@ page_4_layout = html.Div(
                          ], className="aadb"),
 
 
-               ], className='abcdb'),
+               ], className='abcdb',),
      dcc.Store(id='memory-outputpr'),
      html.Div([html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='firstgraph_pr_real',
                        options=[{'label': i, 'value': i} for i in
                                 []],
                        multi=True,
                        style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 5rem'},
-                       className='',
                        clearable=True,
                        placeholder='Values of Real Time',
                        ),),
@@ -1196,7 +1207,7 @@ page_4_layout = html.Div(
                html.Div(id='hiddenrecord4pr', children=[], style={'display': 'None'}),
                html.Div(id='writeexcelhiddenpr', children=[], style={'display': 'None'}),
 
-               ], style = {'overflow' : 'visible'} ),
+               ], style = {'overflow-x' : 'hidden'} ),
 
 
 @app.callback(
@@ -1637,6 +1648,7 @@ def parse_contents(contents, filename, date):
 
         html.Hr(),  # horizontal line
     ])
+
 
 
 @app.callback([Output('datatablehidden', 'children'), Output('retrieve', 'children')],
@@ -3276,13 +3288,13 @@ def LoadingDataTab4(on, tab):
                                        ),
                           ], className="ab"),
                 html.Div([
-                    dbc.Checklist(id="calculintegraltab4",
-                                  options=[{'label': "Calculate Integral", 'value': 'calcultab4'}, ]
-                                  ,
-                                  value='',
-                                  labelClassName='groupgraph',
-                                  labelStyle={'margin': '10px', },
-                                  inputStyle={'margin': '10px', }),
+                    daq.BooleanSwitch(
+                        id="calculintegraltab4",
+                        on=False,
+                        label="Calculate Integral",
+                        labelPosition="bottom",
+                        color = '#1f78b4'
+                    )
                 ]), ], className="ac"),
 
                 html.Div([dcc.Dropdown(id="dropadd4",
@@ -3506,19 +3518,19 @@ def tab4enlarger(tab):
 
 
 @app.callback(Output('tab4check', 'style'),
-              [Input("calculintegraltab4", "value")],
+              [Input("calculintegraltab4", "on")],
               )
 def showintegral(show):
-    if show == ['calcultab4']:
+    if show == True:
         return {'visibility': 'visible'}
     return {'display': 'None'}
 
 
 @app.callback(Output('dbcheck', 'style'),
-              [Input("calculintegraldb", "value")],
+              [Input("calculintegraldb", "on")],
               )
 def showintegral(show):
-    if show == ['calculdb']:
+    if show == True:
         return {'visibility': 'visible'}
     return {'display': 'None'}
 @app.callback([Output("tabDropdownTop", "options"), Output("tabDropdownDown", "options")],
@@ -6241,13 +6253,11 @@ def relationdb(dbname, ipval):
         print('valllll', val)
         return [{'label': i[0], 'value': i[0]} for i in val if
                 i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
-                i[0] != 'received_ack' and i[0] != 'send_vw_variablerequestdestination' and i[
-                    0] != 'flyway_schema_history'
-                and i[0] != 'app_vw_messaging_followup' and i[0] != 'received_variablerequest' and i[
-                    0] != 'received_controlvalues'
-                and i[0] != 'app_system_properties' and i[0] != 'tbl_sites' and i[0] != 'tbl_inventory' and i[
-                    0] != 'send_messages'
-                and i[0] != 'send_variablevaluesmessage']
+                i[0] != 'received_ack' and i[0] != 'send_vw_variablerequestdestination'
+                and i[0] != 'flyway_schema_history' and i[0] != 'app_vw_messaging_followup' and
+                i[0] != 'received_variablerequest' and i[0] != 'received_controlvalues'
+                and i[0] != 'app_system_properties' and i[0] != 'tbl_sites' and i[0] != 'tbl_inventory'
+                and i[0] != 'send_messages' and i[0] != 'send_variablevaluesmessage']
     elif dbname == 'enerbat':
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'enerbat'")
