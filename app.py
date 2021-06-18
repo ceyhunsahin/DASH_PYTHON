@@ -624,7 +624,7 @@ page_2_layout = html.Div(
 
                ], ), ], ),
 
-page_3_layout = html.Div([
+page_3_layout = html.Div([html.Div([
                             html.Div([html.Div([html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
                                                          html.Div(dcc.Link('File Page', href='/page-1', id='link2'),),
                                                          html.Div(dcc.Link('Database Page', href='/Database', id='link3'),),
@@ -658,31 +658,29 @@ page_3_layout = html.Div([
                                                        placeholder='Select Value',
 
                                                        ),
-                                          html.Div([html.P('Enter interval value (Millisecond)', style={'margin':'2em 2em 2em 5em'}),
-                                                  dbc.Input(id='interval_value', type="text", value='1000',
-                                                            min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem', 'margin':'2em'}, ),], className='acsecond'),
+                                          html.Div([html.P('Enter interval value (Second)', style={'margin':'1em 2em 2em 5em'}),
+                                                  dbc.Input(id='interval_value', type="text", value='1',
+                                                            min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem', 'margin':'1em'}, ),], className='acsecond'),
 
-                                      html.Div([dbc.Button("Save", id="write_excel_reel", n_clicks=0, size="lg", className="mr-1",
-                                                           color="primary", style={'margin': '1rem 1rem 1rem 0'}),
-                                                html.A(dbc.Button("Download As Excel", id='download_data_reel', n_clicks=0, size="lg",
-                                                                  className="mr-1", color="primary",
-                                                                  style={'margin': '1rem 1rem 1rem 0'}),
-                                                       id='excel_for_reel',
-                                                       # # download="rawdata.csv",
-                                                       href="/download_excel_reel/",
-                                                       # target="_blank"
-                                                       ),
+                                      html.Div([
                                                 html.Div(
                                                     [
-                                                        dbc.Button("Send to Database", id='download_reel_db', n_clicks=0, size="lg",
-                                                                   className="mr-1", color="primary", style={'margin': '1rem 1rem 1rem 0'}),
+                                                        dbc.Button("Send Values to Database", id='download_reel_db', n_clicks=0, size="lg",
+                                                                   className="mr-1", color="primary", style={'margin': '-3rem 1rem 0 0'}),
                                                         dbc.Modal(
                                                             [
-                                                                dbc.ModalHeader("Save Your Table As"),
+                                                                dbc.ModalHeader("Save Your Table In Database"),
+                                                                dbc.Input(id='input_databasename',
+                                                                          type="text",
+                                                                          min=-10000, max=10000, step=1, bs_size="sm",
+                                                                          style={'width': '31rem', },
+                                                                          placeholder = 'Enter Database name',
+                                                                          autoFocus=True, ),
                                                                 dbc.Input(id='input_tablename',
                                                                           type="text",
                                                                           min=-10000, max=10000, step=1, bs_size="sm",
                                                                           style={'width': '31rem', },
+                                                                          placeholder = 'Enter Table name',
                                                                           autoFocus=True, ),
                                                                 dbc.ModalFooter([
                                                                     dbc.Button("Okey", id="ok_reel", className="ml-auto"),
@@ -694,7 +692,52 @@ page_3_layout = html.Div([
 
                                                 ],style = {'margin':'3rem'}, className='abcd'),
 
-                                      ]),html.Div([daq.Knob(id='vanne_knob',label="Valve Ranges", value=2,labelPosition = 'bottom'), ]),], className='acreel'),
+                                      ]),html.Div([html.Div([html.Div([daq.Knob(id='HVA1IN',color='blue',label={"label": "HV A1 IN", "style": {'color': 'blue','marginBottom':'-1rem'}},
+                                                                                value=0,size= 150,max=100, labelPosition = 'top'),
+                                                                      daq.LEDDisplay(id = 'HVA1INLED',value = 0, color= 'blue', size=30,style = {'margin':'-2rem 0 2rem 0'})],
+                                                                      className = 'aadbknob'),
+                                                             html.Div([daq.Knob(id='HVA2IN',color='blue', label={"label": "HV A2 IN", "style": {'color': 'blue','marginBottom':'-1rem'}},
+                                                                                value=0,size=150, max=100, labelPosition='top'),
+                                                                       daq.LEDDisplay(id='HVA2INLED', value = 0, color='blue', size=30, style={'margin': '-2rem 0 2rem 0'})],
+                                                                      className='aadbknob'),], className = 'abc'),
+                                        html.Div([
+                                                html.Div(
+                                                    [
+                                                        dbc.Button("Send Valve Values to Database", id='download_reel_valve', n_clicks=0, size="lg",
+                                                                   className="mr-1", color="primary", style={'margin': '-3rem 1rem 0 0'}),
+                                                        dbc.Modal(
+                                                            [
+                                                                dbc.ModalHeader("Save Your Table In Database"),
+                                                                dbc.Input(id='input_databasename_valve',
+                                                                          type="text",
+                                                                          min=-10000, max=10000, step=1, bs_size="sm",
+                                                                          style={'width': '31rem', },
+                                                                          placeholder = 'Enter Database name',
+                                                                          autoFocus=True, ),
+                                                                dbc.Input(id='input_tablename_valve',
+                                                                          type="text",
+                                                                          min=-10000, max=10000, step=1, bs_size="sm",
+                                                                          style={'width': '31rem', },
+                                                                          placeholder = 'Enter Table name',
+                                                                          autoFocus=True, ),
+                                                                dbc.ModalFooter([
+                                                                    dbc.Button("Okey", id="ok_reel_valve", className="ml-auto"),
+                                                                    dbc.Button("Close", id="close_reel_valve", className="ml-auto")]
+                                                                ),
+                                                            ],
+                                                            id="modal_reel_valve",
+                                                        ), ]),
+
+                                                ],style = {'margin':'3rem'}, className='abcd'),
+                                                   html.Div([html.Div([daq.Knob(id='HVA1OUT',color='red', label={"label": "HV A1 OUT", "style": {'color': 'red','marginBottom':'-1rem'}},
+                                                                                value=0,size= 150,max=100, labelPosition = 'top'),
+                                                                      daq.LEDDisplay(id = 'HVA1OUTLED',value = 0, color= 'blue', size=30,style = {'margin':'-2rem 0 2rem 0'})],
+                                                                      className = 'aadbknob'),
+                                                             html.Div([daq.Knob(id='HVA2OUT',color='red',  label={"label": "HV A2 OUT", "style": {'color': 'red','marginBottom':'-1rem'}},
+                                                                                value=0,size=150, max=100, labelPosition='top'),
+                                                                       daq.LEDDisplay(id='HVA2OUTLED',value = 0, color='blue', size=30, style={'margin': '-2rem 0 2rem 0'})],
+                                                                      className='aadbknob'), ], className = 'abc'),]),
+                                                  ], className='acreel'),
 
               html.Div([html.Div([dcc.Graph(id="graphreal",
                                                      config={'displayModeBar': True,
@@ -712,7 +755,6 @@ page_3_layout = html.Div([
 
                                                                     }
                                                      }
-
                                                      ),
                                   daq.Slider(id="sliderHeightreel",
                                                       max=2100,
@@ -732,14 +774,51 @@ page_3_layout = html.Div([
                                                       size=750,
 
                                                       updatemode='drag'), style={'marginLeft': '15rem'}),
-                                  ]),],className='className="four-columns-div-user-controlsreel",'),
+                                  ]),
+                        html.Div(dash_table.DataTable(id="getrealtable",
+                                                      editable=True,
+                                                      page_size=50,
+                                                      style_table={'height': '500px', 'overflowY': 'auto',
+                                                                   'width': '80%', 'margin': '0 auto'},
+                                                      style_cell={
+                                                          'overflow': 'hidden',
+                                                          'textOverflow': 'ellipsis',
+                                                          'maxWidth': 0,
+                                                          'fontSize': '1rem',
+                                                          'TextAlign': 'center',
+                                                      },
+
+                                                      fixed_rows={'headers': True},
+                                                      style_header={
+                                                          'backgroundColor': 'rgb(230, 230, 230)',
+                                                          'fontWeight': 'bold'
+                                                      },
+                                                      filter_action="native",
+                                                      sort_action="native",
+                                                      sort_mode="multi",
+                                                      column_selectable="single",
+                                                      selected_columns=[],
+                                                      selected_rows=[],
+                                                      page_action="native",
+                                                      page_current=0,
+                                                      export_format='xlsx',
+                                                      export_headers='display',
+                                                      merge_duplicate_headers=True))
+                        ],className='className="four-columns-div-user-controlsreel",'),
 
 
               html.Div(id='reelhidden1', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden2', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden3', children=[], style={'display': 'None'}),
-              html.Div(id='ok_click_hidden', children=[], style={'display': 'None'}),
-              ],className='main_container',)
+              html.Div(id='reelhidden5', children=[], style={'display': 'None'}),
+              dcc.Store(id='reelhidden6'),
+              html.Div(id='reelhidden7', children=[], style={'display': 'None'}),
+              html.Div(id='reelhidden8', children=[], style={'display': 'None'}),
+              html.Div(id='reelhidden9', children=[], style={'display': 'None'}),
+              html.Div(id='reelhidden10', children=[], style={'display': 'None'}),
+              html.Div(id='ok_click_hidden', children=[], style={'display': 'None'}),],className='main_container',),
+              ])
+
 page_4_layout = html.Div(
     [html.Div([html.Div([
         html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1')),
@@ -805,7 +884,7 @@ page_4_layout = html.Div(
                                 clearable=False,
                                 placeholder='Select your parameters...',
                                 ),
-                   html.P('Enter interval value (Millisecond)'),
+                   html.P('Enter interval value (Second)'),
                     dcc.Interval(
                                  id='interval_component_pr_db',
                                  disabled=True,
@@ -857,7 +936,7 @@ page_4_layout = html.Div(
                                                    placeholder='Select Value',
 
                                                    ),
-                                      html.P('Enter interval value (Millisecond)'),
+                                      html.P('Enter interval value (Second)'),
                                       dbc.Input(id='interval_value_pr', type="text", value='5',
                                                 min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
 
@@ -894,6 +973,7 @@ page_4_layout = html.Div(
                                   html.Div(id='reelhidden2pr', children=[], style={'display': 'None'}),
                                   html.Div(id='reelhidden3pr', children=[], style={'display': 'None'}),
                                   html.Div(id='reelhidden4pr', children=[], style={'display': 'None'}),
+
                                   html.Div(id='ok_click_hiddenpr', children=[], style={'display': 'None'}),
                                   ])
                 ],className="prstyle")
@@ -1192,21 +1272,68 @@ page_4_layout = html.Div(
                ], style = {'overflow-x' : 'hidden'} ),
 
 
-@app.callback(
-    Output("reelhidden3", "children"),
-    [Input("ok_reel", "n_clicks"), ],
-    [State("input_tablename", "value")],
-)
-def toggle_modal(nc, name):
-    if nc != None:
-        print('name 1 ', name)
-        return name
 
+@app.callback(
+    [Output("HVA1INLED", "value"),Output("HVA2INLED", "value"),
+     Output("HVA1OUTLED", "value"),Output("HVA2OUTLED", "value")],
+    [Input("HVA1IN", "value"), Input("HVA2IN", "value"),
+     Input("HVA1OUT", "value"), Input("HVA2OUT", "value")],
+)
+def knobvalues(v1,v2,v3,v4):
+    if v1 != None or v2 != None or v3 != None or v4 != None:
+        v1,v2,v3,v4 = int((v1/100)*28000),int((v2/100)*28000),int((v3/100)*28000),int((v4/100)*28000)
+        return v1,v2,v3,v4
+    else: raise PreventUpdate
+
+@app.callback(Output("reelhidden6", "children"),
+             [Input("download_reel_valve", "n_clicks")],
+             [State("HVA1INLED", "value"), State("HVA2INLED", "value"),
+              State("HVA1OUTLED", "value"), State("HVA2OUTLED", "value")],)
+
+def knobvalues_valve(nc, v1,v2,v3,v4):
+    if nc > 0 :
+
+        a = {'HV_A1_IN': v1, 'HV_A2_IN': v2, 'HV_A1_OUT': v3, 'HV_A2_OUT': v4}
+
+        return a
+
+
+@app.callback(
+    [Output("reelhidden3", "children"),Output("reelhidden5", "children")],
+    [Input("ok_reel", "n_clicks"), ],
+    [State("input_tablename", "value"),State("input_databasename", "value")],
+)
+def toggle_modal(nc, tbname, databasename):
+    if tbname == None  or databasename==None:
+        raise PreventUpdate
+    if nc != None:
+        return tbname,databasename
+
+@app.callback(
+    [Output("reelhidden8", "children"),Output("reelhidden9", "children")],
+    [Input("ok_reel_valve", "n_clicks"), ],
+    [State("input_tablename_valve", "value"),State("input_databasename_valve", "value")],
+)
+def toggle_modal_valve(nc, tbname, databasename):
+    if tbname == None  or databasename==None:
+        raise PreventUpdate
+    if nc != None:
+        return tbname,databasename
 
 @app.callback(
     Output("modal_reel", "is_open"),
     [Input("download_reel_db", "n_clicks"), Input("close_reel", "n_clicks"), Input("ok_reel", "n_clicks")],
     [State("modal_reel", "is_open")],
+)
+def toggle_modal(n1, n2, n3, is_open):
+    if n1 or n2 or n3:
+        return not is_open
+    return is_open
+
+@app.callback(
+    Output("modal_reel_valve", "is_open"),
+    [Input("download_reel_valve", "n_clicks"), Input("close_reel_valve", "n_clicks"), Input("ok_reel_valve", "n_clicks")],
+    [State("modal_reel_valve", "is_open")],
 )
 def toggle_modal(n1, n2, n3, is_open):
     if n1 or n2 or n3:
@@ -1265,7 +1392,7 @@ def intervalcontrolpr_db(on):
               [Input("interval_value", "value")],
               )
 def intervalcontrol2(val):
-    val = int(val)
+    val = int(val)*1000
     return val
 
 @app.callback(Output('interval_component_pr', 'interval'),
@@ -1380,14 +1507,6 @@ def storedata_pr(id, val, qual, date):
 #     return zipped_val
 
 
-@app.callback(Output('reelhidden1', 'children'),
-              [Input("write_excel_reel", "n_clicks")],
-              [State('get_data_from_modbus', 'data')],
-              )
-def intervalcontrol2(nc, data):
-    if nc > 0:
-        df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'Date'])
-        df.to_excel('real.xlsx')
 
 @app.callback(Output('reelhidden1pr', 'children'),
               [Input("write_excel_pr", "n_clicks")],
@@ -1398,24 +1517,6 @@ def intervalcontrol2_pr(nc, data):
         df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'Date'])
         df.to_excel('real.xlsx')
 
-@app.server.route("/download_excel_reel/")
-def download_excel_reel():
-    # Create DF
-    dff = pd.read_excel("real.xlsx")
-    # Convert DF
-    buf = io.BytesIO()
-    excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
-    dff.to_excel(excel_writer, sheet_name="sheet1")
-    excel_writer.save()
-    excel_data = buf.getvalue()
-    buf.seek(0)
-    return send_file(
-        buf,
-        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        attachment_filename="real.xlsx",
-        as_attachment=True,
-        cache_timeout=0
-    )
 
 @app.server.route("/download_excel_pr/")
 def download_excel_pr():
@@ -1439,9 +1540,9 @@ def download_excel_pr():
 
 
 @app.callback(Output('reelhidden2', 'children'),
-              [Input("reelhidden3", "children"), ], [State('get_data_from_modbus', 'data')])
-def pandastosql(name, data):
-    if name == None:
+              [Input("reelhidden3", "children"), Input("reelhidden5", "children"),], [State('get_data_from_modbus', 'data')])
+def pandastosql(name,dbname, data):
+    if name == None or dbname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
     if name != None:
@@ -1452,19 +1553,20 @@ def pandastosql(name, data):
         d = [i for i in df['TIMESTAMP']]
         df['TIMESTAMP'] = df['TIMESTAMP'].apply(lambda x: pd.Timestamp(x).strftime('%Y-%m-%d %H:%M:%S'))
         sql_insert = list(zip(a, df['variable_name'], df['variable_num_value'], df['TIMESTAMP']))
-
+        if dbname == None:
+            dbname = 'enerbat'
         try:
             db_connection = mysql.connector.connect(
                 host="193.54.2.211",
                 user="dashapp",
                 passwd="dashapp",
-                database="enerbat",
+                database=dbname,
                 port=3306, )
             db_cursor = db_connection.cursor()
             # +
-            # Here creating database table as student'
+            # Here creating database table '
             db_cursor.execute(
-                f"CREATE TABLE {name} (id BIGINT PRIMARY KEY, variable_name VARCHAR(255), variable_num_value DOUBLE, TIMESTAMP TIMESTAMP)")
+                f"CREATE OR REPLACE TABLE {name} (id BIGINT PRIMARY KEY, variable_name VARCHAR(255), variable_num_value DOUBLE, TIMESTAMP TIMESTAMP)")
 
             sql_query = f" INSERT INTO {name} (id, variable_name,variable_num_value,TIMESTAMP) VALUES (%s, %s, %s, %s)"
             # Get database table'
@@ -1479,6 +1581,45 @@ def pandastosql(name, data):
                 db_connection.close()
                 print("MySQL connection is closed")
 
+
+@app.callback(Output('reelhidden10', 'children'),
+              [Input("reelhidden8", "children"), Input("reelhidden9", "children"),], [State("reelhidden6", "children")])
+def pandastosql_valve(name,dbname, data):
+    if data == None:
+        raise PreventUpdate
+    print('data',data)
+    #
+    df = pd.DataFrame(data, index = ['0'])
+    HV_A1_IN = [i for i in df['HV_A1_IN']]
+    print(df['HV_A1_IN'])
+    HV_A2_IN = [i for i in df['HV_A2_IN']]
+    HV_A1_OUT = [i for i in df['HV_A1_OUT']]
+    HV_A2_OUT = [i for i in df['HV_A2_OUT']]
+    try:
+        db_connection = mysql.connector.connect(
+            host="193.54.2.211",
+            user="dashapp",
+            passwd="dashapp",
+            database=dbname,
+            port=3306, )
+        db_cursor = db_connection.cursor()
+            # +
+            # Here creating database table '
+        db_cursor.execute(
+            f"CREATE OR REPLACE TABLE {name} (HV_A1_IN BIGINT PRIMARY KEY, HV_A2_IN BIGINT, HV_A1_OUT BIGINT, HV_A2_OUT BIGINT)")
+
+        sql_query = f" INSERT INTO {name} (HV_A1_IN,HV_A2_IN,HV_A1_OUT,HV_A2_OUT)"
+            # Get database table'
+        db_cursor.execute(sql_query)
+        db_connection.commit()
+        print(db_cursor.rowcount, f"Record inserted successfully into {name} Database")
+    except mysql.connector.Error as error:
+        print("Failed to insert record into MARIADB table {}".format(error))
+    finally:
+        if db_connection.is_connected():
+            db_cursor.close()
+            db_connection.close()
+            print("MySQL connection is closed")
 
 @app.callback(Output('reelhidden2pr', 'children'),
               [Input("my-toggle-switch-pr", "on"),Input('interval_component_pr', 'n_intervals')],
@@ -6641,99 +6782,6 @@ def dbname(valname, valdate, dbch, dbname, ipval):
                 cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
             t1 = cur1.fetchall()
             return t1
-
-#
-# @app.callback(ServersideOutput('memory-outputpr', 'data'),
-#               [Input('prvalname', 'value'), Input('prvaldate', 'value')],
-#               [State('prvalchoosen', 'value'), State('prname', 'value'), State('pr_Ip', 'value')])
-# def prname2(valname, valdate, prch, prname, ipval):
-#     if prname == None or valname == None or valdate == None:
-#         raise PreventUpdate
-#     ipadress = "193.54.2.211"
-#     server = SSHTunnelForwarder(
-#         (ipadress, 22),
-#         ssh_username='soudani',
-#         ssh_password="univ484067152",
-#         remote_bind_address=(ipadress, 3306))
-#
-#     server.start()
-#
-#     try:
-#         conn = mariadb.connect(
-#             user="dashapp",
-#             password="dashapp",
-#             host=ipadress,
-#             port=3306,
-#             database=prname)
-#
-#     except mariadb.Error as e:
-#         print(f"Error connecting to MariaDB Platform: {e}")
-#         sys.exit(1)
-#         # Get Cursor
-#
-#         # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-#         # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-#         #     'received_variablevalues')
-#
-#         # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
-#     if prname == 'rcckn':
-#         if prch == 'received_variablevalues':
-#             cur1 = conn.cursor()
-#
-#             print('valname[0]', valname)
-#             if len(valname) == 1:
-#                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
-#             elif len(valname) > 1:
-#                 valname = tuple(valname)
-#                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME IN {valname}")
-#             t1 = cur1.fetchall()
-#             df = pd.DataFrame(t1)
-#             print('bakalim olacak mi', df.head(10))
-#             return t1
-#         elif prch == "send_variablevalues":
-#             cur1 = conn.cursor()
-#             print('valname[0]', valname)
-#             if len(valname) == 1:
-#                 cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
-#             elif len(valname) > 1:
-#                 valname = tuple(valname)
-#                 cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
-#             t1 = cur1.fetchall()
-#             df = pd.DataFrame(t1)
-#             print('bakalim olacak mi', df.head(10))
-#             return t1
-#         elif dbch != "send_variablevalues" or dbch != "received_variablevalues":
-#             cur1 = conn.cursor()
-#             print('valname[0]', valname)
-#             if len(valname) == 1:
-#                 cur1.execute(f"SELECT * FROM {prch} WHERE VARIABLE_NAME = '{valname[0]}'")
-#             elif len(valname) > 1:
-#                 valname = tuple(valname)
-#                 cur1.execute(f"SELECT * FROM {prch} WHERE VARIABLE_NAME IN {valname}")
-#             t1 = cur1.fetchall()
-#             df = pd.DataFrame(t1)
-#             print('bakalim olacak mi', df.head(10))
-#             return t1
-#     if prname == 'enerbat':
-#         if prch != None:
-#             cur1 = conn.cursor()
-#             print('valname[0]', valname)
-#             if len(valname) == 1:
-#                 print('bu islem oluyor mu 0')
-#                 cur1.execute(f"SELECT * FROM {prch} WHERE VARIABLE_NAME = '{valname[0]}'")
-#                 print('bu islem oluyor mu 1')
-#             elif len(valname) > 1:
-#                 valname = tuple(valname)
-#                 cur1.execute(f"SELECT * FROM {prch} WHERE VARIABLE_NAME IN {valname}")
-#             t1 = cur1.fetchall()
-#             print('bu islem oluyor mu 2')
-#             df = pd.DataFrame(t1)
-#             print('bu islem oluyor mu 4')
-#             print('bakalim olacak mi', df)
-#             df.to_csv('project.csv')
-#             return t1
-
-
 @app.callback([Output('getdbtable', 'data'),
                Output('getdbtable', 'columns'), ],
               [Input('memory-output', 'data'), Input('dbvalname', 'value'),
@@ -6813,6 +6861,17 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
+@app.callback([Output('getrealtable', 'data'),
+               Output('getrealtable', 'columns'), ],
+              [Input('get_data_from_modbus', 'data')]
+              )
+def on_data_set_table(data):
+    if data == None :
+        raise PreventUpdate
+    if data != None :
+        df = pd.DataFrame(data, columns = ['VARIABLE_NAME', 'VARIABLE_NUM_VALUE','QUALITY', 'TIMESTAMP'])
+        x = df.to_dict('record')
+        return x, [{'name': i, 'id': i} for i in df.columns]
 
 
 @app.callback([Output('getprtable', 'data'),
