@@ -94,6 +94,16 @@ index_page = html.Div([html.Div(html.Div(html.Div(
         dcc.Link('Start', href='/project')
     ], className="content"), className='box'), className='card')], className='container')
 
+colors = {
+    'background': '#2D2D2D',
+    'text': '#E1E2E5',
+    'figure_text': '#ffffff',
+}
+divBorderStyle = {
+    'backgroundColor' : '#393939',
+    'borderRadius': '12px',
+    'lineHeight': 0.9,
+}
 page_1_layout = html.Div(
     className='main_container',
     children=[
@@ -598,7 +608,7 @@ page_2_layout = html.Div(
                                              page_current=0,
                                              export_format='xlsx',
                                              export_headers='display',
-                                             merge_duplicate_headers=True)),
+                                             merge_duplicate_headers=True),style = {'width': '80%', 'margin': '0 auto'}),
                html.Div(id="hiddendb1", children=[], style={'display': 'None'}),
                html.Div(id="hiddendb2", style={'display': 'None'}),
                html.Div(id="hiddendb3", children=[], style={'display': 'None'}),
@@ -763,7 +773,7 @@ page_3_layout = html.Div([html.Div([
                                                       step=100,
                                                       size=400,
                                                       vertical=True,
-                                                      updatemode='drag'), ],className='abcdb_graph'),
+                                                      updatemode='drag'), ],style={'margintop': '3rem'},className='abcdb_graph'),
 
 
                         html.Div([html.Div(daq.Slider(id="sliderWidthreel",
@@ -987,7 +997,7 @@ page_4_layout = html.Div(
                        options=[{'label': i, 'value': i} for i in
                                 []],
                        multi=True,
-                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 5rem'},
+                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
                        clearable=True,
                        placeholder='Values of Real Time',
                        ),),
@@ -1025,7 +1035,7 @@ page_4_layout = html.Div(
                                              step=100,
                                              size=300,
                                              vertical=True,
-                                             updatemode='drag'), style={'marginRight': '20px'})],style = {'margin' : '1rem 1rem 1rem 5rem'}, className='page4graph1'),
+                                             updatemode='drag'), style={'margin': '2rem 2rem 0 1rem'})],style = {'margin' : '1rem 1rem 1rem 5rem'}, className='page4graph1'),
                         html.Div(daq.Slider(id="sliderWidthpr",
                                             max=1600,
                                             min=500,
@@ -1034,10 +1044,10 @@ page_4_layout = html.Div(
                                             size=500,
 
                                                      updatemode='drag'), style={'marginLeft': '7rem'}),
-                        ], className='aadbpage4'),
+                        ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign'),
 
 
-                         ]),
+                         ], className='boxdesign'),
 
                         html.Div(dcc.Dropdown(id='secondgraph_pr_real',
                                options=[{'label': i, 'value': i} for i in
@@ -1082,7 +1092,7 @@ page_4_layout = html.Div(
                                                                      step=100,
                                                                      size=300,
                                                                      vertical=True,
-                                                                     updatemode='drag'), style={'margin': '20px'})],style = {'margin' : '1rem 1rem 1rem 5rem'}, className='page4graph1'),
+                                                                     updatemode='drag'), style={'margin': '2rem 2rem 0 1rem'})],style = {'margin' : '1rem 1rem 1rem 5rem'}, className='page4graph1'),
                                                 html.Div(daq.Slider(id="sliderWidthpr2",
                                                                     max=1600,
                                                                     min=500,
@@ -1091,16 +1101,16 @@ page_4_layout = html.Div(
                                                                     size=500,
 
                                                                              updatemode='drag'), style={'marginLeft': '6rem'}),
-                                                ], className='aadbpage4'),
+                                                ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign'),
 
 
-                                                 ], className='aadbpage4'), ]),
+                                                 ], className='boxdesign'), ]),
 
                 html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='thirdgraph_pr_real',
                                        options=[{'label': i, 'value': i} for i in
                                                 []],
                                        multi=True,
-                                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 5rem'},
+                                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
                                        className='',
                                        clearable=True,
                                        placeholder='Values of Real Time',
@@ -1139,7 +1149,7 @@ page_4_layout = html.Div(
                                                              step=100,
                                                              size=300,
                                                              vertical=True,
-                                                             updatemode='drag'), style={'marginLeft': '20px'})],style = {'margin':'1rem 3rem 1rem 1rem'}, className='page4graph1'),
+                                                             updatemode='drag'), style={'margin': '2rem 2rem 0 1rem'})],style = {'margin':'1rem 3rem 1rem 1rem'}, className='page4graph1'),
                                         html.Div(daq.Slider(id="sliderWidthpr3",
                                                             max=1600,
                                                             min=500,
@@ -1148,7 +1158,7 @@ page_4_layout = html.Div(
                                                             size=500,
 
                                                                      updatemode='drag'), style={'marginLeft': '5rem'}),
-                                        ], className='aadbpage4'),
+                                        ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign'),
 
 
                                          ]),
@@ -1196,7 +1206,7 @@ page_4_layout = html.Div(
                                                                                      step=100,
                                                                                      size=300,
                                                                                      vertical=True,
-                                                                                     updatemode='drag'), style={'margin': '10px'})],style = {'margin':'0 3rem 0 0'}, className='page4graph1'),
+                                                                                     updatemode='drag'), style={'margin': '2rem 2rem 0 1rem'})],style = {'margin':'0 3rem 0 0'}, className='page4graph1'),
                                                                 html.Div(daq.Slider(id="sliderWidthpr4",
                                                                                              max=1600,
                                                                                              min=500,
@@ -1205,10 +1215,10 @@ page_4_layout = html.Div(
                                                                                              size=500,
 
                                                                                              updatemode='drag'), style={'marginLeft': '5rem'}),
-                                                                ], className='aadbpage4'),
+                                                                ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign'),
 
 
-                                                                 ], className='aadbpage4'), ]),], className='abcdbpr'),
+                                                                 ], className='boxdesign'), ]),], className='abcdbpr'),
 
 
                html.Div(dash_table.DataTable(id="getprtable",
@@ -1718,8 +1728,8 @@ def parse_contents(contents, filename, date):
         ])
 
     return html.Div([
-        html.H5(filename),
-        html.H6(datetime.datetime.fromtimestamp(date)),
+        html.H5(filename, style = {'color' : 'black'}),
+        html.H6(datetime.datetime.fromtimestamp(date), style = {'color' : 'black'}),
         dash_table.DataTable(
             id='datatable-interactivity',
             data=df.to_dict('records'),
@@ -1734,6 +1744,7 @@ def parse_contents(contents, filename, date):
                 'maxWidth': 0,
                 'fontSize': '1rem',
                 'TextAlign': 'center',
+                'color' : 'black'
             },
             fixed_rows={'headers': True},
             tooltip_data=[
@@ -1755,14 +1766,13 @@ def parse_contents(contents, filename, date):
 
             style_header={
                 'backgroundColor': 'rgb(230, 230, 230)',
-                'fontWeight': 'bold'
+                'fontWeight': 'bold',
+                'color': 'black'
             },
             filter_action="native",
             sort_action="native",
             sort_mode="multi",
             column_selectable="single",
-            # row_selectable="multi",
-            # row_deletable=True,
             selected_columns=[],
             selected_rows=[],
             page_action="native",
@@ -2332,7 +2342,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                      labelStyle={'margin': '10px', 'display': 'inline-block'},
                                      inputStyle={'margin': '10px', }
                                      ),
-                      html.Div([html.P('Shift Axes (First-Second)'),
+                      html.Div([html.P('Shift Shaded Area (First-Second)'),
                                 dbc.Input(id='minimumValueGraphFirst',
                                           type="text",
                                           min=-10000, max=10000, step=1,
@@ -2386,7 +2396,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
 
                       ], className='abcd'),
 
-            html.Div([dcc.Graph(id='graph',
+            html.Div([html.Div([dcc.Graph(id='graph',
                                 config={'displayModeBar': True,
                                         'scrollZoom': True,
                                         'modeBarButtonsToAdd': [
@@ -2409,9 +2419,9 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                           min=400,
                                           value=530,
                                           step=100,
-                                          size=400,
+                                          size=420,
                                           vertical=True,
-                                          updatemode='drag'), style={'margin': '20px'})],
+                                          updatemode='drag'), style={'margin': '20px'})],style={'margin':' 0 auto', },
                      className='abcdb'),
 
             html.Div([daq.Slider(id="sliderWidthTab1",
@@ -2419,11 +2429,13 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                  min=600,
                                  value=1000,
                                  step=100,
-                                 size=750,
+                                 size=500,
                                  updatemode='drag'),
-                      html.Div(id='output-data-upload', children=[])]),
+                      html.Div(id='output-data-upload', children=[])],style={'margin': '1rem 0 0 12rem'} ),],style = {'textAlign': 'left',
+                'color': colors['text'],'backgroundColor': '#f0f4fa'}, className = 'abcdbgraphtab1'),
 
-        ])
+        ]),
+        #
 
         return loadTab1
 
@@ -3185,6 +3197,16 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 width=sliderwidth,
                 height=sliderheight,
                 shapes=a if nc > cleanclick else [],
+                legend=dict(
+                    traceorder="normal",
+                    font=dict(
+                        family="sans-serif",
+                        size=12,
+                        color=colors['figure_text']
+                    ),
+                    bgcolor=colors['background'],
+                    borderwidth=5
+                ),
                 margin=dict(
                     l=50,
                     r=50,
@@ -3194,6 +3216,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
 
                 ),
                 paper_bgcolor="LightSteelBlue",
+                plot_bgcolor=colors['background'],
             )
 
             if len(firstshape) == 2 and len(secondshape) == 2:
@@ -3349,19 +3372,19 @@ def LoadingDataTab4(on, tab):
         data_list = ['Choose your value firstly']
 
         loadlist = html.Div([html.Div([
-            html.Div(id='tab4first', children=[html.Div([html.Div([
+            html.Div(id='tab4first', children=[html.Div([html.Div([html.Div(
                 dcc.RadioItems(id="radiographtab4",
                                options=[
-                                   {'label': 'X - Y unlimited', 'value': 'optionlibre'},
-                                   {'label': 'Y by X Choose', 'value': 'choosevalue'},
+                                   {'label': 'X-axis and Y-axis unlimited', 'value': 'optionlibre'},
+                                   {'label': 'X-axis for each Y-axis', 'value': 'choosevalue'},
                                ],
                                # value='choosevalue',
                                labelClassName='groupgraph',
                                labelStyle={'margin': '10px', },
                                inputStyle={'margin': '10px', }
-                               ),
+                               ), className="abtab4"),
 
-                dcc.RadioItems(id="radiograph4",
+                html.Div(dcc.RadioItems(id="radiograph4",
                                options=[
                                    {'label': 'Point', 'value': 'markers'},
                                    {'label': 'Line', 'value': 'lines'},
@@ -3370,16 +3393,9 @@ def LoadingDataTab4(on, tab):
                                labelClassName='groupgraph2',
                                labelStyle={'margin': '10px', },
                                inputStyle={'margin': '10px', }
-                               ),
+                               ), className="abtab4"),
             ], className="abtab4"),
-                html.Div([dcc.Dropdown(id='tabDropdownTop4',
-                                       options=[{'label': i, 'value': i} for i in data_list],
-                                       multi=True,
-                                       style={"cursor": "pointer", 'display': 'None'},
-                                       className='stockSelectorClass2',
-                                       clearable=True,
-                                       placeholder='Select your y-axis value...',
-                                       ),
+                dcc.Loading(id = 'load1', type = 'default', children = [html.Div([
                           dcc.Dropdown(id='tabDropdownTopTab4',
                                        options=[{'label': i, 'value': i} for i in data_list],
                                        multi=True,
@@ -3412,16 +3428,8 @@ def LoadingDataTab4(on, tab):
                                        clearable=True,
                                        placeholder='Select your x-axis value...',
                                        ),
-                          ], className="ab"),
-                html.Div([
-                    daq.BooleanSwitch(
-                        id="calculintegraltab4",
-                        on=False,
-                        label="Calculate Integral",
-                        labelPosition="bottom",
-                        color = '#1f78b4'
-                    )
-                ]), ], className="ac"),
+                          ], className="ab"),]),
+                 ], className="ac"),
 
                 html.Div([dcc.Dropdown(id="dropadd4",
                                        options=[
@@ -3442,6 +3450,16 @@ def LoadingDataTab4(on, tab):
                           ], className="aatab4"),
 
                 html.Button('Add Text', id='addText4', n_clicks=0, style={'marginTop': '1.5rem', 'marginLeft': '2rem'}),
+                html.Div([
+                    daq.BooleanSwitch(
+                        id="calculintegraltab4",
+                        label="Calculate Integral",
+                        labelPosition="bottom",
+                        color= 'red',
+
+
+                    )
+                ], className= 'calculIntegral'),
 
             ], className="tabDesigntab4", ),
             html.Div(id='tab4check', children=
@@ -3591,8 +3609,8 @@ def LoadingDataTab4(on, tab):
 
                                                 ], className='abcd'),
 
-            html.Div(id='tab4third', children=[dcc.Store(id='tab4datastore'),
-                                               dcc.Graph(id='graph4', config={'displayModeBar': True,
+            html.Div([html.Div(id='tab4third', children=[dcc.Store(id='tab4datastore'),
+                                               dcc.Loading(id = 'graph4load', type = 'circle', children = [dcc.Graph(id='graph4', config={'displayModeBar': True,
                                                                               'scrollZoom': True,
                                                                               'modeBarButtonsToAdd': [
                                                                                   'drawopenpath',
@@ -3605,7 +3623,7 @@ def LoadingDataTab4(on, tab):
 
                                                                         }
                                                          }
-                                                         ),
+                                                         )]),
                                                html.Div(daq.Slider(id="sliderHeightTab4",
                                                                    max=2100,
                                                                    min=400,
@@ -3619,13 +3637,14 @@ def LoadingDataTab4(on, tab):
             html.Div([daq.Slider(id="sliderWidthTab4",
                                  max=2000,
                                  min=600,
-                                 value=1500,
+                                 value=1200,
                                  step=100,
                                  size=750,
                                  updatemode='drag'),
                       html.Div(id="tab4DashTable", children=[])
-                      ]),
-        ]), ], style={'background': 'White'})
+                      ], style={'textAlign': 'left','color': colors['text'],
+                },),],style={'marginLeft' : '10rem'}),
+        ]), ], style={'background': 'White', })
 
         return loadlist
     else:
@@ -3651,6 +3670,14 @@ def showintegral(show):
         return {'visibility': 'visible'}
     return {'display': 'None'}
 
+@app.callback(Output('calculintegraltab4', 'color'),
+              [Input("calculintegraltab4", "on")],
+              )
+def showintegralcolor(show):
+    if show == True:
+        color = 'green'
+        return color
+
 
 @app.callback(Output('dbcheck', 'style'),
               [Input("calculintegraldb", "on")],
@@ -3665,6 +3692,7 @@ def dropdownlistcontrol(retrieve):
     if retrieve == []:
         raise PreventUpdate
     if retrieve != []:
+        time.sleep(2)
         df = pd.DataFrame(retrieve)
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
         return (dff, dff)
@@ -3678,6 +3706,7 @@ def dropdownlistcontrolTab4Second(retrieve):
     if retrieve == []:
         raise PreventUpdate
     if retrieve != []:
+        time.sleep(2)
         df = pd.DataFrame(retrieve)
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
         return (dff, dff)
@@ -4278,12 +4307,11 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                             df[axisdrop] = pd.DataFrame(c)
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
-                    print('valy2 neymis bakalim', valy2)
-                    print('valx2 neymis bakalim', valx2)
                     for j in range(len(valy2)):
                         for k in range(len(valx2)):
                             a = df[valy2[j]]
                             b = df[valx2[k]]
+                            time.sleep(3)
                             fig.add_trace(
                                 go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
                                              name="{}/{}".format(valy2[j], valx2[k])))
@@ -4305,7 +4333,18 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                                 title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx2[0], valy2[0]),
                                 autosize=True,
                                 width=slidewidth,
-
+                                legend=dict(
+                                    traceorder="normal",
+                                    font=dict(
+                                        family="sans-serif",
+                                        size=12,
+                                        color=colors['figure_text']
+                                    ),
+                                    bgcolor=colors['background'],
+                                    borderwidth=5
+                                ),
+                                paper_bgcolor="LightSteelBlue",
+                                plot_bgcolor=colors['background'],
                                 shapes=a if (nc > cleanclick) else [],
                                 height=slideheight,
                                 margin=dict(
@@ -4363,7 +4402,7 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                             df[axisdrop] = pd.DataFrame(c)
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
-
+                    time.sleep(3)
                     fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
                                                name="{}/{}".format(valxsecond[s], valysecond[s])))
 
@@ -4639,6 +4678,18 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                         width=slidewidth,
                         shapes=a if (nc > cleanclick) else [],
                         height=slideheight,
+                        legend=dict(
+                            traceorder="normal",
+                            font=dict(
+                                family="sans-serif",
+                                size=12,
+                                color=colors['figure_text']
+                            ),
+                            bgcolor=colors['background'],
+                            borderwidth=5
+                        ),
+                        paper_bgcolor="LightSteelBlue",
+                        plot_bgcolor=colors['background'],
                         margin=dict(
                             l=50,
                             r=50,
@@ -4646,6 +4697,7 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                             t=50,
                             pad=4
                         ),
+
                         yaxis=dict(
                             title='' if g2 == [] else g2[-1],
                             titlefont=dict(
