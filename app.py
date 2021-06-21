@@ -528,7 +528,7 @@ page_2_layout = html.Div(
                           placeholder="Intersection")], className='aa')
       ], style={'display': 'None'},
               className="abdbase"),
-     html.Div([html.Div([html.Div(dcc.Graph(id="getdbgraph",
+     html.Div([html.Div([html.Div(dcc.Loading(type='circle',children = dcc.Graph(id="getdbgraph",
                                             config={'displayModeBar': True,
                                                     'scrollZoom': True,
                                                     'modeBarButtonsToAdd': [
@@ -545,7 +545,7 @@ page_2_layout = html.Div(
                                                            }
                                             }
 
-                                            ), ),
+                                            ), ),),
                          html.Div(daq.Slider(id="sliderHeightdb",
                                              max=2100,
                                              min=400,
@@ -725,7 +725,7 @@ page_3_layout = html.Div([html.Div([
                                                                     dbc.Button("Close", id="close_reel_valve", className="ml-auto")]
                                                                 ),
                                                             ],
-                                                            id="modal_reel_valve",
+                                                            id="modal_reel_valve", style = {'overflow': 'hidden'}
                                                         ), ]),
 
                                                 ],style = {'margin':'3rem'}, className='abcd'),
@@ -739,7 +739,7 @@ page_3_layout = html.Div([html.Div([
                                                                       className='aadbknob'), ], className = 'abc'),]),
                                                   ], className='acreel'),
 
-              html.Div([html.Div([dcc.Graph(id="graphreal",
+              html.Div([html.Div([ dcc.Graph(id="graphreal",
                                                      config={'displayModeBar': True,
                                                              'scrollZoom': True,
                                                              'modeBarButtonsToAdd': [
@@ -1293,7 +1293,7 @@ def knobvalues(v1,v2,v3,v4):
 def knobvalues_valve(nc, v1,v2,v3,v4):
     if nc > 0 :
 
-        a = {'HV_A1_IN': v1, 'HV_A2_IN': v2, 'HV_A1_OUT': v3, 'HV_A2_OUT': v4}
+        a = {'HV_A1_IN': [v1], 'HV_A2_IN': [v2], 'HV_A1_OUT': [v3], 'HV_A2_OUT': [v4]}
 
         return a
 
@@ -1317,7 +1317,7 @@ def toggle_modal(nc, tbname, databasename):
 def toggle_modal_valve(nc, tbname, databasename):
     if tbname == None  or databasename==None:
         raise PreventUpdate
-    if nc != None:
+    if nc > 0:
         return tbname,databasename
 
 @app.callback(
@@ -1588,13 +1588,16 @@ def pandastosql_valve(name,dbname, data):
     if data == None:
         raise PreventUpdate
     print('data',data)
-    #
-    df = pd.DataFrame(data, index = ['0'])
-    HV_A1_IN = [i for i in df['HV_A1_IN']]
-    print(df['HV_A1_IN'])
+    df = pd.DataFrame(data)
+    df.columns=['HV_A1_IN', 'HV_A2_IN', 'HV_A1_OUT', 'HV_A2_OUT']
+    print('dfff', df)
+    HV_A1_IN = [i for i in df['HV_A1_IN']]  # name of variable
+    print(HV_A1_IN)
     HV_A2_IN = [i for i in df['HV_A2_IN']]
     HV_A1_OUT = [i for i in df['HV_A1_OUT']]
     HV_A2_OUT = [i for i in df['HV_A2_OUT']]
+    sql_insert = list(zip(HV_A1_IN, HV_A2_IN, HV_A1_OUT,  HV_A2_OUT))
+    print('sql_insert', sql_insert)
     try:
         db_connection = mysql.connector.connect(
             host="193.54.2.211",
@@ -1608,9 +1611,9 @@ def pandastosql_valve(name,dbname, data):
         db_cursor.execute(
             f"CREATE OR REPLACE TABLE {name} (HV_A1_IN BIGINT PRIMARY KEY, HV_A2_IN BIGINT, HV_A1_OUT BIGINT, HV_A2_OUT BIGINT)")
 
-        sql_query = f" INSERT INTO {name} (HV_A1_IN,HV_A2_IN,HV_A1_OUT,HV_A2_OUT)"
+        sql_query = f" INSERT INTO {name} (HV_A1_IN,HV_A2_IN,HV_A1_OUT,HV_A2_OUT) VALUES (%s, %s, %s, %s)"
             # Get database table'
-        db_cursor.execute(sql_query)
+        db_cursor.executemany(sql_query, sql_insert)
         db_connection.commit()
         print(db_cursor.rowcount, f"Record inserted successfully into {name} Database")
     except mysql.connector.Error as error:
@@ -3349,8 +3352,8 @@ def LoadingDataTab4(on, tab):
             html.Div(id='tab4first', children=[html.Div([html.Div([
                 dcc.RadioItems(id="radiographtab4",
                                options=[
-                                   {'label': 'X - Y illimité', 'value': 'optionlibre'},
-                                   {'label': 'Choose Values', 'value': 'choosevalue'},
+                                   {'label': 'X - Y unlimited', 'value': 'optionlibre'},
+                                   {'label': 'Y by X Choose', 'value': 'choosevalue'},
                                ],
                                # value='choosevalue',
                                labelClassName='groupgraph',
@@ -7029,6 +7032,7 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                         b = [i for i in b if i.startswith(valdate_new[k])]
                         print('aaaaaaaaa', a)
                         print('bbbbbbbbb', b)
+                        time.sleep(1)
                         fig.add_trace(
                             go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
                                          name="{}/{}".format(valy[j], valdate_new[k]))),
