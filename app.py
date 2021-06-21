@@ -95,7 +95,7 @@ index_page = html.Div([html.Div(html.Div(html.Div(
     ], className="content"), className='box'), className='card')], className='container')
 
 colors = {
-    'background': '#2D2D2D',
+    'background': '#e6f7f6',
     'text': '#E1E2E5',
     'figure_text': '#ffffff',
 }
@@ -1047,7 +1047,7 @@ page_4_layout = html.Div(
                         ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign'),
 
 
-                         ], className='boxdesign'),
+                         ]),
 
                         html.Div(dcc.Dropdown(id='secondgraph_pr_real',
                                options=[{'label': i, 'value': i} for i in
@@ -1104,7 +1104,7 @@ page_4_layout = html.Div(
                                                 ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign'),
 
 
-                                                 ], className='boxdesign'), ]),
+                                                 ]), ]),
 
                 html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='thirdgraph_pr_real',
                                        options=[{'label': i, 'value': i} for i in
@@ -1218,7 +1218,7 @@ page_4_layout = html.Div(
                                                                 ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign'),
 
 
-                                                                 ], className='boxdesign'), ]),], className='abcdbpr'),
+                                                                 ], ), ]),], className='abcdbpr'),
 
 
                html.Div(dash_table.DataTable(id="getprtable",
