@@ -159,11 +159,6 @@
      margin : 0.5rem ;
 
 }
-.boxdesign2 {
-     background-color : white;
-     margin : 0.5rem ;
-
-}
 .dark-theme-control {
   grid-column-start: 1;
   grid-column-end: 2;
@@ -258,7 +253,7 @@
     display: flex;
     flex-direction : row;
     justify-content: space-between;
-    width : 90%;
+    width : 1200px;
     margin : 2rem
 }
 .abcTab4{
@@ -293,7 +288,7 @@
     display: flex;
     flex-direction : row;
     justify-content: space-evenly;
-    width : 100%;
+    width : 1900px;
     background-color: #c0e9eb;
 
 }
@@ -873,9 +868,10 @@ there.
 @media (min-width: 750px) {}
 
 /* Larger than desktop */
-@media (min-width: 1000px) {}
+@media (min-width: 1600px) {}
 
 /* Larger than Desktop HD */
-@media (min-width: 1200px) {}
+@media (max-width: 1200px) {
+}
 
 

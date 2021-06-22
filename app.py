@@ -97,7 +97,7 @@ index_page = html.Div([html.Div(html.Div(html.Div(
 colors = {
     'background': '#e6f7f6',
     'text': '#E1E2E5',
-    'figure_text': '#ffffff',
+    'figure_text': 'black',
 }
 divBorderStyle = {
     'backgroundColor' : '#393939',
@@ -969,7 +969,14 @@ page_4_layout = html.Div(
                                                                    n_clicks=0, size="lg",
                                                                    className="mr-1", color="primary",
                                                                    style={'margin': '1rem 1rem 1rem 0'}),
+                                                        dbc.Tooltip(
+                                                            "!!! Enter a Database and Table name",
+                                                            "If entered, disregard this message ",
+                                                            target = "download_pr",
+                                                                    ),
                                                         ]),
+
+
                                                 ], className='abcd'),
                                       html.Div([html.Div([html.P('Enter Table Name'),
                                                         dbc.Input(id='filenametodb', type="text", value='',
@@ -1874,11 +1881,7 @@ def opcLoadingData(on):
             'margin': '20px 20px 20px -100px',
 
             'visibility': 'visible'}
-        data_list = ['CoAd', 'ComManCoP2', 'ComManCoP3P4P5', 'ComManPompeSec', 'CompteurEnergie', 'CoP2',
-                     'CtempDepChauff',
-                     'D1', 'D2', 'D3', 'D4', 'MarcheBruleur', 'Teg', 'SdeBasBouMelange', 'SdeBasHauMelange', 'TambN3',
-                     'Tb1',
-                     'Tb2', 'Tb3', 'Tb4', 'TdepPLC', 'Teb', 'Tec', 'Teev', 'TempminMaf', 'Text', 'Tsb', 'Tsc', 'Tsev']
+        data_list = []
 
         ocploadlist = html.Div(className="userControlDownSideCreated",
                                children=[html.Div(className="userControlDownLeftSide",
@@ -2369,10 +2372,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                    clearable=True,
                                    placeholder='Choose Value...',
                                    ),
-                      dbc.Button("See Surface", id="valuechange", n_clicks=0,
-                                 color="warning", style={'height': '2.5em', 'margin': '1.8rem'}),
-                      dbc.Button("Clean Surface", id="cleanshape", n_clicks=0,
-                                 color="danger", style={'height': '2.5em', 'margin': '1.8rem'}),
+
                       html.Div(id='shiftaxis',
                                children=[
                                    dbc.Input(id='shift_x_axis',
@@ -2393,6 +2393,10 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                               color="primary",
                                               className="mr-2"),
                                ], className='abcd', style={'display': 'None'}),
+                      dbc.Button("See Surface", id="valuechange", n_clicks=0,
+                                 color="warning", style={'height': '2.5em', 'margin': '1.8rem'}),
+                      dbc.Button("Clean Surface", id="cleanshape", n_clicks=0,
+                                 color="danger", style={'height': '2.5em', 'margin': '1.8rem'}),
 
                       ], className='abcd'),
 
@@ -3579,19 +3583,20 @@ def LoadingDataTab4(on, tab):
                                                              clearable=True,
                                                              placeholder='Choose Value...',
                                                              ),
-                                                dbc.Button("See Surface", id="valuechangetab4", n_clicks=0,
-                                                           color="warning",
-                                                           style={'height': '2.5em', 'margin': '1.8rem'}),
-                                                dbc.Button("Clean Surface", id="cleanshapetab4", n_clicks=0,
-                                                           color="danger",
-                                                           style={'height': '2.5em', 'margin': '1.8rem'}),
+                                                dbc.Tooltip(
+                                                    "You can change y-axis values in the same x-axis,",
+                                                    "Entered value will not use",
+                                                    "Clean variable name when you finished your shifting operation",
+                                                    target="shiftaxisdroptab4",
+                                                ),
+
                                                 html.Div(id='shiftaxistab4',
                                                          children=[
                                                              dbc.Input(id='shift_x_axistab4',
                                                                        type="number",
                                                                        min=-100000, max=100000, step=1,
                                                                        bs_size="sm",
-                                                                       value=0,
+                                                                       # value=0,
                                                                        style={'width': '8rem', },
                                                                        placeholder="Shift X axis..."),
                                                              dbc.Input(id='shift_y_axistab4',
@@ -3605,7 +3610,13 @@ def LoadingDataTab4(on, tab):
                                                                         color="primary",
                                                                         className="mr-2"),
                                                          ], className='abcd',
-                                                         style={'display': 'None'})
+                                                         style={'display': 'None'}),
+                                                dbc.Button("See Surface", id="valuechangetab4", n_clicks=0,
+                                                           color="warning",
+                                                           style={'height': '2.5em', 'margin': '1.8rem'}),
+                                                dbc.Button("Clean Surface", id="cleanshapetab4", n_clicks=0,
+                                                           color="danger",
+                                                           style={'height': '2.5em', 'margin': '1.8rem'}),
 
                                                 ], className='abcd'),
 
@@ -3983,6 +3994,7 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
     if g1 == None or g2 == None or head == None or note == None or radioval == []:
         raise PreventUpdate
     print('firstchoosen', firstchoosen)
+    q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
     if radioval != None:
         if len(retrieve) > 0:
             df = pd.read_excel("appending.xlsx")
@@ -4268,7 +4280,7 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
             print('secondshape', secondshape)
             print('radioval', radioval)
             if radioval == 'optionlibre' and valx2 != None and valy2 != None:
-
+                print('valx2', valx2)
                 lst = []
                 for j in zip(valy2, valx2):
                     lst.append(j)
@@ -4284,23 +4296,31 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                     s += 1
                     a = df[lst[i][0]]
                     b = df[lst[i][1]]
-                    if nclick > 0:
-                        if axisdrop == lst[i][1]:
+                    if q1  == "tab4send":
+                        print('burda miyiz')
+                        print('axisdrop', axisdrop)
+                        print('axisdrop', lst[i])
+                        if axisdrop in valx2:
+                            # print('valx2',valx2)
                             p = []
                             c = []
-                            for t in df[lst[i][0]]:
-                                if shift_x == None:
-                                    raise PreventUpdate
-                                else:
-                                    t += float(shift_x)
-                                    p.append(t)
-                            df[lst[i][0]] = pd.DataFrame(p)
-                            a = df[lst[i][0]]
-                            df.to_excel("appending.xlsx")
+                            # for t in df[lst[i][0]]:
+                            #     if shift_x == None:
+                            #         raise PreventUpdate
+                            #     else:
+                            #         print('shif_x', shift_x)
+                            #         t += float(shift_x)
+                            #         p.append(t)
+                            # print('ppp',p)
+                            #
+                            # df[lst[i][0]] = pd.DataFrame(p)
+                            # a = df[lst[i][0]]
+                            # df.to_excel("appending.xlsx")
                             for y in df[axisdrop]:
                                 if shift_y == None:
                                     raise PreventUpdate
                                 else:
+                                    print('shif_y', shift_y)
                                     y += float(shift_y)
                                     c.append(y)
                             c.append(axisdrop)
@@ -4311,15 +4331,13 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                         for k in range(len(valx2)):
                             a = df[valy2[j]]
                             b = df[valx2[k]]
-                            time.sleep(3)
+                            time.sleep(2)
                             fig.add_trace(
                                 go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
                                              name="{}/{}".format(valy2[j], valx2[k])))
                             a = []
                             if nc > 0:
                                 a = controlShape()
-                            # if cleanclick > 0 :
-                            #     a = []
                             fig.update_xaxes(
                                 tickangle=90,
                                 title_text='' if g1 == [] else g1[-1],
@@ -4379,7 +4397,7 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                     s += 1
                     a = df[lst[i][0]]
                     b = df[lst[i][1]]
-                    if nclick > 0:
+                    if q1  == "tab4send":
                         if axisdrop == lst[i][1]:
                             p = []
                             c = []
@@ -4387,6 +4405,7 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                                 if shift_x == None:
                                     raise PreventUpdate
                                 else:
+                                    print('shif_x', shift_x)
                                     t += float(shift_x)
                                     p.append(t)
                             df[lst[i][0]] = pd.DataFrame(p)
@@ -4396,13 +4415,14 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                                 if shift_y == None:
                                     raise PreventUpdate
                                 else:
+                                    print('shif_y', shift_y)
                                     y += float(shift_y)
                                     c.append(y)
                             c.append(axisdrop)
                             df[axisdrop] = pd.DataFrame(c)
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
-                    time.sleep(3)
+                    time.sleep(2)
                     fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
                                                name="{}/{}".format(valxsecond[s], valysecond[s])))
 
