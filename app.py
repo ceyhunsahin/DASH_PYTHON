@@ -95,12 +95,7 @@ index_page = html.Div([html.Div(html.Div(html.Div(
 colors = {
     'background': '#e6f7f6',
     'text': '#E1E2E5',
-    'figure_text': 'black',
-}
-divBorderStyle = {
-    'backgroundColor' : '#393939',
-    'borderRadius': '12px',
-}
+    'figure_text': 'black'}
 page_1_layout = html.Div(
     className='main_container',
     children=[
@@ -354,8 +349,8 @@ page_2_layout = html.Div(
                                  html.Div([html.Div(dcc.Link('Main Page', href='/', id='link5')),
                                            html.Div(dcc.Link('File Page', href='/page-1', id='link6'), ),
                                            html.Div(dcc.Link('Real-Time Page', href='reelTime', id='link7'), ),
-                                           html.Div(dcc.Link('Project Page', href='/project', id='link8'), ), ]
-                                          ,style = {'marginTop':'1rem'},className='abpage2'),
+                                           html.Div(dcc.Link('Project Page', href='/project', id='link8'), ), ],
+                                           style = {'marginTop':'1rem'},className='abpage2'),
                                  html.Div([dbc.Input(id='db_Ip',
                                            type="text",
                                            debounce=True,
@@ -660,7 +655,7 @@ page_3_layout = html.Div([html.Div([
                                      dcc.Dropdown(id='realvalue',
                                                        multi=True,
                                                        style={'cursor': 'pointer'},
-                                                       className='stockSelectorClass_page3',
+                                                       className='stockSelectorClassPage3',
                                                        clearable=True,
                                                        placeholder='Select Value',
 
@@ -2348,7 +2343,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                           step=100,
                                           size=420,
                                           vertical=True,
-                                          updatemode='drag'), style={'margin': '20px'})],style={'margin':' 0 auto', },
+                                          updatemode='drag'), style={'margin': '20px'})],style={'margin':' auto', },
                      className='abcdb'),
 
             html.Div([daq.Slider(id="sliderWidthTab1",
@@ -3307,8 +3302,8 @@ def LoadingDataTab4(on, tab):
                                ],
                                # value='choosevalue',
                                labelClassName='groupgraph',
-                               labelStyle={'margin': '10px', },
-                               inputStyle={'margin': '10px', }
+                               labelStyle={'margin': '10px'},
+                               inputStyle={'margin': '10px'}
                                ), className='abtab4'),
 
                 html.Div(dcc.RadioItems(id="radiograph4",
@@ -3318,8 +3313,8 @@ def LoadingDataTab4(on, tab):
                                    {'label': 'Line + Point', 'value': 'lines+markers'}],
                                value='markers',
                                labelClassName='groupgraph2',
-                               labelStyle={'margin': '10px', },
-                               inputStyle={'margin': '10px', }
+                               labelStyle={'margin': '10px'},
+                               inputStyle={'margin': '10px'}
                                ), className='abtab4'),
             ], className='abtab4'),
                 dcc.Loading(id = 'load1', type = 'default', children = [html.Div([
@@ -3371,7 +3366,7 @@ def LoadingDataTab4(on, tab):
                           dcc.Textarea(
                               id='textarea4',
                               value='',
-                              style={'width': '15rem', 'marginTop': '0.5rem'},
+                              style={'width': '15vw', 'marginTop': '0.5rem'},
                               autoFocus='Saisir',
                           ),
                           ], className='aatab4'),
@@ -3573,12 +3568,12 @@ def LoadingDataTab4(on, tab):
                                  min=600,
                                  value=1200,
                                  step=100,
-                                 size=750,
+                                 size=600,
                                  updatemode='drag'),
                       html.Div(id="tab4DashTable", children=[])
                       ], style={'textAlign': 'left','color': colors['text'],
-                },),],style={'marginLeft' : '10rem'}),
-        ]), ], style={'background': 'white' })
+                },),],style={'marginLeft' : '10vw'}),
+        ]), ],className = 'four-columns-div-user-controlsreel', style={'background': 'white' })
 
         return loadlist
     else:
