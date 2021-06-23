@@ -50,13 +50,12 @@ def find_data_file(filename):
 BS = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
 
 # Initialize the app
-app = dash.Dash(__name__, external_stylesheets=[BS], assets_folder=find_data_file('assets/'), update_title='Loading...')
-# app = DashProxy(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], assets_folder=find_data_file('assets/'),transforms=[
-#     TriggerTransform(),  # enable use of Trigger objects
-#     MultiplexerTransform(),  # makes it possible to target an output multiple times in callbacks
-#     ServersideOutputTransform(),  # enable use of ServersideOutput objects
-#     NoOutputTransform(),  # enable callbacks without output
-# ])
+app = dash.Dash(__name__, external_stylesheets=[BS], assets_folder=find_data_file('assets/'), update_title='Loading...',
+                meta_tags=[{'name': 'viewport', 'content': 'width=device-width, initial-scale=2.0, maximum-scale=1.2, minimum-scale=0.5'}],
+                 external_scripts=["https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" ]
+                )
+
+
 server = app.server
 app.config.suppress_callback_exceptions = True
 
@@ -102,7 +101,6 @@ colors = {
 divBorderStyle = {
     'backgroundColor' : '#393939',
     'borderRadius': '12px',
-    'lineHeight': 0.9,
 }
 page_1_layout = html.Div(
     className='main_container',
@@ -111,7 +109,7 @@ page_1_layout = html.Div(
                  children=[
                      html.Div([html.Div([daq.PowerButton(id='my-toggle-switch',
                                                label={'label': 'Open page',
-                                                      'style': {'fontSize': '22px', 'fontWeight': "bold",},},
+                                                      'style': {'fontSize': '22px', 'fontWeight': 'bold',},},
                                                labelPosition='bottom', on=False, size=100, color="green",style = {'marginTop':'1rem'},
                                                className='dark-theme-control'),]),
                                html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
@@ -364,7 +362,7 @@ page_2_layout = html.Div(
                                            debounce=True,
                                            min=-10000, max=10000, step=1,
                                            bs_size="mr",
-                                           style={'width': '11rem', "marginTop": "1.5rem"},
+                                           style={'width': '11rem', 'marginTop': '1.5rem'},
                                            autoFocus=True,
                                            placeholder="Enter IP number"),
                                          dbc.Input(id='givendb_name',
@@ -372,7 +370,7 @@ page_2_layout = html.Div(
                                                    debounce=True,
                                                    min=-10000, max=10000, step=1,
                                                    bs_size="mr",
-                                                   style={'width': '11rem', "marginTop": "1.5rem"},
+                                                   style={'width': '11rem', 'marginTop': '1.5rem'},
                                                    autoFocus=True,
                                                    placeholder="Enter Database"),], className = 'ab'),
 
@@ -382,7 +380,7 @@ page_2_layout = html.Div(
                                     options=[{'label': i, 'value': i}
                                              for i in ['rcckn', 'enerbat']],
                                     multi=False,
-                                    style={"cursor": "pointer", 'marginTop': '5px'},
+                                    style={'cursor': 'pointer', 'marginTop': '5px'},
                                     className='stockSelectorClass3',
                                     clearable=True,
                                     placeholder='Select Database',
@@ -392,7 +390,7 @@ page_2_layout = html.Div(
                                     # options=[{'label': i, 'value': i}
                                     #          for i in df.columns],
                                     multi=False,
-                                    style={"cursor": "pointer", 'marginTop': '5px'},
+                                    style={'cursor': 'pointer', 'marginTop': '5px'},
                                     className='stockSelectorClass3',
                                     clearable=True,
                                     placeholder='Select Table ...',
@@ -403,7 +401,7 @@ page_2_layout = html.Div(
                                     # options=[{'label': i, 'value': i}
                                     #          for i in df.columns],
                                     multi=True,
-                                    style={"cursor": "pointer", 'marginTop': '13px'},
+                                    style={'cursor': 'pointer', 'marginTop': '13px'},
                                     className='stockSelectorClass3',
                                     clearable=True,
                                     placeholder='Select your parameters...',
@@ -413,7 +411,7 @@ page_2_layout = html.Div(
                                     # options=[{'label': i, 'value': i}
                                     #          for i in df.columns],
                                     multi=True,
-                                    style={"cursor": "pointer", 'marginTop': '13px'},
+                                    style={'cursor': 'pointer', 'marginTop': '13px'},
                                     className='stockSelectorClass3',
                                     clearable=False,
                                     placeholder='Select your parameters...',
@@ -435,7 +433,7 @@ page_2_layout = html.Div(
                                        options=[{'label': i, 'value': i} for i in
                                                 []],
                                        multi=False,
-                                       style={"cursor": "pointer", 'width': '180px'},
+                                       style={'cursor': 'pointer', 'width': '180px'},
                                        className='',
                                        clearable=True,
                                        placeholder='First Value...',
@@ -445,7 +443,7 @@ page_2_layout = html.Div(
                                     debounce=True,
                                     min=-10000, max=10000, step=1,
                                     bs_size="sm",
-                                    style={'width': '8rem', "marginTop": "1.5rem"},
+                                    style={'width': '8rem', 'marginTop': '1.5rem'},
                                     autoFocus=True,
                                     placeholder="first point"),
                           dbc.Input(id='leftIntegralSeconddb',
@@ -453,14 +451,14 @@ page_2_layout = html.Div(
                                     debounce=True,
                                     min=-10000, max=10000, step=1,
                                     bs_size="sm",
-                                    style={'width': '8rem', "marginTop": "1.5rem"},
+                                    style={'width': '8rem', 'marginTop': '1.5rem'},
                                     autoFocus=True,
                                     placeholder="second point"),
                           dbc.Input(id='leftIntegraldb',
                                     type="text",
                                     min=-10000, max=10000, step=1,
                                     bs_size="sm",
-                                    style={'width': '9rem', "marginTop": "1.5rem"},
+                                    style={'width': '9rem', 'marginTop': '1.5rem'},
                                     autoFocus=True,
                                     placeholder="total integration"),
                           ]), html.Div([html.Button("Save", id="write_exceldb", n_clicks=0,
@@ -486,14 +484,14 @@ page_2_layout = html.Div(
           options=[{'label': i, 'value': i} for i in
                    ['Plus', 'Moins', 'Multiplie', 'Division']],
           value=[],
-          labelStyle={"display": "Block"},
+          labelStyle={'display': 'Block'},
       ), ]),
       html.Div([
           dcc.Dropdown(id='secondChoosenValuedb',
                        options=[{'label': i, 'value': i} for i in
                                 []],
                        multi=False,
-                       style={"cursor": "pointer", 'width': '180px'},
+                       style={'cursor': 'pointer', 'width': '180px'},
                        className='',
                        clearable=True,
                        placeholder='Second Value...',
@@ -502,21 +500,21 @@ page_2_layout = html.Div(
                     type="text",
                     min=-10000, max=10000, step=1,
                     bs_size="sm",
-                    style={'width': '8rem', "marginTop": "1.5rem"},
+                    style={'width': '8rem', 'marginTop': '1.5rem'},
                     autoFocus=True,
                     placeholder="first point"),
           dbc.Input(id='rightIntegralSeconddb',
                     type="text",
                     min=-10000, max=10000, step=1,
                     bs_size="sm",
-                    style={'width': '8rem', "marginTop": "1.5rem"},
+                    style={'width': '8rem', 'marginTop': '1.5rem'},
                     autoFocus=True,
                     placeholder="second point"),
           dbc.Input(id='rightIntegraldb',
                     type="text",
                     min=-10000, max=10000, step=1,
                     bs_size="sm",
-                    style={'width': '9rem', "marginTop": "1.5rem"},
+                    style={'width': '9rem', 'marginTop': '1.5rem'},
                     autoFocus=True,
                     placeholder="total integration")
       ]),
@@ -524,7 +522,7 @@ page_2_layout = html.Div(
                           type="text",
                           min=-10000, max=10000, step=1,
                           bs_size="sm",
-                          style={'width': '10rem', "marginTop": "2rem",
+                          style={'width': '10rem', 'marginTop': '2rem',
                                  'height': '5rem', 'textAlign': 'center'},
                           autoFocus=True,
                           placeholder="result"),
@@ -532,7 +530,7 @@ page_2_layout = html.Div(
                           type="text",
                           min=-10000, max=10000, step=1,
                           bs_size="sm",
-                          style={'width': '10rem', "marginTop": "2rem",
+                          style={'width': '10rem', 'marginTop': '2rem',
                                  'height': '2rem', 'textAlign': 'center'},
                           autoFocus=True,
                           placeholder="Intersection")], className='aa')
@@ -548,7 +546,7 @@ page_2_layout = html.Div(
                                                         'select2d',
                                                         'eraseshape',
                                                     ]},
-                                            style={'marginTop': 20, },
+                                            style={'marginTop': '20px', },
                                             figure={
                                                 'layout': {'legend': {'tracegroupgap': 0},
 
@@ -641,7 +639,7 @@ page_3_layout = html.Div([html.Div([
                                                          html.Div(dcc.Link('Project Page', href='/project', id='link4'),),],style = {'marginTop':'1rem'},className='ab'),
                                                 daq.PowerButton(id='my-toggle-switch-reel',
                                                                        label={'label': 'Open page',
-                                                                              'style': {'fontSize': '22px', 'fontWeight': "bold",},},
+                                                                              'style': {'fontSize': '22px', 'fontWeight': 'bold',},},
                                                                        labelPosition='bottom', on=False, size=100, color="green",style = {'margin':'3rem 0'},
                                                                        className='dark-theme-control'),]),
 
@@ -662,8 +660,8 @@ page_3_layout = html.Div([html.Div([
                             html.Div([
                                      dcc.Dropdown(id='realvalue',
                                                        multi=True,
-                                                       style={"cursor": "pointer", 'margin': 'auto', 'width': '30rem'},
-                                                       className='stockSelectorClass3',
+                                                       style={'cursor': 'pointer'},
+                                                       className='stockSelectorClass_page3',
                                                        clearable=True,
                                                        placeholder='Select Value',
 
@@ -713,30 +711,9 @@ page_3_layout = html.Div([html.Div([
                                         html.Div([
                                                 html.Div(
                                                     [
-                                                        dbc.Button("Send Valve Values to Database", id='download_reel_valve', n_clicks=0, size="lg",
+                                                        dbc.Button("Send Valve Values to Server", id='download_reel_valve', n_clicks=0, size="lg",
                                                                    className="mr-1", color="primary", style={'margin': '-3rem 1rem 0 0'}),
-                                                        dbc.Modal(
-                                                            [
-                                                                dbc.ModalHeader("Save Your Table In Database"),
-                                                                dbc.Input(id='input_databasename_valve',
-                                                                          type="text",
-                                                                          min=-10000, max=10000, step=1, bs_size="sm",
-                                                                          style={'width': '31rem', },
-                                                                          placeholder = 'Enter Database name',
-                                                                          autoFocus=True, ),
-                                                                dbc.Input(id='input_tablename_valve',
-                                                                          type="text",
-                                                                          min=-10000, max=10000, step=1, bs_size="sm",
-                                                                          style={'width': '31rem', },
-                                                                          placeholder = 'Enter Table name',
-                                                                          autoFocus=True, ),
-                                                                dbc.ModalFooter([
-                                                                    dbc.Button("Okey", id="ok_reel_valve", className="ml-auto"),
-                                                                    dbc.Button("Close", id="close_reel_valve", className="ml-auto")]
-                                                                ),
-                                                            ],
-                                                            id="modal_reel_valve", style = {'overflow': 'hidden'}
-                                                        ), ]),
+                                                        ]),
 
                                                 ],style = {'margin':'3rem'}, className='abcd'),
                                                    html.Div([html.Div([daq.Knob(id='HVA1OUT',color='red', label={"label": "HV A1 OUT", "style": {'color': 'red','marginBottom':'-1rem'}},
@@ -759,7 +736,7 @@ page_3_layout = html.Div([html.Div([
                                                                  'select2d',
                                                                  'eraseshape',
                                                              ]},
-                                                     style={'marginTop': 20, },
+                                                     style={'marginTop': '20px', },
                                                      figure={
                                                          'layout': {'legend': {'tracegroupgap': 0},
 
@@ -829,162 +806,158 @@ page_3_layout = html.Div([html.Div([
               html.Div(id='ok_click_hidden', children=[], style={'display': 'None'}),],className='main_container',),
               ])
 
-page_4_layout = html.Div(
-    [html.Div([html.Div([
-        html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1')),
-                  html.Div(dcc.Link('Database Page', href='/Database', id='link2'), ),
-                  html.Div(dcc.Link('Real-Time Page', href='/reelTime', id='link3'), ),
-                  html.Div(dcc.Link('Project Page', href='/project', id='link4'), ), ],
-                  className = 'abcdbpr' ),
-                         dbc.Input(id='pr_Ip',
-                                   type="text",
-                                   debounce=True,
-                                   min=-10000, max=10000, step=1,
-                                   bs_size="mr",
-                                   style={'width': '11rem', "marginTop": "1.5rem",'display':'None'},
-                                   autoFocus=True,
-                                   placeholder="Enter your IP number ...",
-                                   ),
-                html.Div([html.Div([
-                    html.Div([daq.PowerButton(id='my-toggle-switch-pr-db',
-                                              label={'label': 'Connection Database',
-                                                     'style': {'fontSize': '22px',
-                                                               'fontWeight': "bold"}},
-                                              labelPosition='bottom', on=False, size=100,
-                                              color="green",
-                                              className='dark-theme-control'),
-                              ], className='abcdb', style={'marginLeft': '1rem'}),
-                    html.Div([ dcc.Dropdown(id='prname',
-                                options=[{'label': i, 'value': i}
-                                         for i in ['rcckn', 'enerbat']],
-                                multi=False,
-                                style={"cursor": "pointer", 'marginTop': '5px'},
-                                className='stockSelectorClass3',
-                                clearable=True,
-                                placeholder='Select Database',
+page_4_layout = html.Div([html.Div([html.Div([html.Div([
+                                                        html.Div(dcc.Link('Main Page', href='/', id='link1')),
+                                                        html.Div(dcc.Link('Database Page', href='/Database', id='link2'), ),
+                                                        html.Div(dcc.Link('Real-Time Page', href='/reelTime', id='link3'), ),
+                                                        html.Div(dcc.Link('Project Page', href='/project', id='link4'), ), ],
+                                                        className = 'abcdbpr' ),
+                                                        dbc.Input(id='pr_Ip',
+                                                                  type="text",
+                                                                  debounce=True,
+                                                                  min=-10000, max=10000, step=1,
+                                                                  bs_size="mr",
+                                                                  style={'width': '11rem', "marginTop": "1.5rem",'display':'None'},
+                                                                  autoFocus=True,
+                                                                  placeholder="Enter your IP number ...",
+                                                                  ),
 
-                                ),
-                   dcc.Dropdown(id='prvalchoosen',
-                                # options=[{'label': i, 'value': i}
-                                #          for i in df.columns],
-                                multi=False,
-                                style={"cursor": "pointer", 'marginTop': '5px'},
-                                className='stockSelectorClass3',
-                                clearable=True,
-                                placeholder='Select Table ...',
+                                    html.Div([html.Div([html.Div([daq.PowerButton(id='my-toggle-switch-pr-db',
+                                                                                  label={'label': 'Connection Database',
+                                                                                         'style': {'fontSize': '22px',
+                                                                                                   'fontWeight': 'bold'}},
+                                                                                  labelPosition='bottom', on=False, size=100,
+                                                                                  color="green",
+                                                                                  className='dark-theme-control'),
+                                                                                ], style={'marginLeft': '1rem'}),
+                                                        html.Div([ dcc.Dropdown(id='prname',
+                                                                                options=[{'label': i, 'value': i}
+                                                                                         for i in ['rcckn', 'enerbat']],
+                                                                                multi=False,
+                                                                                style={'cursor': 'pointer', 'marginTop': '5px'},
+                                                                                className='stockSelectorClass3',
+                                                                                clearable=True,
+                                                                                placeholder='Select Database',
 
-                                ),
+                                                                                ),
+                                                                   dcc.Dropdown(id='prvalchoosen',
+                                                                                # options=[{'label': i, 'value': i}
+                                                                                #          for i in df.columns],
+                                                                                multi=False,
+                                                                                style={'cursor': 'pointer', 'marginTop': '5px'},
+                                                                                className='stockSelectorClass3',
+                                                                                clearable=True,
+                                                                                placeholder='Select Table ...',
 
-                   dcc.Dropdown(id='prvalname',
-                                # options=[{'label': i, 'value': i}
-                                #          for i in df.columns],
-                                multi=True,
-                                style={"cursor": "pointer", 'marginTop': '13px'},
-                                className='stockSelectorClass3',
-                                clearable=True,
-                                placeholder='Select your parameters...',
-                                ),
+                                                                                ),
 
-                   dcc.Dropdown(id='prvaldate',
-                                # options=[{'label': i, 'value': i}
-                                #          for i in df.columns],
-                                multi=True,
-                                style={"cursor": "pointer", 'marginTop': '13px'},
-                                className='stockSelectorClass3',
-                                clearable=False,
-                                placeholder='Select your parameters...',
-                                ),
-                   html.P('Enter interval value (Second)'),
-                    dcc.Interval(
-                                 id='interval_component_pr_db',
-                                 disabled=True,
-                                 interval=1 * 1000,  # in milliseconds
-                                 n_intervals=0),
-                   dbc.Input(id='interval_value_pr_db', type="text", value='5',
-                             min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
-                               ], className='page4reel'),
+                                                                   dcc.Dropdown(id='prvalname',
+                                                                                # options=[{'label': i, 'value': i}
+                                                                                #          for i in df.columns],
+                                                                                multi=True,
+                                                                                style={'cursor': 'pointer','marginTop': '13px'},
+                                                                                className='stockSelectorClass3',
+                                                                                clearable=True,
+                                                                                placeholder='Select your parameters...',
+                                                                                ),
 
-                ],className='abcdb'),
-                    html.Div(
-                        className='main_container',
-                        children=[html.Div(id='fourcolumnsdivusercontrolspr',
-                                           className="four-columns-div-user-controlspr",
-                                           children=[
-                                               html.Div([daq.PowerButton(id='my-toggle-switch-pr',
-                                                                         label={'label': 'Connection',
-                                                                                'style': {'fontSize': '22px',
-                                                                                          'fontWeight': "bold"}},
-                                                                         labelPosition='bottom', on=False, size=100,
-                                                                         color="green",
-                                                                         className='dark-theme-control'),
-                                                         ], className='abpower',style = {'margin':'0 1rem 0 5rem'}),
-                                               dcc.Store(id='get_data_from_modbus_pr'),
-                                               html.Div(id='data_to_store_id_pr', children=[], style={'display': 'None'}),
-                                               html.Div(id='data_to_store_value_pr', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='data_to_store_qualite_pr', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='data_to_store_date_pr', children=[],
-                                                        style={'display': 'None'}),
-                                               dcc.Interval(
-                                                   id='interval_component_pr',
-                                                   disabled=True,
-                                                   interval=1 * 1000,  # in milliseconds
-                                                   n_intervals=0), ]),
-                                  html.Div([
-                                      dcc.Dropdown(id='realvalue_pr',
-                                                   options = [{'label': i[16:], 'value': i} for i in ['sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2',
-                                                                                'sauter.EY6AS680.Tb3', 'sauter.EY6AS680.Tb4',
-                                                                                'sauter.EY6AS680.Tec', 'sauter.EY6AS680.Teev',
-                                                                                'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
-                                                                                'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg' ]],
-                                                   multi=True,
-                                                   style={"cursor": "pointer", 'margin': '5px 5px 10px 0',
-                                                          'width': '30rem'},
-                                                   className='stockSelectorClass3',
-                                                   clearable=True,
-                                                   placeholder='Select Value',
+                                                                   dcc.Dropdown(id='prvaldate',
+                                                                                # options=[{'label': i, 'value': i}
+                                                                                #          for i in df.columns],
+                                                                                multi=True,
+                                                                                style={'cursor': 'pointer', 'marginTop': '13px'},
+                                                                                className='stockSelectorClass3',
+                                                                                clearable=False,
+                                                                                placeholder='Select your parameters...',
+                                                                                ),
+                                                                   html.P('Enter interval value (Second)'),
+                                                                    dcc.Interval(
+                                                                                 id='interval_component_pr_db',
+                                                                                 disabled=True,
+                                                                                 interval=1 * 1000,  # in milliseconds
+                                                                                 n_intervals=0),
+                                                                   dbc.Input(id='interval_value_pr_db', type="text", value='5',
+                                                                             min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
+                                                                               ], className='page4reel'),
 
-                                                   ),
-                                      html.P('Enter interval value (Second)'),
-                                      dbc.Input(id='interval_value_pr', type="text", value='5',
-                                                min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
+                                                                ],className='abcdbpage4upleft'),
+                                            html.Div([html.Div([
+                                                                    html.Div([daq.PowerButton(id='my-toggle-switch-pr',
+                                                                                     label={'label': 'Connection',
+                                                                                            'style': {'fontSize': '22px',
+                                                                                                      'fontWeight': 'bold'}},
+                                                                                     labelPosition='bottom', on=False, size=100,
+                                                                                     color="green",
+                                                                                     className='dark-theme-control'),
+                                                                     ], className='abpower',style = {'margin':'0 1rem 0 5rem'}),
+                                                                           dcc.Store(id='get_data_from_modbus_pr'),
+                                                                           html.Div(id='data_to_store_id_pr', children=[], style={'display': 'None'}),
+                                                                           html.Div(id='data_to_store_value_pr', children=[],
+                                                                                    style={'display': 'None'}),
+                                                                           html.Div(id='data_to_store_qualite_pr', children=[],
+                                                                                    style={'display': 'None'}),
+                                                                           html.Div(id='data_to_store_date_pr', children=[],
+                                                                                    style={'display': 'None'}),
+                                                                           dcc.Interval(
+                                                                               id='interval_component_pr',
+                                                                               disabled=True,
+                                                                               interval=1 * 1000,  # in milliseconds
+                                                                               n_intervals=0), ],className='page4reel'),
+                                                            html.Div([
+                                                                 dcc.Dropdown(id='realvalue_pr',
+                                                                           options = [{'label': i[16:], 'value': i} for i in ['sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2',
+                                                                                                        'sauter.EY6AS680.Tb3', 'sauter.EY6AS680.Tb4',
+                                                                                                        'sauter.EY6AS680.Tec', 'sauter.EY6AS680.Teev',
+                                                                                                        'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
+                                                                                                        'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg' ]],
+                                                                           multi=True,
+                                                                           style={'cursor': 'pointer', 'margin': '5px 5px 10px 0',
+                                                                                  'width': '30rem'},
+                                                                           className='stockSelectorClass3',
+                                                                           clearable=True,
+                                                                           placeholder='Select Value',
 
-                                      html.Div([dbc.Button("Save", id="write_excel_pr", n_clicks=0, size="lg",
-                                                           className="mr-1",
-                                                           color="primary", style={'margin': '1rem 1rem 1rem 0'}),
-                                                html.A(
-                                                    dbc.Button("Download As Excel", id='download_data_pr', n_clicks=0,
-                                                               size="lg",
-                                                               className="mr-1", color="primary",
-                                                               style={'margin': '1rem 1rem 1rem 0'}),
-                                                    id='excel_for_pr',
-                                                    # # download="rawdata.csv",
-                                                    href="/download_excel_pr/",
-                                                    # target="_blank"
-                                                    ),
-                                                html.Div(
-                                                    [
-                                                        dbc.Button("Send to Database", id='download_pr',
-                                                                   n_clicks=0, size="lg",
-                                                                   className="mr-1", color="primary",
-                                                                   style={'margin': '1rem 1rem 1rem 0'}),
-                                                        dbc.Tooltip(
-                                                            "!!! Enter a Database and Table name",
-                                                            "If entered, disregard this message ",
-                                                            target = "download_pr",
-                                                                    ),
-                                                        ]),
+                                                                           ),
+                                                              html.P('Enter interval value (Second)'),
+                                                              dbc.Input(id='interval_value_pr', type="text", value='5',
+                                                                        min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
+
+                                                              html.Div([dbc.Button("Save", id="write_excel_pr", n_clicks=0, size="lg",
+                                                                                   className="mr-1",
+                                                                                   color="primary", style={'margin': '1rem 1rem 1rem 0'}),
+                                                                        html.A(
+                                                                            dbc.Button("Download As Excel", id='download_data_pr', n_clicks=0,
+                                                                                       size="lg",
+                                                                                       className="mr-1", color="primary",
+                                                                                       style={'margin': '1rem 1rem 1rem 0'}),
+                                                                            id='excel_for_pr',
+                                                                            # # download="rawdata.csv",
+                                                                            href="/download_excel_pr/",
+                                                                            # target="_blank"
+                                                                            ),
+                                                                        html.Div(
+                                                                            [
+                                                                                dbc.Button("Send to Database", id='download_pr',
+                                                                                           n_clicks=0, size="lg",
+                                                                                           className="mr-1", color="primary",
+                                                                                           style={'margin': '1rem 1rem 1rem 0'}),
+                                                                                dbc.Tooltip(
+                                                                                    "!!! Enter a Database and Table name",
+                                                                                    "If entered, disregard this message ",
+                                                                                    target = "download_pr",
+                                                                                            ),
+                                                                                ]),
 
 
-                                                ], className='abcd'),
-                                      html.Div([html.Div([html.P('Enter Table Name'),
-                                                        dbc.Input(id='filenametodb', type="text", value='',
-                                                        min=0, max=1000000000, step=1, bs_size="lg", style={'width': '10rem'}, ),]),
-                                                html.Div([html.P('Enter Database Name', style={'marginLeft': '1rem', }),
-                                                        dbc.Input(id='nametodb', type="text", value='',
-                                                        min=0, max=1000000000, step=1, bs_size="lg", style={'width': '10rem', 'marginLeft': '1rem', }, ),])],className='abcd',),
-                                  ], className='page4reel', ),
+                                                                        ], className='abcd'),
+                                                              html.Div([html.Div([html.P('Enter Table Name'),
+                                                                                dbc.Input(id='filenametodb', type="text", value='',
+                                                                                min=0, max=1000000000, step=1, bs_size="lg", style={'width': '10rem'}, ),]),
+                                                                        html.Div([html.P('Enter Database Name', style={'marginLeft': '1rem', }),
+                                                                                dbc.Input(id='nametodb', type="text", value='',
+                                                                                min=0, max=1000000000, step=1, bs_size="lg",
+                                                                                style={'width': '10rem', 'marginLeft': '1rem', }, ),])],className='abcd',),
+                                                          ], className='page4reel', ),
 
                                   html.Div(id='reelhidden1pr', children=[], style={'display': 'None'}),
                                   html.Div(id='reelhidden2pr', children=[], style={'display': 'None'}),
@@ -992,19 +965,19 @@ page_4_layout = html.Div(
                                   html.Div(id='reelhidden4pr', children=[], style={'display': 'None'}),
 
                                   html.Div(id='ok_click_hiddenpr', children=[], style={'display': 'None'}),
-                                  ])
-                ],className="prstyle")
+                                  ],className='abcdbpage4upleft')
+                                ],className="prstyle")
 
-                         ], className="page4reel"),
+                                         ], className="page4reel"),
 
 
-               ], className='abcdbpage4',),
+                               ], className='abcdbpage4'),
      dcc.Store(id='memory-outputpr'),
-     html.Div([html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='firstgraph_pr_real',
+     html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='firstgraph_pr_real',
                        options=[{'label': i, 'value': i} for i in
                                 []],
                        multi=True,
-                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
+                       style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
                        clearable=True,
                        placeholder='Values of Real Time',
                        ),),
@@ -1012,7 +985,7 @@ page_4_layout = html.Div(
                        options=[{'label': i, 'value': i} for i in
                                 []],
                        multi=True,
-                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
+                       style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
                        className='',
                        clearable=True,
                        placeholder='Values of Database',
@@ -1042,7 +1015,7 @@ page_4_layout = html.Div(
                                              step=100,
                                              size=300,
                                              vertical=True,
-                                             updatemode='drag'), style={'margin': '2rem 2rem 0 1rem'})],style = {'margin' : '1rem 1rem 1rem 5rem'}, className='page4graph1'),
+                                             updatemode='drag'), style={'margin': '2rem 2rem 0 1rem'})], style= {'margin' : '1rem 1rem 1rem 5rem'}, className='page4graph1'),
                         html.Div(daq.Slider(id="sliderWidthpr",
                                             max=1600,
                                             min=500,
@@ -1060,7 +1033,7 @@ page_4_layout = html.Div(
                                options=[{'label': i, 'value': i} for i in
                                         []],
                                multi=True,
-                               style={"cursor": "pointer", 'width': '30rem','margin' : '3rem 0 0 5rem'},
+                               style={'cursor': 'pointer', 'width': '30rem','margin' : '3rem 0 0 5rem'},
                                className='',
                                clearable=True,
                                placeholder='Values of Real Time',
@@ -1069,7 +1042,7 @@ page_4_layout = html.Div(
                                options=[{'label': i, 'value': i} for i in
                                         []],
                                multi=True,
-                               style={"cursor": "pointer", 'width': '30rem','margin' : '1rem 0 0 5rem'},
+                               style={'cursor': 'pointer', 'width': '30rem','margin' : '1rem 0 0 5rem'},
                                className='',
                                clearable=True,
                                placeholder='Values of Database',
@@ -1111,13 +1084,13 @@ page_4_layout = html.Div(
                                                 ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign'),
 
 
-                                                 ]), ]),
+                                                 ]),
 
                 html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='thirdgraph_pr_real',
                                        options=[{'label': i, 'value': i} for i in
                                                 []],
                                        multi=True,
-                                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
+                                       style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
                                        className='',
                                        clearable=True,
                                        placeholder='Values of Real Time',
@@ -1126,7 +1099,7 @@ page_4_layout = html.Div(
                                        options=[{'label': i, 'value': i} for i in
                                                 []],
                                        multi=True,
-                                       style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 5rem' },
+                                       style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem' },
                                        className='',
                                        clearable=True,
                                        placeholder='Values of Database',
@@ -1174,7 +1147,7 @@ page_4_layout = html.Div(
                                                options=[{'label': i, 'value': i} for i in
                                                         []],
                                                multi=True,
-                                               style={"cursor": "pointer", 'width': '30rem', 'margin' : '3rem 0 0 5rem'},
+                                               style={'cursor': 'pointer', 'width': '30rem', 'margin' : '3rem 0 0 5rem'},
                                                className='',
                                                clearable=True,
                                                placeholder='Values of Real Time',
@@ -1183,7 +1156,7 @@ page_4_layout = html.Div(
                                                options=[{'label': i, 'value': i} for i in
                                                         []],
                                                multi=True,
-                                               style={"cursor": "pointer", 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
+                                               style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
                                                className='',
                                                clearable=True,
                                                placeholder='Values of Database',
@@ -1286,7 +1259,7 @@ page_4_layout = html.Div(
                html.Div(id='hiddenrecord4pr', children=[], style={'display': 'None'}),
                html.Div(id='writeexcelhiddenpr', children=[], style={'display': 'None'}),
 
-               ], style = {'overflow-x' : 'hidden'} ),
+               ], style = {'overflow-x' : 'visible'} ),
 
 
 
@@ -1303,59 +1276,18 @@ def knobvalues(v1,v2,v3,v4):
     else: raise PreventUpdate
 
 @app.callback(Output("reelhidden6", "children"),
-             [Input("download_reel_valve", "n_clicks")],
-             [State("HVA1INLED", "value"), State("HVA2INLED", "value"),
-              State("HVA1OUTLED", "value"), State("HVA2OUTLED", "value")],)
-
-def knobvalues_valve(nc, v1,v2,v3,v4):
+              [Input("download_reel_valve", "n_clicks")],
+              [State("HVA1INLED", "value"), State("HVA2INLED", "value"),
+               State("HVA1OUTLED", "value"), State("HVA2OUTLED", "value")])
+def toserver(nc, v1,v2,v3,v4):
+    # if from_modbus == None :
+    #     raise PreventUpdate
     if nc > 0 :
+        opc = OpenOPC.client()
+        opc.servers()
+        opc.connect('Kepware.KEPServerEX.V6')
+        opc.write([('Siemens.PLC1.Vanne3voies1', v1), ('Siemens.PLC1.Vanne3voies2', v2),('Siemens.PLC1.Vanne3voies3', v3), ('Siemens.PLC1.Vanne3voies4', v4)])
 
-        a = {'HV_A1_IN': [v1], 'HV_A2_IN': [v2], 'HV_A1_OUT': [v3], 'HV_A2_OUT': [v4]}
-
-        return a
-
-
-@app.callback(
-    [Output("reelhidden3", "children"),Output("reelhidden5", "children")],
-    [Input("ok_reel", "n_clicks"), ],
-    [State("input_tablename", "value"),State("input_databasename", "value")],
-)
-def toggle_modal(nc, tbname, databasename):
-    if tbname == None  or databasename==None:
-        raise PreventUpdate
-    if nc != None:
-        return tbname,databasename
-
-@app.callback(
-    [Output("reelhidden8", "children"),Output("reelhidden9", "children")],
-    [Input("ok_reel_valve", "n_clicks"), ],
-    [State("input_tablename_valve", "value"),State("input_databasename_valve", "value")],
-)
-def toggle_modal_valve(nc, tbname, databasename):
-    if tbname == None  or databasename==None:
-        raise PreventUpdate
-    if nc > 0:
-        return tbname,databasename
-
-@app.callback(
-    Output("modal_reel", "is_open"),
-    [Input("download_reel_db", "n_clicks"), Input("close_reel", "n_clicks"), Input("ok_reel", "n_clicks")],
-    [State("modal_reel", "is_open")],
-)
-def toggle_modal(n1, n2, n3, is_open):
-    if n1 or n2 or n3:
-        return not is_open
-    return is_open
-
-@app.callback(
-    Output("modal_reel_valve", "is_open"),
-    [Input("download_reel_valve", "n_clicks"), Input("close_reel_valve", "n_clicks"), Input("ok_reel_valve", "n_clicks")],
-    [State("modal_reel_valve", "is_open")],
-)
-def toggle_modal(n1, n2, n3, is_open):
-    if n1 or n2 or n3:
-        return not is_open
-    return is_open
 
 @app.callback(
     [Output("reelhidden3pr", "children"),Output("reelhidden4pr", "children")],
@@ -1893,7 +1825,7 @@ def opcLoadingData(on):
                                                                                                for i in data_list if
                                                                                                i != 'date'],
                                                                                       multi=False,
-                                                                                      style={"cursor": "pointer"},
+                                                                                      style={'cursor': 'pointer',},
                                                                                       className='stockSelectorClass',
                                                                                       clearable=False,
                                                                                       placeholder='Select your parameters...',
@@ -1920,8 +1852,8 @@ def opcLoadingData(on):
                                                                                       []],
                                                                              value=[],
                                                                              labelStyle={'display': 'Block'},
-                                                                         ), ], style={"marginTop": "8px",
-                                                                                      "marginLeft": "8px",
+                                                                         ), ], style={'marginTop': '8px',
+                                                                                      'marginLeft': '8px',
                                                                                       'visibility': 'hidden'}),
                                                                          html.Div(
                                                                              [
@@ -1952,7 +1884,7 @@ def opcLoadingData(on):
                                                                                         in extra_data_list],
                                                                                multi=False,
                                                                                value='',
-                                                                               style={"cursor": "pointer"},
+                                                                               style={'cursor': 'pointer',},
                                                                                className='stockSelectorClass',
                                                                                clearable=False,
                                                                                placeholder='Select your parameters...',
@@ -2233,7 +2165,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                          options=[{'label': i, 'value': i} for i in
                                   dropdownhidden],
                          multi=False,
-                         style={"cursor": "pointer", 'width': '180px'},
+                         style={'cursor': 'pointer', 'width': '180px'},
                          className='',
                          clearable=True,
                          placeholder='First Value...',
@@ -2243,7 +2175,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                       debounce=True,
                       min=-10000, max=10000, step=1,
                       bs_size="sm",
-                      style={'width': '8rem', "marginTop": "1.5rem"},
+                      style={'width': '8rem', 'marginTop': '1.5rem'},
                       autoFocus=True,
                       placeholder="first point"),
             dbc.Input(id='leftIntegralSecond',
@@ -2251,14 +2183,14 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                       debounce=True,
                       min=-10000, max=10000, step=1,
                       bs_size="sm",
-                      style={'width': '8rem', "marginTop": "1.5rem"},
+                      style={'width': '8rem', 'marginTop': '1.5rem'},
                       autoFocus=True,
                       placeholder="second point"),
             dbc.Input(id='leftIntegral',
                       type="text",
                       min=-10000, max=10000, step=1,
                       bs_size="sm",
-                      style={'width': '9rem', "marginTop": "1.5rem"},
+                      style={'width': '9rem', 'marginTop': '1.5rem'},
                       autoFocus=True,
                       placeholder="total integration"),
         ]),
@@ -2284,13 +2216,13 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                 options=[{'label': i, 'value': i} for i in
                          ['Plus', 'Moins', 'Multiplie', 'Division']],
                 value=[],
-                labelStyle={"display": "Block"},
+                labelStyle={'display': 'Block'},
             ), ]),
             html.Div([dcc.Dropdown(id='secondChoosenValue',
                                    options=[{'label': i, 'value': i} for i in
                                             dropdownhidden],
                                    multi=False,
-                                   style={"cursor": "pointer", 'width': '180px'},
+                                   style={'cursor': 'pointer','width': '180px'},
                                    className='',
                                    clearable=True,
                                    placeholder='Second Value...',
@@ -2299,21 +2231,21 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                 type="text",
                                 min=-10000, max=10000, step=1,
                                 bs_size="sm",
-                                style={'width': '8rem', "marginTop": "1.5rem"},
+                                style={'width': '8rem', 'marginTop': '1.5rem'},
                                 autoFocus=True,
                                 placeholder="first point"),
                       dbc.Input(id='rightIntegralSecond',
                                 type="text",
                                 min=-10000, max=10000, step=1,
                                 bs_size="sm",
-                                style={'width': '8rem', "marginTop": "1.5rem"},
+                                style={'width': '8rem', 'marginTop': '1.5rem'},
                                 autoFocus=True,
                                 placeholder="second point"),
                       dbc.Input(id='rightIntegral',
                                 type="text",
                                 min=-10000, max=10000, step=1,
                                 bs_size="sm",
-                                style={'width': '9rem', "marginTop": "1.5rem"},
+                                style={'width': '9rem', 'marginTop': '1.5rem'},
                                 autoFocus=True,
                                 placeholder="total integration")]),
             html.Div([dbc.Input(id='operation',
@@ -2328,7 +2260,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                 type="text",
                                 min=-10000, max=10000, step=1,
                                 bs_size="sm",
-                                style={'width': '10rem', "marginTop": "2rem",
+                                style={'width': '10rem', 'marginTop': '2rem',
                                        'height': '2rem', 'textAlign': 'center'},
                                 autoFocus=True,
                                 placeholder="Intersection")], className='aa')],
@@ -2367,7 +2299,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                    options=[{'label': i, 'value': i} for i in
                                             dropdownhidden],
                                    multi=False,
-                                   style={"cursor": "pointer", 'width': '180px', 'margin': '1rem'},
+                                   style={'cursor': 'pointer', 'width': '180px', 'margin': '1rem'},
                                    className='',
                                    clearable=True,
                                    placeholder='Choose Value...',
@@ -3403,7 +3335,7 @@ def LoadingDataTab4(on, tab):
                           dcc.Dropdown(id='tabDropdownTopTab4',
                                        options=[{'label': i, 'value': i} for i in data_list],
                                        multi=True,
-                                       style={"cursor": "pointer", 'display': 'None'},
+                                       style={'cursor': 'pointer', 'display': 'None'},
                                        className='stockSelectorClass2',
                                        clearable=True,
                                        placeholder='Select your y-axis value...',
@@ -3411,7 +3343,7 @@ def LoadingDataTab4(on, tab):
                           dcc.Dropdown(id='tabDropdownDownTab4',
                                        options=[{'label': i, 'value': i} for i in data_list],
                                        multi=True,
-                                       style={"cursor": "pointer", 'display': 'None'},
+                                       style={'cursor': 'pointer', 'display': 'None'},
                                        className='stockSelectorClass2',
                                        clearable=True,
                                        placeholder='Select your x-axis value...',
@@ -3419,7 +3351,7 @@ def LoadingDataTab4(on, tab):
                           dcc.Dropdown(id='tabDropdownTop',
                                        options=[{'label': i, 'value': i} for i in data_list],
                                        multi=True,
-                                       style={"cursor": "pointer", 'display': 'None'},
+                                       style={'cursor': 'pointer', 'display': 'None'},
                                        className='stockSelectorClass2',
                                        clearable=True,
                                        placeholder='Select your y-axis value...',
@@ -3427,7 +3359,7 @@ def LoadingDataTab4(on, tab):
                           dcc.Dropdown(id='tabDropdownDown',
                                        options=[{'label': i, 'value': i} for i in data_list],
                                        multi=True,
-                                       style={"cursor": "pointer", 'display': 'None'},
+                                       style={'cursor': 'pointer', 'display': 'None'},
                                        className='stockSelectorClass2',
                                        clearable=True,
                                        placeholder='Select your x-axis value...',
@@ -3471,7 +3403,7 @@ def LoadingDataTab4(on, tab):
                                               options=[{'label': i, 'value': i} for i in
                                                        data_list],
                                               multi=False,
-                                              style={"cursor": "pointer", 'width': '180px'},
+                                              style={'cursor': 'pointer', 'width': '180px'},
                                               className='',
                                               clearable=True,
                                               placeholder='First Value...',
@@ -3481,7 +3413,7 @@ def LoadingDataTab4(on, tab):
                                            debounce=True,
                                            min=-10000, max=10000, step=1,
                                            bs_size="sm",
-                                           style={'width': '8rem', "marginTop": "1.5rem"},
+                                           style={'width': '8rem', 'marginTop': '1.5rem'},
                                            autoFocus=True,
                                            placeholder="first point"),
                                  dbc.Input(id='leftIntegralSecondTab4',
@@ -3489,14 +3421,14 @@ def LoadingDataTab4(on, tab):
                                            debounce=True,
                                            min=-10000, max=10000, step=1,
                                            bs_size="sm",
-                                           style={'width': '8rem', "marginTop": "1.5rem"},
+                                           style={'width': '8rem', 'marginTop': '1.5rem'},
                                            autoFocus=True,
                                            placeholder="second point"),
                                  dbc.Input(id='leftIntegralTab4',
                                            type="text",
                                            min=-10000, max=10000, step=1,
                                            bs_size="sm",
-                                           style={'width': '9rem', "marginTop": "1.5rem"},
+                                           style={'width': '9rem', 'marginTop': '1.5rem'},
                                            autoFocus=True,
                                            placeholder="total integration"),
                                  ]), html.Div([html.Button("Save", id="write_excelTab4", n_clicks=0,
@@ -3520,14 +3452,14 @@ def LoadingDataTab4(on, tab):
                  options=[{'label': i, 'value': i} for i in
                           ['Plus', 'Moins', 'Multiplie', 'Division']],
                  value=[],
-                 labelStyle={"display": "Block"},
+                 labelStyle={'display': 'Block'},
              ), ]),
              html.Div([
                  dcc.Dropdown(id='secondChoosenValueTab4',
                               options=[{'label': i, 'value': i} for i in
                                        data_list],
                               multi=False,
-                              style={"cursor": "pointer", 'width': '180px'},
+                              style={'cursor': 'pointer', 'width': '180px'},
                               className='',
                               clearable=True,
                               placeholder='Second Value...',
@@ -3536,21 +3468,21 @@ def LoadingDataTab4(on, tab):
                            type="text",
                            min=-10000, max=10000, step=1,
                            bs_size="sm",
-                           style={'width': '8rem', "marginTop": "1.5rem"},
+                           style={'width': '8rem', 'marginTop': '1.5rem'},
                            autoFocus=True,
                            placeholder="first point"),
                  dbc.Input(id='rightIntegralSecondTab4',
                            type="text",
                            min=-10000, max=10000, step=1,
                            bs_size="sm",
-                           style={'width': '8rem', "marginTop": "1.5rem"},
+                           style={'width': '8rem', 'marginTop': '1.5rem'},
                            autoFocus=True,
                            placeholder="second point"),
                  dbc.Input(id='rightIntegralTab4',
                            type="text",
                            min=-10000, max=10000, step=1,
                            bs_size="sm",
-                           style={'width': '9rem', "marginTop": "1.5rem"},
+                           style={'width': '9rem', 'marginTop': '1.5rem'},
                            autoFocus=True,
                            placeholder="total integration")
              ]),
@@ -3558,7 +3490,7 @@ def LoadingDataTab4(on, tab):
                                  type="text",
                                  min=-10000, max=10000, step=1,
                                  bs_size="sm",
-                                 style={'width': '10rem', "marginTop": "2rem",
+                                 style={'width': '10rem', 'marginTop': '2rem',
                                         'height': '5rem', 'textAlign': 'center'},
                                  autoFocus=True,
                                  placeholder="result"),
@@ -3566,7 +3498,7 @@ def LoadingDataTab4(on, tab):
                                  type="text",
                                  min=-10000, max=10000, step=1,
                                  bs_size="sm",
-                                 style={'width': '10rem', "marginTop": "2rem",
+                                 style={'width': '10rem', 'marginTop': '2rem',
                                         'height': '2rem', 'textAlign': 'center'},
                                  autoFocus=True,
                                  placeholder="Intersection")], className='aa')
@@ -3577,7 +3509,7 @@ def LoadingDataTab4(on, tab):
                                                              options=[{'label': i, 'value': i} for i in
                                                                       []],
                                                              multi=False,
-                                                             style={"cursor": "pointer", 'width': '180px',
+                                                             style={'cursor': 'pointer', 'width': '180px',
                                                                     'margin': '1rem'},
                                                              className='',
                                                              clearable=True,
@@ -4688,9 +4620,9 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                         title_font={"size": 20},
                         title_standoff=25),
 
-                    fig.update_yaxes(
-                        title_text='' if g2 == [] else g2[-1],
-                        title_standoff=25),
+                    # fig.update_yaxes(
+                    #     title_text='' if g2 == [] else g2[-1],
+                    #     title_standoff=25),
                     fig.update_shapes(yref='y'),
                     fig.update_layout(
                         title_text=head[-1] if len(head) > 0 else "{}/{}".format(valxsecond[0], valysecond[0]),
@@ -4727,18 +4659,18 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                                 color="#1f77b4"
                             )
                         ),
-                        # yaxis2=dict(
-                        #     title='' if g2 == [] else g2[-1],
-                        #     titlefont=dict(
-                        #         color="#d62728"
-                        #     ),
-                        #     tickfont=dict(
-                        #         color="#d62728"
-                        #     ),
-                        #     anchor="x",
-                        #     overlaying="y",
-                        #     side="right"),
-                        # hovermode='x unified',
+                        yaxis2=dict(
+                            title='' if g2 == [] else g2[-1],
+                            titlefont=dict(
+                                color="#d62728"
+                            ),
+                            tickfont=dict(
+                                color="#d62728"
+                            ),
+                            anchor="x",
+                            overlaying="y",
+                            side="right"),
+                        hovermode='x unified',
                         uirevision=valysecond[0], ),
                     fig.add_annotation(text=note[-1] if len(note) > 0 else '',
                                        xref="paper", yref="paper",
@@ -7231,7 +7163,8 @@ def graphreelTime(data, val, sliderwidth, sliderheight):
             pad=4
         ),
         paper_bgcolor="LightSteelBlue",
-    )
+        template="plotly_white"
+    ),
 
     return fig
 
