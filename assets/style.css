@@ -84,7 +84,7 @@
 .page4reel{
     display: flex;
     flex-direction : column;
-    justify-content: space-evenly;
+    justify-content: space-between;
 
     margin-left : 2rem
 }
@@ -153,7 +153,7 @@
 
 
 }
-.boxdesign {
+.boxdesign1,.boxdesign2,.boxdesign3,.boxdesign4 {
      background-color : black;
      margin : 0.5rem ;
 
@@ -218,7 +218,7 @@
     flex-direction : row;
     justify-content:space-between;
     width : 60%;
-    margin : 10px
+    margin : 10px;
     background : #f5f5f5
 
 }
@@ -236,7 +236,7 @@
     flex-direction : row;
     justify-content:space-between;
     width : 100%;
-    margin : 10px
+    margin : 10px;
 
 }
 
@@ -255,6 +255,13 @@
     width : 1200px;
     margin : 2rem
 }
+.abcdbprGraph{
+    display: flex;
+    flex-direction : row;
+    justify-content: space-between;
+    width : 1200px;
+    margin : 2rem
+}
 .abcTab4{
     display: flex;
     flex-direction : row;
@@ -265,7 +272,7 @@
 .abcd{ 
     display: flex;
     flex-direction : row;
-    justify-content: center;
+
 
 
 }
@@ -275,7 +282,7 @@
     flex-direction : row;
     justify-content: flex-start;
     width : 85%;
-    margin-left : '7rem'
+    margin-left : 7rem
 }
 
 .abcdbpage4upleft{
@@ -634,6 +641,15 @@ html {
         border-radius: 5px;
         width : 20rem;
 }
+.stockSelectorClass3{
+        margin-top :10px;
+        color: black;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        border-radius: 5px;
+        width: 30rem;
+
+}
 .stockSelectorClass_page3{
         margin-top :10px;
         color: black;
@@ -877,14 +893,15 @@ there.
     flex-direction : column;
     align-items : center;
     }
-    .page4reel{
-        align-items : center;
-        align-content : center;
+    .abcdbpr {
+        flex-direction : row;
+        width : 80%;
     }
-    .abcdbpage4upleft{
-        align-items : center;
+    .boxdesign3, .boxdesign4,.fourgraphpr_db,.thirdgraphpr_db, {
+        display : None
+    }
 
-    }
+
 
 }
 
@@ -902,8 +919,15 @@ there.
     .abc {
         flex-direction : column;
         }
-    .stockSelectorClass_page3 {
+    .stockSelectorClass3 {
         width : 22rem}
+    .abcdbpr {
+        flex-direction : row;
+    }
+    .abcdbprGraph {
+        flex-direction : column;
+    }
+
 
 }
 
