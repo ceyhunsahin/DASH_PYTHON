@@ -421,8 +421,8 @@ page_2_layout = html.Div(
                                   on=False,
                                   label="Calculate Integral",
                                   color= '#1f78b4',
-                                  labelPosition="right",
-                                style = {'margin': '5rem'}
+                                  labelPosition="bottom",
+                                  style = {'margin': '5rem'}
                             )
                         ])
                 ], className='abcdb'),
@@ -567,9 +567,9 @@ page_2_layout = html.Div(
                                              min=600,
                                              value=1000,
                                              step=100,
-                                             size=750,
+                                             size=600,
 
-                                             updatemode='drag'), style={'marginLeft': '35rem'}),
+                                             updatemode='drag'),),
                          ]),
                html.Div(dash_table.DataTable(id="getdbtable",
                                              editable=True,
@@ -629,7 +629,7 @@ page_2_layout = html.Div(
                html.Div(id='hiddenrecord4db', children=[], style={'display': 'None'}),
                html.Div(id='writeexcelhiddendb', children=[], style={'display': 'None'}),
 
-               ], ), ], ),
+               ],className='four-columns-div-user-controlsreel' ), ], ),
 
 page_3_layout = html.Div([html.Div([
                             html.Div([html.Div([html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
@@ -757,15 +757,15 @@ page_3_layout = html.Div([html.Div([
                                                       min=600,
                                                       value=1000,
                                                       step=100,
-                                                      size=750,
+                                                      size=600,
 
-                                                      updatemode='drag'), style={'marginLeft': '15rem'}),
+                                                      updatemode='drag'), style={'marginLeft': '2rem'}),
                                   ]),
                         html.Div(dash_table.DataTable(id="getrealtable",
                                                       editable=True,
                                                       page_size=50,
                                                       style_table={'height': '500px', 'overflowY': 'auto',
-                                                                   'width': '80%', 'margin': '0 auto'},
+                                                                   'width': '60vw', 'margin': 'auto'},
                                                       style_cell={
                                                           'overflow': 'hidden',
                                                           'textOverflow': 'ellipsis',
