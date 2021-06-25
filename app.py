@@ -104,7 +104,7 @@ page_1_layout = html.Div(
                      html.Div([html.Div([daq.PowerButton(id='my-toggle-switch',
                                                label={'label': 'Open page',
                                                       'style': {'fontSize': '22px', 'fontWeight': 'bold',},},
-                                               labelPosition='bottom', on=False, size=100, color="green",style = {'marginTop':'1rem'},
+                                               labelPosition='bottom', on=False, size=100, color='green',style = {'marginTop':'1rem'},
                                                className='dark-theme-control'),]),
                                html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
                                          html.Div(dcc.Link('Database Page', href='/Database', id='link2'),),
@@ -668,7 +668,7 @@ page_3_layout = html.Div([html.Div([
                                                 html.Div(
                                                     [
                                                         dbc.Button("Send Values to Database", id='download_reel_db', n_clicks=0, size="lg",
-                                                                   className='mr-1', color="primary", style={'margin': '-3rem 1rem 0 0'}),
+                                                                   className='mr-1', color="primary", style={'margin': '-3rem 1rem 0 6vw'}),
                                                         dbc.Modal(
                                                             [
                                                                 dbc.ModalHeader("Save Your Table In Database"),
@@ -706,7 +706,7 @@ page_3_layout = html.Div([html.Div([
                                                 html.Div(
                                                     [
                                                         dbc.Button("Send Valve Values to Server", id='download_reel_valve', n_clicks=0, size="lg",
-                                                                   className='mr-1', color="primary", style={'margin': '-3rem 1rem 0 0'}),
+                                                                   className='mr-1', color="primary", style={'margin': '-3rem 1rem 0 6vw'}),
                                                         ]),
 
                                                 ],style = {'margin':'3rem'}, className='abcd'),
@@ -811,7 +811,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                   debounce=True,
                                                                   min=-10000, max=10000, step=1,
                                                                   bs_size="mr",
-                                                                  style={'width': '11rem', "marginTop": "1.5rem",'display':'None'},
+                                                                  style={'width': '11rem', 'marginTop': '1.5rem','display':'None'},
                                                                   autoFocus=True,
                                                                   placeholder="Enter your IP number ...",
                                                                   ),
@@ -1668,7 +1668,7 @@ def parse_contents(contents, filename, date):
                 'textOverflow': 'ellipsis',
                 'maxWidth': 0,
                 'fontSize': '1rem',
-                'TextAlign': 'center',
+                'textAlign': 'center',
                 'color' : 'black'
             },
             fixed_rows={'headers': True},
@@ -2343,7 +2343,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                           step=100,
                                           size=420,
                                           vertical=True,
-                                          updatemode='drag'), style={'margin': '20px'})],style={'margin':' auto', },
+                                          updatemode='drag'), style={'margin': '20px'})],
                      className='abcdb'),
 
             html.Div([daq.Slider(id="sliderWidthTab1",
@@ -2755,7 +2755,7 @@ def clear(nclick, st1, st2):
 def res2(val, radiograph, sliderheight, sliderwidth,
          minValfirst, minValsecond, firstchoosen, secondchoosen, rightsidedrop, right_y_axis, right_x_axis,
          nclick, nc, cleanclick, axis, shift_x, shift_y, differance, retrieve, leftfirstval, leftsecondval,
-         rightfirstval, rightsecondval, firstshape, secondshape, ):
+         rightfirstval, rightsecondval, firstshape, secondshape ):
     if retrieve == None or retrieve == []:
         raise PreventUpdate
     if retrieve != []:
@@ -2769,12 +2769,15 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 if 'Temps' in col:
                     baseval += col
                     dt = df[baseval]
-        else:
-            df_shape = df.copy()
-            df_shape['newindex'] = df_shape.index
-            df_shape.index = df_shape['date']
-            dt = ["{}-{:02.0f}-{:02.0f}_{:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day, d.hour, d.minute,
-                                                                           d.second) for d in df_shape.index]
+        if 'date' in df.columns:
+            if type(df['date'][0]) == 'str' :
+                df_shape = df.copy()
+                df_shape['newindex'] = df_shape.index
+                df_shape.index = df_shape['date']
+                dt = ["{}-{:02.0f}-{:02.0f}_{:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day, d.hour, d.minute,
+                                                                               d.second) for d in df_shape.index]
+            else :
+                dt = df['date']
         fig = go.Figure()
         print('rightsidedrop', rightsidedrop)
         print('right_y_axis', right_y_axis)
@@ -3366,7 +3369,7 @@ def LoadingDataTab4(on, tab):
                           dcc.Textarea(
                               id='textarea4',
                               value='',
-                              style={'width': '15vw', 'marginTop': '0.5rem'},
+                              style={'width': '15rem', 'marginTop': '0.5rem'},
                               autoFocus='Saisir',
                           ),
                           ], className='aatab4'),
@@ -3491,22 +3494,21 @@ def LoadingDataTab4(on, tab):
              ], style={'display': 'None'},
                      className='abdbase'),
 
-            html.Div(id='tab4second', children=[dcc.Dropdown(id='shiftaxisdroptab4',
+            html.Div(id='tab4second', children=[html.Div([dcc.Dropdown(id='shiftaxisdroptab4',
                                                              options=[{'label': i, 'value': i} for i in
                                                                       []],
                                                              multi=False,
-                                                             style={'cursor': 'pointer', 'width': '180px',
-                                                                    'margin': '1rem'},
+                                                             style={'cursor': 'pointer', 'width':'10vw','marginLeft' : '1vw'},
 
                                                              clearable=True,
                                                              placeholder='Choose Value...',
                                                              ),
                                                 dbc.Tooltip(
-                                                    "You can change y-axis values in the same x-axis,",
-                                                    "Entered value will not use",
-                                                    "Clean variable name when you finished your shifting operation",
+                                                    "You can change y-axis values in the same x-axis,    "
+                                                    "If you finished your shifting operation, clean variable name and closed dropdown-list",
                                                     target="shiftaxisdroptab4",
-                                                ),
+                                                    placement='top',
+                                                ),]),
 
                                                 html.Div(id='shiftaxistab4',
                                                          children=[
@@ -3514,7 +3516,7 @@ def LoadingDataTab4(on, tab):
                                                                        type="number",
                                                                        min=-100000, max=100000, step=1,
                                                                        bs_size='sm',
-                                                                       # value=0,
+                                                                       value=0,
                                                                        style={'width': '8rem' },
                                                                        placeholder="Shift X axis..."),
                                                              dbc.Input(id='shift_y_axistab4',
@@ -3526,15 +3528,17 @@ def LoadingDataTab4(on, tab):
                                                                        placeholder="Shift Y axis..."),
                                                              dbc.Button("Ok", id="tab4send", outline=True, n_clicks=0,
                                                                         color='primary',
-                                                                        className='mr-2'),
+                                                                        className='mr-1'),
                                                          ], className='abcd',
                                                          style={'display': 'None'}),
                                                 dbc.Button("See Surface", id="valuechangetab4", n_clicks=0,
                                                            color="warning",
-                                                           style={'height': '2.5em', 'margin': '1.8rem'}),
+                                                           style={'height': '2.5em', 'marginLeft': '1.8rem'}
+                                                           ),
                                                 dbc.Button("Clean Surface", id="cleanshapetab4", n_clicks=0,
                                                            color="danger",
-                                                           style={'height': '2.5em', 'margin': '1.8rem'}),
+                                                           style={'height': '2.5em', 'marginLeft': '1.8rem'}
+                                                           ),
 
                                                 ], className='abcd'),
 
@@ -3571,9 +3575,9 @@ def LoadingDataTab4(on, tab):
                                  size=600,
                                  updatemode='drag'),
                       html.Div(id="tab4DashTable", children=[])
-                      ], style={'textAlign': 'left','color': colors['text'],
-                },),],style={'marginLeft' : '10vw'}),
-        ]), ],className = 'four-columns-div-user-controlsreel', style={'background': 'white' })
+                      ], style={'textAlign': 'left','color': colors['text'],'marginLeft' : '3rem'
+                },),],style={'marginLeft' : '2rem'}),
+        ]), ],className = 'four-columns-div-user-controlsreel', style={'backgroundColor': 'white' })
 
         return loadlist
     else:
@@ -3586,7 +3590,7 @@ def LoadingDataTab4(on, tab):
               Input('tabs-with-classes', 'value'), )
 def tab4enlarger(tab):
     if tab == 'tab-4':
-        return {'display': 'None'}, {'width': '260%', 'margin': '1rem'}
+        return {'display': 'None'}, {'margin': '1rem'}
     else:
         return {'visibility': 'visible'}, {'visibility': 'visible'}
 
@@ -3598,15 +3602,6 @@ def showintegral(show):
     if show == True:
         return {'visibility': 'visible'}
     return {'display': 'None'}
-
-@app.callback(Output('calculintegraltab4', 'color'),
-              [Input("calculintegraltab4", "on")],
-              )
-def showintegralcolor(show):
-    if show == True:
-        color = 'green'
-        return color
-
 
 @app.callback(Output('dbcheck', 'style'),
               [Input("calculintegraldb", "on")],
@@ -3621,7 +3616,7 @@ def dropdownlistcontrol(retrieve):
     if retrieve == []:
         raise PreventUpdate
     if retrieve != []:
-        time.sleep(2)
+        time.sleep(1)
         df = pd.DataFrame(retrieve)
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
         return (dff, dff)
@@ -3635,7 +3630,7 @@ def dropdownlistcontrolTab4Second(retrieve):
     if retrieve == []:
         raise PreventUpdate
     if retrieve != []:
-        time.sleep(2)
+        time.sleep(1)
         df = pd.DataFrame(retrieve)
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
         return (dff, dff)
@@ -4249,7 +4244,7 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                         for k in range(len(valx2)):
                             a = df[valy2[j]]
                             b = df[valx2[k]]
-                            time.sleep(2)
+
                             fig.add_trace(
                                 go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
                                              name="{}/{}".format(valy2[j], valx2[k])))
@@ -4340,7 +4335,7 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
                             df[axisdrop] = pd.DataFrame(c)
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
-                    time.sleep(2)
+
                     fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
                                                name="{}/{}".format(valxsecond[s], valysecond[s])))
 
