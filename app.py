@@ -823,6 +823,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                                   labelPosition='bottom', on=False, size=100,
                                                                                   color="green",
                                                                                   className='dark-theme-control'),
+
                                                                                 ], style={'marginLeft': '1rem'}),
                                                         html.Div([ dcc.Dropdown(id='prname',
                                                                                 options=[{'label': i, 'value': i}
@@ -883,6 +884,11 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                                      labelPosition='bottom', on=False, size=100,
                                                                                      color="green",
                                                                                      className='dark-theme-control'),
+dbc.Tooltip(
+                                                                                    "!!! Before the connection, fulfill database and table name, "
+                                                                                    "Then send to Database button",
+                                                                                    target = "my-toggle-switch-pr",
+                                                                                            ),
                                                                      ], className='abpower',style = {'margin':'0 1rem 0 5rem'}),
                                                                            dcc.Store(id='get_data_from_modbus_pr'),
                                                                            html.Div(id='data_to_store_id_pr', children=[], style={'display': 'None'}),
@@ -1449,7 +1455,7 @@ def storedata_pr(id, val, qual, date):
               )
 def intervalcontrol2_pr(nc, data):
     if nc > 0:
-        df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'Date'])
+        df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'date'])
         df.to_excel('real.xlsx')
 
 
@@ -1751,6 +1757,7 @@ def retrieve(retrieve):
         raise PreventUpdate
     else:
         xx = retrieve[0]['props']['children'][2]['props']['data']
+        print('xx',xx)
         return xx
 
 
@@ -1906,8 +1913,12 @@ def dropdownlistcontrol(retrieve):
         raise PreventUpdate
 
     df = pd.DataFrame(retrieve)
-    dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
-    return dff
+    if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+        dff = [{'label': i, 'value': i} for i in df['ID'].unique() if i.startswith('Un') != 1 and i != 'index' and i != 'Date']
+        return dff
+    else :
+        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
+        return dff
 
 
 # @app.callback(
@@ -2769,8 +2780,11 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 if 'Temps' in col:
                     baseval += col
                     dt = df[baseval]
+            if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns :
+                dt = df['Date']
+
         if 'date' in df.columns:
-            if type(df['date'][0]) == 'str' :
+            if type(df['date'][0]) == 'str':
                 df_shape = df.copy()
                 df_shape['newindex'] = df_shape.index
                 df_shape.index = df_shape['date']
@@ -2778,6 +2792,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                                                                d.second) for d in df_shape.index]
             else :
                 dt = df['date']
+
         fig = go.Figure()
         print('rightsidedrop', rightsidedrop)
         print('right_y_axis', right_y_axis)
@@ -2800,13 +2815,24 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                        showarrow=True,
                                        yshift=80
                                        )
-
+        print('burda mi')
         for i_val in range(len(val)):
-            y_axis = df[val[i_val]]
+            print('burda mi')
+
+
+            if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                y_axis = df[df['ID'] == val[i_val]]['Value']
+                print('yaxis', y_axis)
+            else :
+                y_axis = df[val[i_val]]
             if 'date' not in df.columns:
-                x_axis = df[baseval]
-            else:
+                if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                    x_axis = df[df['ID'] == val[i_val]]['Date']
+                    print('xaxis', x_axis)
+                else : x_axis = df[baseval]
+            if 'date' in df.columns:
                 x_axis = df['date']
+
             if nclick > 0:
                 if axis == val[i_val]:
                     j = []
@@ -2833,6 +2859,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                         df.to_excel("appending.xlsx")
                     else:
                         x_axis = df['date']
+
 
             fig.add_trace(
                 go.Scattergl(x=x_axis, y=y_axis, mode=radiograph, marker=dict(line=dict(width=0.2, color='white')),
@@ -3618,6 +3645,8 @@ def dropdownlistcontrol(retrieve):
     if retrieve != []:
         time.sleep(1)
         df = pd.DataFrame(retrieve)
+        if 'ID' and  'Value' and 'Quality' and 'date' in df.columns:
+            return [{'label': i, 'value': i} for i in df['ID'].unique()], [{'label': i, 'value': i} for i in df['ID'].unique()]
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
         return (dff, dff)
     else:
@@ -3685,20 +3714,6 @@ def contractdropdown2(valxsecond, valysecond, radio):
         return [], []
 
 
-@app.callback(Output("tabDropdownTop4", "options"),
-              [Input("datastore", "data")])
-def dropdownlistcontrolTab4First(retrieve):
-    if retrieve == []:
-        raise PreventUpdate
-    if retrieve != []:
-        df = pd.DataFrame(retrieve)
-
-        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('TG') == 1 or i[-2:] != 'ts']
-        return dff
-    else:
-        return no_update
-
-
 @app.callback(
     Output('output_s', 'children'),
     [Input('tabDropdownTopTab4', 'value'),
@@ -3761,16 +3776,20 @@ def container5(val2, val3, radio):
     [Output('firstChoosenValueTab4', 'options'),
      Output('secondChoosenValueTab4', 'options')],
     [Input('output_s', 'children'),
-     Input('radiographtab4', 'value')], )
-def container4_2(val, radio):
+     Input('radiographtab4', 'value')],
+    [State("datastore", "data")])
+def container4_2(val, radio,data):
     if val == None or val == []:
         raise PreventUpdate
     a = []
+    df = pd.DataFrame(data)
+    print(df)
     if radio == 'choosevalue':
         print('vallllllllll output olan2', val)
         a = [{'label': i, 'value': i} for i in val], [{'label': i, 'value': i} for i in val]
     elif radio == 'optionlibre':
         print('vallllllllll output olan3', val)
+
         a = [{'label': i, 'value': i} for i in val], [{'label': i, 'value': i} for i in val]
     print('son radioya gore optionslar', val)
     return a
@@ -3871,7 +3890,6 @@ def relay7(valradio):
 @app.callback(Output('graph4', 'figure'),
               [Input('radiograph4', 'value'),
                Input('radiographtab4hidden', 'children'),
-               Input('tab4hiddenValuex_axis', 'children'),
                Input('tab4hiddenValuex_axissecond', 'children'),
                Input('tab4hiddenValuey_axissecond', 'children'),
                Input('sliderHeightTab4', 'value'),
@@ -3900,7 +3918,7 @@ def relay7(valradio):
                State('rightIntegralSecondTab4', 'value'),
                ]
               )
-def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
+def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                    slideheight, slidewidth, g1, g2, head, note, nclick, firstchoosen, secondchoosen, nc,
                    valx2, valy2, cleanclick, axisdrop, shift_x, shift_y, retrieve, firstshape, secondshape,
                    leftfirstval, leftsecondval, rightfirstval, rightsecondval, ):
@@ -3914,6 +3932,7 @@ def detailedGraph4(radio, radioval, valx, valxsecond, valysecond,
             df.dropna(axis=0, inplace=True)
             fig = go.Figure()
             print('firstshape ne olmali', firstshape)
+            print(df)
 
             def controlShape():
                 pathline = ''
@@ -4698,8 +4717,14 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
+                    print('x_val', x_val)
+                    print(df)
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
+                    if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                        dff = df[df['Date'] == x_val + '000+00:00']
+                        print(dff)
+
                     else:
                         a = ''
                         for v in df.columns:
@@ -4711,7 +4736,9 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
                                     dff = df[df[v] == x_val]
 
                     a = []
-                    a.append(dff[firstchoosen].index)
+                    if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                        a.append(dff[dff['ID'] == firstchoosen].index)
+                    else : a.append(dff[firstchoosen].index)
                     for i in range(len(a)):
                         for j in a:
                             leftchild.append(j[i])
@@ -5129,6 +5156,9 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, ret
                     x_val = clickData['points'][0]['x']
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
+                    if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                        dff = df[df['Date'] == x_val + '000+00:00']
+
                     else:
                         a = ''
                         for v in df.columns:
@@ -5139,7 +5169,9 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, ret
                                     x_val -= shift_x
                                     dff = df[df[v] == x_val]
                     a = []
-                    a.append(dff[secondchoosen].index)
+                    if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                        a.append(dff[dff['ID'] == secondchoosen].index)
+                    else : a.append(dff[secondchoosen].index)
                     for i in range(len(a)):
                         for j in a:
                             leftchild.append(j[i])
@@ -5520,16 +5552,29 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
             df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
-            dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
+            if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                df = df[df['ID'] == valuechoosenleft]
+                print(df[(df['index'] >= float(st1left)) & (df['index'] <= float(st1right))])
+                dff1 = (df[(df['index'] >= float(st1left)) & (df['index'] <= float(st1right))])
+
+                print('dffff1', dff1)
+                c = dff1['Value']
+                area1 = abs(trapz((abs(c)), dx=1))
+
+                return area1
+
+
+            else :
+                dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
             for i in df.columns:
                 if i.startswith('Temps'):
                     dff1 = dff1.groupby(i).mean()
 
-            c = dff1[valuechoosenleft]
-            area1 = abs(trapz((abs(c)), dx=1))
+                c = dff1[valuechoosenleft]
+                area1 = abs(trapz((abs(c)), dx=1))
 
-            return area1
+                return area1
         elif (st1left == '' and st1right != '') or (st1left != '' and st1right == ''):
             return 'total integration'
         elif (st1left == '' and st1right == '') and valuechoosenleft != '':
@@ -5671,16 +5716,25 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
             df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
-            dff2 = df[
-                (df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
-                (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
-            for i in df.columns:
-                if i.startswith('Temps'):
-                    dff2 = dff2.groupby(i).mean()
+            if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                df = df[df['ID'] == valuechoosenright]
+                print(df[(df['index'] >= float(st2left)) & (df['index'] <= float(st2right))])
+                dff2 = (df[(df['index'] >= float(st2left)) & (df['index'] <= float(st2right))])
+                f = dff2['Value']
+                area1 = abs(trapz((abs(f)), dx=1))
 
-            f = dff2[valuechoosenright]
-            area2 = abs(trapz(abs(f), dx=1))
-            return area2
+                return area1
+            else :
+                dff2 = df[
+                    (df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
+                    (df[valuechoosenright].index >= float(st2right)) & (df[valuechoosenright].index <= float(st2left))]
+                for i in df.columns:
+                    if i.startswith('Temps'):
+                        dff2 = dff2.groupby(i).mean()
+
+                f = dff2[valuechoosenright]
+                area2 = abs(trapz(abs(f), dx=1))
+                return area2
         elif (st2left == '' and st2right != '') or (st2left != '' and st2right == ''):
             return 'total integration'
         elif (st2left == '' and st2right == '') and valuechoosenright != '':
@@ -6221,8 +6275,7 @@ def exportdata(valueparse):
             t_parse.append(a_parse)
             a_parse = []
     t_parse.insert(0, ['time', 'firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
-                       'secondChoosenValue',
-                       'rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation', 'intersection'])
+                       'secondChoosenValue','rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation', 'intersection'])
 
     df = pd.DataFrame(t_parse)
     df.to_excel('new_fichier.xlsx')
