@@ -2782,11 +2782,16 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                     dt = df[baseval]
                     print('bu dt nedir', dt)
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns :
-                for col in df.columns:
-                    if 'Date' in col:
-                        baseval += col
-                        dt = df[baseval]
-                        print('dt',dt)
+                dff = df[df['ID'] == firstchoosen[-1]]
+                dff = dff.copy()
+                index = np.arange(0, len(dff['ID']))
+                dff.reset_index(drop=True, inplace=True)
+                dff.set_index(index, inplace=True)
+                # for col in dff.columns: buraya sadece dt ye uygun hale getirmem lazim
+                #     if _ in col:
+                #         baseval += col
+                #         dt = dff[baseval]
+                #         print('dt',dt)
 
                 # burada gelen veriye gore islemi suzmek gerekli
                 # ona gore bir dt cikacak
@@ -2951,7 +2956,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                             dff.reset_index(drop=True, inplace=True)
                                             dff.set_index(index, inplace=True)
                                             print('111111111', dff[dff.index == k]['Value'])
-                                            pathline += 'M ' + str(dt[k].index) + ', ' + str(minValfirst) + ' L' + str(dt[k].index) + ', ' +\
+                                            pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(dt[k]) + ', ' +\
                                                         str(dff[dff.index == k]['Value']) + ' '
                                             print('pathline1', pathline)
                                         else :
