@@ -83,9 +83,9 @@ index_page = html.Div([html.Div(html.Div(html.Div(
         dcc.Link('Start', href='/Database')
     ], className='content'), className='box'), className='card'),
     html.Div(html.Div(html.Div(children=[
-        html.H3('Work with Reel Time'),
+        html.H3('Work with Real Time'),
         html.P('Lorem ipsum'),
-        dcc.Link('Start', href='/reelTime')
+        dcc.Link('Start', href='/realTime')
     ], className='content'), className='box'), className='card'),
     html.Div(html.Div(html.Div(children=[
         html.H3('Project'),
@@ -108,7 +108,7 @@ page_1_layout = html.Div(
                                                className='dark-theme-control'),]),
                                html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
                                          html.Div(dcc.Link('Database Page', href='/Database', id='link2'),),
-                                         html.Div(dcc.Link('Real-Time Page', href='/reelTime', id='link3'),),
+                                         html.Div(dcc.Link('Real-Time Page', href='/realTime', id='link3'),),
                                           html.Div(dcc.Link('Project Page', href='/project', id='link4'),),], style = {'margin' : '2rem 2rem 0 2rem'})
                                ], className='abpower'),
                      html.Div(
@@ -348,7 +348,7 @@ page_2_layout = html.Div(
                                                              )]),
                                  html.Div([html.Div(dcc.Link('Main Page', href='/', id='link5')),
                                            html.Div(dcc.Link('File Page', href='/page-1', id='link6'), ),
-                                           html.Div(dcc.Link('Real-Time Page', href='reelTime', id='link7'), ),
+                                           html.Div(dcc.Link('Real-Time Page', href='realTime', id='link7'), ),
                                            html.Div(dcc.Link('Project Page', href='/project', id='link8'), ), ],
                                            style = {'marginTop':'1rem'},className='abpage2'),
                                  html.Div([dbc.Input(id='db_Ip',
@@ -803,7 +803,7 @@ page_3_layout = html.Div([html.Div([
 page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                         html.Div(dcc.Link('Main Page', href='/', id='link1')),
                                                         html.Div(dcc.Link('Database Page', href='/Database', id='link2'), ),
-                                                        html.Div(dcc.Link('Real-Time Page', href='/reelTime', id='link3'), ),
+                                                        html.Div(dcc.Link('Real-Time Page', href='/realTime', id='link3'), ),
                                                         html.Div(dcc.Link('Project Page', href='/project', id='link4'), ), ],
                                                         className = 'abcdbpr' ),
                                                         dbc.Input(id='pr_Ip',
@@ -1627,7 +1627,7 @@ def display_page(pathname):
         return index_page
     elif pathname == '/Database':
         return page_2_layout
-    elif pathname == '/reelTime':
+    elif pathname == '/realTime':
         return page_3_layout
     elif pathname == '/project':
         return page_4_layout
@@ -2780,8 +2780,19 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 if 'Temps' in col:
                     baseval += col
                     dt = df[baseval]
+                    print('bu dt nedir', dt)
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns :
-                dt = df['Date']
+                for col in df.columns:
+                    if 'Date' in col:
+                        baseval += col
+                        dt = df[baseval]
+                        print('dt',dt)
+
+                # burada gelen veriye gore islemi suzmek gerekli
+                # ona gore bir dt cikacak
+                #
+                #
+                #
 
         if 'date' in df.columns:
             if type(df['date'][0]) == 'str':
@@ -2790,6 +2801,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 df_shape.index = df_shape['date']
                 dt = ["{}-{:02.0f}-{:02.0f}_{:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day, d.hour, d.minute,
                                                                                d.second) for d in df_shape.index]
+
             else :
                 dt = df['date']
 
@@ -2939,16 +2951,17 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                             dff.reset_index(drop=True, inplace=True)
                                             dff.set_index(index, inplace=True)
                                             print('111111111', dff[dff.index == k]['Value'])
-                                            pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(dt[k]) + ', ' +\
+                                            pathline += 'M ' + str(dt[k].index) + ', ' + str(minValfirst) + ' L' + str(dt[k].index) + ', ' +\
                                                         str(dff[dff.index == k]['Value']) + ' '
-                                            print('pathline', pathline)
+                                            print('pathline1', pathline)
                                         else :
                                             pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(
                                                 dt[k]) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
-                                            print('pathline', pathline)
+                                            print('pathline2', pathline)
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         pathline += ' L' + str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k])
+                                        print('pathline3', pathline)
                                 pathline += ' L' + str(dt[k]) + ', ' + str(minValfirst)
                                 pathline += ' Z'
                                 print('2222222')
@@ -4765,17 +4778,22 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
-                    print('x_val', x_val)
-                    print(df)
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
                     elif 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                         dff = df.loc[df['ID'] == firstchoosen]
+                        print(dff)
                         dff = dff.copy()
                         index = np.arange(0, len(dff['ID']))
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
-                        dff = dff.loc[dff['Date'] == x_val + '000+00:00']
+                        print('x_val', x_val[-3])
+                        if x_val[-3] == '.':
+                            x_val = x_val + '0000+00:00'
+                        elif x_val[-1] == '.':
+                            x_val = x_val + '00000+00:00'
+                        else : x_val += '000+00:00'
+                        dff = dff[dff['Date'] == x_val]
                         print(dff)
 
                     else:
@@ -4787,24 +4805,19 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
                                 if shift_x != 0:
                                     x_val -= shift_x
                                     dff = df[df[v] == x_val]
-
                     a = []
                     if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                         a.append([dff[dff['ID'] == firstchoosen].index][0])
-                        print('aaaaaaaaaaa',a)
-                    else :
-                        a.append(dff.index)
+                    else : a.append(dff[firstchoosen].index)
                     for i in range(len(a)):
                         for j in a:
                             leftchild.append(j[i])
-
                     if len(leftchild) > 2:
                         leftchild.pop(0)
-                    print('left2', leftchild)
                     return (leftchild, leftchild)
                 else:
                     return (no_update, no_update)
-            # else : return(no_update,no_update)
+            # else : return (no_update, no_update)
     else:
         return (no_update, no_update)
 
@@ -5217,8 +5230,15 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, ret
                         index = np.arange(0, len(dff['ID']))
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
-                        dff = dff.loc[dff['Date'] == x_val + '000+00:00']
+                        if x_val[-3] == '.':
+                            x_val = x_val + '0000+00:00'
+                        elif x_val[-1] == '.':
+                            x_val = x_val + '00000+00:00'
+                        else:
+                            x_val += '000+00:00'
+                        dff = dff[dff['Date'] == x_val]
                         print(dff)
+
 
                     else:
                         a = ''
