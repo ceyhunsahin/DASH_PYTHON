@@ -2783,10 +2783,29 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                     print('bu dt nedir', dt)
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns :
                 dff = df[df['ID'] == firstchoosen[-1]]
-                dff = dff.copy()
-                index = np.arange(0, len(dff['ID']))
-                dff.reset_index(drop=True, inplace=True)
-                dff.set_index(index, inplace=True)
+                if dff.empty !=1:
+                    print('dfffffffffffffff', type(dff.loc[0,'Date']))
+                # if  type(dff.loc[0,'Date']) != 'str':
+                #     print('ceyhunnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn',type(df.loc[0,'Date']))
+                # df_shape = dff.copy()
+                # df_shape['newindex'] = df_shape.index
+                # df_shape.index = df_shape['Date']
+                # dt = ["{}-{:02.0f}-{:02.0f}_{:02.0f}:{:02.0f}:{:02.0f}".format(d.year, d.month, d.day, d.hour, d.minute,
+                #                                                                d.second) for d in df_shape.index]
+                # dff = dff.copy()
+                # index = np.arange(0, len(dff['ID']))
+                # dff.reset_index(drop=True, inplace=True)
+                # dff.set_index(index, inplace=True)
+                # print('1111111111', dff)
+                # # dff['Date'] = dff['Date'].apply(lambda x: pd.Timestamp(x).strftime('%Y-%m-%d %H:%M:%f'))
+                # # dff['Date'] = pd.to_datetime(df['Date'], format=('%Y-%m-%d %H:%M:%f'))
+                # print('1111111111', type(dff['Date']))
+                # # dff['Date'] = dff['Date'].apply(lambda x: x+'+00:00')
+                # print('dfff buraki bu',dff)
+                # # dff['index'] = dff.index
+                dt = dff['Date']
+                #
+                # print('bu nedir', dt)
                 # for col in dff.columns: buraya sadece dt ye uygun hale getirmem lazim
                 #     if _ in col:
                 #         baseval += col
@@ -2846,6 +2865,8 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                     x_axis = df[df['ID'] == val[i_val]]['Date']
                     print('xaxis', x_axis)
+                    if df.empty != 1:
+                        print('dfffffffffffffff', type(df.loc[0, 'Date']))
                 else : x_axis = df[baseval]
             if 'date' in df.columns:
                 x_axis = df['date']
@@ -2944,43 +2965,45 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                         if int(firstshape[1]) > int(firstshape[0]):
                             pathline = ''
                             rangeshape = range(int(firstshape[0]), int(firstshape[1]))
+                            print('rangeshape', rangeshape)
                             if ':' or '-' in dt[0]:
-
+                                print('biiiiiiiiiiiiiiiir')
                                 for k in rangeshape:
+                                    print('ikiiiiiiiiiiiiiiii')
                                     if k == rangeshape[0]:
-
+                                        print('3333333333333333333333333333333333')
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                                            df = df[df['ID'] == firstchoosen[-1]]
-                                            dff = df.copy()
-                                            index = np.arange(0, len(dff['ID']))
-                                            dff.reset_index(drop=True, inplace=True)
-                                            dff.set_index(index, inplace=True)
-                                            print('111111111', dff[dff.index == k]['Value'])
-                                            pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(dt[k]) + ', ' +\
-                                                        str(dff[dff.index == k]['Value']) + ' '
+                                            pathline += 'M ' + dt[k] + ', ' + str(minValfirst) + ' L' + dt[k] + ', ' +\
+                                                        str(list(dff[dff.index == k]['Value'])[0]) + ' '
                                             print('pathline1', pathline)
                                         else :
-                                            pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(
-                                                dt[k]) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
+                                            pathline += 'M ' + dt[k] + ', ' + str(minValfirst) + ' L' + dt[k] + \
+                                                        ', ' + str(df[firstchoosen[-1]][k]) + ' '
                                             print('pathline2', pathline)
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
-                                        pathline += ' L' + str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k])
-                                        print('pathline3', pathline)
-                                pathline += ' L' + str(dt[k]) + ', ' + str(minValfirst)
-                                pathline += ' Z'
-                                print('2222222')
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline += ' L' + dt[k] + ', ' + str(list(dff[dff.index == k]['Value'])[0])
+                                            print('pathline3', pathline)
+
+                                        else :
+                                            pathline += ' L' + str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k])
+                                            print('pathline3', pathline)
+                                if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                    pathline += ' L' + dt[k] + ', ' + str(minValfirst)
+                                    pathline += ' Z'
+                                    print('pathline4', pathline)
+                                else:
+                                    pathline += ' L' + str(dt[k]) + ', ' + str(minValfirst)
+                                    pathline += ' Z'
+                                    print('2222222')
                             else:
                                 print('333333')
                                 for k in rangeshape:
                                     if k == rangeshape[0]:
-                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                                            pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(
-                                            dt[k]) + ', ' + str(df[df['ID'] == firstchoosen[-1]][k]['Value']) + ' '
-                                        else:
-                                            pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(
-                                            dt[k]) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
 
+                                        pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + \
+                                                    str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         pathline += ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
