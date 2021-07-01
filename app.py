@@ -2528,7 +2528,6 @@ def secondchleftpr(secondchoosen):
 def firstchright(leftintfirst):
     return leftintfirst
 
-
 @app.callback(Output("leftintegralfirsthiddenTab4", "children"),
               [Input("leftIntegralFirstTab4", "value")],
               )
@@ -2960,7 +2959,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                     if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:
                         if int(firstshape[1]) > int(firstshape[0]):
                             pathline = ''
-                            rangeshape = range(int(firstshape[0]), int(firstshape[1]))
+                            rangeshape = range(int(firstshape[0]), int(firstshape[1])+2)
                             print('rangeshape', rangeshape)
                             if ':' or '-' in dt[0]:
 
@@ -2980,18 +2979,19 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                                             pathline += ' L' + dt[k] + ', ' + str(list(dff[dff.index == k]['Value'])[0])
                                             print('pathline3', pathline)
+                                            print('pathline3', k)
 
                                         else :
                                             pathline += ' L' + str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k])
                                             print('pathline3', pathline)
                                     elif k == rangeshape[-1] :
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                                            pathline += ' L' + dt[k] + ', ' + str(minValfirst)
+                                            pathline += ' L' + dt[k-1] + ', ' + str(minValfirst)
                                             pathline += ' Z'
                                             print('pathline4', pathline)
                                             print('burasi 1')
                                         else:
-                                            pathline += ' L' + str(dt[k]) + ', ' + str(minValfirst)
+                                            pathline += ' L' + str(dt[k-1]) + ', ' + str(minValfirst)
                                             pathline += ' Z'
                                             print('pathline4', pathline)
                                             print('burasi 2')
@@ -3004,12 +3004,12 @@ def res2(val, radiograph, sliderheight, sliderwidth,
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         pathline += ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
-                                pathline += ' L' + str(int(dt[k])) + ', ' + str(minValfirst)
+                                pathline += ' L' + str(int(dt[k-1])) + ', ' + str(minValfirst)
                                 pathline += ' Z'
 
                     if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
                         if int(secondshape[1]) > int(secondshape[0]):
-                            rangeshape = range(int(secondshape[0]), int(secondshape[1]))
+                            rangeshape = range(int(secondshape[0]), int(secondshape[1]+2))
                             if ':' or '-' in dt[0]:
                                 for k in rangeshape:
                                     if k == rangeshape[0]:
@@ -3029,12 +3029,12 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                             pathline2 += ' L' + str(dt[k]) + ', ' + str(df[secondchoosen][k])
                                     elif k == rangeshape[-1] :
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                                            pathline2 += ' L' + dt2[k] + ', ' + str(minValfirst)
+                                            pathline2 += ' L' + dt2[k-1] + ', ' + str(minValfirst)
                                             pathline2 += ' Z'
                                             print('pathline4', pathline)
                                             print('burasi 1')
                                         else :
-                                            pathline2 += ' L' + str(dt[k]) + ', ' + str(minValsecond)
+                                            pathline2 += ' L' + str(dt[k-1]) + ', ' + str(minValsecond)
                                             pathline2 += ' Z'
                             else:
                                 for k in rangeshape:
@@ -3045,7 +3045,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
-                                pathline2 += ' L' + str(int(dt[k])) + ', ' + str(minValsecond)
+                                pathline2 += ' L' + str(int(dt[k-1])) + ', ' + str(minValsecond)
                                 pathline2 += ' Z'
 
                     return [dict(
@@ -3068,7 +3068,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                     if len(firstshape) == 2:
                         if int(firstshape[1]) > int(firstshape[0]) or int(firstshape[0]) > int(firstshape[1]):
                             pathline = ''
-                            rangeshape = range(int(firstshape[0]), int(firstshape[1]))
+                            rangeshape = range(int(firstshape[0]), int(firstshape[1])+2)
                             print('rangeshape', rangeshape)
                             if ':' or '-' or '_' in dt[0]:
                                 for k in rangeshape:
@@ -3110,7 +3110,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         pathline += ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
-                                pathline += ' L' + str(int(dt[k])) + ', ' + str(minValfirst)
+                                pathline += ' L' + str(int(dt[k-1])) + ', ' + str(minValfirst)
                                 pathline += ' Z'
 
                         return [dict(
@@ -3125,7 +3125,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 if secondchoosen != None and firstchoosen[-1] == None:
                     if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
                         if int(secondshape[1]) > int(secondshape[0]) or int(secondshape[0]) > int(secondshape[1]):
-                            rangeshape = range(int(secondshape[0]), int(secondshape[1]))
+                            rangeshape = range(int(secondshape[0]), int(secondshape[1])+2)
                             if ':' or '-' in dt[0]:
                                 for k in rangeshape:
                                     if k == rangeshape[0]:
@@ -3150,7 +3150,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                             print('pathline4', pathline)
                                             print('burasi 1')
                                         else:
-                                            pathline2 += ' L' + str(dt[k]) + ', ' + str(minValsecond)
+                                            pathline2 += ' L' + str(dt[k-1]) + ', ' + str(minValsecond)
                                             pathline2 += ' Z'
                             else:
                                 for k in rangeshape:
@@ -3160,7 +3160,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
-                                pathline2 += ' L' + str(int(dt[k])) + ', ' + str(minValsecond)
+                                pathline2 += ' L' + str(int(dt[k-1])) + ', ' + str(minValsecond)
                                 pathline2 += ' Z'
 
                         return [dict(
@@ -4884,15 +4884,16 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
 
 
 @app.callback([Output('leftIntegralFirst', 'value'), Output('leftIntegralSecond', 'value')],
-              [Input('pointLeftFirst', 'children'), Input('pointLeftSecond', 'children')],
-              [State('firstChoosenValue', 'value')], )
+              [Input('pointLeftFirst', 'children'), Input('pointLeftSecond', 'children'),Input('firstChoosenValue', 'value')],
+               )
 def display_hover_data(leftchild, rightchild, firstchoosen):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
-        raise PreventUpdate
+    # if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
+    #     raise PreventUpdate
 
     minchild = 0
     maxchild = 0
-    if len(leftchild) == 2:
+    if firstchoosen != None and len(leftchild) == 2:
+        print('buraya girebildik mi simdi',firstchoosen)
         for i in range(len(leftchild)):
             if leftchild[0] < leftchild[1]:
                 minchild = leftchild[0]
@@ -4900,26 +4901,22 @@ def display_hover_data(leftchild, rightchild, firstchoosen):
             else:
                 minchild = leftchild[1]
                 maxchild = leftchild[0]
-    else:
-        minchild = leftchild[0]
-        maxchild = leftchild[0]
-
-    if firstchoosen != '' and len(leftchild) == 2:
         return ('T ' + str(minchild), 'T ' + str(maxchild))
+    elif firstchoosen == None :
+        return '',''
     else:
         return (no_update, no_update)
-
 
 @app.callback([Output('leftIntegralFirstdb', 'value'), Output('leftIntegralSeconddb', 'value')],
               [Input('pointLeftFirstdb', 'children'), Input('pointLeftSeconddb', 'children')],
               )
 def display_hover_data_db(leftchild, rightchild):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
-        raise PreventUpdate
-
+    # if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
+    #     raise PreventUpdate
     minchild = 0
     maxchild = 0
-    if len(leftchild) == 2:
+    if firstchoosen != None and len(leftchild) == 2:
+        print('buraya girebildik mi simdi',firstchoosen)
         for i in range(len(leftchild)):
             if leftchild[0] < leftchild[1]:
                 minchild = leftchild[0]
@@ -4927,12 +4924,9 @@ def display_hover_data_db(leftchild, rightchild):
             else:
                 minchild = leftchild[1]
                 maxchild = leftchild[0]
-    else:
-        minchild = leftchild[0]
-        maxchild = leftchild[0]
-
-    if len(leftchild) == 2:
         return ('T ' + str(minchild), 'T ' + str(maxchild))
+    elif firstchoosen == None :
+        return '',''
     else:
         return (no_update, no_update)
 
@@ -4941,12 +4935,13 @@ def display_hover_data_db(leftchild, rightchild):
               [Input('pointLeftFirstpr', 'children'), Input('pointLeftSecondpr', 'children')],
               )
 def display_hover_data_pr(leftchild, rightchild):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
-        raise PreventUpdate
+    # if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
+    #     raise PreventUpdate
 
     minchild = 0
     maxchild = 0
-    if len(leftchild) == 2:
+    if firstchoosen != None and len(leftchild) == 2:
+        print('buraya girebildik mi simdi',firstchoosen)
         for i in range(len(leftchild)):
             if leftchild[0] < leftchild[1]:
                 minchild = leftchild[0]
@@ -4954,12 +4949,9 @@ def display_hover_data_pr(leftchild, rightchild):
             else:
                 minchild = leftchild[1]
                 maxchild = leftchild[0]
-    else:
-        minchild = leftchild[0]
-        maxchild = leftchild[0]
-
-    if len(leftchild) == 2:
         return ('T ' + str(minchild), 'T ' + str(maxchild))
+    elif firstchoosen == None :
+        return '',''
     else:
         return (no_update, no_update)
 
@@ -5324,15 +5316,15 @@ def valintdb2(clickData, secondchoosen, value, leftchild, rightchild, retrieve, 
 
 
 @app.callback([Output('rightIntegralFirstdb', 'value'), Output('rightIntegralSeconddb', 'value')],
-              [Input('pointRightFirstdb', 'children'), Input('pointRightSeconddb', 'children')],
+              [Input('pointRightFirstdb', 'children'), Input('pointRightSeconddb', 'children'),Input('secondChoosenValuedb', 'value')],
               )
 def display_hover_data_db(leftchild, rightchild):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
-        raise PreventUpdate
+    # if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
+    #     raise PreventUpdate
 
     minchild = 0
     maxchild = 0
-    if len(leftchild) == 2:
+    if secondchoosen != None and len(leftchild) == 2:
         for i in range(len(leftchild)):
             if leftchild[0] < leftchild[1]:
                 minchild = leftchild[0]
@@ -5340,66 +5332,57 @@ def display_hover_data_db(leftchild, rightchild):
             else:
                 minchild = leftchild[1]
                 maxchild = leftchild[0]
-    else:
-        minchild = leftchild[0]
-        maxchild = leftchild[0]
-
-    if len(leftchild) == 2:
         return ('T ' + str(minchild), 'T ' + str(maxchild))
+    elif secondchoosen == None :
+        return '',''
     else:
         return (no_update, no_update)
 
-
-@app.callback([Output('rightIntegralFirstpr', 'value'), Output('rightIntegralSecondpr', 'value')],
-              [Input('pointRightFirstpr', 'children'), Input('pointRightSecondpr', 'children')],
-              )
-def display_hover_data_pr(leftchild, rightchild):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
-        raise PreventUpdate
-
-    minchild = 0
-    maxchild = 0
-    if len(leftchild) == 2:
-        for i in range(len(leftchild)):
-            if leftchild[0] < leftchild[1]:
-                minchild = leftchild[0]
-                maxchild = leftchild[1]
-            else:
-                minchild = leftchild[1]
-                maxchild = leftchild[0]
-    else:
-        minchild = leftchild[0]
-        maxchild = leftchild[0]
-    print('leftchild', leftchild)
-    if len(leftchild) == 2:
-        return ('T ' + str(minchild), 'T ' + str(maxchild))
-    else:
-        return (no_update, no_update)
+#
+# @app.callback([Output('rightIntegralFirstpr', 'value'), Output('rightIntegralSecondpr', 'value')],
+#               [Input('pointRightFirstpr', 'children'), Input('pointRightSecondpr', 'children'),Input('secondChoosenValuepr', 'value')],
+#               )
+# def display_hover_data_pr(leftchild, rightchild):
+#     # if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
+#     #     raise PreventUpdate
+#
+#     minchild = 0
+#     maxchild = 0
+#     if secondchoosen != None and len(leftchild) == 2:
+#
+#         for i in range(len(leftchild)):
+#             if leftchild[0] < leftchild[1]:
+#                 minchild = leftchild[0]
+#                 maxchild = leftchild[1]
+#             else:
+#                 minchild = leftchild[1]
+#                 maxchild = leftchild[0]
+#         return ('T ' + str(minchild), 'T ' + str(maxchild))
+#     elif secondchoosen == None :
+#         return '',''
+#     else:
+#         return (no_update, no_update)
 
 
 @app.callback(
     [Output('rightIntegralFirst', 'value'), Output('rightIntegralSecond', 'value')],
-    [Input('pointRightFirst', 'children'), Input('pointRightSecond', 'children')],
-    [State('secondChoosenValue', 'value')], )
-def display_hover_data2(leftchild1, rightchild1, secondchoosen):
-    if leftchild1 == None or rightchild1 == None or leftchild1 == [] or rightchild1 == [] or secondchoosen == None:
-        raise PreventUpdate
-    if secondchoosen != '' and len(leftchild1) == 2:
-        for i in range(len(leftchild1)):
-            if leftchild1[0] < leftchild1[1]:
-                minchild = leftchild1[0]
-                maxchild = leftchild1[1]
-                return 'T ' + str(minchild), 'T ' + str(maxchild)
-            else:
-                minchild = leftchild1[1]
-                maxchild = leftchild1[0]
-                return 'T ' + str(minchild), 'T ' + str(maxchild)
-    else:
-        minchild = leftchild1[0]
-        maxchild = leftchild1[0]
+    [Input('pointRightFirst', 'children'), Input('pointRightSecond', 'children'),
+    Input('secondChoosenValue', 'value')], )
+def display_hover_data2(leftchild, rightchild1, secondchoosen):
+    minchild = 0
+    maxchild = 0
+    if secondchoosen != None and len(leftchild) == 2:
 
-    if secondchoosen != '' and len(leftchild1) == 2:
-        return 'T ' + str(minchild), 'T ' + str(maxchild)
+        for i in range(len(leftchild)):
+            if leftchild[0] < leftchild[1]:
+                minchild = leftchild[0]
+                maxchild = leftchild[1]
+            else:
+                minchild = leftchild[1]
+                maxchild = leftchild[0]
+        return ('T ' + str(minchild), 'T ' + str(maxchild))
+    elif secondchoosen == None :
+        return '',''
     else:
         return (no_update, no_update)
 
@@ -5583,7 +5566,7 @@ def display_hover_data4(leftchild1, rightchild1, secondchoosen):
                ], [State('retrieve', 'children')]
               )
 def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
-    if st1left == None or st1right == None or valuechoosenleft == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
+    if st1left == None or st1right == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
     if st1left.startswith('T') == 1 and st1right.startswith('T') == 1:
         st1left = st1left[2:]
@@ -5602,6 +5585,7 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
             df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
+            print('valuechoosenleft', valuechoosenleft)
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 df = df.loc[df['ID'] == valuechoosenleft]
                 df = df.copy()
@@ -5627,9 +5611,11 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
                 return area1
         elif (st1left == '' and st1right != '') or (st1left != '' and st1right == ''):
             return 'total integration'
-        elif (st1left == '' and st1right == '') and valuechoosenleft != '':
+        elif (st1left == '' and st1right == '') and valuechoosenleft != None:
             return 'total integration'
-        elif st1left != '' and st1right != '' and valuechoosenleft == '':
+        elif st1left != '' and st1right != '' and valuechoosenleft == None:
+            return 'total integration'
+        elif st1left == '' and st1right != '' and valuechoosenleft == None:
             return 'total integration'
     # return no_update
 
@@ -5689,9 +5675,11 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbn
             return area1
         elif (st1left == '' and st1right != '') or (st1left != '' and st1right == ''):
             return 'total integration'
-        elif (st1left == '' and st1right == '') and valuechoosenleft != '':
+        elif (st1left == '' and st1right == '') and valuechoosenleft != None:
             return 'total integration'
-        elif st1left != '' and st1right != '' and valuechoosenleft == '':
+        elif st1left != '' and st1right != '' and valuechoosenleft == None:
+            return 'total integration'
+        elif st1left == '' and st1right != '' and valuechoosenleft == None:
             return 'total integration'
 
 
@@ -5733,9 +5721,11 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
             return area1
         elif (st1left == '' and st1right != '') or (st1left != '' and st1right == ''):
             return 'total integration'
-        elif (st1left == '' and st1right == '') and valuechoosenleft != '':
+        elif (st1left == '' and st1right == '') and valuechoosenleft != None:
             return 'total integration'
-        elif st1left != '' and st1right != '' and valuechoosenleft == '':
+        elif st1left != '' and st1right != '' and valuechoosenleft == None:
+            return 'total integration'
+        elif st1left == '' and st1right != '' and valuechoosenleft == None:
             return 'total integration'
     # return no_update
 
@@ -5747,7 +5737,7 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
                ], [State('retrieve', 'children')]
               )
 def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
-    if st2left == None or st2right == None or valuechoosenright == None or valuechoosenright == [] or retrieve == None or retrieve == []:
+    if st2left == None or st2right == None or valuechoosenright == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
     if st2left.startswith('T') == 1 and st2right.startswith('T') == 1:
         st2left = st2left[2:]
@@ -5791,9 +5781,11 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
                 return area2
         elif (st2left == '' and st2right != '') or (st2left != '' and st2right == ''):
             return 'total integration'
-        elif (st2left == '' and st2right == '') and valuechoosenright != '':
+        elif (st2left == '' and st2right == '') and valuechoosenright != None:
             return 'total integration'
-        elif st2left != '' and st2right != '' and valuechoosenright == '':
+        elif st2left != '' and st2right != '' and valuechoosenright == None:
+            return 'total integration'
+        elif st2left == '' and st2right != '' and valuechoosenright == None:
             return 'total integration'
 
 
@@ -5805,7 +5797,7 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
                State('dbvalchoosen', 'value'), State('db_name', 'value'), State('dbvaldate', 'value')]
               )
 def integralCalculationdb(st2left, st2right, valuechoosenright, retrieve, dbch, dbname, valdate):
-    if st2left == None or st2right == None or valuechoosenright == None or valuechoosenright == [] or retrieve == None or retrieve == []:
+    if st2left == None or st2right == None or valuechoosenright == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
     print('st1left', st2left)
     print('st1left', st2right)
@@ -5850,9 +5842,11 @@ def integralCalculationdb(st2left, st2right, valuechoosenright, retrieve, dbch, 
             return area1
         elif (st2left == '' and st2right != '') or (st2left != '' and st2right == ''):
             return 'total integration'
-        elif (st2left == '' and st2right == '') and valuechoosenright != '':
+        elif (st2left == '' and st2right == '') and valuechoosenright != None:
             return 'total integration'
-        elif st2left != '' and st2right != '' and valuechoosenright == '':
+        elif st2left != '' and st2right != '' and valuechoosenright == None:
+            return 'total integration'
+        elif st2left == '' and st2right != '' and valuechoosenright == None:
             return 'total integration'
 
 
@@ -5864,7 +5858,7 @@ def integralCalculationdb(st2left, st2right, valuechoosenright, retrieve, dbch, 
                ], [State('retrieve', 'children')]
               )
 def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
-    if st2left == None or st2right == None or valuechoosenright == None or valuechoosenright == [] or retrieve == None or retrieve == []:
+    if st2left == None or st2right == None or  valuechoosenright == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
     if st2left.startswith('T') == 1 and st2right.startswith('T') == 1:
         st2left = st2left[2:]
@@ -5894,9 +5888,11 @@ def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
             return area2
         elif (st2left == '' and st2right != '') or (st2left != '' and st2right == ''):
             return 'total integration'
-        elif (st2left == '' and st2right == '') and valuechoosenright != '':
+        elif (st2left == '' and st2right == '') and valuechoosenright != None:
             return 'total integration'
-        elif st2left != '' and st2right != '' and valuechoosenright == '':
+        elif st2left != '' and st2right != '' and valuechoosenright == None:
+            return 'total integration'
+        elif st2left == '' and st2right != '' and valuechoosenright == None:
             return 'total integration'
 
 
