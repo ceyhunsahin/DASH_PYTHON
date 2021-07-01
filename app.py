@@ -1665,7 +1665,8 @@ def parse_contents(contents, filename, date):
             id='datatable-interactivity',
             data=df.to_dict('records'),
             columns=[{'name': i, 'id': i, "deletable": True, "selectable": True} for i in df.columns if
-                     i[1:].isdigit() != 1],
+                     i[1:].isdigit() != 1 and i.startswith('Unn') != 1],
+
             editable=True,
             page_size=50,
             style_table={'height': '500px', 'overflowY': 'auto', 'width': '98%'},
@@ -1688,13 +1689,10 @@ def parse_contents(contents, filename, date):
                 {
                     'if': {'column_id': c},
                     'textAlign': 'center',
-                    'width': '8%'}
+                    'width': '8%',
 
-                for c in df.columns if c != 'date'],
-            # style_cell_conditional=[
-            # {'if': {'column_id': 'date'},
-            #  'width': '15%'}
-
+                    'if': {'column_id': 'Date'},
+                     'width': '18%'} for c in df.columns ],
             style_header={
                 'backgroundColor': 'rgb(230, 230, 230)',
                 'fontWeight': 'bold',
@@ -2364,8 +2362,8 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                  step=100,
                                  size=500,
                                  updatemode='drag'),
-                      html.Div(id='output-data-upload', children=[])],style={'margin': '1rem 0 0 12rem'} ),],style = {'textAlign': 'left',
-                'color': colors['text'],'backgroundColor': '#f0f4fa'}, className = 'abcdbgraphtab1'),
+                      html.Div(id='output-data-upload', children=[])],style={'margin': '1rem 0 0 1rem'} ),],style = {'textAlign': 'left',
+                'color': colors['text'],'backgroundColor': '#f0f4fa', 'width':'60vw'}, className = 'abcdbgraphtab1'),
 
         ]),
         #
@@ -2780,24 +2778,24 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                     baseval += col
                     dt = df[baseval]
                     print('bu dt nedir', dt)
-            if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns :
-                dff = df[df['ID'] == firstchoosen[-1]]
-                dff = dff.copy()
-                index = np.arange(0, len(dff['ID']))
-                dff.reset_index(drop=True, inplace=True)
-                dff.set_index(index, inplace=True)
-                dt = dff[['Date']]
-                dt.columns = ['Date']
-                dt = dt['Date'].apply(lambda x : x[:10] + '_' + x[12:])
-
-                dff2 = df[df['ID'] == secondchoosen]
-                dff2 = dff2.copy()
-                index = np.arange(0, len(dff2['ID']))
-                dff2.reset_index(drop=True, inplace=True)
-                dff2.set_index(index, inplace=True)
-                dt2 = dff2[['Date']]
-                dt2.columns = ['Date']
-                dt2 = dt2['Date'].apply(lambda x: x[:10] + '_' + x[12:])
+            # if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns :
+            #     dff = df[df['ID'] == firstchoosen[-1]]
+            #     dff = dff.copy()
+            #     index = np.arange(0, len(dff['ID']))
+            #     dff.reset_index(drop=True, inplace=True)
+            #     dff.set_index(index, inplace=True)
+            #     dt = dff[['Date']]
+            #     dt.columns = ['Date']
+            #     dt = dt['Date'].apply(lambda x : x[:10] + '_' + x[12:])
+            #
+            #     dff2 = df[df['ID'] == secondchoosen]
+            #     dff2 = dff2.copy()
+            #     index = np.arange(0, len(dff2['ID']))
+            #     dff2.reset_index(drop=True, inplace=True)
+            #     dff2.set_index(index, inplace=True)
+            #     dt2 = dff2[['Date']]
+            #     dt2.columns = ['Date']
+            #     dt2 = dt2['Date'].apply(lambda x: x[:10] + '_' + x[12:])
 
                 #
                 # print('bu nedir', dt)
@@ -3249,101 +3247,6 @@ def aa(a):
     return a
 
 
-# @app.callback(Output('tab2Data', 'children'),
-#               [Input("my-toggle-switch", "on")],
-#               )
-# def LoadingDataTab2(on):
-#
-#     if on == 1:
-#
-#         data_list = ['CoAd', 'ComManCoP2', 'ComManCoP3P4P5', 'ComManPompeSec', 'CompteurEnergie', 'CoP2',
-#                          'CtempDepChauff',
-#                          'D1', 'D2', 'D3', 'D4', 'MarcheBruleur', 'Teg', 'SdeBasBouMelange', 'SdeBasHauMelange', 'TambN3',
-#                          'Tb1',
-#                          'Tb2', 'Tb3', 'Tb4', 'TdepPLC', 'Teb', 'Tec', 'Teev', 'TempminMaf', 'Text', 'Tsb', 'Tsc', 'Tsev']
-#
-#         loadlist = html.Div(children=[
-#                 html.Div([html.Div([html.Div([dcc.Dropdown(id='tabDropdownTop',
-#                                                            options=[{'label': i, 'value': i} for i in data_list],
-#                                                            multi=True,
-#                                                            style={"cursor": "pointer"},
-#                                                            className='stockSelectorClass2',
-#                                                            clearable=True,
-#                                                            placeholder='Select your y-axis value...',
-#                                                            ),
-#                                               dcc.Dropdown(id='tabDropdownDown',
-#                                                            options=[{'label': i, 'value': i} for i in data_list],
-#                                                            multi=True,
-#                                                            style={"cursor": "pointer"},
-#                                                            className='stockSelectorClass2',
-#                                                            clearable=True,
-#                                                            placeholder='Select your x-axis value...',
-#                                                            ), ], className="ab"),
-#                                     html.Div(dcc.RadioItems(id="radiograph2",
-#                                                             options=[
-#                                                                 {'label': 'Point', 'value': 'markers'},
-#                                                                 {'label': 'Line', 'value': 'lines'},
-#                                                                 {'label': 'Line + Point', 'value': 'lines+markers'}],
-#                                                             value='markers',
-#                                                             labelClassName='groupgraph2',
-#                                                             labelStyle={'margin': '10px', },
-#                                                             inputStyle={'margin': '10px', }
-#                                                             ), ), ], className="ac"),
-#                           html.Div([dcc.Dropdown(id="dropadd",
-#                                                  options=[
-#                                                      {'label': 'Note', 'value': 'note'},
-#                                                      {'label': 'Header', 'value': 'header'},
-#                                                      {'label': 'x-axis', 'value': 'x_axis'},
-#                                                      {'label': 'y-axis', 'value': 'y_axis'},
-#
-#                                                  ],
-#                                                  value='header',
-#                                                  ),
-#                                     dcc.Textarea(
-#                                         id='textarea',
-#                                         value='',
-#                                         style={'width': '15rem', 'marginTop': '0.5rem'},
-#                                         autoFocus='Saisir',
-#                                     ),
-#                                     ], className="aa"),
-#
-#                           html.Button('addText', id='addText', n_clicks=0, style={'marginTop': '1.5rem'}),
-#
-#                           ], className="tabDesign", ),
-#
-#                 html.Div([dcc.Graph(id='graph2', config={'displayModeBar': True,
-#                                                          'scrollZoom': True,
-#                                                          'modeBarButtonsToAdd': [
-#                                                              'drawopenpath',
-#                                                              'drawcircle',
-#                                                              'eraseshape',
-#                                                              'select2d',
-#                                                          ]},
-#                                     figure={
-#                                         'layout': {'legend': {'tracegroupgap': 0},
-#
-#                                                    }
-#                                     }
-#                                     ),
-#                           dcc.Slider(id="sliderHeight",
-#                                      max=2100,
-#                                      min=400,
-#                                      value=500,
-#                                      step=100,
-#                                      vertical=True,
-#                                      updatemode='drag')], className='abc'),
-#
-#                 html.Div([dcc.Slider(id="sliderWidth",
-#                                      max=2000,
-#                                      min=600,
-#                                      value=950,
-#                                      step=100,
-#                                      updatemode='drag'),
-#                           html.Div(id="tab2DashTable", children=[])]),
-#             ])
-#
-#         return loadlist
-
 @app.callback(Output('tab4Data', 'children'),
               [Input("my-toggle-switch", "on")],
               [State('tabs-with-classes', 'value')]
@@ -3667,6 +3570,7 @@ def showintegral(show):
     if show == True:
         return {'visibility': 'visible'}
     return {'display': 'None'}
+
 @app.callback([Output("tabDropdownTop", "options"), Output("tabDropdownDown", "options")],
               [Input("datastore", "data")])
 def dropdownlistcontrol(retrieve):
@@ -3675,10 +3579,11 @@ def dropdownlistcontrol(retrieve):
     if retrieve != []:
         time.sleep(1)
         df = pd.DataFrame(retrieve)
-        if 'ID' and  'Value' and 'Quality' and 'date' in df.columns:
+        if 'ID' and  'Value' and 'Quality' and 'Date' in df.columns:
             return [{'label': i, 'value': i} for i in df['ID'].unique()], [{'label': i, 'value': i} for i in df['ID'].unique()]
-        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
-        return (dff, dff)
+        else :
+            dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
+            return (dff, dff)
     else:
         return (no_update, no_update)
 
@@ -3691,8 +3596,13 @@ def dropdownlistcontrolTab4Second(retrieve):
     if retrieve != []:
         time.sleep(1)
         df = pd.DataFrame(retrieve)
-        dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
-        return (dff, dff)
+        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+            return [{'label': i, 'value': i} for i in df['ID'].unique()], [{'label': i, 'value': i} for i in
+                                                                           df['ID'].unique()]
+        else:
+            dff = [{'label': i, 'value': i} for i in df.columns if
+                   i.startswith('Un') != 1 and i != 'index' and i != 'date']
+            return (dff, dff)
     else:
         return (no_update, no_update)
 
@@ -4263,21 +4173,9 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                         print('axisdrop', axisdrop)
                         print('axisdrop', lst[i])
                         if axisdrop in valx2:
-                            # print('valx2',valx2)
+                            print('valx2',valx2)
                             p = []
                             c = []
-                            # for t in df[lst[i][0]]:
-                            #     if shift_x == None:
-                            #         raise PreventUpdate
-                            #     else:
-                            #         print('shif_x', shift_x)
-                            #         t += float(shift_x)
-                            #         p.append(t)
-                            # print('ppp',p)
-                            #
-                            # df[lst[i][0]] = pd.DataFrame(p)
-                            # a = df[lst[i][0]]
-                            # df.to_excel("appending.xlsx")
                             for y in df[axisdrop]:
                                 if shift_y == None:
                                     raise PreventUpdate
@@ -4908,9 +4806,9 @@ def display_hover_data(leftchild, rightchild, firstchoosen):
         return (no_update, no_update)
 
 @app.callback([Output('leftIntegralFirstdb', 'value'), Output('leftIntegralSeconddb', 'value')],
-              [Input('pointLeftFirstdb', 'children'), Input('pointLeftSeconddb', 'children')],
+              [Input('pointLeftFirstdb', 'children'), Input('pointLeftSeconddb', 'children'), Input('firstChoosenValuedb', 'value')],
               )
-def display_hover_data_db(leftchild, rightchild):
+def display_hover_data_db1(leftchild, rightchild,firstchoosen):
     # if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
     #     raise PreventUpdate
     minchild = 0
@@ -5318,7 +5216,7 @@ def valintdb2(clickData, secondchoosen, value, leftchild, rightchild, retrieve, 
 @app.callback([Output('rightIntegralFirstdb', 'value'), Output('rightIntegralSeconddb', 'value')],
               [Input('pointRightFirstdb', 'children'), Input('pointRightSeconddb', 'children'),Input('secondChoosenValuedb', 'value')],
               )
-def display_hover_data_db(leftchild, rightchild):
+def display_hover_data_db2(leftchild, rightchild,secondchoosen):
     # if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
     #     raise PreventUpdate
 
@@ -5628,7 +5526,7 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
                State('dbvalchoosen', 'value'), State('db_name', 'value'), State('dbvaldate', 'value')]
               )
 def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbname, valdate):
-    if st1left == None or st1right == None or valuechoosenleft == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
+    if st1left == None or st1right == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
     print('st1left', st1left)
     print('st1left', st1right)
@@ -6056,18 +5954,6 @@ def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, righ
     if retrieve == None or retrieve == [] or leftfirst == None or rightfirst == None or leftsecond == None or rightsecond == None:
         raise PreventUpdate
 
-    # (len(hiddendif)>=2 and len(valuechoosenright)==1) or (len(hiddendif)>=2 and len(valuechoosenleft)==1) or
-    # if (len(hiddendif) >= 2):
-    #     a = 0
-    #     b = 0
-    #     for i in range(len(hiddendif)):
-    #         if hiddendif[0] < hiddendif[1]:
-    #             a = hiddendif[0]
-    #             b = hiddendif[1]
-    #         else:
-    #             a = hiddendif[1]
-    #             b = hiddendif[0]
-
     if valuechoosenright != None and valuechoosenleft != None:
         differance = []
         print('leftfirst', leftfirst)
@@ -6075,13 +5961,22 @@ def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, righ
         print('rightfirst', rightfirst)
         print('rightfirst', rightsecond)
         st1left = leftfirst[2:]
-        a = int(st1left)
+        a,b,c,d = 0,0,0,0
+        if st1left != '':
+            a = int(st1left)
+        else : a == 0
         st1right = leftsecond[2:]
-        b = int(st1right)
+        if st1right != '':
+            b = int(st1right)
+        else : b == 0
         st2left = rightfirst[2:]
-        c = int(st2left)
+        if st2left != '':
+            c = int(st2left)
+        else : c == 0
         st2right = rightsecond[2:]
-        d = int(st2right)
+        if st2right != '':
+            d = int(st2right)
+        else : d == 0
         if set(range(a, b)).issuperset(set(range(c, d))) == 1:
             differance.append(c)
             differance.append(d)
