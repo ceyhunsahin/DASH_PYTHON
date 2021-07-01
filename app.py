@@ -2963,8 +2963,9 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                             rangeshape = range(int(firstshape[0]), int(firstshape[1]))
                             print('rangeshape', rangeshape)
                             if ':' or '-' in dt[0]:
-                                print('biiiiiiiiiiiiiiiir')
+
                                 for k in rangeshape:
+                                    print('biiiiiiiiiiiiiiiir',k)
                                     if k == rangeshape[0]:
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                                             pathline += 'M ' + dt[k] + ', ' + str(minValfirst) + ' L' +\
@@ -2985,12 +2986,12 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                             print('pathline3', pathline)
                                     elif k == rangeshape[-1] :
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                                            pathline += ' L' + dt[k-1] + ', ' + str(minValfirst)
+                                            pathline += ' L' + dt[k] + ', ' + str(minValfirst)
                                             pathline += ' Z'
                                             print('pathline4', pathline)
                                             print('burasi 1')
                                         else:
-                                            pathline += ' L' + str(dt[k-1]) + ', ' + str(minValfirst)
+                                            pathline += ' L' + str(dt[k]) + ', ' + str(minValfirst)
                                             pathline += ' Z'
                                             print('pathline4', pathline)
                                             print('burasi 2')
@@ -3013,8 +3014,8 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                 for k in rangeshape:
                                     if k == rangeshape[0]:
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                                            pathline += 'M ' + dt2[k] + ', ' + str(minValfirst) + ' L' + \
-                                                        dt2[k] + ', ' + str(list(dff2[dff.index == k]['Value'])[0]) + ' '
+                                            pathline2 += 'M ' + dt2[k] + ', ' + str(minValfirst) + ' L' + \
+                                                        dt2[k] + ', ' + str(list(dff2[dff2.index == k]['Value'])[0]) + ' '
                                             print('pathline1', pathline)
                                         else :
                                             pathline2 += 'M ' + str(dt[k]) + ', ' + str(minValsecond) + ' L' + str(
@@ -3022,14 +3023,14 @@ def res2(val, radiograph, sliderheight, sliderwidth,
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                                            pathline += ' L' + dt2[k] + ', ' + str(list(dff2[dff2.index == k]['Value'])[0])
+                                            pathline2 += ' L' + dt2[k] + ', ' + str(list(dff2[dff2.index == k]['Value'])[0])
                                             print('pathline3', pathline)
                                         else :
                                             pathline2 += ' L' + str(dt[k]) + ', ' + str(df[secondchoosen][k])
                                     elif k == rangeshape[-1] :
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                                            pathline += ' L' + dt2[k-1] + ', ' + str(minValfirst)
-                                            pathline += ' Z'
+                                            pathline2 += ' L' + dt2[k] + ', ' + str(minValfirst)
+                                            pathline2 += ' Z'
                                             print('pathline4', pathline)
                                             print('burasi 1')
                                         else :
@@ -3065,7 +3066,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
 
                 if firstchoosen[-1] != None and secondchoosen == None:
                     if len(firstshape) == 2:
-                        if int(firstshape[1]) > int(firstshape[0]):
+                        if int(firstshape[1]) > int(firstshape[0]) or int(firstshape[0]) > int(firstshape[1]):
                             pathline = ''
                             rangeshape = range(int(firstshape[0]), int(firstshape[1]))
                             print('rangeshape', rangeshape)
@@ -3123,13 +3124,13 @@ def res2(val, radiograph, sliderheight, sliderwidth,
 
                 if secondchoosen != None and firstchoosen[-1] == None:
                     if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
-                        if int(secondshape[1]) > int(secondshape[0]):
+                        if int(secondshape[1]) > int(secondshape[0]) or int(secondshape[0]) > int(secondshape[1]):
                             rangeshape = range(int(secondshape[0]), int(secondshape[1]))
                             if ':' or '-' in dt[0]:
                                 for k in rangeshape:
                                     if k == rangeshape[0]:
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                                            pathline += 'M ' + dt2[k] + ', ' + str(minValfirst) + ' L' + \
+                                            pathline2 += 'M ' + dt2[k] + ', ' + str(minValfirst) + ' L' + \
                                                         dt2[k] + ', ' + str(list(dff2[dff2.index == k]['Value'])[0]) + ' '
                                             print('pathline1', pathline)
                                         else:
@@ -3138,14 +3139,14 @@ def res2(val, radiograph, sliderheight, sliderwidth,
 
                                     elif k != rangeshape[0] and k != rangeshape[-1]:
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                                            pathline += ' L' + dt2[k] + ', ' + str(list(dff2[dff2.index == k]['Value'])[0])
+                                            pathline2 += ' L' + dt2[k] + ', ' + str(list(dff2[dff2.index == k]['Value'])[0])
                                             print('pathline3', pathline)
                                         else:
                                             pathline2 += ' L' + str(dt[k]) + ', ' + str(df[secondchoosen][k])
                                     elif k == rangeshape[-1]:
                                         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                                            pathline += ' L' + dt2[k - 1] + ', ' + str(minValfirst)
-                                            pathline += ' Z'
+                                            pathline2 += ' L' + dt2[k - 1] + ', ' + str(minValfirst)
+                                            pathline2 += ' Z'
                                             print('pathline4', pathline)
                                             print('burasi 1')
                                         else:
@@ -3170,9 +3171,6 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                 opacity=0.8,
                                 line_color="#8896BF",
                             )]
-
-
-
             a = []
             if nc > 0:
                 a = controlShape()
@@ -3236,7 +3234,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                     if set(range(c, d)).issuperset(set(range(a, b))) == 1:
                         differance.append(a)
                         differance.append(b)
-
+                    print('diferance', differance)
                 else:
                     differance = [0, 0]
         return fig, differance[-2:]
@@ -5987,30 +5985,60 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
                 b = hiddendif[0]
         differance = []
         if len(retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
-
             df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
-            dff = df[(df[valuechoosenright].index >= float(a)) & (df[valuechoosenright].index <= float(b)) |
-                     (df[valuechoosenright].index >= float(b)) & (df[valuechoosenright].index <= float(a))]
-            l = dff[valuechoosenright]
+            if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                df1 = df.loc[df['ID'] == valuechoosenleft]
+                index = np.arange(0, len(df1['ID']))
+                df1.reset_index(drop=True, inplace=True)
+                df1.set_index(index, inplace=True)
+                dff1 =  df1[(df1[df1['ID'] == valuechoosenleft].index >= float(a)) & (df1[df1['ID'] == valuechoosenleft].index <= float(b))]
+                l = dff1['Value']
 
-            dff2 = df[(df[valuechoosenleft].index >= float(a)) & (df[valuechoosenleft].index <= float(b)) |
-                      (df[valuechoosenleft].index >= float(b)) & (df[valuechoosenleft].index <= float(a))]
-            r = dff2[valuechoosenleft]
-            tt = []
-            yy = []
-            for i in l:
-                tt.append(i)
-            for i in r:
-                yy.append(i)
-            for i in range(len(tt)):
-                if tt[i] <= yy[i]:
-                    differance.append(tt[i])
-                if yy[i] < tt[i]:
-                    differance.append(yy[i])
-            diff = (abs(trapz(differance, dx=1)))
-            return diff
+                df2 = df.loc[df['ID'] == valuechoosenright]
+                index = np.arange(0, len(df2['ID']))
+                df2.reset_index(drop=True, inplace=True)
+                df2.set_index(index, inplace=True)
+                dff2 = df2[(df2[df2['ID'] == valuechoosenright].index >= float(a)) & (
+                        df2[df2['ID'] == valuechoosenright].index <= float(b))]
+                r = dff2['Value']
+                tt = []
+                yy = []
+                for i in l:
+                    tt.append(i)
+                for i in r:
+                    yy.append(i)
+                for i in range(len(tt)):
+                    if tt[i] <= yy[i]:
+                        differance.append(tt[i])
+                    if yy[i] < tt[i]:
+                        differance.append(yy[i])
+                diff = (abs(trapz(differance, dx=1)))
+                return diff
+
+
+            else :
+                dff = df[(df[valuechoosenright].index >= float(a)) & (df[valuechoosenright].index <= float(b)) |
+                         (df[valuechoosenright].index >= float(b)) & (df[valuechoosenright].index <= float(a))]
+                l = dff[valuechoosenright]
+
+                dff2 = df[(df[valuechoosenleft].index >= float(a)) & (df[valuechoosenleft].index <= float(b)) |
+                          (df[valuechoosenleft].index >= float(b)) & (df[valuechoosenleft].index <= float(a))]
+                r = dff2[valuechoosenleft]
+                tt = []
+                yy = []
+                for i in l:
+                    tt.append(i)
+                for i in r:
+                    yy.append(i)
+                for i in range(len(tt)):
+                    if tt[i] <= yy[i]:
+                        differance.append(tt[i])
+                    if yy[i] < tt[i]:
+                        differance.append(yy[i])
+                diff = (abs(trapz(differance, dx=1)))
+                return diff
         else:
             return ['intersection']
 
