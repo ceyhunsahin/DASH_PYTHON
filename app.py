@@ -2810,6 +2810,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 dt = dff[['Date']]
                 dt.columns = ['Date']
                 dt = dt['Date'].apply(lambda x : x[:10] + '_' + x[12:])
+
                 dff2 = df[df['ID'] == secondchoosen]
                 dff2 = dff2.copy()
                 index = np.arange(0, len(dff2['ID']))
@@ -2818,6 +2819,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 dt2 = dff2[['Date']]
                 dt2.columns = ['Date']
                 dt2 = dt2['Date'].apply(lambda x: x[:10] + '_' + x[12:])
+
 
         if 'date' in df.columns:
             if type(df['date'][0]) == 'str':
@@ -2861,6 +2863,8 @@ def res2(val, radiograph, sliderheight, sliderwidth,
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 y_axis = df[df['ID'] == val[i_val]]['Value']
                 print('yaxis', y_axis)
+            else :
+                y_axis = df[val[i_val]]
             if 'date' not in df.columns:
                 if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                     x_axis = df[df['ID'] == val[i_val]]['Date']
@@ -2896,11 +2900,10 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                         df.to_excel("appending.xlsx")
                     else:
                         x_axis = df['date']
-
-
             fig.add_trace(
                 go.Scattergl(x=x_axis, y=y_axis, mode=radiograph, marker=dict(line=dict(width=0.2, color='white')),
                              name=val[i_val]))
+
             color = {0: 'blue', 1: 'red', 2: 'green', 3: 'purple', 4: 'orange'}
             if len(firstshape) == 2 and leftfirstval != firstshape[0] and leftfirstval != []:
                 if leftfirstval.startswith('T') == 1:
