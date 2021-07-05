@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from dash import no_update
 
 def controlShape_Tab(retrieve,firstchoosen, secondchoosen,firstshape, leftfirstval,leftsecondval,secondshape,
                  rightfirstval,rightsecondval,minValfirst, minValsecond):

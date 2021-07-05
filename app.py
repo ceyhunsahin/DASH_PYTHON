@@ -235,7 +235,7 @@ page_1_layout = html.Div(
                                   html.Div(id='rightintegralsecondhiddentab4', children=[], style={'display': 'None'}),
 
                                   html.Div(id='tableinteractivehiddentab4', children=[], style={'display': 'None'}),
-                                  # html.Div(id='tableinteractivehiddendb', children=[], style={'display': 'None'}),
+
                                   html.Div(id='writeexcelhidden', children=[], style={'display': 'None'}),
                                   html.Div(id='writeexcelhiddenTab4', children=[], style={'display': 'None'}),
 
