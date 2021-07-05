@@ -791,6 +791,7 @@ page_3_layout = html.Div([html.Div([
               html.Div(id='reelhidden1', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden2', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden3', children=[], style={'display': 'None'}),
+              html.Div(id='reelhidden4', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden5', children=[], style={'display': 'None'}),
               dcc.Store(id='reelhidden6'),
               html.Div(id='reelhidden7', children=[], style={'display': 'None'}),
@@ -1268,6 +1269,28 @@ def toserver(nc, v1,v2,v3,v4):
         opc.connect('Kepware.KEPServerEX.V6')
         opc.write([('Siemens.PLC1.Vanne3voies1', v1), ('Siemens.PLC1.Vanne3voies2', v2),('Siemens.PLC1.Vanne3voies3', v3), ('Siemens.PLC1.Vanne3voies4', v4)])
 
+
+@app.callback(
+    [Output("reelhidden3", "children"),Output("reelhidden5", "children")],
+    [Input("ok_reel", "n_clicks"), ],
+    [State("input_tablename", "value"),State("input_databasename", "value")],
+)
+def toggle_modal(nc, tbname, databasename):
+    if tbname == None  or databasename==None:
+        raise PreventUpdate
+    if nc != None:
+        return tbname,databasename
+
+
+@app.callback(
+    Output("modal_reel", "is_open"),
+    [Input("download_reel_db", "n_clicks"), Input("close_reel", "n_clicks"), Input("ok_reel", "n_clicks")],
+    [State("modal_reel", "is_open")],
+)
+def toggle_modal(n1, n2, n3, is_open):
+    if n1 or n2 or n3:
+        return not is_open
+    return is_open
 
 @app.callback(
     [Output("reelhidden3pr", "children"),Output("reelhidden4pr", "children")],
@@ -1902,6 +1925,7 @@ def dropdownlistcontrol(retrieve):
     if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
         dff = [{'label': i, 'value': i} for i in df['ID'].unique() if i.startswith('Un') != 1 and i != 'index' and i != 'Date']
         return dff
+
     else :
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
         return dff
@@ -2268,13 +2292,24 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                           value=0,
                                           style={'width': '8rem', 'marginLeft': '20px'},
                                           placeholder="Minimum Value of Graph for First..."),
+                                dbc.Tooltip(
+                                    "For the first parameter's (left) shaded area  ",
+                                    target="minimumValueGraphFirst",
+                                    placement='bottom',
+                                ),
                                 dbc.Input(id='minimumValueGraphSecond',
                                           type="text",
                                           min=-10000, max=10000, step=1,
                                           bs_size="sm",
                                           value=0,
                                           style={'width': '8rem', 'marginLeft': '20px'},
-                                          placeholder="Minimum Value of Graph for Second..."), ], className='shift'),
+                                          placeholder="Minimum Value of Graph for Second..."),
+                                dbc.Tooltip(
+                                    "For the second parameter's(right) shaded area ",
+                                    target="minimumValueGraphSecond",
+                                    placement='right',
+                                ),
+                                ], className='shift'),
 
                       ], className='abcd'),
 
@@ -2775,7 +2810,6 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 dt = dff[['Date']]
                 dt.columns = ['Date']
                 dt = dt['Date'].apply(lambda x : x[:10] + '_' + x[12:])
-
                 dff2 = df[df['ID'] == secondchoosen]
                 dff2 = dff2.copy()
                 index = np.arange(0, len(dff2['ID']))
@@ -2827,8 +2861,6 @@ def res2(val, radiograph, sliderheight, sliderwidth,
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 y_axis = df[df['ID'] == val[i_val]]['Value']
                 print('yaxis', y_axis)
-            else :
-                y_axis = df[val[i_val]]
             if 'date' not in df.columns:
                 if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                     x_axis = df[df['ID'] == val[i_val]]['Date']
@@ -3353,8 +3385,8 @@ def dropdownlistcontrolTab4Second(retrieve):
         time.sleep(1)
         df = pd.DataFrame(retrieve)
         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-            return [{'label': i, 'value': i} for i in df['ID'].unique()], [{'label': i, 'value': i} for i in
-                                                                           df['ID'].unique()]
+            return [{'label': i, 'value': i} for i in df['ID'].unique()], [{'label': i, 'value': i} for i in df['ID'].unique()]
+
         else:
             dff = [{'label': i, 'value': i} for i in df.columns if
                    i.startswith('Un') != 1 and i != 'index' and i != 'date']
@@ -4197,6 +4229,7 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
                     a = []
                     if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                         a.append([dff[dff['ID'] == firstchoosen].index][0])
+
                     else : a.append(dff[firstchoosen].index)
                     for i in range(len(a)):
                         for j in a:
@@ -4417,6 +4450,7 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
                 dff = dff.pivot(values='Value', columns='ID')
                 dff2 = pd.concat([dff2, dff], axis=1)
             df = dff2.copy()
+
         else :
             df['index'] = df.index
             df.dropna(axis=0, inplace=True)
@@ -4667,7 +4701,6 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, ret
                             x_val += '000+00:00'
                         dff = dff[dff['Date'] == x_val]
                         print(dff)
-
 
                     else:
                         a = ''
@@ -5224,6 +5257,7 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
                     dff = dff.pivot(values='Value', columns='ID')
                     dff2 = pd.concat([dff2, dff], axis=1)
                 df = dff2.copy()
+
             else :
                 df['index'] = df.index
                 df = df.reindex(columns=sorted(df.columns, reverse=True))
@@ -5285,6 +5319,7 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
                 area1 = abs(trapz((abs(f)), dx=1))
 
                 return area1
+
             else :
                 dff2 = df[
                     (df[valuechoosenright].index >= float(st2left)) & (df[valuechoosenright].index <= float(st2right)) |
@@ -5545,7 +5580,6 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
                 diff = (abs(trapz(differance, dx=1)))
                 return diff
 
-
             else :
                 dff = df[(df[valuechoosenright].index >= float(a)) & (df[valuechoosenright].index <= float(b)) |
                          (df[valuechoosenright].index >= float(b)) & (df[valuechoosenright].index <= float(a))]
@@ -5787,6 +5821,7 @@ def differanceCalculation4(firstshape, secondshape, valuechoosenleft, valuechoos
                     dff = dff.pivot(values='Value', columns='ID')
                     dff2 = pd.concat([dff2, dff], axis=1)
                 df = dff2.copy()
+
             else :
                 df['index'] = df.index
                 df = df.reindex(columns=sorted(df.columns, reverse=True))
@@ -6696,7 +6731,7 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                         print('bbbbbbbbb', b)
                         time.sleep(1)
                         fig.add_trace(
-                            go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
+                            go.Scattergl(x=b, y=a, mode='lines + markers', marker=dict(line=dict(width=0.2, color='white')),
                                          name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
                         autosize=True,
@@ -6732,7 +6767,7 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='lines+markers',
                                                    marker=dict(
                                                        line=dict(
                                                            width=0.2,
@@ -6770,7 +6805,7 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                     a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                     b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                     b = [i for i in b if i.startswith(valdate_new[k])]
-                    fig.add_trace(go.Scattergl(x=b, y=a, mode='markers',
+                    fig.add_trace(go.Scattergl(x=b, y=a, mode='lines+markers',
                                                marker=dict(
                                                    line=dict(
                                                        width=0.2,
