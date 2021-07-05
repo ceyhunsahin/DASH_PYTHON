@@ -2809,7 +2809,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 dff.set_index(index, inplace=True)
                 dt = dff[['Date']]
                 dt.columns = ['Date']
-                dt = dt['Date'].apply(lambda x : x[:10] + '_' + x[12:])
+                dt = dt['Date'].apply(lambda x : x[:10] + '_' + x[11:])
 
                 dff2 = df[df['ID'] == secondchoosen]
                 dff2 = dff2.copy()
@@ -2818,7 +2818,7 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 dff2.set_index(index, inplace=True)
                 dt2 = dff2[['Date']]
                 dt2.columns = ['Date']
-                dt2 = dt2['Date'].apply(lambda x: x[:10] + '_' + x[12:])
+                dt2 = dt2['Date'].apply(lambda x: x[:10] + '_' + x[11:])
 
 
         if 'date' in df.columns:
