@@ -26,7 +26,6 @@ from flask import send_file
 from openpyxl import Workbook, load_workbook
 from dash_extensions.enrich import Dash, ServersideOutput
 import OpenOPC
-from graphshape import controlShape_Tab
 from sshtunnel import SSHTunnelForwarder
 import mariadb
 import mysql.connector
@@ -1381,7 +1380,6 @@ def values(on, n_intervals, id, val, qual, date):
                 ['sauter.EY6AS680.Tb1', 'sauter.EY6AS680.Tb2', 'sauter.EY6AS680.Tb3', 'sauter.EY6AS680.Tb4',
                  'sauter.EY6AS680.Tec', 'sauter.EY6AS680.Teev', 'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
                  'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg' ]):
-            # print('value', (ID, value, Quality, Timestamp))
             id.append(ID[16:])
             val.append(value)
             qual.append(Quality)
@@ -1406,9 +1404,7 @@ def values_pr(on,realval, n_intervals, id, val, qual, date):
         opc = OpenOPC.client()
         opc.servers()
         opc.connect('Kepware.KEPServerEX.V6')
-        print(realval)
         for ID, value, Quality, Timestamp in opc.iread(realval):
-            # print('value', (ID, value, Quality, Timestamp))
             id.append(ID[16:])
             val.append(value)
             qual.append(Quality)
@@ -1439,26 +1435,8 @@ def storedata_pr(id, val, qual, date):
     # if store == None :
     #     raise PreventUpdate
     zipped_val = list(zip(id, val, qual, date))
-    print('buradan cikan value bu',list(zip(id, val, qual, date)))
 
     return zipped_val
-
-# @app.callback(Output('get_data_from_modbus_pr', 'data'),
-#               [Input('data_to_store_id_pr', 'children'),
-#                Input('data_to_store_value_pr', 'children'),
-#                Input('data_to_store_qualite_pr', 'children'),
-#                Input('data_to_store_date_pr', 'children'),
-#
-#                ], )
-# def storedata_pr(id, val, qual, date):
-#     # if realval == None :
-#     #     raise PreventUpdate
-#     print('realval', val)
-#     print('realval', qual)
-#     zipped_val=(list(zip(id, val, qual, date))),
-#     return zipped_val
-
-
 
 @app.callback(Output('reelhidden1pr', 'children'),
               [Input("write_excel_pr", "n_clicks")],
@@ -1539,17 +1517,13 @@ def pandastosql(name,dbname, data):
 def pandastosql_valve(name,dbname, data):
     if data == None:
         raise PreventUpdate
-    print('data',data)
     df = pd.DataFrame(data)
     df.columns=['HV_A1_IN', 'HV_A2_IN', 'HV_A1_OUT', 'HV_A2_OUT']
-    print('dfff', df)
     HV_A1_IN = [i for i in df['HV_A1_IN']]  # name of variable
-    print(HV_A1_IN)
     HV_A2_IN = [i for i in df['HV_A2_IN']]
     HV_A1_OUT = [i for i in df['HV_A1_OUT']]
     HV_A2_OUT = [i for i in df['HV_A2_OUT']]
     sql_insert = list(zip(HV_A1_IN, HV_A2_IN, HV_A1_OUT,  HV_A2_OUT))
-    print('sql_insert', sql_insert)
     try:
         db_connection = mysql.connector.connect(
             host="193.54.2.211",
@@ -1615,16 +1589,6 @@ def pandastosql_pr(on,interval, name,nametodb, data):
                 if db_connection.is_connected():
                     db_cursor.close()
                     db_connection.close()
-                    print("MySQL connection is closed")
-
-
-# @app.callback(Output('ceyhun', 'children'),
-#               [Input('get_data_from_modbus', 'data')])
-#
-# def graphreelTime(data) :
-#     df = pd.DataFrame(data,columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-#     print('df bakalim olacak mi', df)
-
 
 
 # surf between pages
@@ -1740,7 +1704,6 @@ def update_output(list_of_contents, on, list_of_names, list_of_dates, retrieve, 
             parse_contents(c, n, d) for c, n, d in
             zip(list_of_contents, list_of_names, list_of_dates)]
         retrieve = list_of_names
-        print('content', pd.DataFrame(content).head(10))
         return content, retrieve
     else:
         return (no_update, no_update)
@@ -1764,7 +1727,6 @@ def retrieve(retrieve):
         raise PreventUpdate
     else:
         xx = retrieve[0]['props']['children'][2]['props']['data']
-        print('xx',xx)
         return xx
 
 
@@ -1928,24 +1890,6 @@ def dropdownlistcontrol(retrieve):
         dff = [{'label': i, 'value': i} for i in df.columns if i.startswith('Un') != 1 and i != 'index' and i != 'date']
         return dff
 
-
-# @app.callback(
-#     [Output("leftSideDropdownHidden", "children"),
-#      Output("leftSidedroptValue", "children")],
-#     [Input("dropdownLeft", "value"),],
-#     [State("leftSideDropdownHidden", "children")]
-# )
-# def hiddendiv(val_dropdownLeft, children):
-#     if val_dropdownLeft == None or val_dropdownLeft == '':
-#         raise PreventUpdate
-#     a = []
-#     a.append(val_dropdownLeft)
-#     for i in a:
-#         if i not in children:
-#             children.append(val_dropdownLeft)
-#     return children, children
-#
-
 @app.callback(
     [Output('choosenChecklistLeft', 'options'),
      Output('choosenChecklistLeft', 'style'),
@@ -1979,7 +1923,6 @@ def displayLeftDropdown(n_clicks1, nc2, dropval, valeur, value, deletedval):
         return [{'label': i, 'value': i} for i in valeur], {'visibility': 'visible'}, [], valeur, valeur, deletedval
 
     if q1 == 'clearLeft':
-        print('nclick ne oldu', nc2)
 
         for k in range(len(value)):
             valeur.remove(value[k])
@@ -2078,57 +2021,7 @@ def edit_list2(ncr1, ncr2, valeur, children, hiddenchild):
             hiddenchild.pop()
     return children, hiddenchild
 
-
-#
-#
 # #### bunla ugras shapeler ciktiktan sonra referance bilgileri cikmiyor
-#
-# @app.callback([Output("inputRightY_axishidden", "children"),
-#                Output("inputRightX_axishidden", "children"),
-#                Output('checklistvaleurhidden2', "children"),],
-#               [Input('valueSendRight0', 'n_clicks'),
-#                Input('valueClearRight0', 'n_clicks'),
-#                ],
-#               [State("inputRightY_axis0", "value"),
-#                State("inputRightX_axis0", "value"),
-#                State("dropdownRight", "value"),
-#                State('checklistvaleurhidden2', "children"),
-#                State("inputRightY_axishidden", "children"),
-#                State("inputRightX_axishidden", "children"),]
-#               )
-# def Inputaxis0(sendnc,clrnc, y_val, x_val,droplist, checklist, y_axis, x_axis):
-#     if y_val == None or x_val == None :
-#         raise PreventUpdate
-#     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-#     print('q1', q1)
-#     print('droplist', droplist)
-#     print('checklist', checklist)
-#
-#     if q1 == 'valueSendRight0':
-#         if droplist != None or y_val != None or x_val != None:
-#             y_axis.append(y_val)
-#             x_axis.append(x_val)
-#             checklist.append(droplist)
-#         print('len(checklist)', checklist)
-#         print('yval', y_val)
-#         print('xval', x_val)
-#         if len(checklist) == len(y_axis) and len(checklist) == len(x_axis):
-#
-#             print('y_axis', y_axis)
-#             print('x_axis', x_axis)
-#             return (y_axis, x_axis,checklist)
-#         else:
-#             no_update, no_update, no_update
-#     if q1 == 'valueClearRight0':
-#         y_axis.remove(y_val)
-#         x_axis.remove(x_val)
-#         checklist.remove(droplist)
-#         print('clr sonrasi checklist)', checklist)
-#         print('clr yval', y_axis)
-#         print('clr xval', x_axis)
-#         return (y_axis, x_axis, checklist)
-#     else : no_update,no_update,no_update
-
 
 @app.callback(Output('tabs-content-classes', 'children'),
               [Input('tabs-with-classes', 'value')],
@@ -2398,34 +2291,8 @@ def LoadingDataTab1(on, dropdownhidden, tab):
 def res(val, hiddenval):
     if val == None:
         raise PreventUpdate
-    print('val', val)
     hiddenval = val
     return hiddenval
-
-
-# @app.callback(Output("leftSideChecklistValueHiddendb", "children"),
-#               [Input('choosenChecklistLeftdb', 'value'), ],
-#               [State("leftSideChecklistValueHiddendb", "children")]
-#               )
-# def res(val, hiddenval):
-#     if val == None:
-#         raise PreventUpdate
-#     print('val', val)
-#     hiddenval = val
-#     return hiddenval
-
-# @app.callback(Output("leftSideChecklistValueHiddenTab4", "children"),
-#               [Input('choosenChecklistLeft', 'value')],
-#               [State("leftSideChecklistValueHiddenTab4", "children")]
-#               )
-# def res(val, hiddenval):
-#     if val == None:
-#         raise PreventUpdate
-#     hiddenval = val
-#     print('valllllllllll', val)
-#     print('hiddenval', hiddenval)
-#     return hiddenval
-
 
 @app.callback(Output("radiographhidden", "children"),
               [Input("radiograph", "value")],
@@ -2502,15 +2369,6 @@ def firstchlefttab4(firstchoosen4, hiddenfirstchoosen4):
     hiddenfirstchoosen4.append(firstchoosen4)
     return hiddenfirstchoosen4
 
-
-# @app.callback(Output("firstchoosenvalhiddendb", "children"),
-#               [Input("firstChoosenValuedb", "value")],
-#               [State("firstchoosenvalhiddendb", "children")]
-#               )
-# def firstchleftdb(firstchoosendb, hiddenfirstchoosendb):
-#     hiddenfirstchoosendb.append(firstchoosendb)
-#     return hiddenfirstchoosendb
-
 @app.callback(Output("secondchoosenvalhidden", "children"),
               [Input("secondChoosenValue", "value")],
               )
@@ -2551,14 +2409,6 @@ def firstchright(leftintfirst):
 def firstchrighttab4(leftintfirst):
     return leftintfirst
 
-
-# @app.callback(Output("leftintegralfirsthiddendb", "children"),
-#               [Input("leftIntegralFirstdb", "value")],
-#               )
-# def firstchrightdb(leftintfirst):
-#     return leftintfirst
-
-
 @app.callback(Output("leftintegralsecondhidden", "children"),
               [Input("leftIntegralSecond", "value")],
               )
@@ -2571,13 +2421,6 @@ def secondchright(leftintsecond):
               )
 def secondchright(leftintsecond):
     return leftintsecond
-
-
-# @app.callback(Output("leftintegralsecondhiddendb", "children"),
-#               [Input("leftIntegralSeconddb", "value")],
-#               )
-# def secondchrightdb(leftintsecond):
-#     return leftintsecond
 
 @app.callback(Output("rightintegralfirsthidden", "children"),
               [Input("rightIntegralFirst", "value")],
@@ -2633,17 +2476,6 @@ def rightscnddb(rightintsecond):
               )
 def rightscndpr(rightintsecond):
     return rightintsecond
-
-
-# @app.callback(Output('valueSendRighthidden','children'),
-#               [Input('valueSendRight','n_clicks')])
-# def sendright(val):
-#     return val
-#
-# @app.callback(Output('checklistvaleurhidden', "children"),
-#               [Input('checklistValeur','value')])
-# def sendrightdrop(val):
-#     return val
 # for show graph and changement
 
 @app.callback(Output('shiftaxisdrophidden', 'children'),
@@ -2697,8 +2529,6 @@ def Inputaxis(sendnc, clrnc, y_val, x_val, droplist, checklist, y_axis, x_axis):
     if y_val == None or x_val == None:
         raise PreventUpdate
     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-    print('droplist', droplist)
-    print('checklist', checklist)
 
     if q1 == 'valueSendRight0':
         if droplist != None or y_val != None or x_val != None:
@@ -2708,16 +2538,7 @@ def Inputaxis(sendnc, clrnc, y_val, x_val, droplist, checklist, y_axis, x_axis):
         enum_y_axis = [j for j in enumerate(y_axis, 0)]
         enum_x_axis = [j for j in enumerate(x_axis, 0)]
         enum_checklist = [j for j in enumerate(checklist, 0)]
-        print('enum_y_axis', enum_y_axis)
-        print('enum_x_axis', enum_x_axis)
-        print('enum_checklist', enum_checklist)
-        print('len(checklist)', checklist)
-        print('yval', y_val)
-        print('xval', x_val)
         if len(checklist) == len(y_axis) and len(checklist) == len(x_axis):
-
-            print('y_axis', y_axis)
-            print('x_axis', x_axis)
             return (y_axis, x_axis, checklist)
         else:
             no_update, no_update, no_update
@@ -2726,9 +2547,6 @@ def Inputaxis(sendnc, clrnc, y_val, x_val, droplist, checklist, y_axis, x_axis):
         y_axis.remove(y_val)
         x_axis.remove(x_val)
         checklist.remove(droplist)
-        print('clr sonrasi checklist)', checklist)
-        print('clr yval', y_axis)
-        print('clr xval', x_axis)
         return (y_axis, x_axis, checklist)
 
 
@@ -2786,7 +2604,6 @@ def res2(val, radiograph, sliderheight, sliderwidth,
     if retrieve == None or retrieve == []:
         raise PreventUpdate
     if retrieve != []:
-        print('grapval', val)
         df = pd.DataFrame(retrieve)
         df['index'] = df.index
         df = df.reindex(columns=sorted(df.columns, reverse=True))
@@ -2796,7 +2613,6 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                 if 'Temps' in col:
                     baseval += col
                     dt = df[baseval]
-                    print('bu dt nedir', dt)
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns :
                 dff = df[df['ID'] == firstchoosen[-1]]
                 dff = dff.copy()
@@ -2830,9 +2646,6 @@ def res2(val, radiograph, sliderheight, sliderwidth,
 
 
         fig = go.Figure()
-        print('rightsidedrop', rightsidedrop)
-        print('right_y_axis', right_y_axis)
-        print('right_x_axis', right_x_axis)
         if right_x_axis != [] and right_y_axis != []:
             for k in range(len(rightsidedrop)):
                 if len(rightsidedrop) == len(right_x_axis) and len(rightsidedrop) == len(right_y_axis):
@@ -2851,21 +2664,14 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                                        showarrow=True,
                                        yshift=80
                                        )
-        print('burda mi')
         for i_val in range(len(val)):
-            print('burda mi')
-
-
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 y_axis = df[df['ID'] == val[i_val]]['Value']
-                print('yaxis', y_axis)
             else :
                 y_axis = df[val[i_val]]
             if 'date' not in df.columns:
                 if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                     x_axis = df[df['ID'] == val[i_val]]['Date']
-                    print('xaxis', type(x_axis))
-                    print(x_axis)
                 else : x_axis = df[baseval]
             if 'date' in df.columns:
                 x_axis = df['date']
@@ -2954,11 +2760,224 @@ def res2(val, radiograph, sliderheight, sliderwidth,
             if len(firstshape) == 2 and firstchoosen == None:
                 del firstshape[1]
 
+            def controlShape_Tab():
+                if retrieve != []:
+                    df = pd.DataFrame(retrieve)
+                    df['index'] = df.index
+                    df = df.reindex(columns=sorted(df.columns, reverse=True))
+
+                pathline = ''
+                pathline2 = ''
+                df = pd.DataFrame(retrieve)
+                if firstchoosen[-1] != None and secondchoosen != None:
+                    if len(firstshape) == 2 and leftfirstval != None and leftsecondval != None:
+                        if int(firstshape[1]) > int(firstshape[0]):
+                            pathline = ''
+                            rangeshape = range(int(firstshape[0]), int(firstshape[1]) + 2)
+                            if ':' or '-' in dt[0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline += 'M ' + dt[k] + ', ' + str(minValfirst) + ' L' + \
+                                                        dt[k] + ', ' + str(list(dff[dff.index == k]['Value'])[0]) + ' '
+                                        else:
+                                            pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(
+                                                dt[k]) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline += ' L' + dt[k] + ', ' + str(list(dff[dff.index == k]['Value'])[0])
+
+                                        else:
+                                            pathline += ' L' + str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k])
+                                    elif k == rangeshape[-1]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline += ' L' + dt[k - 1] + ', ' + str(minValfirst)
+                                            pathline += ' Z'
+
+                                        else:
+                                            pathline += ' L' + str(dt[k - 1]) + ', ' + str(minValfirst)
+                                            pathline += ' Z'
+
+                            else:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + \
+                                                    str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
+                                pathline += ' L' + str(int(dt[k - 1])) + ', ' + str(minValfirst)
+                                pathline += ' Z'
+
+                    if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
+                        if int(secondshape[1]) > int(secondshape[0]):
+                            rangeshape = range(int(secondshape[0]), int(secondshape[1] + 2))
+                            if ':' or '-' in dt[0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline2 += 'M ' + dt2[k] + ', ' + str(minValfirst) + ' L' + \
+                                                         dt2[k] + ', ' + str(
+                                                list(dff2[dff2.index == k]['Value'])[0]) + ' '
+
+                                        else:
+                                            pathline2 += 'M ' + str(dt[k]) + ', ' + str(minValsecond) + ' L' + str(
+                                                dt[k]) + ', ' + str(df[secondchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline2 += ' L' + dt2[k] + ', ' + str(
+                                                list(dff2[dff2.index == k]['Value'])[0])
+
+                                        else:
+                                            pathline2 += ' L' + str(dt[k]) + ', ' + str(df[secondchoosen][k])
+                                    elif k == rangeshape[-1]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline2 += ' L' + dt2[k - 1] + ', ' + str(minValfirst)
+                                            pathline2 += ' Z'
+
+                                        else:
+                                            pathline2 += ' L' + str(dt[k - 1]) + ', ' + str(minValsecond)
+                                            pathline2 += ' Z'
+                            else:
+                                for k in rangeshape:
+
+                                    if k == rangeshape[0]:
+                                        pathline2 += 'M ' + str(dt[k]) + ', ' + str(minValsecond) + ' L' + str(
+                                            dt[k]) + ', ' + str(df[secondchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
+                                pathline2 += ' L' + str(int(dt[k - 1])) + ', ' + str(minValsecond)
+                                pathline2 += ' Z'
+
+                    return [dict(
+                        type="path",
+                        path=pathline,
+                        layer='below',
+                        fillcolor="#5083C7",
+                        opacity=0.8,
+                        line_color="#8896BF",
+                    ), dict(
+                        type="path",
+                        path=pathline2,
+                        layer='below',
+                        fillcolor="#B0384A",
+                        opacity=0.8,
+                        line_color="#B36873",
+                    )]
+
+                if firstchoosen[-1] != None and secondchoosen == None:
+                    if len(firstshape) == 2:
+                        if int(firstshape[1]) > int(firstshape[0]) or int(firstshape[0]) > int(firstshape[1]):
+                            pathline = ''
+                            rangeshape = range(int(firstshape[0]), int(firstshape[1]) + 2)
+
+                            if ':' or '-' or '_' in dt[0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline += 'M ' + dt[k] + ', ' + str(minValfirst) + ' L' + \
+                                                        dt[k] + ', ' + str(list(dff[dff.index == k]['Value'])[0]) + ' '
+
+                                        else:
+                                            pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + str(
+                                                dt[k]) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
+
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline += ' L' + dt[k] + ', ' + str(list(dff[dff.index == k]['Value'])[0])
+
+
+                                        else:
+                                            pathline += ' L' + str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k])
+
+                                    elif k == rangeshape[-1]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline += ' L' + dt[k - 1] + ', ' + str(minValfirst)
+                                            pathline += ' Z'
+
+                                        else:
+                                            pathline += ' L' + str(dt[k - 1]) + ', ' + str(minValfirst)
+                                            pathline += ' Z'
+
+                            else:
+
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline += 'M ' + str(dt[k]) + ', ' + str(minValfirst) + ' L' + \
+                                                    str(dt[k]) + ', ' + str(df[firstchoosen[-1]][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline += ' L' + str(int(dt[k])) + ', ' + str(df[firstchoosen[-1]][k])
+                                pathline += ' L' + str(int(dt[k - 1])) + ', ' + str(minValfirst)
+                                pathline += ' Z'
+
+                        return [dict(
+                            type="path",
+                            path=pathline,
+                            layer='below',
+                            fillcolor="#5083C7",
+                            opacity=0.8,
+                            line_color="#8896BF",
+                        )]
+
+                if secondchoosen != None and firstchoosen[-1] == None:
+                    if len(secondshape) == 2 and rightsecondval != None and rightfirstval != None:
+                        if int(secondshape[1]) > int(secondshape[0]) or int(secondshape[0]) > int(secondshape[1]):
+                            rangeshape = range(int(secondshape[0]), int(secondshape[1]) + 2)
+                            if ':' or '-' in dt[0]:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline2 += 'M ' + dt2[k] + ', ' + str(minValfirst) + ' L' + \
+                                                         dt2[k] + ', ' + str(
+                                                list(dff2[dff2.index == k]['Value'])[0]) + ' '
+
+                                        else:
+                                            pathline2 += 'M ' + str(dt[k]) + ', ' + str(minValsecond) + ' L' + str(
+                                                dt[k]) + ', ' + str(df[secondchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline2 += ' L' + dt2[k] + ', ' + str(
+                                                list(dff2[dff2.index == k]['Value'])[0])
+
+                                        else:
+                                            pathline2 += ' L' + str(dt[k]) + ', ' + str(df[secondchoosen][k])
+                                    elif k == rangeshape[-1]:
+                                        if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                                            pathline2 += ' L' + dt2[k - 1] + ', ' + str(minValfirst)
+                                            pathline2 += ' Z'
+
+                                        else:
+                                            pathline2 += ' L' + str(dt[k - 1]) + ', ' + str(minValsecond)
+                                            pathline2 += ' Z'
+                            else:
+                                for k in rangeshape:
+                                    if k == rangeshape[0]:
+                                        pathline2 += 'M ' + str(dt[k]) + ', ' + str(minValsecond) + ' L' + str(
+                                            dt[k]) + ', ' + str(df[secondchoosen][k]) + ' '
+
+                                    elif k != rangeshape[0] and k != rangeshape[-1]:
+                                        pathline2 += ' L' + str(int(dt[k])) + ', ' + str(df[secondchoosen][k])
+                                pathline2 += ' L' + str(int(dt[k - 1])) + ', ' + str(minValsecond)
+                                pathline2 += ' Z'
+
+                        return [dict(
+                            type="path",
+                            path=pathline2,
+                            layer='below',
+                            fillcolor="#5083C7",
+                            opacity=0.8,
+                            line_color="#8896BF",
+                        )]
 
             a = []
             if nc > 0:
-                a = controlShape_Tab(retrieve,firstchoosen, secondchoosen,firstshape, leftfirstval,leftsecondval,secondshape,
-                 rightfirstval,rightsecondval,minValfirst, minValsecond)
+                a = controlShape_Tab()
             fig.update_layout(
                 autosize=False,
                 width=sliderwidth,
@@ -3019,7 +3038,6 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                     if set(range(c, d)).issuperset(set(range(a, b))) == 1:
                         differance.append(a)
                         differance.append(b)
-                    print('diferance', differance)
                 else:
                     differance = [0, 0]
         return fig, differance[-2:]
@@ -3330,11 +3348,9 @@ def LoadingDataTab4(on, tab):
     else:
         no_update
 
-
 @app.callback([Output('fourcolumnsdivusercontrols', 'style'),
                Output('eightcolumnsdivforcharts', 'style'), ],
-              # Output('tab4third', 'style'),],
-              Input('tabs-with-classes', 'value'), )
+               Input('tabs-with-classes', 'value'), )
 def tab4enlarger(tab):
     if tab == 'tab-4':
         return {'display': 'None'}, {'margin': '1rem'}
@@ -3487,18 +3503,6 @@ def container5(val2, val3, radio):
             a = val3
     return [{'label': i, 'value': i} for i in a]
 
-
-# @app.callback(
-#       [Output('firstChoosenValueTab4', 'value'),
-#        Output('secondChoosenValueTab4', 'value'),],
-#       [Input('radiographtab4', 'value')],)
-#
-# def clearbox(radioval) :
-#     if radioval == 'choosevalue' or radioval == 'optionlibre' or radioval == 'Standart':
-#         return '',''
-#     else : raise PreventUpdate
-
-
 @app.callback(
     [Output('firstChoosenValueTab4', 'options'),
      Output('secondChoosenValueTab4', 'options')],
@@ -3510,15 +3514,11 @@ def container4_2(val, radio,data):
         raise PreventUpdate
     a = []
     df = pd.DataFrame(data)
-    print(df)
     if radio == 'choosevalue':
-        print('vallllllllll output olan2', val)
         a = [{'label': i, 'value': i} for i in val], [{'label': i, 'value': i} for i in val]
     elif radio == 'optionlibre':
-        print('vallllllllll output olan3', val)
 
         a = [{'label': i, 'value': i} for i in val], [{'label': i, 'value': i} for i in val]
-    print('son radioya gore optionslar', val)
     return a
 
 
@@ -3651,14 +3651,12 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                    leftfirstval, leftsecondval, rightfirstval, rightsecondval, ):
     if g1 == None or g2 == None or head == None or note == None or radioval == []:
         raise PreventUpdate
-    print('firstchoosen', firstchoosen)
     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
     if radioval != None:
         if len(retrieve) > 0:
             df = pd.read_excel("appending.xlsx")
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 a = df['ID'].unique()
-                print('aaaaaaaaaaaaaa',a)
                 dff2 = pd.DataFrame([])
                 for i in a:
                     dff = df[df['ID'] == i]
@@ -3675,8 +3673,6 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
             else:
                 df.dropna(axis=0, inplace=True)
                 fig = go.Figure()
-                print('firstshape ne olmali', firstshape)
-                print(df)
 
             def controlShape():
                 pathline = ''
@@ -3952,11 +3948,8 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                 del secondshape[1]
             if len(firstshape) == 2 and firstchoosen == None:
                 del firstshape[1]
-            print('firstshape', firstshape)
-            print('secondshape', secondshape)
-            print('radioval', radioval)
             if radioval == 'optionlibre' and valx2 != None and valy2 != None:
-                print('valx2', valx2)
+
                 lst = []
                 for j in zip(valy2, valx2):
                     lst.append(j)
@@ -3973,18 +3966,13 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                     a = df[lst[i][0]]
                     b = df[lst[i][1]]
                     if q1  == "tab4send":
-                        print('burda miyiz')
-                        print('axisdrop', axisdrop)
-                        print('axisdrop', lst[i])
                         if axisdrop in valx2:
-                            print('valx2',valx2)
                             p = []
                             c = []
                             for y in df[axisdrop]:
                                 if shift_y == None:
                                     raise PreventUpdate
                                 else:
-                                    print('shif_y', shift_y)
                                     y += float(shift_y)
                                     c.append(y)
                             c.append(axisdrop)
@@ -4048,7 +4036,6 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                 lst = []
                 for j in zip(valysecond, valxsecond):
                     lst.append(j)
-                print('lst', lst)
                 s = -1
                 m = ''
                 for i in range(len(lst)):
@@ -4069,7 +4056,6 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                                 if shift_x == None:
                                     raise PreventUpdate
                                 else:
-                                    print('shif_x', shift_x)
                                     t += float(shift_x)
                                     p.append(t)
                             df[lst[i][0]] = pd.DataFrame(p)
@@ -4079,7 +4065,6 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                                 if shift_y == None:
                                     raise PreventUpdate
                                 else:
-                                    print('shif_y', shift_y)
                                     y += float(shift_y)
                                     c.append(y)
                             c.append(axisdrop)
@@ -4090,8 +4075,6 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                     fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
                                                name="{}/{}".format(valxsecond[s], valysecond[s])))
 
-
-
                     a = []
                     if nc > 0:
                         a = controlShape()
@@ -4100,10 +4083,6 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                         title_text='' if g1 == [] else g1[-1],
                         title_font={"size": 20},
                         title_standoff=25),
-
-                    # fig.update_yaxes(
-                    #     title_text='' if g2 == [] else g2[-1],
-                    #     title_standoff=25),
                     fig.update_shapes(yref='y'),
                     fig.update_layout(
                         title_text=head[-1] if len(head) > 0 else "{}/{}".format(valxsecond[0], valysecond[0]),
@@ -4207,14 +4186,12 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
                         index = np.arange(0, len(dff['ID']))
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
-                        print('x_val', x_val[-3])
                         if x_val[-3] == '.':
                             x_val = x_val + '0000+00:00'
                         elif x_val[-1] == '.':
                             x_val = x_val + '00000+00:00'
                         else : x_val += '000+00:00'
                         dff = dff[dff['Date'] == x_val]
-                        print(dff)
 
                     else:
                         a = ''
@@ -4242,13 +4219,6 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
     else:
         return (no_update, no_update)
 
-
-#     # return left
-# @app.callback(
-#     Output('pointLeftFirstdb', 'children'),
-#     [Input('getdbgraph', 'clickData')],)
-# def ceyhun (p):
-#     print(json.dumps(p))
 
 @app.callback(
     [Output('pointLeftFirstdb', 'children'),
@@ -4280,7 +4250,6 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
                               'CONVERTED_NUM_VALUE']
         if dbname == 'enerbat':
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-        print('dffffffff',df)
         for i in range(len(value)):
             spaceList1.append(zero)
             zero += 1
@@ -4292,7 +4261,6 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
                     x_val = x_val[:10] + 'T' + x_val[11:]
-                    print('x_val', x_val)
 
                     dff = df[df['VARIABLE_NAME'] == firstchoosen]
                     if dbch == 'send_variablevalues':
@@ -4301,8 +4269,6 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
                         dff = dff[(dff['TIMESTAMP'] == x_val)]
-
-                        print('dfff2', dff)
                     if dbch == 'received_variablevalues':
                         dff = dff[dff.REMOTE_TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
@@ -4312,10 +4278,8 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
                     elif dbch != 'received_variablevalues' and dbch != 'send_variablevalues':
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
-                        print('aaaaa',index)
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
-                        print('aaaaa',dff.index)
                         dff = dff[(dff['TIMESTAMP'] == x_val)]
                     a = []
                     a.append(dff.index)
@@ -4323,10 +4287,8 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
                     for i in range(len(a)):
                         for j in a:
                             leftchild.append(j[i])
-                            print('leftchild', leftchild)
                     if len(leftchild) > 2:
                         leftchild.pop(0)
-                    print('left2', leftchild)
                     return (leftchild, leftchild)
                     # else: return (no_update, no_update)
                 else:
@@ -4345,7 +4307,6 @@ def display_hover_data(leftchild, rightchild, firstchoosen):
     minchild = 0
     maxchild = 0
     if firstchoosen != None and len(leftchild) == 2:
-        print('buraya girebildik mi simdi',firstchoosen)
         for i in range(len(leftchild)):
             if leftchild[0] < leftchild[1]:
                 minchild = leftchild[0]
@@ -4368,7 +4329,6 @@ def display_hover_data_db1(leftchild, rightchild,firstchoosen):
     minchild = 0
     maxchild = 0
     if firstchoosen != None and len(leftchild) == 2:
-        print('buraya girebildik mi simdi',firstchoosen)
         for i in range(len(leftchild)):
             if leftchild[0] < leftchild[1]:
                 minchild = leftchild[0]
@@ -4393,7 +4353,6 @@ def display_hover_data_pr(leftchild, rightchild):
     minchild = 0
     maxchild = 0
     if firstchoosen != None and len(leftchild) == 2:
-        print('buraya girebildik mi simdi',firstchoosen)
         for i in range(len(leftchild)):
             if leftchild[0] < leftchild[1]:
                 minchild = leftchild[0]
@@ -4438,7 +4397,6 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
         df = pd.read_excel('appending.xlsx')
         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
             a = df['ID'].unique()
-            print('aaaaaaaaaaaaaa', a)
             dff2 = pd.DataFrame([])
             for i in a:
                 dff = df[df['ID'] == i]
@@ -4457,22 +4415,17 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
             spaceList1.append(zero)
             zero += 1
             spaceList2.append(container[i])
-        print('11111111111111')
         zippedval = [i for i in list(zip(spaceList1, spaceList2))]
         curvenumber = clickData4['points'][0]['curveNumber']
         for k in zippedval:
-            print('22222222222222222')
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     if radioval == 'choosevalue':
-                        print('33333333333333')
                         if firstchoosen[-1].isdigit() == 1 and firstchoosen[:2].startswith('Tb') != 1:
                             if valxsecond != []:
-                                print('4444444444aaaaaaaaaa')
                                 t = valxsecond.index(firstchoosen)
                                 m = valysecond[t]
                                 x_val = clickData4['points'][0]['x']
-                                print("xvalllllllll", x_val)
                                 dff = df[df[m] == x_val]
                                 a = []
                                 a.append(dff[firstchoosen].index)
@@ -4484,12 +4437,9 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
                             else:
-                                print('44444444444bbbbbbbb')
                                 m = firstchoosen[-1:]
-                                print('bence saccmalik burda')
                                 m = 'T' + m
                                 x_val = clickData4['points'][0]['x']
-                                print("xvalllllllll", x_val)
                                 dff = df[df[m] == x_val]
                                 a = []
                                 a.append(dff[firstchoosen].index)
@@ -4501,12 +4451,10 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
                         elif firstchoosen[-2].isdigit() == 1:
-                            print('5555555555555555555')
                             if valxsecond != []:
                                 t = valxsecond.index(firstchoosen)
                                 m = valysecond[t]
                                 x_val = clickData4['points'][0]['x']
-                                print("xvalllllllll", x_val)
                                 dff = df[df[m] == x_val]
                                 a = []
                                 a.append(dff[firstchoosen].index)
@@ -4518,7 +4466,7 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
                             else:
-                                print('666666666666666')
+
                                 m = firstchoosen[-2:]
                                 m = 'T' + m
                                 x_val = clickData4['points'][0]['x']
@@ -4532,69 +4480,40 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
                         else:
-                            print('8888888888888')
-                            if valxsecond != []:
 
-                                print('nedir simdi burdaki firstchoosen', firstchoosen)
+                            if valxsecond != []:
                                 t = valxsecond.index(firstchoosen)
-                                print('nedir simdi burdaki firstchoosen', firstchoosen)
                                 m = valysecond[t]
-                                print('m ne ola ki', m)
                                 x_val = clickData4['points'][0]['x']
-                                print('x_val left', x_val)
-                                print('dfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', df)
                                 if firstchoosen in df.columns:
                                     dff = df[df[firstchoosen] == x_val]
                                 else : dff = df[df[m] == x_val]
                                 a = []
                                 a.append(dff[firstchoosen].index)
-                                print('aaaaaaaleft', a)
                                 for i in range(len(a)):
                                     for j in a:
                                         leftchild.append(j[i])
-                                        print("leftchild1left", leftchild)
 
                                 if len(leftchild) > 2:
                                     leftchild.pop(0)
-                                print("leftchild2left", leftchild)
                                 return (leftchild, leftchild)
                             else:
                                 return (no_update, no_update)
 
                     elif radioval == 'optionlibre':
                         if valx != []:
-                            print('valxxsxhshxshxsh, ', valx)
-                            print('df', df)
                             t = valx.index(firstchoosen)
                             m = valy[t]
-                            print('mmmmmm', m)
                             x_val = clickData4['points'][0]['x']
-                            print('x_val left first', x_val)
                             dff = df[df[m] == x_val]
-                            print('df[m]', df[m])
-                            print('dffffffleft', dff)
-                            # if 'date' in df.columns:
-                            #     dff = df[df['date'] == x_val]
-                            # else:
-                            #     a = ''
-                            #     for v in df.columns:
-                            #         if 'Temps' in v:
-                            #             a += v
-                            #             dff = df[df[v] == x_val]
-                            #             if shift_x != 0:
-                            #                 x_val -= shift_x
-                            #                 dff = df[df[v] == x_val]
                             a = []
                             a.append(dff[valx].index)
-                            print('aaaaaaaleft', a)
                             for i in range(len(a)):
                                 for j in a:
                                     leftchild.append(j[i])
-                                    print("leftchild1dsdsd", leftchild)
 
                             if len(leftchild) > 2:
                                 leftchild.pop(0)
-                            print("leftchild2sdsds", leftchild)
 
                             return (leftchild, leftchild)
                         else:
@@ -4620,11 +4539,8 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
                Input('firstChoosenValueTab4', 'value'),
                Input('radiographtab4', 'value')], )
 def display_hover_dataTab4(leftchild, rightchild, firstchoosen, radioval):
-    # if leftchild == None or firstchoosen == None or rightchild == None or leftchild == [] or rightchild == []:
-    #     raise PreventUpdate
     if radioval == 'optionlibre' :
         if firstchoosen != None and len(leftchild) == 2:
-            print('buraya girebildik mi simdi',firstchoosen)
             for i in range(len(leftchild)):
                 if leftchild[0] < leftchild[1]:
                     minchild = leftchild[0]
@@ -4637,7 +4553,6 @@ def display_hover_dataTab4(leftchild, rightchild, firstchoosen, radioval):
             return '',''
     if radioval == 'choosevalue' :
         if firstchoosen != None and len(leftchild) == 2:
-            print('buraya girebildik mi simdi',firstchoosen)
             for i in range(len(leftchild)):
                 if leftchild[0] < leftchild[1]:
                     minchild = leftchild[0]
@@ -4647,7 +4562,6 @@ def display_hover_dataTab4(leftchild, rightchild, firstchoosen, radioval):
                     maxchild = leftchild[0]
             return ('T ' + str(minchild), 'T ' + str(maxchild))
         elif firstchoosen == None :
-            print('neden olmuyor', firstchoosen)
             return '',''
     else:
         return (no_update, no_update)
@@ -4699,7 +4613,6 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, ret
                         else:
                             x_val += '000+00:00'
                         dff = dff[dff['Date'] == x_val]
-                        print(dff)
 
                     else:
                         a = ''
@@ -4742,7 +4655,6 @@ def valintdb2(clickData, secondchoosen, value, leftchild, rightchild, retrieve, 
     if value == [] or value == None or clickData == None or clickData == [] or secondchoosen == None or \
             retrieve == None or retrieve == []:
         raise PreventUpdate
-    print('secondchoosen', secondchoosen)
     spaceList1 = []
     zero = 0
     spaceList2 = []
@@ -4766,47 +4678,38 @@ def valintdb2(clickData, secondchoosen, value, leftchild, rightchild, retrieve, 
             zero += 1
             spaceList2.append(value[i])
         zippedval = [i for i in list(zip(spaceList1, spaceList2))]
-        print('zippedval', zippedval)
         curvenumber = clickData['points'][0]['curveNumber']
         for k in zippedval:
             if k[1] == secondchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
-
                     x_val = x_val[:10] + 'T' + x_val[11:]
-                    print('x_val', x_val)
                     dff = df[df['VARIABLE_NAME'] == secondchoosen]
                     if dbch == 'send_variablevalues':
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
                         dff = dff[(dff['TIMESTAMP'] == x_val)]
                     if dbch == 'received_variablevalues':
                         dff = dff[dff.REMOTE_TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
                         dff = dff[(dff['REMOTE_TIMESTAMP'] == x_val)]
                     elif dbch != 'received_variablevalues' and dbch != 'send_variablevalues':
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
-                        print('dffff', dff.tail(5))
                         dff = dff[(dff['TIMESTAMP'] == x_val)]
                     a = []
                     a.append(dff.index)
-                    print('aaaaaaaaa', a)
                     for i in range(len(a)):
                         for j in a:
                             leftchild.append(j[i])
-                            print('leftchild', leftchild)
                     if len(leftchild) > 2:
                         leftchild.pop(0)
-                    print('left2', leftchild)
                     return (leftchild, leftchild)
                     # else: return (no_update, no_update)
                 else:
@@ -4819,9 +4722,6 @@ def valintdb2(clickData, secondchoosen, value, leftchild, rightchild, retrieve, 
               [Input('pointRightFirstdb', 'children'), Input('pointRightSeconddb', 'children'),Input('secondChoosenValuedb', 'value')],
               )
 def display_hover_data_db2(leftchild, rightchild,secondchoosen):
-    # if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
-    #     raise PreventUpdate
-
     minchild = 0
     maxchild = 0
     if secondchoosen != None and len(leftchild) == 2:
@@ -4837,32 +4737,6 @@ def display_hover_data_db2(leftchild, rightchild,secondchoosen):
         return '',''
     else:
         return (no_update, no_update)
-
-#
-# @app.callback([Output('rightIntegralFirstpr', 'value'), Output('rightIntegralSecondpr', 'value')],
-#               [Input('pointRightFirstpr', 'children'), Input('pointRightSecondpr', 'children'),Input('secondChoosenValuepr', 'value')],
-#               )
-# def display_hover_data_pr(leftchild, rightchild):
-#     # if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
-#     #     raise PreventUpdate
-#
-#     minchild = 0
-#     maxchild = 0
-#     if secondchoosen != None and len(leftchild) == 2:
-#
-#         for i in range(len(leftchild)):
-#             if leftchild[0] < leftchild[1]:
-#                 minchild = leftchild[0]
-#                 maxchild = leftchild[1]
-#             else:
-#                 minchild = leftchild[1]
-#                 maxchild = leftchild[0]
-#         return ('T ' + str(minchild), 'T ' + str(maxchild))
-#     elif secondchoosen == None :
-#         return '',''
-#     else:
-#         return (no_update, no_update)
-
 
 @app.callback(
     [Output('rightIntegralFirst', 'value'), Output('rightIntegralSecond', 'value')],
@@ -4916,14 +4790,12 @@ def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, val
         df = pd.read_excel('appending.xlsx')
         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
             a = df['ID'].unique()
-            print('aaaaaaaaaaaaaa', a)
             dff2 = pd.DataFrame([])
             for i in a:
                 dff = df[df['ID'] == i]
                 index = np.arange(0, len(dff))
                 dff.reset_index(drop=True, inplace=True)
                 dff.set_index(index, inplace=True)
-                # dff.drop(['Unnamed: 0', 'Unnamed: 0.1', 'Unnamed: 0.1.1'], axis=1, inplace=True)
                 dff = dff.pivot(values='Value', columns='ID')
                 dff2 = pd.concat([dff2, dff], axis=1)
             df = dff2.copy()
@@ -4940,13 +4812,10 @@ def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, val
                 if k[0] == curvenumber:
                     if radioval == "choosevalue":
                         if secondchoosen[-1].isdigit() == 1 and secondchoosen[:2].startswith('Tb') !=1:
-                            print('valxsecond ne alaka anlamadim 1 ', valxsecond)
                             if valxsecond != []:
                                 t = valxsecond.index(secondchoosen)
                                 m = valysecond[t]
-                                print('mmmmmmmmmm', m)
                                 x_val = clickData['points'][0]['x']
-                                print('x_valalalallala', x_val)
                                 dff = df[df[m] == x_val]
                                 a = []
                                 a.append(dff[secondchoosen].index)
@@ -4970,7 +4839,6 @@ def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, val
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
                         elif secondchoosen[-2].isdigit() == 1:
-                            print('valxsecond ne alaka anlamadim 2 ', valxsecond)
                             if valxsecond != []:
                                 t = valxsecond.index(secondchoosen)
                                 m = valysecond[t]
@@ -4999,18 +4867,12 @@ def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, val
                                 return (leftchild, leftchild)
                         else:
                             if valxsecond != []:
-
-                                print('valxsecond ne alaka anlamadim else', valxsecond)
-                                print('secondchoosen nedir', secondchoosen)
                                 t = valxsecond.index(secondchoosen)
                                 m = valysecond[t]
-                                print('buradaki m nedir karmasik oldu', m)
                                 x_val = clickData['points'][0]['x']
                                 if secondchoosen in df.columns:
                                     dff = df[df[secondchoosen] == x_val]
                                 else : dff = df[df[m] == x_val]
-                                print('dffffffff onemli olan', dff)
-                                print('dffffffff onemli olan', x_val)
                                 a = []
                                 a.append(dff[secondchoosen].index)
                                 for i in range(len(a)):
@@ -5024,16 +4886,12 @@ def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, val
                                 return no_update, no_update
                     elif radioval == 'optionlibre':
                         if valx != []:
-                            print('valxxxxxx', valx)
-                            print('valyyyyyy', valy)
                             t = valx.index(secondchoosen)
                             m = valy[0]
-                            print('mmmmmmmmmmmchange', m)
                             x_val = clickData['points'][0]['x']
                             dff = df[df[m] == x_val]
                             a = []
                             a.append(dff[secondchoosen].index)
-                            print('aaaaaaaachange', a)
                             for i in range(len(a)):
                                 for j in a:
                                     leftchild.append(j[i])
@@ -5119,7 +4977,6 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
             df = pd.read_excel('appending.xlsx')
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
-            print('valuechoosenleft', valuechoosenleft)
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 df = df.loc[df['ID'] == valuechoosenleft]
                 df = df.copy()
@@ -5162,10 +5019,6 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
                State('dbvalchoosen', 'value'), State('db_name', 'value'), State('dbvaldate', 'value')]
               )
 def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbname, valdate):
-    # if st1left == None or st1right == None or valuechoosenleft == [] or retrieve == None or retrieve == []:
-    #     raise PreventUpdate
-    print('st1left', st1left)
-    print('st1left', st1right)
     if st1left.startswith('T') == 1 and st1right.startswith('T') == 1:
         st1left = st1left[2:]
         st1right = st1right[2:]
@@ -5244,7 +5097,6 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
             df = pd.read_excel('appending.xlsx')
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 a = df['ID'].unique()
-                print('aaaaaaaaaaaaaa', a)
                 dff2 = pd.DataFrame([])
                 for i in a:
                     dff = df[df['ID'] == i]
@@ -5350,8 +5202,6 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
 def integralCalculationdb(st2left, st2right, valuechoosenright, retrieve, dbch, dbname, valdate):
     if st2left == None or st2right == None or valuechoosenright == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
-    print('st1left', st2left)
-    print('st1left', st2right)
     if st2left.startswith('T') == 1 and st2right.startswith('T') == 1:
         st2left = st2left[2:]
         st2right = st2right[2:]
@@ -5428,7 +5278,6 @@ def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
             df = pd.read_excel('appending.xlsx')
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 a = df['ID'].unique()
-                print('aaaaaaaaaaaaaa', a)
                 dff2 = pd.DataFrame([])
                 for i in a:
                     dff = df[df['ID'] == i]
@@ -5623,10 +5472,6 @@ def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, righ
 
     if valuechoosenright != None and valuechoosenleft != None:
         differance = []
-        print('leftfirst', leftfirst)
-        print('leftfirst', leftsecond)
-        print('rightfirst', rightfirst)
-        print('rightfirst', rightsecond)
         st1left = leftfirst[2:]
         a,b,c,d = 0,0,0,0
         if st1left != '':
@@ -5647,11 +5492,9 @@ def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, righ
         if set(range(a, b)).issuperset(set(range(c, d))) == 1:
             differance.append(c)
             differance.append(d)
-            print('differance1', differance)
         elif set(range(c, d)).issuperset(set(range(a, b))) == 1:
             differance.append(a)
             differance.append(b)
-            print('differance2', differance)
         elif len(set(range(a, b)).intersection(set(range(c, d)))) >= 1 or len(
                 set(range(c, d)).intersection(set(range(a, b)))) >= 1:
             if a <= c:
@@ -5674,10 +5517,8 @@ def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, righ
                     differance.pop(0)
                     differance.append(d)
                 differance.append(d)
-            print('differance3', differance)
         else:
             return ['intersection']
-        print('buralarda miyiz')
         df1 = pd.DataFrame(retrieve)
         dates = []
         if dbname == 'rcckn':
@@ -5701,22 +5542,19 @@ def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, righ
         df1['dates'] = dates
         first_df = df1[df1['VARIABLE_NAME'] == valuechoosenleft]
         second_df = df1[df1['VARIABLE_NAME'] == valuechoosenright]
-
-        print('first_df1', first_df)
         first_df = first_df[first_df['dates'].isin(dbdate)]
         index = np.arange(0, len(first_df['VARIABLE_NAME']))
         first_df.reset_index(drop=True, inplace=True)
         first_df.set_index(index, inplace=True)
         first_df = first_df[(first_df.index >= float(differance[0])) & (first_df.index <= float(differance[1]))]
         first_df = first_df['VARIABLE_NUM_VALUE']
-        print('first_df2', first_df)
+
         second_df = second_df[second_df['dates'].isin(dbdate)]
         index = np.arange(0, len(second_df['VARIABLE_NAME']))
         second_df.reset_index(drop=True, inplace=True)
         second_df.set_index(index, inplace=True)
         second_df = second_df[(second_df.index >= float(differance[0])) & (second_df.index <= float(differance[1]))]
         second_df = second_df['VARIABLE_NUM_VALUE']
-        print('second_df', second_df)
         min_val = []
         for i, j in zip(first_df, second_df):
             if i <= j:
@@ -5724,26 +5562,6 @@ def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, righ
             if j < i:
                 min_val.append(j)
 
-        # dff2 = df1[(df1.index >= float(st2left)) & (df1.index <= float(st2right)) |
-        #                (df1.index >= float(st2right)) & (df1.index <= float(st2left))]
-        # l = dff2['VARIABLE_NUM_VALUE']
-        # print('lllllllll',l.head(5))
-        # dff3 = df1[(df1.index >= float(st1left)) & (df1.index <= float(st1right)) |
-        #                (df1.index >= float(st1right)) & (df1.index <= float(st1left))]
-        # r = dff3['VARIABLE_NUM_VALUE']
-        # print('rrrrrrrrrrr',r.head(5))
-        # tt = []
-        # yy = []
-        #
-        # for i in l:
-        #     tt.append(i)
-        # for i in r:
-        #     yy.append(i)
-        # for i in range(len(tt)):
-        #     if tt[i] <= yy[i]:
-        #         differance.append(tt[i])
-        #     if yy[i] < tt[i]:
-        #         differance.append(yy[i])
         diff = (abs(trapz(min_val, dx=1)))
         return diff
     else:
@@ -5808,7 +5626,6 @@ def differanceCalculation4(firstshape, secondshape, valuechoosenleft, valuechoos
             df = pd.read_excel('appending.xlsx')
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 a = df['ID'].unique()
-                print('aaaaaaaaaaaaaa', a)
                 dff2 = pd.DataFrame([])
                 for i in a:
                     dff = df[df['ID'] == i]
@@ -6077,7 +5894,6 @@ def relationdb(dbname, ipval):
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'rcckn'")
         val = cur.fetchall()
 
-        print('valllll', val)
         return [{'label': i[0], 'value': i[0]} for i in val if
                 i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
                 i[0] != 'received_ack' and i[0] != 'send_vw_variablerequestdestination'
@@ -6090,7 +5906,6 @@ def relationdb(dbname, ipval):
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'enerbat'")
         val = cur.fetchall()
 
-        print('valllll', val)
         return [{'label': i[0], 'value': i[0]} for i in val]
     else:
         no_update
@@ -6139,7 +5954,6 @@ def relationpr(prname, ipval):
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'rcckn'")
         val = cur.fetchall()
 
-        print('valllll', val)
         return [{'label': i[0], 'value': i[0]} for i in val if
                 i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
                 i[0] != 'received_ack' and i[0] != 'send_vw_variablerequestdestination' and i[
@@ -6153,7 +5967,6 @@ def relationpr(prname, ipval):
         cur = conn.cursor()
         cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'enerbat'")
         val = cur.fetchall()
-        print('valllll', val)
 
         return [{'label': i[0], 'value': i[0]} for i in val]
     else:
@@ -6267,7 +6080,6 @@ def dbname(nc, nc2, dbch, dbname, ipval):
 
     if q1 == 'deactivatedb':
         kk = [{'label': i, 'value': i} for i in '']
-        print('kkkkkkkkk', kk)
         return [{'label': i, 'value': i} for i in ''], [{'label': i, 'value': i} for i in '']
     else:
         no_update, no_update
@@ -6279,7 +6091,6 @@ def dbname(nc, nc2, dbch, dbname, ipval):
 def prname(interval, prch, prname, ipval):
     if prname == None:
         raise PreventUpdate
-    print('prch',prch)
     ipadress = "193.54.2.211"
     # server = SSHTunnelForwarder(
     #     (ipadress, 22),
@@ -6386,11 +6197,6 @@ def prname(interval, prch, prname, ipval):
             b = sorted(b)
             str_list = [t.strftime("%Y-%m-%d") for t in b]
             return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-
-    # if q1 == 'deactivatepr':
-    #     kk = [{'label': i, 'value': i} for i in '']
-    #     print('kkkkkkkkk', kk)
-    #     return [{'label': i, 'value': i} for i in ''], [{'label': i, 'value': i} for i in '']
     else:
         no_update, no_update
 
@@ -6431,8 +6237,6 @@ def dbname(valname, valdate, dbch, dbname, ipval):
     if dbname == 'rcckn':
         if dbch == 'received_variablevalues':
             cur1 = conn.cursor()
-
-            print('valname[0]', valname)
             if len(valname) == 1:
                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
             elif len(valname) > 1:
@@ -6441,11 +6245,9 @@ def dbname(valname, valdate, dbch, dbname, ipval):
             t1 = cur1.fetchall()
 
             df = pd.DataFrame(t1)
-            print('bakalim olacak mi', df.head(10))
             return t1
         elif dbch == "send_variablevalues":
             cur1 = conn.cursor()
-            print('valname[0]', valname)
             if len(valname) == 1:
                 cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
             elif len(valname) > 1:
@@ -6454,11 +6256,9 @@ def dbname(valname, valdate, dbch, dbname, ipval):
             t1 = cur1.fetchall()
 
             df = pd.DataFrame(t1)
-            print('bakalim olacak mi', df.head(10))
             return t1
         elif dbch != "send_variablevalues" or dbch != "received_variablevalues":
             cur1 = conn.cursor()
-            print('valname[0]', valname)
             if len(valname) == 1:
                 cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
             elif len(valname) > 1:
@@ -6467,13 +6267,10 @@ def dbname(valname, valdate, dbch, dbname, ipval):
             t1 = cur1.fetchall()
 
             df = pd.DataFrame(t1)
-
-            print('bakalim olacak mi', df.head(10))
             return t1
     if dbname == 'enerbat':
         if dbch != None:
             cur1 = conn.cursor()
-            print('valname[0]', valname)
             if len(valname) == 1:
                 cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME = '{valname[0]}'")
             elif len(valname) > 1:
@@ -6493,13 +6290,11 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
     df = pd.DataFrame(data)
     if dbname == 'rcckn':
         if dbch == 'received_variablevalues':
-            print('sikinti burda 1 ')
             if valdate != '' or valname != []:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
                                   'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
                                   'CONVERTED_NUM_VALUE']
-                    print('sikinti burda 2 ')
                     df['REMOTE_TIMESTAMP'] = df['REMOTE_TIMESTAMP'].astype('string')
                     a = []
                     for col in df['REMOTE_TIMESTAMP']:
@@ -6510,20 +6305,17 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
                     a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
-                    x = a.to_dict('record')
+                    x = a.to_dict('records')
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
             else:
                 raise PreventUpdate
         if dbch != None:
-            print('sikinti burda 1send ')
             if valdate != '' or valname != []:
-                print('sikinti burda 2send ')
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                                   'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-                    print('sikinti burda 3send ')
                     df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
                     a = []
                     for col in df['TIMESTAMP']:
@@ -6533,9 +6325,8 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
                     for i in range(len(valdate)):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
-                    print('valname', valname)
                     a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
-                    x = a.to_dict('record')
+                    x = a.to_dict('records')
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
@@ -6556,7 +6347,7 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
                     a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
-                    x = a.to_dict('record')
+                    x = a.to_dict('records')
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
@@ -6569,7 +6360,7 @@ def on_data_set_table(data):
         raise PreventUpdate
     if data != None :
         df = pd.DataFrame(data, columns = ['VARIABLE_NAME', 'VARIABLE_NUM_VALUE','QUALITY', 'TIMESTAMP'])
-        x = df.to_dict('record')
+        x = df.to_dict('records')
         return x, [{'name': i, 'id': i} for i in df.columns]
 
 
@@ -6588,10 +6379,6 @@ def on_data_set_tablepr( valname, valdate,interval, prch, prname):
             if valdate != '' or valname != []:
                 if df.empty != 1:
                     df = df[df['VARIABLE_NAME'].isin(valname)]
-                    # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                    #               'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT',
-                    #               'CONVERTED_NUM_VALUE']
-                    print('sikinti burda 2 ')
                     df['REMOTE_TIMESTAMP'] = df['REMOTE_TIMESTAMP'].astype('string')
                     a = []
                     for col in df['REMOTE_TIMESTAMP']:
@@ -6602,21 +6389,16 @@ def on_data_set_tablepr( valname, valdate,interval, prch, prname):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
                     a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
-                    x = a.to_dict('record')
+                    x = a.to_dict('records')
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
             else:
                 raise PreventUpdate
         if prch == 'send_variablevalues':
-            print('sikinti burda 1send ')
             if valdate != '' or valname != []:
-                print('sikinti burda 2send ')
                 if df.empty != 1:
                     df = df[df['VARIABLE_NAME'].isin(valname)]
-                    # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                    #               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
-                    print('sikinti burda 3send ')
                     df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
                     a = []
                     for col in df['TIMESTAMP']:
@@ -6626,20 +6408,15 @@ def on_data_set_tablepr( valname, valdate,interval, prch, prname):
                     for i in range(len(valdate)):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
-                    print('valname', valname)
                     a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
-                    x = a.to_dict('record')
+                    x = a.to_dict('records')
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
         if prch != 'send_variablevalues' or prch != 'received_variablevalues':
-            print('sikinti burda 1send ')
             if valdate != '' or valname != []:
-                print('sikinti burda 2send ')
                 if df.empty != 1:
                     df = df[df['VARIABLE_NAME'].isin(valname)]
-                        # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
-                    print('sikinti burda 3send ')
                     df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
                     a = []
                     for col in df['TIMESTAMP']:
@@ -6649,9 +6426,8 @@ def on_data_set_tablepr( valname, valdate,interval, prch, prname):
                     for i in range(len(valdate)):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
-                    print('valname', valname)
                     a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
-                    x = a.to_dict('record')
+                    x = a.to_dict('records')
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
@@ -6673,7 +6449,7 @@ def on_data_set_tablepr( valname, valdate,interval, prch, prname):
                         valdate_new.append(valdate[i][:10])
                     df1 = df[df['dates'].isin(valdate_new)]
                     a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
-                    x = a.to_dict('record')
+                    x = a.to_dict('records')
                     return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
                 else:
                     raise PreventUpdate
@@ -6686,7 +6462,6 @@ def on_data_set_tablepr( valname, valdate,interval, prch, prname):
 def containerdb(val1):
     if val1 == None or val1 == []:
         raise PreventUpdate
-    print('val1', val1)
 
     return [{'label': i, 'value': i} for i in val1], [{'label': i, 'value': i} for i in val1]
 
@@ -6706,7 +6481,6 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
         raise PreventUpdate
     df = pd.DataFrame(data)
     fig = go.Figure()
-    print('dbname', dbname)
     if dbname == 'rcckn':
         if dbch == 'received_variablevalues':
             if df.empty != 1:
@@ -6726,8 +6500,6 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        print('aaaaaaaaa', a)
-                        print('bbbbbbbbb', b)
                         time.sleep(1)
                         fig.add_trace(
                             go.Scattergl(x=b, y=a, mode='lines + markers', marker=dict(line=dict(width=0.2, color='white')),
@@ -6759,7 +6531,6 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i])
-                print('valdattttt', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]
@@ -6891,15 +6662,11 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
         raise PreventUpdate
     df = pd.read_csv('project.csv')
     df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-    # df3 = df2[df2['ID'].isin(realval)]
-    # pr_reel = df2.loc[df2['ID'].isin(realval)]
     fig = go.Figure()
     for i in realval:
-        print('iiiiiiiiiiii', i)
         fig.add_trace(go.Scattergl(x=df2[df2['ID'] == i[16:]]['TIMESTAMP'], y=df2[df2['ID'] == i[16:]]['Value'], mode='lines',
                                    marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
                                    ))
-    print('prch', prch)
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
             if df.empty != 1:
@@ -6942,18 +6709,13 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
         elif prch == 'send_variablevalues':
             if df.empty != 1:
                 df = df[df['VARIABLE_NAME'].isin(prvalname)]
-                print('dfff bu mi baktigimiz', df.head(5))
-                # df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                #               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
                 df['dates'] = a
-                print(type(a[0]))
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i])
-                print('valdattttt', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]
@@ -6994,7 +6756,6 @@ def on_data_set_graph(data, realval,valy, valdat, sliderw, sliderh,interval, prc
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i])
-                print('valdattttt', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]
@@ -7078,16 +6839,11 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
         raise PreventUpdate
     df = pd.read_csv('project.csv')
     df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-    # df3 = df2[df2['ID'].isin(realval)]
-    # pr_reel = df2.loc[df2['ID'].isin(realval)]
-    print('df pr_reel',df2[df2['ID'] == 'Tb1']['TIMESTAMP'])
     fig = go.Figure()
     for i in realval:
-        print('iiiiiiiiiiii', i)
         fig.add_trace(go.Scattergl(x=df2[df2['ID'] == i[16:]]['TIMESTAMP'], y=df2[df2['ID'] == i[16:]]['Value'], mode='lines',
                                    marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
                                    ))
-    print('prname', prname)
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
             if df.empty != 1:
@@ -7107,8 +6863,6 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        print('aaaaaaaaa', a)
-                        print('bbbbbbbbb', b)
                         fig.add_trace(
                             go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
                                          name="{}/{}".format(valy[j], valdate_new[k]))),
@@ -7138,7 +6892,6 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i])
-                print('valdattttt', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]
@@ -7174,11 +6927,9 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
                 df['dates'] = a
-                print('aaaaaaaa', a)
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i])
-                print('valdattttt', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]
@@ -7215,7 +6966,6 @@ def on_data_set_graph2(data, realval,valy, valdat, sliderw, sliderh,interval, pr
             for col in df['TIMESTAMP']:
                 a.append(col[:10])
             df['dates'] = a
-            print('aaaaaaaa', a)
             valdate_new = []
             for i in range(len(valdat)):
                 valdate_new.append(valdat[i][:10])
@@ -7261,16 +7011,11 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
         raise PreventUpdate
     df = pd.read_csv('project.csv')
     df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-    # df3 = df2[df2['ID'].isin(realval)]
-    # pr_reel = df2.loc[df2['ID'].isin(realval)]
-    print('df pr_reel',df2[df2['ID'] == 'Tb1']['TIMESTAMP'])
     fig = go.Figure()
     for i in realval:
-        print('iiiiiiiiiiii', i)
         fig.add_trace(go.Scattergl(x=df2[df2['ID'] == i[16:]]['TIMESTAMP'], y=df2[df2['ID'] == i[16:]]['Value'], mode='lines',
                                    marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
                                    ))
-    print('prname', prname)
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
             if df.empty != 1:
@@ -7288,8 +7033,6 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        print('aaaaaaaaa', a)
-                        print('bbbbbbbbb', b)
                         fig.add_trace(
                             go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
                                          name="{}/{}".format(valy[j], valdate_new[k]))),
@@ -7319,7 +7062,6 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i])
-                print('valdattttt', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]
@@ -7358,7 +7100,6 @@ def on_data_set_graph3(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i])
-                print('valdattttt', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]
@@ -7444,11 +7185,9 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
     # pr_reel = df2.loc[df2['ID'].isin(realval)]
     fig = go.Figure()
     for i in realval:
-        print('iiiiiiiiiiii', i)
         fig.add_trace(go.Scattergl(x=df2[df2['ID'] == i[16:]]['TIMESTAMP'], y=df2[df2['ID'] == i[16:]]['Value'], mode='lines',
                                    marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
                                    ))
-    print('prname', prname)
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
             if df.empty != 1:
@@ -7466,8 +7205,6 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        print('aaaaaaaaa', a)
-                        print('bbbbbbbbb', b)
                         fig.add_trace(
                             go.Scattergl(x=b, y=a, mode='markers', marker=dict(line=dict(width=0.2, color='white')),
                                          name="{}/{}".format(valy[j], valdate_new[k]))),
@@ -7497,7 +7234,6 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i])
-                print('valdattttt', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]
@@ -7536,7 +7272,6 @@ def on_data_set_graph4(data, realval,valy, valdat, sliderw, sliderh,interval, pr
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i])
-                print('valdattttt', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]
