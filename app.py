@@ -1275,7 +1275,7 @@ def toserver(nc, v1,v2,v3,v4):
     [Input("ok_reel", "n_clicks"), ],
     [State("input_tablename", "value"),State("input_databasename", "value")],
 )
-def toggle_modal(nc, tbname, databasename):
+def toggle_modal_1(nc, tbname, databasename):
     if tbname == None  or databasename==None:
         raise PreventUpdate
     if nc != None:
@@ -1287,7 +1287,7 @@ def toggle_modal(nc, tbname, databasename):
     [Input("download_reel_db", "n_clicks"), Input("close_reel", "n_clicks"), Input("ok_reel", "n_clicks")],
     [State("modal_reel", "is_open")],
 )
-def toggle_modal(n1, n2, n3, is_open):
+def toggle_modal_2(n1, n2, n3, is_open):
     if n1 or n2 or n3:
         return not is_open
     return is_open
@@ -1298,7 +1298,7 @@ def toggle_modal(n1, n2, n3, is_open):
     [State("filenametodb", "value"),
      State("nametodb", "value")],
 )
-def toggle_modal(n1, name, nametodb):
+def toggle_modal_3(n1, name, nametodb):
     # if n1 == None :
     #     raise PreventUpdate
     if n1 > 0 :
@@ -1310,7 +1310,7 @@ def toggle_modal(n1, name, nametodb):
             return name , nametodb
         else :
             return 'LERMAB_test', 'enerbat'
-    else : return no_update
+    else : return no_update, no_update
 
 
 @app.callback(Output('interval_component', 'disabled'),
@@ -1582,8 +1582,6 @@ def pandastosql_valve(name,dbname, data):
 def pandastosql_pr(on,interval, name,nametodb, data):
     if name == None :
         raise PreventUpdate
-    print('name', name)
-    print('data', data)
     if on == 1:
         if name != None:
             df = pd.DataFrame(data, columns=['variable_name', 'variable_num_value', 'quality', 'TIMESTAMP'])
@@ -1998,7 +1996,7 @@ def displayLeftDropdown(n_clicks1, nc2, dropval, valeur, value, deletedval):
     [State("modal", "is_open"),
      State("leftSideDropdownHidden", "children")],
 )
-def toggle_modal(n1, n2, is_open, children):
+def toggle_modal_5(n1, n2, is_open, children):
     if len(children) > 20:
         return not is_open
     return is_open
@@ -2021,7 +2019,6 @@ def toggle_modal(n1, n2, is_open, children):
 )
 def edit_list2(ncr1, ncr2, valeur, children, hiddenchild):
     new_listRight = []
-    print('hiddenchild', hiddenchild)
     triggered_buttons = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
     if triggered_buttons == "showRight":
         hiddenchild.append(valeur)
@@ -2079,7 +2076,6 @@ def edit_list2(ncr1, ncr2, valeur, children, hiddenchild):
         else:
             children.pop()
             hiddenchild.pop()
-    print('hiddenchild2', hiddenchild)
     return children, hiddenchild
 
 
