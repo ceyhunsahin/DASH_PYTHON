@@ -518,7 +518,17 @@ page_2_layout = html.Div(
                           placeholder="Intersection")], className='aa')
       ], style={'display': 'None'},
               className='abdbase'),
-     html.Div([html.Div([html.Div(dcc.Loading(type='cube',children = dcc.Graph(id="getdbgraph",
+     html.Div([html.Div([html.Div(dcc.RadioItems(id="radiographdb",
+                               options=[
+                                   {'label': 'Point', 'value': 'markers'},
+                                   {'label': 'Line', 'value': 'lines'},
+                                   {'label': 'Line + Point', 'value': 'lines+markers'}],
+                               value='markers',
+                               labelClassName='groupgraph2',
+                               labelStyle={'margin': '10px'},
+                               inputStyle={'margin': '10px'}
+                               ), className='abdbside'),
+                         html.Div(dcc.Loading(type='cube',children = dcc.Graph(id="getdbgraph",
                                             config={'displayModeBar': True,
                                                     'scrollZoom': True,
                                                     'modeBarButtonsToAdd': [
@@ -6681,9 +6691,10 @@ def containerdb(val1):
                Input('dbvalname', 'value'),
                Input('dbvaldate', 'value'),
                Input('sliderWidthdb', 'value'),
-               Input('sliderHeightdb', 'value'), ],
+               Input('sliderHeightdb', 'value'),
+               Input('radiographdb', 'value'),],
               [State('dbvalchoosen', 'value'), State('db_name', 'value'), ])
-def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
+def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
     if data == None or valy == [] or valdat == [] or valdat == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -6709,7 +6720,7 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                         b = [i for i in b if i.startswith(valdate_new[k])]
                         time.sleep(1)
                         fig.add_trace(
-                            go.Scattergl(x=b, y=a, mode='lines + markers', marker=dict(line=dict(width=0.2, color='white')),
+                            go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
                                          name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
                         autosize=True,
@@ -6745,7 +6756,7 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        fig.add_trace(go.Scattergl(x=b, y=a, mode='lines+markers',
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode=radio,
                                                    marker=dict(
                                                        line=dict(
                                                            width=0.2,
@@ -6784,7 +6795,7 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        fig.add_trace(go.Scattergl(x=b, y=a, mode='lines+markers',
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode=radio,
                                                    marker=dict(
                                                        line=dict(
                                                            width=0.2,
@@ -6824,7 +6835,7 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                     a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                     b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                     b = [i for i in b if i.startswith(valdate_new[k])]
-                    fig.add_trace(go.Scattergl(x=b, y=a, mode='lines+markers',
+                    fig.add_trace(go.Scattergl(x=b, y=a, mode=radio,
                                                marker=dict(
                                                    line=dict(
                                                        width=0.2,
