@@ -47,10 +47,18 @@ def find_data_file(filename):
     return os.path.join(datadir, filename)
 
 
-BS = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+BS =[ "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
+    {
+        'href': 'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
+        'rel': 'stylesheet',
+        'integrity': 'sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf',
+        'crossorigin': 'anonymous'
+    }
+
+]
 
 # Initialize the app
-app = dash.Dash(__name__,external_stylesheets=[BS], assets_folder=find_data_file('assets/'), update_title='Loading...',
+app = dash.Dash(__name__,external_stylesheets=BS, assets_folder=find_data_file('assets/'), update_title='Loading...',
                 meta_tags=[{'name': 'viewport', 'content': 'width=device-width, initial-scale=2.0, maximum-scale=1.2, minimum-scale=0.5'}],
                 )
 
@@ -110,10 +118,19 @@ page_1_layout = html.Div(
                                                       'style': {'fontSize': '22px', 'fontWeight': 'bold',},},
                                                labelPosition='bottom', on=False, size=100, color='green',style = {'marginTop':'1rem'},
                                                className='dark-theme-control'),]),
-                               html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
-                                         html.Div(dcc.Link('Database', href='/Database', id='link2'),),
-                                         html.Div(dcc.Link('Enerbat', href='/realTime_Enerbat', id='link3'),),
-                                          html.Div(dcc.Link('RCC/KN', href='/RCC_KN', id='link4'),),], style = {'margin' : '2rem 2rem 0 2rem'},className='abpage1'),
+                               html.Div([html.Div([html.Div([html.I(className="fas fa-home"), ]),
+                                                                    dcc.Link('Home', href='/', id='link1')],
+                                                                   className='icon_position1'),
+                                                          html.Div([html.Div([html.I(className="fas fa-database"), ]),
+                                                                    dcc.Link('Database', href='/Database', id='link2')],
+                                                                   className='icon_position1'),
+                                                        html.Div([html.Div([html.I(className="fas fa-server"), ]),
+                                                                     dcc.Link('Enerbat', href='/realTime_Enerbat', id='link3')],
+                                                                   className='icon_position1'),
+                                                          html.Div([html.Div([html.I(className="fas fa-archway"), ]),
+                                                                    dcc.Link('RCC/KN', href='/RCC_KN',
+                                                                             id='link4')], className='icon_position1'),
+                                         ], style = {'margin' : '2rem 2rem 0 2rem'},className='abpage1'),
                                ], className='abpower'),
                      html.Div(
                          dcc.Upload(
@@ -326,19 +343,29 @@ page_1_layout = html.Div(
 
 page_2_layout = html.Div(
                     [html.Div(
-                        [html.Div([dbc.ButtonGroup([dbc.Button("Database Activate", id="activatedb", n_clicks=0,
+                        [html.Div([
+                                 html.Div([html.Div([html.Div([html.I(className="fas fa-home"), ]),
+                                                                    dcc.Link('Home', href='/', id='link1')],
+                                                                   className='icon_position'),
+                                                          html.Div([html.Div([html.I(className="far fa-file-excel"), ]),
+                                                                    dcc.Link('File', href='/File', id='link5')],
+                                                                   className='icon_position'),
+                                                        html.Div([html.Div([html.I(className="fas fa-server"), ]),
+                                                                     dcc.Link('Enerbat', href='/realTime_Enerbat', id='link3')],
+                                                                   className='icon_position'),
+                                                          html.Div([html.Div([html.I(className="fas fa-archway"), ]),
+                                                                    dcc.Link('RCC/KN', href='/RCC_KN',
+                                                                             id='link4')], className='icon_position'),
+                                           ],
+                                           style = {'margin':'-3rem 0 1rem 0'},className='abpage2'),
+                                        dbc.ButtonGroup([dbc.Button("Database Activate", id="activatedb", n_clicks=0,
                                                      size="lg", className='mr-1', color="success",
-                                                     style={'width': '25rem'}
+                                                     style={'width': '25rem', 'marginBottom' : '1rem','borderRadius' : '2rem'}
                                                      ),
                                                      dbc.Button("Database Deactivate", id="deactivatedb", n_clicks=0,
                                                              size="lg", className='mr-1', color="danger",
-                                                             style={'width': '25rem'}
+                                                             style={'width': '25rem', 'marginBottom' : '1rem','borderRadius' : '2rem'}
                                                              )]),
-                                 html.Div([html.Div(dcc.Link('Main Page', href='/', id='link5')),
-                                           html.Div(dcc.Link('Analysis', href='/File', id='link6'), ),
-                                           html.Div(dcc.Link('Enerbat', href='realTime_Enerbat', id='link7'), ),
-                                           html.Div(dcc.Link('RCC/KN', href='/RCC_KN', id='link8'), ), ],
-                                           style = {'marginTop':'1rem'},className='abpage2'),
                                  html.Div([dbc.Input(id='db_Ip',
                                            type="text",
                                            debounce=True,
@@ -527,7 +554,7 @@ page_2_layout = html.Div(
                                labelClassName='groupgraph2',
                                labelStyle={'margin': '10px'},
                                inputStyle={'margin': '10px'}
-                               ), className='abdbside'),
+                               ), className='abdbside-db'),
                html.Div([html.Div([
                          html.Div(dcc.Loading(type='cube',children = dcc.Graph(id="getdbgraph",
                                             config={'displayModeBar': True,
@@ -626,10 +653,23 @@ page_2_layout = html.Div(
                ],className='four-columns-div-user-controlsreel' ), ], ),
 
 page_3_layout = html.Div([html.Div([
-                            html.Div([html.Div([html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
-                                                         html.Div(dcc.Link('Analysis', href='/File', id='link2'),),
-                                                         html.Div(dcc.Link('Enerbat', href='/Database', id='link3'),),
-                                                         html.Div(dcc.Link('RCC/KN', href='/RCC_KN', id='link4'),),],style = {'marginTop':'1rem'},className='ab'),
+                            html.Div([html.Div([html.Div([
+
+
+
+                                                          html.Div([html.Div([html.I(className="fas fa-home"), ]),
+                                                                    dcc.Link('Home', href='/', id='link1')],
+                                                                   className='icon_position3'),
+                                                          html.Div([html.Div([html.I(className="far fa-file-excel"), ]),
+                                                                    dcc.Link('Analysis', href='/File', id='link5')],
+                                                                   className='icon_position3'),
+                                                          html.Div([html.Div([html.I(className="fas fa-database"), ]),
+                                                                    dcc.Link('Database', href='/Database', id='link2')],
+                                                                   className='icon_position3'),
+                                                          html.Div([html.Div([html.I(className="fas fa-archway"), ]),
+                                                                    dcc.Link('RCC/KN', href='/RCC_KN',
+                                                                             id='link4')], className='icon_position3'),
+                                                          ],style = {'marginTop':'1rem'},className='ab-page-3'),
                                                 daq.PowerButton(id='my-toggle-switch-reel',
                                                                        label={'label': 'Connection',
                                                                               'style': {'fontSize': '22px', 'fontWeight': 'bold',},},
@@ -801,10 +841,15 @@ page_3_layout = html.Div([html.Div([
               ])
 
 page_4_layout = html.Div([html.Div([html.Div([html.Div([
-                                                        html.Div(dcc.Link('Main Page', href='/', id='link1')),
-                                                        html.Div(dcc.Link('Analysis', href='/File', id='link4'), ),
-                                                        html.Div(dcc.Link('Database', href='/Database', id='link2'), ),
-                                                        html.Div(dcc.Link('Enerbat', href='/realTime_Enerbat', id='link3'), ),
+                                                        html.Div([html.Div([html.I(className="fas fa-home"),], ),
+                                                                  dcc.Link('Home', href='/', id='link1')], className='icon_position4'),
+                                                        html.Div([html.Div([html.I(className="far fa-file-excel"),]),
+                                                                  dcc.Link('Analysis', href='/File', id='link4')], className='icon_position4'),
+                                                        html.Div([html.Div([html.I(className="fas fa-database"), ]),
+                                                                  dcc.Link('Database', href='/Database', id='link2')], className='icon_position4'),
+                                                        html.Div([html.Div([html.I(className="fas fa-server"), ]),
+                                                                  dcc.Link('Enerbat', href='/realTime_Enerbat', id='link2')], className='icon_position4'),
+
                                                          ],
                                                         className = 'abcdbpr' ),
                                                         dbc.Input(id='pr_Ip',
@@ -2171,7 +2216,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                        'height': '2rem', 'textAlign': 'center'},
                                 autoFocus=True,
                                 placeholder="Intersection")], className='aa')],
-            className='ab'),
+            className='ab-tab-1'),
             html.Div([dcc.RadioItems(id="radiograph",
                                      options=[
                                          {'label': 'Point', 'value': 'markers'},
@@ -3151,7 +3196,7 @@ def LoadingDataTab4(on, tab):
                                        clearable=True,
                                        placeholder='Select your x-axis value...',
                                        ),
-                          ], className='ab'),]),
+                          ], className='abtab1'),]),
                  ], className='ac'),
 
                 html.Div([dcc.Dropdown(id="dropadd4",

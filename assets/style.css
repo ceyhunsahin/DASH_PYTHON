@@ -22,15 +22,16 @@
 }
 
 .four-columns-div-user-controlsreel {
-    background-color:#7a99ed ;
+
     display: flex;
     flex-direction : column;
     align-items: center;
     justify-content: flex-start;
-    width : 50%;
+    width : 100%;
 
 
 }
+
 .userControlDownSide {
     width : 100%;
     
@@ -56,6 +57,48 @@
     background-color:#ffe2c3;
 
 }
+.icon_position {
+    display: flex;
+    flex-direction : row;
+    justify-content: space-evenly;
+    width:12%;
+    float : left;
+    position : right;
+    background-color : #d6f2f2;
+    border-radius : 1rem;
+}
+.icon_position1 {
+    display: flex;
+    flex-direction : row;
+    justify-content: space-evenly;
+    width:45%;
+    float : left;
+    position : right;
+    background-color : #fcf7ed;
+    border-radius : 1rem;
+
+}
+.icon_position3 {
+    display: flex;
+    flex-direction : row;
+    justify-content: space-evenly;
+    width:18%;
+    float : left;
+    position : right;
+    background-color : #d6f2f2;
+    border-radius : 1rem;
+
+}
+.icon_position4 {
+    display: flex;
+    flex-direction : row;
+    justify-content: space-evenly;
+    width:12%;
+    float : left;
+    position : right;
+    background-color : #fcf7ed;
+    border-radius : 1rem;
+}
 
 .aa{ 
     display: flex;
@@ -67,6 +110,7 @@
     display: flex;
     flex-direction : column;
     justify-content: center;
+    /*margin-left : 2vw*/
 }
 .aadbknob{
     display: flex;
@@ -85,13 +129,17 @@
     display: flex;
     flex-direction : column;
     justify-content: space-between;
-
     margin-left : 2rem
 }
+.page4reeldb{
+    margin-left : 10rem
+}
+
 .page2design1{
     display: flex;
     flex-direction : column;
     justify-content: center;
+    width : 40vw
 }
 .aatab4{
     display: flex;
@@ -115,7 +163,9 @@
 }
 .acsecond{
     display: flex;
-    flex-direction : row
+    flex-direction : row;
+    justify-content: center;
+
 }
 .ad{
     display: flex;
@@ -134,15 +184,46 @@
 .ab{ 
     display: flex;
     flex-direction : row;
+    justify-content: space-evenly;
+    align-items : center;
+    width : 40rem;
+    background-color : #d6f2f2;
+    border-radius: 0.5rem;
+    margin-left : 1rem;
+}
+.ab-page-3{
+    display: flex;
+    flex-direction : row;
+    justify-content: space-evenly;
+    align-items : center;
+    width : 40rem;
+
+    border-radius: 0.5rem;
+    margin-left : 1rem;
+}
+.ab-tab-1{
+    display: flex;
+    flex-direction : row;
     justify-content:space-around;
     background-color : #d6f2f2
+
+}
+.abpage1{
+    display: flex;
+    flex-direction : column;
+    align-items : center;
+    justify-content : space-evenly;
+    align-content : center;
+    border-radius: 0.5rem;
+
 
 }
 .abpage2{
     display: flex;
     flex-direction : row;
-    justify-content:space-evenly;
-    background-color : #d6f2f2
+    justify-content: space-evenly;
+
+    border-radius: 0.5rem;
 
 }
 .abpower{
@@ -204,7 +285,23 @@
     background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,182,244,1) 0%, rgba(18,116,231,1) 90.1% );
     box-sizing: border-box;
     margin : 10px;
+    width : 40vw;
+    border-radius: 0.5rem;
 
+}
+
+.abdbside{
+    background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,182,244,1) 0%, rgba(18,116,231,1) 90.1% );
+    box-sizing: border-box;
+    width : 10vw;
+    border-radius: 0.5rem;
+
+}
+.abdbside-db{
+    background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,182,244,1) 0%, rgba(18,116,231,1) 90.1% );
+    box-sizing: border-box;
+    width : 10vw;
+    height : 10vw;
     border-radius: 0.5rem;
 
 }
@@ -226,7 +323,7 @@
     display: flex;
     flex-direction : row;
     justify-content:space-between;
-    width : 70%;
+    width : 80%;
     margin : auto;
     background : #f5f5f5
 
@@ -248,12 +345,14 @@
 
 }
 
+
 .abcdbpr{
     display: flex;
     flex-direction : row;
-    justify-content: space-between;
-    width : 1200px;
-    margin : 2rem
+    justify-content: space-evenly;
+    width :50rem;
+    margin : 2rem;
+    border-radius: 0.5rem;
 }
 .abcdbprGraph{
     display: flex;
@@ -266,23 +365,20 @@
     display: flex;
     flex-direction : row;
     justify-content: flex-start;
-    margin-top : 30px
+    margin-top : 30px;
+    width : 60vw
 
 }
 .abcd{ 
     display: flex;
     flex-direction : row;
-
-
-
 }
 
 .abcdb{
     display: flex;
     flex-direction : row;
-    justify-content: flex-start;
+    justify-content: space-evenly;
     width : 85%;
-    margin-left : 7rem
 }
 
 .abcdbpage4upleft{
@@ -296,7 +392,7 @@
 
 }
 .abcdbgraphtab1{
-    margin : 0 auto;
+    margin : auto;
 
 
 }
@@ -325,8 +421,17 @@
 .abcdb_graph{
     display: flex;
     flex-direction : row;
-    justify-content: center;
-    margin-top : 10em
+    margin-top : 10em;
+    width : 70vw;
+    margin-left : 5rem
+
+}
+.abcdb_graph2{
+    display: flex;
+    flex-direction : row;
+    margin-top : 10em;
+    width : 70vw;
+    justify-content : center
 
 }
 
@@ -392,19 +497,13 @@
     border-radius: 5px;
     width: 90%;
     margin: auto;
-   
-
-
 }
-
 .prstyle {
     display : flex;
     flex-direction: row;
     justify-content:space-between;
-    width : calc(100%);
+    width : 100%;
     margin-left:-10rem;
-
-
 }
  /*rightside input design*/
 .design_children {
@@ -412,7 +511,6 @@
     flex-direction: row;
     justify-content:space-between;
     color: white;
-    
     width : 100%;
 }
 .design_children2 {
@@ -421,7 +519,6 @@
     justify-content:space-between;
     width : 100%;
     cursor : pointer;
-    
 }
 /* asagi ilave*/
 .design_children3 { 
@@ -443,7 +540,6 @@
    
 }
 .add_design {
-    
         display : flex;
         flex-direction: row;
         justify-content:flex-start;
@@ -486,7 +582,7 @@
 
 
   }
-  .groupgraph2 {
+.groupgraph2 {
     font: bold 18px Roboto, sans-serif;
     padding: 6px 7px;
     cursor: pointer;
@@ -582,7 +678,8 @@ html {
   }
 #file_save:active,  #db_save:active{
     background-color: #0c960c; 
-    color: white;}
+    color: white;
+}
 
 .eight-columns-div-for-charts {
         margin : auto;
@@ -647,16 +744,16 @@ html {
         font-family: Arial, Helvetica, sans-serif;
         font-size: 16px;
         border-radius: 5px;
-        width: 30rem;
+        width: 25vw;
 
 }
-.stockSelectorClass_page3{
+.stockSelectorClassPage3{
         margin-top :10px;
         color: black;
         font-family: Arial, Helvetica, sans-serif;
         font-size: 16px;
         border-radius: 5px;
-        width: 30rem;
+        width: 25vw;
         margin-left : 4rem
 }
 
@@ -890,15 +987,18 @@ there.
 /* smaller than tablet */
 @media only screen and (max-width: 1200px) {
     .prstyle{
-    flex-direction : column;
-    align-items : center;
+        flex-direction : column;
+        align-items : center;
     }
     .abcdbpr {
         flex-direction : row;
         width : 80%;
     }
-    .boxdesign3, .boxdesign4,.fourgraphpr_db,.thirdgraphpr_db, {
+    .boxdesign3, .boxdesign4,.fourgraphpr_db,.thirdgraphpr_db{
         display : None
+    }
+    .abcdb {
+        flex-direction : column;
     }
 
 
@@ -915,18 +1015,21 @@ there.
     }
     .abcdbpr {
         flex-direction : column;
-        }
+       }
     .abc {
         flex-direction : column;
-        }
+    }
+
     .stockSelectorClass3 {
-        width : 22rem}
+        width : 22rem
+    }
     .abcdbpr {
         flex-direction : row;
     }
     .abcdbprGraph {
         flex-direction : column;
     }
+
 
 
 }
