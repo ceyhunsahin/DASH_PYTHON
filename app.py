@@ -528,6 +528,7 @@ page_2_layout = html.Div(
                                labelStyle={'margin': '10px'},
                                inputStyle={'margin': '10px'}
                                ), className='abdbside'),
+               html.Div([html.Div([
                          html.Div(dcc.Loading(type='cube',children = dcc.Graph(id="getdbgraph",
                                             config={'displayModeBar': True,
                                                     'scrollZoom': True,
@@ -555,15 +556,15 @@ page_2_layout = html.Div(
                                              vertical=True,
                                              updatemode='drag'), style={'margin': '20px'})], className='abcdb_graph'),
 
-               html.Div([html.Div(daq.Slider(id="sliderWidthdb",
+               html.Div([daq.Slider(id="sliderWidthdb",
                                              max=2000,
                                              min=600,
                                              value=1000,
                                              step=100,
                                              size=600,
 
-                                             updatemode='drag'),),
-                         ]),
+                                             updatemode='drag')],className='page4reeldb'),
+                         ], style = {'marginLeft' : '15rem'}),],className='acsecond'),
                html.Div(dash_table.DataTable(id="getdbtable",
                                              editable=True,
                                              page_size=50,
@@ -6354,9 +6355,8 @@ def dbname(valname, valdate, dbch, dbname, ipval):
             elif len(valname) > 1:
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME IN {valname}")
+            else: return no_update
             t1 = cur1.fetchall()
-
-            df = pd.DataFrame(t1)
             return t1
         elif dbch == "send_variablevalues":
             cur1 = conn.cursor()
@@ -6365,9 +6365,8 @@ def dbname(valname, valdate, dbch, dbname, ipval):
             elif len(valname) > 1:
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
+            else: return no_update
             t1 = cur1.fetchall()
-
-            df = pd.DataFrame(t1)
             return t1
         elif dbch != "send_variablevalues" or dbch != "received_variablevalues":
             cur1 = conn.cursor()
@@ -6376,9 +6375,8 @@ def dbname(valname, valdate, dbch, dbname, ipval):
             elif len(valname) > 1:
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
+            else  : return no_update
             t1 = cur1.fetchall()
-
-            df = pd.DataFrame(t1)
             return t1
     if dbname == 'enerbat':
         if dbch != None:
@@ -6388,6 +6386,7 @@ def dbname(valname, valdate, dbch, dbname, ipval):
             elif len(valname) > 1:
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
+            else: return no_update
             t1 = cur1.fetchall()
             return t1
 @app.callback(ServersideOutput('memory-outputpr', 'data'),
@@ -6431,10 +6430,9 @@ def dbname(valname, valdate, dbch, dbname):
             elif len(valname) > 1:
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME IN {valname}")
+            else:
+                return no_update
             t1 = cur1.fetchall()
-
-            df = pd.DataFrame(t1)
-            print('dfreceivded', df)
             return t1
         elif dbch == "send_variablevalues":
             cur1 = conn.cursor()
@@ -6443,9 +6441,9 @@ def dbname(valname, valdate, dbch, dbname):
             elif len(valname) > 1:
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
+            else:
+                return no_update
             t1 = cur1.fetchall()
-
-            df = pd.DataFrame(t1)
             return t1
         else:
             print('burda miyiz')
@@ -6456,10 +6454,9 @@ def dbname(valname, valdate, dbch, dbname):
             elif len(valname) > 1:
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
+            else:
+                return no_update
             t1 = cur1.fetchall()
-
-            df = pd.DataFrame(t1)
-            print('dfffffgonderilen', df)
             return t1
     if dbname == 'enerbat':
         if dbch != None:
@@ -6469,6 +6466,8 @@ def dbname(valname, valdate, dbch, dbname):
             elif len(valname) > 1:
                 valname = tuple(valname)
                 cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
+            else:
+                return no_update
             t1 = cur1.fetchall()
             return t1
 @app.callback([Output('getdbtable', 'data'),
@@ -6934,7 +6933,7 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
                              marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
                              ))
         if prname == 'rcckn':
-            if prch == 'received_variablevalues':
+            if prch == 'received_variablevalues' or len(df.columns) == 11:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
                                   'REMOTE_ID',
@@ -6972,7 +6971,7 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
                     return fig
                 else:
                     raise PreventUpdate
-            elif prch == 'send_variablevalues':
+            elif prch == 'send_variablevalues' or len(df.columns) == 8:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                                   'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
@@ -7111,7 +7110,7 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
             return fig
     if valy != None:
         if prname == 'rcckn':
-            if prch == 'received_variablevalues':
+            if prch == 'received_variablevalues' or len(df.columns) == 11:
                 if df.empty != 1:
 
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
@@ -7150,7 +7149,7 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
                     return fig
                 else:
                     raise PreventUpdate
-            elif prch == 'send_variablevalues':
+            elif prch == 'send_variablevalues' or len(df.columns) == 8:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                                   'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
@@ -7190,11 +7189,10 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
                     return fig
                 else:
                     raise PreventUpdate
-            else :
+            elif len(df.columns) == 4 :
                 if df.empty != 1:
 
-                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE',  'TIMESTAMP']
                     df = df[df['VARIABLE_NAME'].isin(prvalname)]
                     a = []
                     for col in df['TIMESTAMP']:
@@ -7298,7 +7296,7 @@ def on_data_set_graph2(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                              marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
                              ))
         if prname == 'rcckn':
-            if prch == 'received_variablevalues':
+            if prch == 'received_variablevalues' or len(df.columns) == 11:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
                                   'REMOTE_ID',
@@ -7336,7 +7334,7 @@ def on_data_set_graph2(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     return fig
                 else:
                     raise PreventUpdate
-            elif prch == 'send_variablevalues':
+            elif prch == 'send_variablevalues' or len(df.columns) == 8:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                                   'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
@@ -7476,7 +7474,7 @@ def on_data_set_graph2(data2,data, realval,valy, valdat, sliderw, sliderh,interv
             return fig
     if valy != None:
         if prname == 'rcckn':
-            if prch == 'received_variablevalues':
+            if prch == 'received_variablevalues' or len(df.columns) == 11:
                 if df.empty != 1:
 
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
@@ -7516,7 +7514,7 @@ def on_data_set_graph2(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     return fig
                 else:
                     raise PreventUpdate
-            elif prch == 'send_variablevalues':
+            elif prch == 'send_variablevalues' or len(df.columns) == 8:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                                   'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
@@ -7556,11 +7554,10 @@ def on_data_set_graph2(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     return fig
                 else:
                     raise PreventUpdate
-            else:
+            elif len(df.columns) == 4:
                 if df.empty != 1:
 
-                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                     df = df[df['VARIABLE_NAME'].isin(prvalname)]
                     a = []
                     for col in df['TIMESTAMP']:
@@ -7664,7 +7661,7 @@ def on_data_set_graph3(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                              marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
                              ))
         if prname == 'rcckn':
-            if prch == 'received_variablevalues':
+            if prch == 'received_variablevalues' or len(df.columns) == 11:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
                                   'REMOTE_ID',
@@ -7702,7 +7699,7 @@ def on_data_set_graph3(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     return fig
                 else:
                     raise PreventUpdate
-            elif prch == 'send_variablevalues':
+            elif prch == 'send_variablevalues' or len(df.columns) == 8:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                                   'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
@@ -7842,7 +7839,7 @@ def on_data_set_graph3(data2,data, realval,valy, valdat, sliderw, sliderh,interv
             return fig
     if valy != None:
         if prname == 'rcckn':
-            if prch == 'received_variablevalues':
+            if prch == 'received_variablevalues' or len(df.columns) == 11:
                 if df.empty != 1:
 
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
@@ -7882,7 +7879,7 @@ def on_data_set_graph3(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     return fig
                 else:
                     raise PreventUpdate
-            elif prch == 'send_variablevalues':
+            elif prch == 'send_variablevalues' or len(df.columns) == 8:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                                   'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
@@ -7922,11 +7919,10 @@ def on_data_set_graph3(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     return fig
                 else:
                     raise PreventUpdate
-            else:
+            elif len(df.columns) == 4:
                 if df.empty != 1:
 
-                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                     df = df[df['VARIABLE_NAME'].isin(prvalname)]
                     a = []
                     for col in df['TIMESTAMP']:
@@ -8030,7 +8026,7 @@ def on_data_set_graph4(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                              marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
                              ))
         if prname == 'rcckn':
-            if prch == 'received_variablevalues':
+            if prch == 'received_variablevalues' or len(df.columns) == 11:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
                                   'REMOTE_ID',
@@ -8068,7 +8064,7 @@ def on_data_set_graph4(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     return fig
                 else:
                     raise PreventUpdate
-            elif prch == 'send_variablevalues':
+            elif prch == 'send_variablevalues' or len(df.columns) == 8:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                                   'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
@@ -8208,7 +8204,7 @@ def on_data_set_graph4(data2,data, realval,valy, valdat, sliderw, sliderh,interv
             return fig
     if valy != None:
         if prname == 'rcckn':
-            if prch == 'received_variablevalues':
+            if prch == 'received_variablevalues' or len(df.columns) == 11:
                 if df.empty != 1:
 
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
@@ -8248,7 +8244,7 @@ def on_data_set_graph4(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     return fig
                 else:
                     raise PreventUpdate
-            elif prch == 'send_variablevalues':
+            elif prch == 'send_variablevalues' or len(df.columns) == 8:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                                   'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
@@ -8288,11 +8284,10 @@ def on_data_set_graph4(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     return fig
                 else:
                     raise PreventUpdate
-            else:
+            elif len(df.columns) == 4:
                 if df.empty != 1:
 
-                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
-                                  'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE','TIMESTAMP']
                     df = df[df['VARIABLE_NAME'].isin(prvalname)]
                     a = []
                     for col in df['TIMESTAMP']:
