@@ -888,7 +888,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                                 style={'cursor': 'pointer', 'marginTop': '5px'},
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=True,
-                                                                                placeholder='Select Table ...',
+                                                                                placeholder='Select Table...',
 
                                                                                 ),
 
