@@ -113,7 +113,7 @@ page_1_layout = html.Div(
                                html.Div([html.Div(dcc.Link('Main Page', href='/', id='link1') ),
                                          html.Div(dcc.Link('Database', href='/Database', id='link2'),),
                                          html.Div(dcc.Link('Enerbat', href='/realTime_Enerbat', id='link3'),),
-                                          html.Div(dcc.Link('RCC/KN', href='/RCC_KN', id='link4'),),], style = {'margin' : '2rem 2rem 0 2rem'})
+                                          html.Div(dcc.Link('RCC/KN', href='/RCC_KN', id='link4'),),], style = {'margin' : '2rem 2rem 0 2rem'},className='abpage1'),
                                ], className='abpower'),
                      html.Div(
                          dcc.Upload(
@@ -743,7 +743,7 @@ page_3_layout = html.Div([html.Div([
                                                       step=100,
                                                       size=400,
                                                       vertical=True,
-                                                      updatemode='drag'), ],style={'marginTop': '3rem'},className='abcdb_graph'),
+                                                      updatemode='drag'), ],style={'marginTop': '3rem'},className='abcdb_graph2'),
 
 
                         html.Div([html.Div(daq.Slider(id="sliderWidthreel",
