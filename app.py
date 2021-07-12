@@ -518,7 +518,7 @@ page_2_layout = html.Div(
                           placeholder="Intersection")], className='aa')
       ], style={'display': 'None'},
               className='abdbase'),
-     html.Div([html.Div([html.Div(dcc.Loading(type='circle',children = dcc.Graph(id="getdbgraph",
+     html.Div([html.Div([html.Div(dcc.Loading(type='cube',children = dcc.Graph(id="getdbgraph",
                                             config={'displayModeBar': True,
                                                     'scrollZoom': True,
                                                     'modeBarButtonsToAdd': [
@@ -1349,6 +1349,15 @@ def intervalcontrol2_pr(val):
 def intervalcontrol2_pr_db(val):
     val = int(val)*1000
     return val
+
+@app.callback(Output("interval_value_pr_db", "value"),
+              Input('prname', 'value')
+              )
+def intervalcontrol2_pr_db(val):
+    if val == 'rcckn' :
+        return '10'
+    return '5'
+
 
 @app.callback([Output('data_to_store_id', 'children'),
                Output('data_to_store_value', 'children'),
@@ -4296,10 +4305,7 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
                         print(index)
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
-                        print(dff)
-                        print(x_val)
                         dff = dff[(dff['TIMESTAMP'] == x_val)]
-                        print(dff)
                     a = []
                     a.append(dff.index)
 
@@ -6042,9 +6048,6 @@ def dbname(nc, nc2, dbch, dbname, ipval):
             # Get Cursor
 
             # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-            # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-            #     'received_variablevalues')
-
         # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
         if dbname == 'rcckn':
             if dbch == 'received_variablevalues':
@@ -6055,7 +6058,6 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 cur2 = conn.cursor()
                 cur2.execute("SELECT DISTINCT REMOTE_TIMESTAMP FROM received_variablevalues ")
                 t2 = cur2.fetchall()
-
                 str_list = [i[0] for i in t2]
                 df = pd.DataFrame(str_list)
                 df.columns = ['REMOTE_TIMESTAMP']
@@ -6077,7 +6079,6 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 cur2 = conn.cursor()
                 cur2.execute("SELECT DISTINCT TIMESTAMP FROM send_variablevalues ")
                 t2 = cur2.fetchall()
-
                 str_list = [i[0] for i in t2]
                 df = pd.DataFrame(str_list)
                 df.columns = ['TIMESTAMP']
@@ -6091,6 +6092,55 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 b = sorted(b)
                 str_list = [t.strftime("%Y-%m-%d") for t in b]
                 return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+            elif dbch != 'received_variablevalues' or dbch != 'send_variablevalues':
+                cur = conn.cursor()
+                cur.execute(
+                    f"SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dbch}' ORDER BY ORDINAL_POSITION")
+                t = cur.fetchall()
+                x = [ i[0] for i in t]
+                print(x)
+                if 'REMOTE_TIMESTAMP' in x:
+                    cur1 = conn.cursor()
+                    cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {dbch} ")
+                    t1 = cur1.fetchall()
+                    name = [i[0] for i in t1]
+                    cur2 = conn.cursor()
+                    cur2.execute(f"SELECT DISTINCT REMOTE_TIMESTAMP FROM {dbch} ")
+                    t2 = cur2.fetchall()
+                    str_list = [i[0] for i in t2]
+                    df = pd.DataFrame(str_list)
+                    df.columns = ['REMOTE_TIMESTAMP']
+                    df['REMOTE_TIMESTAMP'] = df.REMOTE_TIMESTAMP.apply(pd.to_datetime)
+                    df["day"] = df.REMOTE_TIMESTAMP.dt.day
+                    df["month"] = df.REMOTE_TIMESTAMP.dt.month
+                    df["year"] = df.REMOTE_TIMESTAMP.dt.year
+                    a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+                    a = list(set(a))
+                    b = pd.to_datetime(a)
+                    b = sorted(b)
+                    str_list = [t.strftime("%Y-%m-%d") for t in b]
+                    return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+                else:
+                    cur1 = conn.cursor()
+                    cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {dbch} ")
+                    t1 = cur1.fetchall()
+                    name = [i[0] for i in t1]
+                    cur2 = conn.cursor()
+                    cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {dbch}  ")
+                    t2 = cur2.fetchall()
+                    str_list = [i[0] for i in t2]
+                    df = pd.DataFrame(str_list)
+                    df.columns = ['TIMESTAMP']
+                    df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
+                    df["day"] = df.TIMESTAMP.dt.day
+                    df["month"] = df.TIMESTAMP.dt.month
+                    df["year"] = df.TIMESTAMP.dt.year
+                    a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+                    a = list(set(a))
+                    b = pd.to_datetime(a)
+                    b = sorted(b)
+                    str_list = [t.strftime("%Y-%m-%d") for t in b]
+                    return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
         if dbname == 'enerbat':
             if dbch != None:
                 cur1 = conn.cursor()
@@ -6100,7 +6150,6 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 cur2 = conn.cursor()
                 cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {dbch}  ")
                 t2 = cur2.fetchall()
-
                 str_list = [i[0] for i in t2]
                 df = pd.DataFrame(str_list)
                 df.columns = ['TIMESTAMP']
@@ -6194,6 +6243,7 @@ def prname(on,interval, prch, prname, ipval):
                 b = sorted(b)
                 str_list = [t.strftime("%Y-%m-%d") for t in b]
                 return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+            elif prch == None: raise PreventUpdate
             else:
                 cur1 = conn.cursor()
                 cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {prch} ")
@@ -6243,7 +6293,8 @@ def prname(on,interval, prch, prname, ipval):
                 b = sorted(b)
                 str_list = [t.strftime("%Y-%m-%d") for t in b]
                 return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-
+            elif prch == None:
+                raise PreventUpdate
         else:
             no_update, no_update
     if on == 0:
@@ -6311,10 +6362,10 @@ def dbname(valname, valdate, dbch, dbname, ipval):
         elif dbch != "send_variablevalues" or dbch != "received_variablevalues":
             cur1 = conn.cursor()
             if len(valname) == 1:
-                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
+                cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME = '{valname[0]}'")
             elif len(valname) > 1:
                 valname = tuple(valname)
-                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
+                cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
             t1 = cur1.fetchall()
 
             df = pd.DataFrame(t1)
@@ -6443,11 +6494,31 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
                     raise PreventUpdate
             else:
                 raise PreventUpdate
-        if dbch != None:
+        if dbch != None and len(df.columns) == 8:
             if valdate != '' or valname != []:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                                   'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
+                    df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
+                    a = []
+                    for col in df['TIMESTAMP']:
+                        a.append(col[:10])
+                    df['dates'] = a
+                    valdate_new = []
+                    for i in range(len(valdate)):
+                        valdate_new.append(valdate[i][:10])
+                    df1 = df[df['dates'].isin(valdate_new)]
+                    a = df1.loc[df1['VARIABLE_NAME'].isin(valname)]
+                    x = a.to_dict('records')
+                    return x, [{'name': i, 'id': i} for i in df.columns if i.startswith('Unn') != 1 or i != 'dates']
+                else:
+                    raise PreventUpdate
+            else:
+                raise PreventUpdate
+        if dbch != None and len(df.columns) == 4:
+            if valdate != '' or valname != []:
+                if df.empty != 1:
+                    df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                     df['TIMESTAMP'] = df['TIMESTAMP'].astype('string')
                     a = []
                     for col in df['TIMESTAMP']:
@@ -6616,13 +6687,13 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
     if data == None or valy == [] or valdat == [] or valdat == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
+    print(len(df.columns))
     fig = go.Figure()
     if dbname == 'rcckn':
-        if dbch == 'received_variablevalues':
+        if dbch == 'received_variablevalues' or len(df.columns) == 11:
             if df.empty != 1:
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
-                              'REMOTE_ID',
-                              'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
+                              'REMOTE_ID', 'REMOTE_TIMESTAMP', 'REMOTE_MESSAGE_ID', 'PROCESSED', 'TIMED_OUT', 'CONVERTED_NUM_VALUE']
                 a = []
                 for col in df['REMOTE_TIMESTAMP']:
                     a.append(col[:10])
@@ -6656,7 +6727,7 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                 return fig
             else:
                 raise PreventUpdate
-        else:
+        elif dbch == 'send_variablevalues' or len(df.columns) == 8:
             if df.empty != 1:
                 print('bu hangi dffdffdf',df)
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
@@ -6696,6 +6767,47 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh, dbch, dbname):
                 return fig
             else:
                 raise PreventUpdate
+        elif len(df.columns) == 4 :
+            if df.empty != 1:
+                print('bu hangi dffdffdf',df)
+                df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
+                a = []
+                for col in df['TIMESTAMP']:
+                    a.append(col[:10])
+                df['dates'] = a
+                valdate_new = []
+                for i in range(len(valdat)):
+                    valdate_new.append(valdat[i])
+                for j in range(len(valy)):
+                    for k in range(len(valdate_new)):
+                        a = df[df['VARIABLE_NAME'] == valy[j]]
+                        a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
+                        b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
+                        b = [i for i in b if i.startswith(valdate_new[k])]
+                        fig.add_trace(go.Scattergl(x=b, y=a, mode='lines+markers',
+                                                   marker=dict(
+                                                       line=dict(
+                                                           width=0.2,
+                                                           color='white')),
+                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
+                        fig.update_layout(
+                            autosize=True,
+                            width=sliderw,
+                            height=sliderh,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=50,
+                                t=50,
+                                pad=4
+                            ),
+
+                            uirevision=valy[j], ),
+                return fig
+            else:
+                raise PreventUpdate
+        else:
+            raise PreventUpdate
     if dbname == 'enerbat':
         if df.empty != 1:
             df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
