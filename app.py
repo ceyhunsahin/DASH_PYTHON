@@ -15,9 +15,10 @@ import dash_html_components as html
 import dash_table  # #
 import pandas as pd
 import plotly.graph_objects as go
+from plotly.validators.scatter.marker import SymbolValidator
 import plotly.express as px
 from dash import no_update
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output, State,MATCH
 from dash.exceptions import PreventUpdate
 from urllib.parse import quote as urlquote
 import numpy as np
@@ -58,7 +59,7 @@ BS =[ "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
 ]
 
 # Initialize the app
-app = dash.Dash(__name__,external_stylesheets=BS, assets_folder=find_data_file('assets/'), update_title='Loading...',
+app = dash.Dash(__name__,external_stylesheets=BS, suppress_callback_exceptions=True, assets_folder=find_data_file('assets/'), update_title='Loading...',
                 meta_tags=[{'name': 'viewport', 'content': 'width=device-width, initial-scale=2.0, maximum-scale=1.2, minimum-scale=0.5'}],
                 )
 
@@ -1908,15 +1909,29 @@ def opcLoadingData(on):
                                                                                placeholder='Select your parameters...',
                                                                                ),
                                                               ),
-                                                              html.Div([html.Button('Show', id='showRight', n_clicks=0,
-                                                                                    style={'height': '40px',
-                                                                                           'width': '80px',
-                                                                                           'fontSize': '1.2rem'}),
+                                                              html.P('Enter Y and X values', style = {'margin' : '1rem 6rem', }),
+                                                              html.Div([dbc.Input(
+                                                                  id='inputRightY_axis',
+                                                                  type="text",
+                                                                  min=-10000, max=10000, step=1, bs_size="sm",
+                                                                  style={'width': '7rem'},
+                                                                  placeholder='Y axis value',
+                                                                  autoFocus=True, ),
+                                                                        dbc.Input(id='inputRightX_axis',
+                                                                                  type="text",
+                                                                                  min=-10000, max=10000, step=1,
+                                                                                  bs_size="sm", style={'width': '7rem'},
+                                                                                  placeholder='X axis value',
+                                                                                  autoFocus=True, ),
+                                                                        ], id="styled-numeric-input",className = "add_design2" ),
+                                                              html.Div([dbc.Button('Show', id='showRight',color = 'primary',
+                                                                                    n_clicks=0, className = 'mr-1', style = {'width':'5rem', 'fontSize':'1rem'}),
+                                                                        dbc.Button('Clear', id='valueClearRight', color = 'warning',
+                                                                                    n_clicks=0, className = 'mr-1',style = {'width':'5rem','fontSize':'1rem'}),
+                                                                        dbc.Button('Delete', id='clearRight',color = 'danger',
+                                                                                    n_clicks=0, className = 'mr-1',style = {'width':'5rem','fontSize':'1rem'}),
 
-                                                                        html.Button('Delete', id='clearRight',
-                                                                                    n_clicks=0, style={'height': '40px',
-                                                                                                       'width': '80px',
-                                                                                                       'fontSize': '1.2rem'})],
+                                                                        ],
                                                                        className='buttons'),
                                                               html.Div(id='rightSideDropdownHidden', children=[],
                                                                        style={'visibility': 'hidden'}),
@@ -2002,21 +2017,24 @@ def toggle_modal_5(n1, n2, is_open, children):
 
 
 #### rightside dropdown-checklist relation
-
 @app.callback(
     [Output('rightSideDropdown', "children"),
      Output('checklistvaleurhidden', "children"), ],
     [
         Input("showRight", "n_clicks"),
-        Input("clearRight", "n_clicks")
+        Input("clearRight", "n_clicks"),
+        Input("valueClearRight", "n_clicks"),
+
+
     ],
-    [
+    [   State('inputRightY_axis', "value"),
+        State('inputRightX_axis', "value"),
         State("dropdownRight", "value"),
         State('rightSideDropdown', "children"),
         State('checklistvaleurhidden', "children")
     ]
 )
-def edit_list2(ncr1, ncr2, valeur, children, hiddenchild):
+def edit_list2(ncr1, ncr2,ncr3, valy, valx, valeur, children, hiddenchild):
     new_listRight = []
     triggered_buttons = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
     if triggered_buttons == "showRight":
@@ -2042,41 +2060,58 @@ def edit_list2(ncr1, ncr2, valeur, children, hiddenchild):
 
         if hiddenchild != ['']:
             new_listRight = html.Div([html.Div([
-                html.Div([dcc.Markdown('''*{}'''.format(valeur), id="checklistValeur0",
-                                       style={'height': '1rem', 'fontFamily': 'arial', 'color': 'black',
+                html.Hr(),
+                html.Div([
+                    html.Div([dbc.Checklist(
+                        id='choosenChecklistRef',
+                        options=[{'label': i, 'value': i} for i in
+                                 [f'{valeur} ({mesure1(valeur)}) Y-axis : {valy} and X-axis : {valx}']],
+                        value=[],
+                        labelStyle={'display': 'Block'},
+                    ), ], style={'height': '1rem', 'fontFamily': 'arial', 'color': 'black',
                                               'fontSize': '1.2rem'}),
-                          html.Div([dbc.Input(id='inputRightY_axis0',
-                                              type="text",
-                                              min=-10000, max=10000, step=1, bs_size="sm", style={'width': '6rem'},
-                                              placeholder='Y axis value',
-                                              autoFocus=True, ),
-                                    dbc.Input(id='inputRightX_axis0',
-                                              type="text",
-                                              min=-10000, max=10000, step=1, bs_size="sm", style={'width': '6rem'},
-                                              placeholder='X axis value',
-                                              autoFocus=True, ),
-                                    ], id="styled-numeric-input", ),
-                          html.P(mesure1(valeur),
-                                 style={'margin': '0.1rem 0', 'color': 'black', 'height': '2rem', 'fontFamily': 'arial',
-                                        'fontSize': '1.2rem', }),
-                          dbc.Button("Ok", id="valueSendRight0", outline=True, n_clicks=0, color="primary",
-                                     className='mr-1'),
-                          dbc.Button("Clr", id="valueClearRight0", n_clicks=0, color="warning",
-                                     className='mr-1'),
 
                           ], className='design_children2'),
-            ], className='design_children', ), html.Hr()])
+            ], className='design_children', ),
 
+               ])
         children.append(new_listRight)
+        print(children)
 
     if triggered_buttons == "clearRight":
         if len(children) == 0:
-            raise PreventUpdate
+            return no_update, no_update
         else:
             children.pop()
             hiddenchild.pop()
     return children, hiddenchild
 
+@app.callback(Output('choosenChecklistRef', 'options'),
+              [Input('inputRightY_axis', "value"),
+               Input('inputRightX_axis', "value"),
+               Input("dropdownRight", "value"),],
+              )
+def render_ref(y_axis, x_axis, valeur):
+
+    def mesure1(textRight):
+        if textRight == "Mass de Bois":
+            return "g"
+        elif textRight == 'Volume gaz':
+            return 'm3'
+
+        elif textRight == 'Vitesse de rotation':
+            return 'tour/mn'
+
+        elif textRight in {'Puissance Thermique', 'Puissance Electrique'}:
+            return "W"
+
+        elif textRight in {'CO', 'CO2', 'NO', 'NOX', 'CX'}:
+            return "% MOL"
+
+        elif textRight == 'Temperature de Fumée':
+            return '°K'
+    return [{'label': i, 'value': i} for i in
+                                 [f'{valeur} ({mesure1(valeur)}) Y-axis : {valy} and X-axis : {valx}']]
 # #### bunla ugras shapeler ciktiktan sonra referance bilgileri cikmiyor
 
 @app.callback(Output('tabs-content-classes', 'children'),
@@ -2330,7 +2365,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                  step=100,
                                  size=500,
                                  updatemode='drag'),
-                      html.Div(id='output-data-upload', children=[])],style={'margin': '1rem 0 0 1rem'} ),],style = {'textAlign': 'left',
+                      html.Div(id='output-data-upload', children=[])],style={'margin': '1rem 0 0 12rem'} ),],style = {'textAlign': 'left',
                 'color': colors['text'],'backgroundColor': '#f0f4fa', 'width':'60vw'}, className = 'abcdbgraphtab1'),
 
         ]),
@@ -2588,50 +2623,51 @@ def shiftingaxes(val):
 
 
 ##### bunla ugras shapeler ciktiktan sonra referance bilgileri cikmiyor
+
 @app.callback([Output("inputRightY_axishidden", "children"),
                Output("inputRightX_axishidden", "children"),
                Output('checklistvaleurhidden2', "children"),
                ],
-              [Input('valueSendRight0', 'n_clicks'),
-               Input('valueClearRight0', 'n_clicks'),
+              [Input('choosenChecklistRef','value'),
                ],
-              [State("inputRightY_axis0", "value"),
-               State("inputRightX_axis0", "value"),
+              [State("inputRightY_axis", "value"),
+               State("inputRightX_axis", "value"),
                State("dropdownRight", "value"),
                State('checklistvaleurhidden2', "children"),
                State("inputRightY_axishidden", "children"),
                State("inputRightX_axishidden", "children"), ]
               )
-def Inputaxis(sendnc, clrnc, y_val, x_val, droplist, checklist, y_axis, x_axis):
+def Inputaxis(okval, y_val, x_val, droplist, checklist, y_axis, x_axis):
     if y_val == None or x_val == None:
         raise PreventUpdate
     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
+    print('okval', okval)
+    if okval != [] :
+        y_axis.append(y_val)
+        x_axis.append(x_val)
+        checklist.append(droplist)
+    # if q1 == 'valueSendRight0':
+    #     if droplist != None or y_val != None or x_val != None:
 
-    if q1 == 'valueSendRight0':
-        if droplist != None or y_val != None or x_val != None:
-            y_axis.append(y_val)
-            x_axis.append(x_val)
-            checklist.append(droplist)
-        enum_y_axis = [j for j in enumerate(y_axis, 0)]
-        enum_x_axis = [j for j in enumerate(x_axis, 0)]
-        enum_checklist = [j for j in enumerate(checklist, 0)]
-        if len(checklist) == len(y_axis) and len(checklist) == len(x_axis):
-            return (y_axis, x_axis, checklist)
-        else:
-            no_update, no_update, no_update
-
-    if q1 == 'valueClearRight0':
-        y_axis.remove(y_val)
-        x_axis.remove(x_val)
-        checklist.remove(droplist)
+    #     enum_y_axis = [j for j in enumerate(y_axis, 0)]
+    #     enum_x_axis = [j for j in enumerate(x_axis, 0)]
+    #     enum_checklist = [j for j in enumerate(checklist, 0)]
+    #     if len(checklist) == len(y_axis) and len(checklist) == len(x_axis):
+    #         return (y_axis, x_axis, checklist)
+    #     else:
+    #         no_update, no_update, no_update
+    #
+    # if q1 == 'valueClearRight0':
+    #     y_axis.remove(y_val)
+    #     x_axis.remove(x_val)
+    #     checklist.remove(droplist)
         return (y_axis, x_axis, checklist)
-
-
-@app.callback([Output("inputRightY_axis0", "value"),
-               Output("inputRightX_axis0", "value")],
-              [Input('valueClearRight0', 'n_clicks')],
-              [State("inputRightY_axis0", "value"),
-              State("inputRightX_axis0", "value")]
+    else :return [],[],[]
+@app.callback([Output("inputRightY_axis", "value"),
+               Output("inputRightX_axis", "value")],
+              [Input('valueClearRight', 'n_clicks')],
+              [State("inputRightY_axis", "value"),
+              State("inputRightX_axis", "value")]
               )
 def clear(nclick, st1, st2):
     if st1 == None or st2 == None:
@@ -2726,21 +2762,14 @@ def res2(val, radiograph, sliderheight, sliderwidth,
         if right_x_axis != [] and right_y_axis != []:
             for k in range(len(rightsidedrop)):
                 if len(rightsidedrop) == len(right_x_axis) and len(rightsidedrop) == len(right_y_axis):
-                    x = int(right_x_axis[k])
-                    y = int(right_y_axis[k])
-                    z = int(right_x_axis[k]) / 100
-                    t = int(right_y_axis[k]) / 100
-                    fig.add_shape(type="circle",
-                                  x0=x, y0=y, x1=x + z, y1=y + t,
-                                  xref="x", yref="y",
-                                  fillcolor="PaleTurquoise",
-                                  line_color="LightSeaGreen",
-                                  )
-                    fig.add_annotation(x=x, y=y,
-                                       text="{} - {} référence".format(x, y),
-                                       showarrow=True,
-                                       yshift=80
-                                       )
+                    x = [float(right_x_axis[k])]
+                    y = [float(right_y_axis[k])]
+                    fig.add_trace(go.Scatter(mode="markers", x=x, y=y, marker_symbol='diamond-x',
+                                             marker_line_color="midnightblue", marker_color="lightskyblue",
+                                             marker_line_width=2, marker_size=8,hovertemplate="Ref_point: %{y}/%{x}",
+                                             name=f"Ref_point: {y}/{x}",
+                                  )),
+                    fig.update_layout(margin=dict(b=0, r=0),)
         for i_val in range(len(val)):
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 y_axis = df[df['ID'] == val[i_val]]['Value']
@@ -4232,11 +4261,12 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
      State('pointLeftFirst', 'children'),
      State('pointLeftSecond', 'children'),
      State('shift_x_axis', 'value'),
+     State('checklistvaleurhidden2', "children"),
      State('retrieve', 'children'),
      ]
 )
-def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retrieve):
-    if value is [] or value is None or clickData == None or clickData == [] or firstchoosen == None or retrieve == None or retrieve == []:
+def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rightside, retrieve):
+    if value is [] or value is None or clickData == None or clickData == [] or firstchoosen == None or rightside == None or retrieve == None or retrieve == []:
         raise PreventUpdate
 
     spaceList1 = []
@@ -4245,21 +4275,29 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
         df['index'] = df.index
+        print('rightside', rightside)
+        for i in range(len(rightside)):
+            spaceList1.append(zero)
+            zero += 1
+            spaceList2.append(rightside[i])
+
         for i in range(len(value)):
             spaceList1.append(zero)
             zero += 1
             spaceList2.append(value[i])
         zippedval = [i for i in list(zip(spaceList1, spaceList2))]
         curvenumber = clickData['points'][0]['curveNumber']
+        print('curvenumber ', curvenumber)
+        print('zippedval',zippedval)
         for k in zippedval:
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
+                    print('x+val', x_val)
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
                     elif 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                         dff = df.loc[df['ID'] == firstchoosen]
-
                         dff = dff.copy()
                         index = np.arange(0, len(dff['ID']))
                         dff.reset_index(drop=True, inplace=True)
@@ -4276,6 +4314,7 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x, retri
                         for v in df.columns:
                             if 'Temps' in v:
                                 a += v
+                                print('x+val', x_val)
                                 dff = df[df[v] == x_val]
                                 if shift_x != 0:
                                     x_val -= shift_x
@@ -4667,10 +4706,11 @@ def display_hover_dataTab4(leftchild, rightchild, firstchoosen, radioval):
      State('pointRightFirst', 'children'),
      State('pointRightSecond', 'children'),
      State('shift_x_axis', 'value'),
+     State('checklistvaleurhidden2', "children"),
      State('retrieve', 'children')]
 )
-def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, retrieve):
-    if value is [] or value is None or clickData == None or secondchoosen == None or retrieve == None or retrieve == []:
+def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x,rightside, retrieve):
+    if value is [] or value is None or clickData == None or secondchoosen == None or rightside == None or retrieve == None or retrieve == []:
         raise PreventUpdate
 
     spaceList1 = []
@@ -4679,6 +4719,10 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x, ret
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
         df['index'] = df.index
+        for i in range(len(rightside)):
+            spaceList1.append(zero)
+            zero += 1
+            spaceList2.append(rightside[i])
         for i in range(len(value)):
             spaceList1.append(zero)
             zero += 1
@@ -6491,7 +6535,7 @@ def dbname(valname, valdate, dbch, dbname):
             t1 = cur1.fetchall()
             return t1
         else:
-            print('burda miyiz')
+
             cur1 = conn.cursor()
             print(valname)
             if len(valname) == 1:

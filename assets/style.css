@@ -518,6 +518,7 @@
     flex-direction: row;
     justify-content:space-between;
     width : 100%;
+    height : 2rem;
     cursor : pointer;
 }
 /* asagi ilave*/
@@ -543,6 +544,12 @@
         display : flex;
         flex-direction: row;
         justify-content:flex-start;
+}
+
+.add_design2 {
+        display : flex;
+        flex-direction: row;
+        justify-content:space-evenly;
 }
 
 .buttons {
@@ -632,7 +639,7 @@
 html {
   overflow-y: scroll;
 }
-#showLeft, #showRight, #showTab, #upload_data, #write_excel,#write_exceldb,#addText,#addText4, #write_excelTab4, #download, #download_data,#download_dataTab4,#download_datadb {
+#showLeft, #showTab, #upload_data, #write_excel,#write_exceldb,#addText,#addText4, #write_excelTab4, #download, #download_data,#download_dataTab4,#download_datadb {
     background-color: #0996ce; 
     border: none;
     color: white;
@@ -644,15 +651,15 @@ html {
     cursor: pointer;
     border-radius: 0.3rem;
 }
-#showLeft:hover, #showRight:hover, #showTab:hover,#write_exceldb:hover, #write_excel:hover,#write_excelTab4:hover,#addText:hover,#addText4:hover, #download:hover,#download_data:hover,#download_datadb:hover,#download_dataTab4:hover  {
+#showLeft:hover, #showTab:hover,#write_exceldb:hover, #write_excel:hover,#write_excelTab4:hover,#addText:hover,#addText4:hover, #download:hover,#download_data:hover,#download_datadb:hover,#download_dataTab4:hover  {
     background-color: #052b5e; 
     color: white;
 }
-#showLeft:active, #showRight:active, #showTab:active ,#write_exceldb:active, #write_excel:active,#write_excelTab4:active,#addText:active,#addText4:active, #download:active, #download_data:active,#download_dataTab4:active, #download_datadb:active{
+#showLeft:active, #showTab:active ,#write_exceldb:active, #write_excel:active,#write_excelTab4:active,#addText:active,#addText4:active, #download:active, #download_data:active,#download_dataTab4:active, #download_datadb:active{
     background-color: #052b5e; 
     color: white;
 }
-#clearLeft,#clearRight {
+#clearLeft  {
     background-color: #f11010; 
     border: none;
     color: white;
@@ -664,11 +671,12 @@ html {
     cursor: pointer;
     border-radius: 0.3rem;
 }
-#clearLeft:hover, #clearRight:hover {
+
+#clearLeft:hover, {
     background-color: #5c0316; 
     color: white;
 }
-#clearLeft:active, #clearRight:active {
+#clearLeft:active,  {
     background-color: #0c5e05; 
     color: white;
 }
