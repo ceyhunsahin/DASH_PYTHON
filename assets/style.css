@@ -10,6 +10,7 @@
     height : 30%;
 
 }
+/* colors variables settings */
 
 .four-columns-div-user-controls {
     background-color:#7a99ed ;
@@ -308,6 +309,12 @@
 .calculIntegral {
     margin : 1.8rem 0 0 4rem;
     box-sizing: unset!important;
+
+    }
+.pluraly {
+    margin : 1.8rem 0 0 4rem;
+    box-sizing: unset!important;
+    color : black;
 
     }
 .abTab4{
