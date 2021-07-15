@@ -48,6 +48,7 @@ def find_data_file(filename):
     return os.path.join(datadir, filename)
 
 
+
 BS =[ "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
     {
         'href': 'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
@@ -128,7 +129,7 @@ page_1_layout = html.Div(
                                                         html.Div([html.Div([html.I(className="fas fa-server"), ]),
                                                                      dcc.Link('Enerbat', href='/realTime_Enerbat', id='link3')],
                                                                    className='icon_position1'),
-                                                          html.Div([html.Div([html.I(className="fas fa-archway"), ]),
+                                                          html.Div([html.Div([html.I(className="fas fa-chart-line"), ]),
                                                                     dcc.Link('RCC/KN', href='/RCC_KN',
                                                                              id='link4')], className='icon_position1'),
                                          ], style = {'margin' : '2rem 2rem 0 2rem'},className='abpage1'),
@@ -199,6 +200,7 @@ page_1_layout = html.Div(
                                                html.Div(id='leftSideChecklistValueHiddendb', children=[],
                                                         style={'display': 'None'}),
                                                html.Div(id='deletedval', children=[], style={'display': 'None'}),
+                                               html.Div(id='deletedvalref', children=[], style={'display': 'None'}),
                                                html.Div(id='leftSideChecklistValueHiddenTab4', children=[],
                                                         style={'display': 'None'}),
                                                html.Div(id='tab2hiddenValuex_axis', style={'display': 'None'},
@@ -281,7 +283,7 @@ page_1_layout = html.Div(
                                   html.Div(id='output_s', children=[], style={'display': 'None'}),
                                   html.Div(id='radiographtab4hidden', children=[], style={'display': 'None'}),
                                   html.Div(dcc.Graph(id='graphhidden',
-                                                     config={},
+                                                     config={'displaylogo': False},
                                                      style={'display': 'None'},
                                                      figure={
                                                          'layout': {'legend': {'tracegroupgap': 0},
@@ -354,7 +356,7 @@ page_2_layout = html.Div(
                                                         html.Div([html.Div([html.I(className="fas fa-server"), ]),
                                                                      dcc.Link('Enerbat', href='/realTime_Enerbat', id='link3')],
                                                                    className='icon_position'),
-                                                          html.Div([html.Div([html.I(className="fas fa-archway"), ]),
+                                                          html.Div([html.Div([html.I(className="fas fa-chart-line"), ]),
                                                                     dcc.Link('RCC/KN', href='/RCC_KN',
                                                                              id='link4')], className='icon_position'),
                                            ],
@@ -560,12 +562,14 @@ page_2_layout = html.Div(
                          html.Div(dcc.Loading(type='cube',children = dcc.Graph(id="getdbgraph",
                                             config={'displayModeBar': True,
                                                     'scrollZoom': True,
+                                                    'displaylogo': False,
                                                     'modeBarButtonsToAdd': [
                                                         'drawline',
                                                         'drawrect',
                                                         'drawopenpath',
                                                         'select2d',
                                                         'eraseshape',
+
                                                     ]},
                                             style={'marginTop': '20px', },
                                             figure={
@@ -667,7 +671,7 @@ page_3_layout = html.Div([html.Div([
                                                           html.Div([html.Div([html.I(className="fas fa-database"), ]),
                                                                     dcc.Link('Database', href='/Database', id='link2')],
                                                                    className='icon_position3'),
-                                                          html.Div([html.Div([html.I(className="fas fa-archway"), ]),
+                                                          html.Div([html.Div([html.I(className="fas fa-chart-line"), ]),
                                                                     dcc.Link('RCC/KN', href='/RCC_KN',
                                                                              id='link4')], className='icon_position3'),
                                                           ],style = {'marginTop':'1rem'},className='ab-page-3'),
@@ -763,12 +767,14 @@ page_3_layout = html.Div([html.Div([
               html.Div([html.Div([ dcc.Graph(id="graphreal",
                                                      config={'displayModeBar': True,
                                                              'scrollZoom': True,
+                                                             'displaylogo': False,
                                                              'modeBarButtonsToAdd': [
                                                                  'drawline',
                                                                  'drawrect',
                                                                  'drawopenpath',
                                                                  'select2d',
                                                                  'eraseshape',
+
                                                              ]},
                                                      style={'marginTop': '20px', },
                                                      figure={
@@ -1027,12 +1033,14 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                        html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph",
                                             config={'displayModeBar': True,
                                                     'scrollZoom': True,
+                                                    'displaylogo': False,
                                                     'modeBarButtonsToAdd': [
                                                         'drawline',
                                                         'drawrect',
                                                         'drawopenpath',
                                                         'select2d',
                                                         'eraseshape',
+
                                                     ]},
                                             style={'marginTop': '20px', },
                                             figure={
@@ -1083,6 +1091,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                ),),
                                html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph2",
                                                     config={'displayModeBar': True,
+                                                            'displaylogo': False,
                                                             'scrollZoom': True,
                                                             'modeBarButtonsToAdd': [
                                                                 'drawline',
@@ -1090,6 +1099,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                 'drawopenpath',
                                                                 'select2d',
                                                                 'eraseshape',
+
                                                             ]},
                                                     style={'marginTop': '20px' },
                                                     figure={
@@ -1138,12 +1148,14 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                        html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph3",
                                                             config={'displayModeBar': True,
                                                                     'scrollZoom': True,
+                                                                     'displaylogo': False,
                                                                     'modeBarButtonsToAdd': [
                                                                         'drawline',
                                                                         'drawrect',
                                                                         'drawopenpath',
                                                                         'select2d',
                                                                         'eraseshape',
+
                                                                     ]},
                                                             style={'marginTop': '20px', },
                                                             figure={
@@ -1191,12 +1203,14 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph4",
                                                                     config={'displayModeBar': True,
                                                                             'scrollZoom': True,
+                                                                            'displaylogo': False,
                                                                             'modeBarButtonsToAdd': [
                                                                                 'drawline',
                                                                                 'drawrect',
                                                                                 'drawopenpath',
                                                                                 'select2d',
                                                                                 'eraseshape',
+
                                                                             ]},
                                                                     style={'margin': '20px ' },
                                                                     figure={
@@ -1933,6 +1947,15 @@ def opcLoadingData(on):
 
                                                                         ],
                                                                        className='buttons'),
+                                                              html.Div([dbc.Checklist(
+                                                                  id='choosenChecklistRef',
+                                                                  options=[{'label': i, 'value': i} for i in
+                                                                           []],
+                                                                  value=[],
+                                                                  labelStyle={'display': 'Block','marginTop': '2rem',},
+                                                              ), ], style={'marginTop': '2rem',
+                                                                           'marginLeft': '1rem',
+                                                                           }),
                                                               html.Div(id='rightSideDropdownHidden', children=[],
                                                                        style={'visibility': 'hidden'}),
                                                               html.Div(id="rightSideDropdown", children=[])
@@ -2015,84 +2038,30 @@ def toggle_modal_5(n1, n2, is_open, children):
         return not is_open
     return is_open
 
-
-#### rightside dropdown-checklist relation
 @app.callback(
-    [Output('rightSideDropdown', "children"),
-     Output('checklistvaleurhidden', "children"), ],
+    [Output('choosenChecklistRef', 'options'),
+     Output('choosenChecklistRef', 'style'),
+     Output('choosenChecklistRef', 'value'),
+     Output("checklistvaleurhidden", "children"),
+     Output("deletedvalref", "children"),
+
+     ],
+    [Input("showRight", "n_clicks"),
+     Input("clearRight", "n_clicks"),
+     ],
     [
-        Input("showRight", "n_clicks"),
-        Input("clearRight", "n_clicks"),
-        Input("valueClearRight", "n_clicks"),
+    State('inputRightY_axis', "value"),
+    State('inputRightX_axis', "value"),
+    State("dropdownRight", "value"),
+    State("checklistvaleurhidden", "children"),
+    State('choosenChecklistRef', 'value'),
+    State('deletedvalref', 'children'),],)
+# left side dropdown-checklist relation
+#########
 
-
-    ],
-    [   State('inputRightY_axis', "value"),
-        State('inputRightX_axis', "value"),
-        State("dropdownRight", "value"),
-        State('rightSideDropdown', "children"),
-        State('checklistvaleurhidden', "children")
-    ]
-)
-def edit_list2(ncr1, ncr2,ncr3, valy, valx, valeur, children, hiddenchild):
-    new_listRight = []
-    triggered_buttons = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-    if triggered_buttons == "showRight":
-        hiddenchild.append(valeur)
-
-        def mesure1(textRight):
-            if textRight == "Mass de Bois":
-                return "g"
-            elif textRight == 'Volume gaz':
-                return 'm3'
-
-            elif textRight == 'Vitesse de rotation':
-                return 'tour/mn'
-
-            elif textRight in {'Puissance Thermique', 'Puissance Electrique'}:
-                return "W"
-
-            elif textRight in {'CO', 'CO2', 'NO', 'NOX', 'CX'}:
-                return "% MOL"
-
-            elif textRight == 'Temperature de Fumée':
-                return '°K'
-
-        if hiddenchild != ['']:
-            new_listRight = html.Div([html.Div([
-                html.Hr(),
-                html.Div([
-                    html.Div([dbc.Checklist(
-                        id='choosenChecklistRef',
-                        options=[{'label': i, 'value': i} for i in
-                                 [f'{valeur} ({mesure1(valeur)}) Y-axis : {valy} and X-axis : {valx}']],
-                        value=[],
-                        labelStyle={'display': 'Block'},
-                    ), ], style={'height': '1rem', 'fontFamily': 'arial', 'color': 'black',
-                                              'fontSize': '1.2rem'}),
-
-                          ], className='design_children2'),
-            ], className='design_children', ),
-
-               ])
-        children.append(new_listRight)
-        print(children)
-
-    if triggered_buttons == "clearRight":
-        if len(children) == 0:
-            return no_update, no_update
-        else:
-            children.pop()
-            hiddenchild.pop()
-    return children, hiddenchild
-
-@app.callback(Output('choosenChecklistRef', 'options'),
-              [Input('inputRightY_axis', "value"),
-               Input('inputRightX_axis', "value"),
-               Input("dropdownRight", "value"),],
-              )
-def render_ref(y_axis, x_axis, valeur):
-
+def displayLeftDropdownRight(n_clicks1, nc2, valy, valx,dropval, valeur, value, deletedval):
+    if dropval == None or deletedval == None or valy == None or valx == None:
+        raise PreventUpdate
     def mesure1(textRight):
         if textRight == "Mass de Bois":
             return "g"
@@ -2110,10 +2079,93 @@ def render_ref(y_axis, x_axis, valeur):
 
         elif textRight == 'Temperature de Fumée':
             return '°K'
-    return [{'label': i, 'value': i} for i in
-                                 [f'{valeur} ({mesure1(valeur)}) Y-axis : {valy} and X-axis : {valx}']]
-# #### bunla ugras shapeler ciktiktan sonra referance bilgileri cikmiyor
+    q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
+    if dropval != None:
+        x = f'''Entered values for {dropval} ( {mesure1(dropval)} ) are : Y-axis : {valy} and X-axis : {valx}'''
+    a = []
+    a.append(x)
+    for i in a:
+        if q1 == 'showRight' and i not in valeur:
+            valeur.append(x)
 
+
+
+        if q1 == 'clearRight' and i not in deletedval:
+            pass
+    if q1 == 'showRight':
+
+        return [{'label': i, 'value': i} for i in valeur], {'visibility': 'visible'}, [], valeur, deletedval
+
+    if q1 == 'clearRight':
+
+        for k in range(len(value)):
+            valeur.remove(value[k])
+            deletedval.append(value[k])
+
+        return [{'label': i, 'value': i} for i in  valeur], {'visibility': 'visible'}, [], valeur, deletedval
+    else:
+        no_update, no_update, no_update, no_update, no_update
+
+
+@app.callback([Output("inputRightY_axishidden", "children"),
+               Output("inputRightX_axishidden", "children"),
+               Output('checklistvaleurhidden2', "children"),],
+              [Input('choosenChecklistRef','value'),],)
+def Inputaxis(okval):
+    if okval != []:
+        y_val = []
+        x_val = []
+        checklist = []
+        for i in okval:
+            m = i.split(' ')
+            for k in m:
+                if k != 'Y-axis':
+                    checklist.append(k)
+                    break
+            x_val.append(m[-1])
+            i = m[:-1]
+            for j in range(len(i)):
+                if i[j].isdecimal():
+                    y_val.append(i[j])
+                else :
+                    fmts = (
+                    '%Y', '%b %d, %Y', '%b %d, %Y', '%B %d, %Y', '%B %d %Y', '%m/%d/%Y', '%m/%d/%y', '%b %Y', '%B%Y',
+                    '%b %d,%Y')
+
+                    parsed = []
+                    for e in i[j].splitlines():
+                        for fmt in fmts:
+                            try:
+                                t = datetime.datetime.strptime(e, fmt)
+                                parsed.append((e, fmt, t))
+                                break
+                            except ValueError as err:
+                                pass
+
+                    # check that all the cases are handled
+                    success = {t[0] for t in parsed}
+
+                    for t in parsed:
+                        y_val.append('"{:20}" => {}'.format(*t))
+        print(y_val)
+        return y_val,x_val,checklist
+    else : return [],[],[]
+
+@app.callback([Output("inputRightY_axis", "value"),
+               Output("inputRightX_axis", "value")],
+              [Input('valueClearRight', 'n_clicks')],
+              [State("inputRightY_axis", "value"),
+              State("inputRightX_axis", "value")]
+              )
+def clear(nclick, st1, st2):
+    if st1 == None or st2 == None:
+        raise PreventUpdate
+    if nclick > 0:
+        st1 = 0
+        st2 = 0
+        return (st1, st2)
+    else:
+        (no_update, no_update)
 @app.callback(Output('tabs-content-classes', 'children'),
               [Input('tabs-with-classes', 'value')],
               )
@@ -2122,15 +2174,7 @@ def render_content(tab):
         return html.Div([
             html.Div(id='tab1Data')
         ])
-    # if tab == 'tab-2':
-    #     return html.Div([
-    #         html.Div(id='tab2Data')
-    #     ])
-    # if tab == 'tab-3':
-    #     page_2_layout = html.Div([
-    #         html.Div(id='tab3Data', children=[]),
-    #         html.Div(id='Dbdesign')])
-    #     return page_2_layout
+
 
     if tab == 'tab-4':
         return html.Div([
@@ -2333,12 +2377,14 @@ def LoadingDataTab1(on, dropdownhidden, tab):
             html.Div([html.Div([dcc.Graph(id='graph',
                                 config={'displayModeBar': True,
                                         'scrollZoom': True,
+                                        'displaylogo': False,
                                         'modeBarButtonsToAdd': [
                                             'drawline',
                                             'drawrect',
                                             'drawopenpath',
                                             'select2d',
                                             'eraseshape',
+
                                         ]},
                                 style={'marginTop': '20px'},
                                 figure={
@@ -2355,7 +2401,22 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                           step=100,
                                           size=420,
                                           vertical=True,
-                                          updatemode='drag'), style={'margin': '20px'})],
+                                          updatemode='drag'), style={'margin': '20px'}),
+                    html.Div([daq.BooleanSwitch(
+                                        id="selectyaxis",
+                                        label="Multiple Y-axis",
+                                        labelPosition="bottom",
+                                        color='red',
+
+                                    )
+                                ,
+                        dbc.Tooltip(
+                            "You can select maximum 3 y-axis",
+                            target="selectyaxis",
+                            placement='bottom',
+                        ),
+                    ], className='pluraly'),
+                                ],
                      className='abcdb'),
 
             html.Div([daq.Slider(id="sliderWidthTab1",
@@ -2622,67 +2683,11 @@ def shiftingaxes(val):
     return {'visibility': 'visible', 'marginTop': '2rem'}
 
 
-##### bunla ugras shapeler ciktiktan sonra referance bilgileri cikmiyor
-
-@app.callback([Output("inputRightY_axishidden", "children"),
-               Output("inputRightX_axishidden", "children"),
-               Output('checklistvaleurhidden2', "children"),
-               ],
-              [Input('choosenChecklistRef','value'),
-               ],
-              [State("inputRightY_axis", "value"),
-               State("inputRightX_axis", "value"),
-               State("dropdownRight", "value"),
-               State('checklistvaleurhidden2', "children"),
-               State("inputRightY_axishidden", "children"),
-               State("inputRightX_axishidden", "children"), ]
-              )
-def Inputaxis(okval, y_val, x_val, droplist, checklist, y_axis, x_axis):
-    if y_val == None or x_val == None:
-        raise PreventUpdate
-    q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-    print('okval', okval)
-    if okval != [] :
-        y_axis.append(y_val)
-        x_axis.append(x_val)
-        checklist.append(droplist)
-    # if q1 == 'valueSendRight0':
-    #     if droplist != None or y_val != None or x_val != None:
-
-    #     enum_y_axis = [j for j in enumerate(y_axis, 0)]
-    #     enum_x_axis = [j for j in enumerate(x_axis, 0)]
-    #     enum_checklist = [j for j in enumerate(checklist, 0)]
-    #     if len(checklist) == len(y_axis) and len(checklist) == len(x_axis):
-    #         return (y_axis, x_axis, checklist)
-    #     else:
-    #         no_update, no_update, no_update
-    #
-    # if q1 == 'valueClearRight0':
-    #     y_axis.remove(y_val)
-    #     x_axis.remove(x_val)
-    #     checklist.remove(droplist)
-        return (y_axis, x_axis, checklist)
-    else :return [],[],[]
-@app.callback([Output("inputRightY_axis", "value"),
-               Output("inputRightX_axis", "value")],
-              [Input('valueClearRight', 'n_clicks')],
-              [State("inputRightY_axis", "value"),
-              State("inputRightX_axis", "value")]
-              )
-def clear(nclick, st1, st2):
-    if st1 == None or st2 == None:
-        raise PreventUpdate
-    if nclick > 0:
-        st1 = 0
-        st2 = 0
-        return (st1, st2)
-    else:
-        (no_update, no_update)
-
 
 @app.callback([Output('graphhidden', 'figure'),
                Output('hiddenDifferance', 'children'), ],
-              [Input("hiddenchoosenChecklistLeft", "children"),
+              [Input("selectyaxis", "on"),
+                  Input("hiddenchoosenChecklistLeft", "children"),
                Input("radiographhidden", "children"),
                Input("sliderHeightTab1hidden", "children"),
                Input("sliderWidthTab1hidden", "children"),
@@ -2708,12 +2713,13 @@ def clear(nclick, st1, st2):
                State('rightintegralsecondhidden', 'children'),
                State('pointLeftFirst', 'children'),
                State('pointRightFirst', 'children'),
+
                ]
               )
-def res2(val, radiograph, sliderheight, sliderwidth,
+def res2(on,val, radiograph, sliderheight, sliderwidth,
          minValfirst, minValsecond, firstchoosen, secondchoosen, rightsidedrop, right_y_axis, right_x_axis,
          nclick, nc, cleanclick, axis, shift_x, shift_y, differance, retrieve, leftfirstval, leftsecondval,
-         rightfirstval, rightsecondval, firstshape, secondshape ):
+         rightfirstval, rightsecondval, firstshape, secondshape):
     if retrieve == None or retrieve == [] or nc == None:
         raise PreventUpdate
     if retrieve != []:
@@ -2756,20 +2762,19 @@ def res2(val, radiograph, sliderheight, sliderwidth,
 
             else :
                 dt = df['date']
-
-
         fig = go.Figure()
-        if right_x_axis != [] and right_y_axis != []:
-            for k in range(len(rightsidedrop)):
-                if len(rightsidedrop) == len(right_x_axis) and len(rightsidedrop) == len(right_y_axis):
-                    x = [float(right_x_axis[k])]
-                    y = [float(right_y_axis[k])]
-                    fig.add_trace(go.Scatter(mode="markers", x=x, y=y, marker_symbol='diamond-x',
-                                             marker_line_color="midnightblue", marker_color="lightskyblue",
-                                             marker_line_width=2, marker_size=8,hovertemplate="Ref_point: %{y}/%{x}",
-                                             name=f"Ref_point: {y}/{x}",
-                                  )),
-                    fig.update_layout(margin=dict(b=0, r=0),)
+        if rightsidedrop != None :
+            if right_x_axis != [] and right_y_axis != []:
+                for k in range(len(rightsidedrop)):
+                    if len(rightsidedrop) == len(right_x_axis) and len(rightsidedrop) == len(right_y_axis):
+                        x = [float(right_x_axis[k])]
+                        y = [float(right_y_axis[k])]
+                        fig.add_trace(go.Scatter(mode="markers", x=x, y=y, marker_symbol='diamond-x',
+                                                 marker_line_color="midnightblue", marker_color="lightskyblue",
+                                                 marker_line_width=2, marker_size=8,hovertemplate=f"Ref_point{k}: %{y}/%{x}",
+                                                 name=f"Ref_point{k}: {y}/{x}",
+                                      )),
+                        fig.update_layout(margin=dict(b=0, r=0),)
         for i_val in range(len(val)):
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 y_axis = df[df['ID'] == val[i_val]]['Value']
@@ -2808,9 +2813,19 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                         df.to_excel("appending.xlsx")
                     else:
                         x_axis = df['date']
-            fig.add_trace(
-                go.Scattergl(x=x_axis, y=y_axis, mode=radiograph, marker=dict(line=dict(width=0.2, color='white')),
-                             name=val[i_val]))
+            if on == 1:
+                if len(val) == 1:
+                    fig.add_trace(
+                        go.Scattergl(x=x_axis, y=y_axis, mode=radiograph, marker=dict(line=dict(width=0.2, color='white')),
+                                     name=val[i_val]))
+                elif len(val)>1 :
+                    fig.add_trace(
+                        go.Scattergl(x=x_axis, y=y_axis, mode=radiograph, marker=dict(line=dict(width=0.2, color='white')),
+                                     name=val[i_val], yaxis = f'y{i_val+1}'))
+            else :
+                fig.add_trace(
+                    go.Scattergl(x=x_axis, y=y_axis, mode=radiograph, marker=dict(line=dict(width=0.2, color='white')),
+                                 name=val[i_val]))
 
             color = {0: 'blue', 1: 'red', 2: 'green', 3: 'purple', 4: 'orange'}
             if len(firstshape) == 2 and leftfirstval != firstshape[0] and leftfirstval != []:
@@ -3100,6 +3115,31 @@ def res2(val, radiograph, sliderheight, sliderwidth,
                     bgcolor=colors['background'],
                     borderwidth=5
                 ),
+                yaxis2=dict(
+                    titlefont=dict(
+                        color="#d62728"
+                    ),
+                    tickfont=dict(
+                        color="#d62728"
+                    ),
+                    anchor="free",
+                    overlaying="y",
+                    side="right",
+                    position=1
+                ),
+                yaxis3=dict(
+                    titlefont=dict(
+                        color='green'
+                    ),
+                    tickfont=dict(
+                        color="green"
+                    ),
+                    anchor="free",
+                    overlaying="y",
+                    side="right",
+                    position=0.92
+                ),
+
                 margin=dict(
                     l=50,
                     r=50,
@@ -3417,6 +3457,7 @@ def LoadingDataTab4(on, tab):
             html.Div([html.Div(id='tab4third', children=[dcc.Store(id='tab4datastore'),
                                                dcc.Loading(id = 'graph4load', type = 'circle', children = [dcc.Graph(id='graph4', config={'displayModeBar': True,
                                                                               'scrollZoom': True,
+                                                                              'displaylogo': False,
                                                                               'modeBarButtonsToAdd': [
                                                                                   'drawopenpath',
                                                                                   'drawcircle',
@@ -4275,7 +4316,7 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rights
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
         df['index'] = df.index
-        print('rightside', rightside)
+
         for i in range(len(rightside)):
             spaceList1.append(zero)
             zero += 1
@@ -4287,13 +4328,11 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rights
             spaceList2.append(value[i])
         zippedval = [i for i in list(zip(spaceList1, spaceList2))]
         curvenumber = clickData['points'][0]['curveNumber']
-        print('curvenumber ', curvenumber)
-        print('zippedval',zippedval)
         for k in zippedval:
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
-                    print('x+val', x_val)
+
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
                     elif 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
@@ -8456,7 +8495,5 @@ def on_data_set_graph4(data2,data, realval,valy, valdat, sliderw, sliderh,interv
             else:
                 raise PreventUpdate
 
-
 if __name__ == '__main__':
-    # app.run_server(debug = True)
     app.run_server(debug=True, host='0.0.0.0', port=8049)
