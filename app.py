@@ -55,7 +55,8 @@ BS =[ "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         'rel': 'stylesheet',
         'integrity': 'sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf',
         'crossorigin': 'anonymous'
-    }
+    },
+
 
 ]
 
@@ -2118,36 +2119,24 @@ def Inputaxis(okval):
         checklist = []
         for i in okval:
             m = i.split(' ')
+            print('mmmm',m)
             for k in m:
                 if k != 'Y-axis':
                     checklist.append(k)
                     break
             x_val.append(m[-1])
+            print('xval', x_val)
             i = m[:-1]
+            print('iiii',i)
             for j in range(len(i)):
+                print('ij', i[j])
                 if i[j].isdecimal():
                     y_val.append(i[j])
-                else :
-                    fmts = (
-                    '%Y', '%b %d, %Y', '%b %d, %Y', '%B %d, %Y', '%B %d %Y', '%m/%d/%Y', '%m/%d/%y', '%b %Y', '%B%Y',
-                    '%b %d,%Y')
+            # else :
+            #     y_val=(x_val[0])
+            #     print(y_val)
 
-                    parsed = []
-                    for e in i[j].splitlines():
-                        for fmt in fmts:
-                            try:
-                                t = datetime.datetime.strptime(e, fmt)
-                                parsed.append((e, fmt, t))
-                                break
-                            except ValueError as err:
-                                pass
 
-                    # check that all the cases are handled
-                    success = {t[0] for t in parsed}
-
-                    for t in parsed:
-                        y_val.append('"{:20}" => {}'.format(*t))
-        print(y_val)
         return y_val,x_val,checklist
     else : return [],[],[]
 
@@ -3212,7 +3201,7 @@ def LoadingDataTab4(on, tab):
             html.Div(id='tab4first', children=[html.Div([html.Div([html.Div(
                 dcc.RadioItems(id="radiographtab4",
                                options=[
-                                   {'label': 'X-axis and Y-axis unlimited', 'value': 'optionlibre'},
+                                   {'label': 'Multiple X-axis and Y-axis', 'value': 'optionlibre'},
                                    {'label': 'X-axis for each Y-axis', 'value': 'choosevalue'},
                                ],
                                # value='choosevalue',
