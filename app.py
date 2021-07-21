@@ -55,8 +55,7 @@ BS =[ "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         'rel': 'stylesheet',
         'integrity': 'sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf',
         'crossorigin': 'anonymous'
-    },
-
+    }
 
 ]
 
@@ -427,7 +426,7 @@ page_2_layout = html.Div(
                                     style={'cursor': 'pointer', 'marginTop': '13px'},
                                     className='stockSelectorClass3',
                                     clearable=False,
-                                    placeholder='Select your parameters...',
+                                    placeholder='Select your time...',
                                     ), ], className='aadb'),
                    html.Div([
                             daq.BooleanSwitch(
@@ -917,7 +916,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                                 style={'cursor': 'pointer', 'marginTop': '13px'},
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=False,
-                                                                                placeholder='Select your parameters...',
+                                                                                placeholder='Select your time...',
                                                                                 ),
                                                                    html.P('Enter interval value (Second)'),
                                                                     dcc.Interval(
@@ -1801,13 +1800,6 @@ def retrieve(retrieve):
         xx = retrieve[0]['props']['children'][2]['props']['data']
         return xx
 
-
-# @app.callback(Output('tab2DashTable', 'children'),
-#               [Input('datatablehidden', 'children')],
-#               )
-# def retrieve2(retrieve):
-#     return retrieve
-
 @app.callback(Output('tab4DashTable', 'children'),
               [Input('datatablehidden', 'children')],
               )
@@ -1870,6 +1862,7 @@ def opcLoadingData(on):
                                                                                                style={'height': '40px',
                                                                                                       'width': '80px',
                                                                                                       'fontSize': '1.2rem'}),
+
                                                                                    html.Button('Delete', id='clearLeft',
                                                                                                n_clicks=0,
                                                                                                style={'height': '40px',
@@ -1938,6 +1931,13 @@ def opcLoadingData(on):
                                                                                   bs_size="sm", style={'width': '7rem'},
                                                                                   placeholder='X axis value',
                                                                                   autoFocus=True, ),
+                                                                  dbc.Tooltip(
+                                                                      "For using 'date', the format is  "
+                                                                      "'yyyy-mm-dd hh:mm:ss'"
+                                                                      " 2021-07-21 12:15:18",
+                                                                      target="inputRightX_axis",
+                                                                      placement='right',
+                                                                  ),
                                                                         ], id="styled-numeric-input",className = "add_design2" ),
                                                               html.Div([dbc.Button('Show', id='showRight',color = 'primary',
                                                                                     n_clicks=0, className = 'mr-1', style = {'width':'5rem', 'fontSize':'1rem'}),
@@ -2124,17 +2124,28 @@ def Inputaxis(okval):
                 if k != 'Y-axis':
                     checklist.append(k)
                     break
-            x_val.append(m[-1])
+            i = []
+            if len(m[-1]) < 7:
+                x_val.append(m[-1])
+                i = m[:-1]
+            else :
+                a = ''.join([i for i in m[-2:]])
+                b = a[:10] + ' ' + a[10:]
+                x_val.append(b)
+                i = m[:-2]
             print('xval', x_val)
-            i = m[:-1]
+            # i = m[:-1]
             print('iiii',i)
             for j in range(len(i)):
-                print('ij', i[j])
-                if i[j].isdecimal():
+
+                if (i[j]).isdecimal():
                     y_val.append(i[j])
+                if '.' in i[j]:
+                    y_val.append(float(i[j]))
+
             # else :
             #     y_val=(x_val[0])
-            #     print(y_val)
+            print('yvalllllllll',y_val)
 
 
         return y_val,x_val,checklist
@@ -2155,6 +2166,7 @@ def clear(nclick, st1, st2):
         return (st1, st2)
     else:
         (no_update, no_update)
+
 @app.callback(Output('tabs-content-classes', 'children'),
               [Input('tabs-with-classes', 'value')],
               )
@@ -2756,8 +2768,12 @@ def res2(on,val, radiograph, sliderheight, sliderwidth,
             if right_x_axis != [] and right_y_axis != []:
                 for k in range(len(rightsidedrop)):
                     if len(rightsidedrop) == len(right_x_axis) and len(rightsidedrop) == len(right_y_axis):
-                        x = [float(right_x_axis[k])]
-                        y = [float(right_y_axis[k])]
+                        if len(right_x_axis[k]) < 6 :
+                            x = [right_x_axis[k]]
+                        else :
+                            x = [right_x_axis[k]]
+                            print('xxxxxxxxxxxxxxxxxx',x)
+                        y = [right_y_axis[k]]
                         fig.add_trace(go.Scatter(mode="markers", x=x, y=y, marker_symbol='diamond-x',
                                                  marker_line_color="midnightblue", marker_color="lightskyblue",
                                                  marker_line_width=2, marker_size=8,hovertemplate=f"Ref_point{k}: %{y}/%{x}",
@@ -3201,7 +3217,7 @@ def LoadingDataTab4(on, tab):
             html.Div(id='tab4first', children=[html.Div([html.Div([html.Div(
                 dcc.RadioItems(id="radiographtab4",
                                options=[
-                                   {'label': 'Multiple X-axis and Y-axis', 'value': 'optionlibre'},
+                                   {'label': 'X-axis and Y-axis unlimited', 'value': 'optionlibre'},
                                    {'label': 'X-axis for each Y-axis', 'value': 'choosevalue'},
                                ],
                                # value='choosevalue',
@@ -6220,7 +6236,7 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 b = sorted(b)
                 str_list = [t.strftime("%Y-%m-%d") for t in b]
                 return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-            elif dbch != 'received_variablevalues' or dbch != 'send_variablevalues':
+            elif (dbch != 'received_variablevalues' or dbch != 'send_variablevalues') and dbch != None:
                 cur = conn.cursor()
                 cur.execute(
                     f"SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dbch}' ORDER BY ORDINAL_POSITION")
@@ -6248,6 +6264,7 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                     b = sorted(b)
                     str_list = [t.strftime("%Y-%m-%d") for t in b]
                     return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+
                 else:
                     cur1 = conn.cursor()
                     cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {dbch} ")
@@ -6269,6 +6286,8 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                     b = sorted(b)
                     str_list = [t.strftime("%Y-%m-%d") for t in b]
                     return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+            elif dbch == None:
+                return no_update, no_update
         if dbname == 'enerbat':
             if dbch != None:
                 cur1 = conn.cursor()
@@ -6291,12 +6310,14 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                 b = sorted(b)
                 str_list = [t.strftime("%Y-%m-%d") for t in b]
                 return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-
+            else:
+                return no_update, no_update
+        else : return no_update, no_update
     if q1 == 'deactivatedb':
         kk = [{'label': i, 'value': i} for i in '']
         return [{'label': i, 'value': i} for i in ''], [{'label': i, 'value': i} for i in '']
     else:
-        no_update, no_update
+        return no_update, no_update
 
 
 @app.callback([Output('prvalname', 'options'), Output('prvaldate', 'options')],
