@@ -8,6 +8,7 @@
     grid-template-columns:32% 68%;
     grid-gap: 1rem;
     height : 30%;
+    overflow-x : hidden;
 
 }
 /* colors variables settings */
@@ -168,6 +169,15 @@
     justify-content: center;
 
 }
+.design_page1 {
+    margin : auto;
+}
+.design_page2 {
+    display: flex;
+    flex-direction : column;
+    justify-content: center;
+    align-content : center;
+}
 .ad{
     display: flex;
     flex-direction : row;
@@ -291,6 +301,18 @@
 
 }
 
+.abtab4_drop{
+    display: flex;
+    flex-direction : row;
+    justify-content: space-evenly;
+    background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,182,244,1) 0%, rgba(18,116,231,1) 90.1% );
+    box-sizing: border-box;
+    margin : 10px;
+    width : 40vw;
+    border-radius: 0.5rem;
+
+}
+
 .abdbside{
     background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,182,244,1) 0%, rgba(18,116,231,1) 90.1% );
     box-sizing: border-box;
@@ -298,6 +320,7 @@
     border-radius: 0.5rem;
 
 }
+
 .abdbside-db{
     background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,182,244,1) 0%, rgba(18,116,231,1) 90.1% );
     box-sizing: border-box;
@@ -312,7 +335,7 @@
 
     }
 .pluraly {
-    margin : 1.8rem 0 0 4rem;
+
     box-sizing: unset!important;
     color : black;
 
@@ -364,19 +387,23 @@
 .abcdbprGraph{
     display: flex;
     flex-direction : row;
-    justify-content: space-between;
-    width : 1200px;
+    justify-content: space-evenly;
+    width : 100vw;
     margin : 2rem
 }
 .abcTab4{
     display: flex;
     flex-direction : row;
-    justify-content: flex-start;
+    justify-content: center;
     margin-top : 30px;
-    width : 60vw
+    width : 100vw
 
 }
 .abcd{ 
+    display: flex;
+    flex-direction : row;
+}
+.abcd{
     display: flex;
     flex-direction : row;
 }
@@ -386,6 +413,14 @@
     flex-direction : row;
     justify-content: space-evenly;
     width : 85%;
+}
+
+.abcdb_page1{
+    display: flex;
+    flex-direction : row;
+    justify-content: center;
+    width : 100%;
+    margin : auto;
 }
 
 .abcdbpage4upleft{
@@ -428,9 +463,10 @@
 .abcdb_graph{
     display: flex;
     flex-direction : row;
-    margin-top : 10em;
     width : 70vw;
-    margin-left : 5rem
+    justify-content : center;
+    margin-Top : 10rem;
+
 
 }
 .abcdb_graph2{
@@ -646,6 +682,7 @@
 html {
   overflow-y: scroll;
 }
+
 #showLeft, #showTab, #upload_data, #write_excel,#write_exceldb,#addText,#addText4, #write_excelTab4, #download, #download_data,#download_dataTab4,#download_datadb {
     background-color: #0996ce; 
     border: none;
@@ -732,7 +769,7 @@ html {
         display : flex;
         flex-direction: row;
         flex-wrap: nowrap;
-        justify-content: flex-start;
+        justify-content: space-evenly;;
         align-items: flex-start;
         width : 90%;
         margin-bottom: 2rem;

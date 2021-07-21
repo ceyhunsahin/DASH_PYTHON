@@ -49,7 +49,7 @@ def find_data_file(filename):
 
 
 
-BS =[ "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css",
+BS =[ "https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css",
     {
         'href': 'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
         'rel': 'stylesheet',
@@ -351,7 +351,7 @@ page_2_layout = html.Div(
                                                                     dcc.Link('Home', href='/', id='link1')],
                                                                    className='icon_position'),
                                                           html.Div([html.Div([html.I(className="far fa-file-excel"), ]),
-                                                                    dcc.Link('File', href='/File', id='link5')],
+                                                                    dcc.Link('Analysis', href='/File', id='link5')],
                                                                    className='icon_position'),
                                                         html.Div([html.Div([html.I(className="fas fa-server"), ]),
                                                                      dcc.Link('Enerbat', href='/realTime_Enerbat', id='link3')],
@@ -595,8 +595,8 @@ page_2_layout = html.Div(
                                              step=100,
                                              size=600,
 
-                                             updatemode='drag')],className='page4reeldb'),
-                         ], style = {'marginLeft' : '15rem'}),],className='acsecond'),
+                                             updatemode='drag')],className='design_page1'),
+                         ],className='design_page2'),],className='acsecond'),
                html.Div(dash_table.DataTable(id="getdbtable",
                                              editable=True,
                                              page_size=50,
@@ -640,13 +640,11 @@ page_2_layout = html.Div(
                html.Div(id='pointRightFirstdb', children=[], style={'display': 'None'}),
                html.Div(id='pointRightSeconddb', children=[], style={'display': 'None'}),
                html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
-               html.Div(id='leftintegralsecondhiddendb', children=[], style={'display': 'None'}),
                html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
                html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
                html.Div(id='firstchoosenvalhiddendb', children=[], style={'display': 'None'}),
                html.Div(id='secondchoosenvalhiddendb', children=[], style={'display': 'None'}),
                html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
-               html.Div(id='leftintegralsecondhiddendb', children=[], style={'display': 'None'}),
                html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
                html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
                html.Div(id='hiddenrecord1db', children=[], style={'display': 'None'}),
@@ -1855,6 +1853,7 @@ def opcLoadingData(on):
                                                                                       className='stockSelectorClass',
                                                                                       clearable=False,
                                                                                       placeholder='Select your parameters...',
+
                                                                                       ),
                                                                      ),
                                                                          html.Div([html.Button('Show', id='showLeft',
@@ -1915,6 +1914,7 @@ def opcLoadingData(on):
                                                                                className='stockSelectorClass',
                                                                                clearable=False,
                                                                                placeholder='Select your parameters...',
+
                                                                                ),
                                                               ),
                                                               html.P('Enter Y and X values', style = {'margin' : '1rem 6rem', }),
@@ -2418,7 +2418,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                         ),
                     ], className='pluraly'),
                                 ],
-                     className='abcdb'),
+                     className='abcdb_page1'),
 
             html.Div([daq.Slider(id="sliderWidthTab1",
                                  max=2000,
@@ -2426,11 +2426,11 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                  value=1000,
                                  step=100,
                                  size=500,
-                                 updatemode='drag'),
-                      html.Div(id='output-data-upload', children=[])],style={'margin': '1rem 0 0 12rem'} ),],style = {'textAlign': 'left',
-                'color': colors['text'],'backgroundColor': '#f0f4fa', 'width':'60vw'}, className = 'abcdbgraphtab1'),
-
+                                 updatemode='drag'),], className = 'design_page1')], className = 'design_page2'),
+            html.Div(id='output-data-upload', children=[]),
         ]),
+
+
         #
 
         return loadTab1
@@ -3485,16 +3485,15 @@ def LoadingDataTab4(on, tab):
                                                                    updatemode='drag'), style={'margin': '10px'})],
                      className='abcTab4'),
 
-            html.Div([html.Div(daq.Slider(id="sliderWidthTab4",
+            html.Div([daq.Slider(id="sliderWidthTab4",
                                  max=2000,
                                  min=600,
                                  value=1200,
                                  step=100,
                                  size=600,
-                                 updatemode='drag'),style={'marginLeft' : '50rem'
-                }),
-                      html.Div(id="tab4DashTable", children=[],style = {"width" : '90vw','textAlign': 'left','color': colors['text'],'marginLeft' : '5rem'} )
-                      ],),],style={'marginLeft' : '2rem'}),
+                                 updatemode='drag')],className = 'design_page1')],className = 'design_page2'),
+            html.Div(id="tab4DashTable", children=[],style = {"width" : '90vw','textAlign': 'left','color': colors['text'],'marginLeft' : '5rem'} )
+
         ]), ],className = 'four-columns-div-user-controlsreel', style={'backgroundColor': 'white' })
 
         return loadlist
