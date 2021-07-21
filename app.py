@@ -2688,7 +2688,7 @@ def shiftingaxes(val):
 @app.callback([Output('graphhidden', 'figure'),
                Output('hiddenDifferance', 'children'), ],
               [Input("selectyaxis", "on"),
-                  Input("hiddenchoosenChecklistLeft", "children"),
+               Input("hiddenchoosenChecklistLeft", "children"),
                Input("radiographhidden", "children"),
                Input("sliderHeightTab1hidden", "children"),
                Input("sliderWidthTab1hidden", "children"),
@@ -3270,7 +3270,7 @@ def LoadingDataTab4(on, tab):
                                        clearable=True,
                                        placeholder='Select your x-axis value...',
                                        ),
-                          ], className='abtab1'),]),
+                          ], className='abtab4_drop'),]),
                  ], className='ac'),
 
                 html.Div([dcc.Dropdown(id="dropadd4",
@@ -3457,10 +3457,10 @@ def LoadingDataTab4(on, tab):
                                                            style={'height': '2.5em', 'marginLeft': '1.8rem'}
                                                            ),
 
-                                                ], className='abcd'),
+                                                ], className='add_design'),
 
             html.Div([html.Div(id='tab4third', children=[dcc.Store(id='tab4datastore'),
-                                               dcc.Loading(id = 'graph4load', type = 'circle', children = [dcc.Graph(id='graph4', config={'displayModeBar': True,
+                                               dcc.Loading(id = 'graph4load', type = 'cube', children = [dcc.Graph(id='graph4', config={'displayModeBar': True,
                                                                               'scrollZoom': True,
                                                                               'displaylogo': False,
                                                                               'modeBarButtonsToAdd': [
@@ -3485,16 +3485,16 @@ def LoadingDataTab4(on, tab):
                                                                    updatemode='drag'), style={'margin': '10px'})],
                      className='abcTab4'),
 
-            html.Div([daq.Slider(id="sliderWidthTab4",
+            html.Div([html.Div(daq.Slider(id="sliderWidthTab4",
                                  max=2000,
                                  min=600,
                                  value=1200,
                                  step=100,
                                  size=600,
-                                 updatemode='drag'),
-                      html.Div(id="tab4DashTable", children=[],style = {"width" : '95vw'} )
-                      ], style={'textAlign': 'left','color': colors['text'],'marginLeft' : '3rem'
-                },),],style={'marginLeft' : '2rem'}),
+                                 updatemode='drag'),style={'marginLeft' : '50rem'
+                }),
+                      html.Div(id="tab4DashTable", children=[],style = {"width" : '90vw','textAlign': 'left','color': colors['text'],'marginLeft' : '5rem'} )
+                      ],),],style={'marginLeft' : '2rem'}),
         ]), ],className = 'four-columns-div-user-controlsreel', style={'backgroundColor': 'white' })
 
         return loadlist
