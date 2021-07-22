@@ -2733,6 +2733,8 @@ def res2(on,val, radiograph, sliderheight, sliderwidth,
                 if 'Temps' in col:
                     baseval += col
                     dt = df[baseval]
+                else :
+                    dt = np.arange(0, df.shape[0])
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns :
                 dff = df[df['ID'] == firstchoosen[-1]]
                 dff = dff.copy()
@@ -2742,7 +2744,6 @@ def res2(on,val, radiograph, sliderheight, sliderwidth,
                 dt = dff[['Date']]
                 dt.columns = ['Date']
                 dt = dt['Date'].apply(lambda x : x[:10] + '_' + x[11:])
-
                 dff2 = df[df['ID'] == secondchoosen]
                 dff2 = dff2.copy()
                 index = np.arange(0, len(dff2['ID']))
@@ -2772,7 +2773,6 @@ def res2(on,val, radiograph, sliderheight, sliderwidth,
                             x = [right_x_axis[k]]
                         else :
                             x = [right_x_axis[k]]
-                            print('xxxxxxxxxxxxxxxxxx',x)
                         y = [right_y_axis[k]]
                         fig.add_trace(go.Scatter(mode="markers", x=x, y=y, marker_symbol='diamond-x',
                                                  marker_line_color="midnightblue", marker_color="lightskyblue",
@@ -2788,7 +2788,9 @@ def res2(on,val, radiograph, sliderheight, sliderwidth,
             if 'date' not in df.columns:
                 if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                     x_axis = df[df['ID'] == val[i_val]]['Date']
-                else : x_axis = df[baseval]
+                elif baseval != '' :
+                    x_axis = df[baseval]
+                else: x_axis = np.arange(0, df.shape[0])
             if 'date' in df.columns:
                 x_axis = df['date']
 
@@ -3668,10 +3670,11 @@ def container4_2(val, radio,data):
     df = pd.DataFrame(data)
     if radio == 'choosevalue':
         a = [{'label': i, 'value': i} for i in val], [{'label': i, 'value': i} for i in val]
+        return a
     elif radio == 'optionlibre':
-
         a = [{'label': i, 'value': i} for i in val], [{'label': i, 'value': i} for i in val]
-    return a
+        return a
+    else : return no_update
 
 
 @app.callback([Output('hiddenTextxaxis', 'children'), Output('hiddenTextyaxis', 'children'),
@@ -4336,7 +4339,7 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rights
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
-
+                    dff = pd.DataFrame([])
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
                     elif 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
@@ -4362,6 +4365,7 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rights
                                 if shift_x != 0:
                                     x_val -= shift_x
                                     dff = df[df[v] == x_val]
+                            else : dff = df
                     a = []
                     if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                         a.append([dff[dff['ID'] == firstchoosen].index][0])
@@ -4642,28 +4646,30 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
                                     leftchild.pop(0)
                                 return (leftchild, leftchild)
                         else:
-
                             if valxsecond != []:
-                                t = valxsecond.index(firstchoosen)
-                                print(t)
-                                m = valysecond[t]
-                                print(m)
-                                x_val = clickData4['points'][0]['x']
-                                print(x_val)
-                                print(firstchoosen)
+                                if firstchoosen in valxsecond :
+                                    t = valxsecond.index(firstchoosen)
+                                    print(t)
+                                    m = valysecond[t]
+                                    print(m)
+                                    x_val = clickData4['points'][0]['x']
+                                    print(x_val)
+                                    print(firstchoosen)
 
-                                dff = df[df[m] == x_val]
+                                    dff = df[df[m] == x_val]
 
-                                print(dff)
-                                a = []
-                                a.append(dff[firstchoosen].index)
-                                for i in range(len(a)):
-                                    for j in a:
-                                        leftchild.append(j[i])
+                                    print(dff)
+                                    a = []
+                                    a.append(dff[firstchoosen].index)
+                                    for i in range(len(a)):
+                                        for j in a:
+                                            leftchild.append(j[i])
 
-                                if len(leftchild) > 2:
-                                    leftchild.pop(0)
-                                return (leftchild, leftchild)
+                                    if len(leftchild) > 2:
+                                        leftchild.pop(0)
+                                    return (leftchild, leftchild)
+                                else:
+                                    return (no_update, no_update)
                             else:
                                 return (no_update, no_update)
 
@@ -6856,7 +6862,7 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
                         b = [i for i in b if i.startswith(valdate_new[k])]
                         time.sleep(1)
                         fig.add_trace(
-                            go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
+                            go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
                                          name="{}/{}".format(valy[j], valdate_new[k]))),
                     fig.update_layout(
                         autosize=True,
@@ -6869,14 +6875,12 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
                             t=50,
                             pad=4
                         ),
-
                         uirevision=valy[j]),
                 return fig
             else:
                 raise PreventUpdate
         elif dbch == 'send_variablevalues' or len(df.columns) == 8:
             if df.empty != 1:
-                print('bu hangi dffdffdf',df)
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'TIMESTAMP',
                               'PROCESSED', 'TIMED_OUT', 'UNREFERENCED']
                 a = []
