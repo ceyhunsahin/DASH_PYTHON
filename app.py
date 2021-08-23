@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-import collections
-import base64
 import datetime
 import time
-import json
-import io
 import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
@@ -15,12 +11,10 @@ import dash_html_components as html
 import dash_table  # #
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.validators.scatter.marker import SymbolValidator
 import plotly.express as px
 from dash import no_update
 from dash.dependencies import Input, Output, State,MATCH
 from dash.exceptions import PreventUpdate
-from urllib.parse import quote as urlquote
 import numpy as np
 from numpy import trapz
 from flask import send_file
@@ -44,10 +38,7 @@ def find_data_file(filename):
         # The application is not frozen
         # Change this bit to match where you store your data files:
         datadir = os.path.dirname(__file__)
-
     return os.path.join(datadir, filename)
-
-
 
 BS =[ "https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css",
     {
@@ -56,28 +47,21 @@ BS =[ "https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css"
         'integrity': 'sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf',
         'crossorigin': 'anonymous'
     }
-
 ]
 
 # Initialize the app
 app = dash.Dash(__name__,external_stylesheets=BS, suppress_callback_exceptions=True, assets_folder=find_data_file('assets/'), update_title='Loading...',
                 meta_tags=[{'name': 'viewport', 'content': 'width=device-width, initial-scale=2.0, maximum-scale=1.2, minimum-scale=0.5'}],
                 )
-
-
 server = app.server
 app.config.suppress_callback_exceptions = True
 
-# connect OPC
-
-# get data from MAF
-
-
+# Referance values
 extra_data_list = [
     'Mass de Bois', 'Volume gaz', 'Vitesse de rotation', 'Puissance Thermique',
     'Puissance Electrique', 'CO', 'CO2', 'NO', 'NOX', 'Temperature de Fumée'
 ]
-
+# Layout design
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content'),
@@ -147,155 +131,110 @@ page_1_layout = html.Div(
                              },
                              # Allow multiple files to be uploaded
                              multiple=True,
-
                          ),
-
                      ),
-
                      html.Div(id="openOPCDiv", children=[], style={'visibility': 'hidden'}),
                      html.Div(className='userControlDownSide',
                               children=[
                                   html.Div(className='userControlDownLeftSide',
                                            children=[
-                                               html.Div(id="opcLoad",
+                                                html.Div(id="opcLoad",
                                                         className='div-for-dropdown',
                                                         children=[], ),
-                                               html.Div(dcc.Interval(
+                                                html.Div(dcc.Interval(
                                                    id='interval',
                                                    interval=5000,
                                                    n_intervals=3,
-
                                                )),
-                                               # html.Div(id = 'ceyhun',
-                                               #          style = {'visibility' : 'hidden', 'height' :'1rem' }),
-                                               # html.Div(className="file_db_button",
-                                               #          children=[
-                                               #              html.Button('File', id='file_save', n_clicks=0, ),
-                                               #              html.Button('Database', id='db_save', n_clicks=0, ),
-                                               #          ]),
-                                               # html.Div([dcc.Store(id='pointLeftFirstdb'),dcc.Store(id='pointLeftSeconddb')
-                                               #           ,dcc.Store(id='pointRightFirstdb'),dcc.Store(id='pointRightSeconddb')
-                                               #           ,dcc.Store(id='leftIntegralFirstdb'),dcc.Store(id='leftIntegralSeconddb')
-                                               #           ,dcc.Store(id='rightIntegralFirstdb'),dcc.Store(id='rightIntegraleconddb')
-                                               #           ]),
-                                               html.Div(id='pointLeftFirst', children=[], style={'display': 'None'}),
-                                               html.Div(id='pointLeftSecond', children=[], style={'display': 'None'}),
-                                               html.Div(id='pointRightFirst', children=[], style={'display': 'None'}),
-                                               html.Div(id='pointRightSecond', children=[], style={'display': 'None'}),
-
-                                               html.Div(id='pointLeftFirstTab4', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='pointLeftSecondTab4', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='pointRightFirstTab4', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='pointRightSecondTab4', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='leftSideChecklistValue', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='leftSidedroptValue', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='leftSideChecklistValueHidden', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='leftSideChecklistValueHiddendb', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='deletedval', children=[], style={'display': 'None'}),
-                                               html.Div(id='deletedvalref', children=[], style={'display': 'None'}),
-                                               html.Div(id='leftSideChecklistValueHiddenTab4', children=[],
-                                                        style={'display': 'None'}),
-                                               html.Div(id='tab2hiddenValuex_axis', style={'display': 'None'},
-                                                        children=[]),
-                                               html.Div(id='tab2hiddenValuey_axis', style={'display': 'None'},
-                                                        children=[]),
-                                               html.Div(id='tab4hiddenValuex_axissecond', style={'display': 'None'},
-                                                        children=[]),
-                                               html.Div(id='tab4hiddenValuey_axissecond', style={'display': 'None'},
-                                                        children=[]),
-                                               html.Div(id='tab4hiddenValuex_axis', style={'display': 'None'},
-                                                        children=[]),
-                                               html.Div(id='tab3hiddenValuey_axis', style={'display': 'None'},
-                                                        children=[]),
-                                               html.Div(id='hiddenTextHeader', children=[], style={'display': 'None'}),
-                                               html.Div(id='hiddenTextNote', children=[], style={'display': 'None'}),
-                                               html.Div(id='hiddenTextxaxis', children=[], style={'display': 'None'}),
-                                               html.Div(id='hiddenTextyaxis', children=[], style={'display': 'None'}),
-                                               html.Div(id='hiddenTextHeader4', children=[], style={'display': 'None'}),
-                                               html.Div(id='hiddenTextNote4', children=[], style={'display': 'None'}),
-                                               html.Div(id='hiddenTextxaxis4', children=[], style={'display': 'None'}),
-                                               html.Div(id='hiddenTextyaxis4', children=[], style={'display': 'None'}),
-                                               html.Div(id='hiddenShapeVal', children=[], style={'display': 'None'}),
-                                               html.Div(id='hiddenShapeDate', children=[],
-                                                        style={'display': 'None'}), ], ),
-                                  html.Div(id='hiddenDifferance', children=[], style={'display': 'None'}),
-                                  dcc.Store(id='datastore'),
-                                  html.Div(id='retrieve', children=[], style={'display': 'None'}),
-                                  html.Div(id='datatablehidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='radiographhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='sliderHeightTab1hidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='sliderWidthTab1hidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='hiddenShapeValtab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='hiddenShapeDatetab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='hiddenDifferancetab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='retrievetab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='datatablehiddentab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='radiographhiddentab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='sliderHeightTab1hiddentab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='sliderWidthTab1hiddentab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='minimumValueGraphhiddenfirst', children=[], style={'display': 'None'}),
-                                  html.Div(id='minimumValueGraphhiddensecond', children=[], style={'display': 'None'}),
-                                  html.Div(id='firstchoosenvalhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='secondchoosenvalhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='leftintegralfirsthidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='leftintegralsecondhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='rightintegralfirsthidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='rightintegralsecondhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='hiddenvaluechange', children=[], style={'display': 'None'}),
-                                  html.Div(id='hiddencleanshape', children=[], style={'display': 'None'}),
-                                  html.Div(id='tableinteractivehidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='firstchoosenvalhiddentab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='secondchoosenvalhiddentab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='leftintegralfirsthiddentab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='leftintegralsecondhiddentab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='rightintegralfirsthiddentab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='rightintegralsecondhiddentab4', children=[], style={'display': 'None'}),
-                                  html.Div(id='hiddenchoosenChecklistLeft', children=[], style={'display': 'None'}),
-                                  html.Div(id='tableinteractivehiddentab4', children=[], style={'display': 'None'}),
-
-                                  html.Div(id='writeexcelhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='writeexcelhiddenTab4', children=[], style={'display': 'None'}),
-
-                                  html.Div(id='hiddenrecord1', children=[], style={'display': 'None'}),
-                                  html.Div(id='hiddenrecord2', children=[], style={'display': 'None'}),
-                                  html.Div(id='hiddenrecord3', children=[], style={'display': 'None'}),
-                                  html.Div(id='hiddenrecord4', children=[], style={'display': 'None'}),
-                                  html.Div(id='inputRightY_axishidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='inputRightX_axishidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='valueSendRighthidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='checklistvaleurhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='checklistvaleurhidden2', children=[], style={'display': 'None'}),
-                                  html.Div(id='shiftaxisdrophidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='shift_x_axishidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='shift_y_axishidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='tab1sendhidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='shiftaxisdroptab4hidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='shift_x_axistab4hidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='shift_y_axistab4hidden', children=[], style={'display': 'None'}),
-                                  html.Div(id='output_s', children=[], style={'display': 'None'}),
-                                  html.Div(id='radiographtab4hidden', children=[], style={'display': 'None'}),
-                                  html.Div(dcc.Graph(id='graphhidden',
+                                                html.Div(id='pointLeftFirst', children=[], style={'display': 'None'}),
+                                                html.Div(id='pointLeftSecond', children=[], style={'display': 'None'}),
+                                                html.Div(id='pointRightFirst', children=[], style={'display': 'None'}),
+                                                html.Div(id='pointRightSecond', children=[], style={'display': 'None'}),
+                                                html.Div(id='pointLeftFirstTab4', children=[],style={'display': 'None'}),
+                                                html.Div(id='pointLeftSecondTab4', children=[],style={'display': 'None'}),
+                                                html.Div(id='pointRightFirstTab4', children=[],style={'display': 'None'}),
+                                                html.Div(id='pointRightSecondTab4', children=[],style={'display': 'None'}),
+                                                html.Div(id='leftSideChecklistValue', children=[],style={'display': 'None'}),
+                                                html.Div(id='leftSidedroptValue', children=[],style={'display': 'None'}),
+                                                html.Div(id='leftSideChecklistValueHidden', children=[],style={'display': 'None'}),
+                                                html.Div(id='leftSideChecklistValueHiddendb', children=[],style={'display': 'None'}),
+                                                html.Div(id='deletedval', children=[], style={'display': 'None'}),
+                                                html.Div(id='deletedvalref', children=[], style={'display': 'None'}),
+                                                html.Div(id='leftSideChecklistValueHiddenTab4', children=[],style={'display': 'None'}),
+                                                html.Div(id='tab2hiddenValuex_axis', style={'display': 'None'},children=[]),
+                                                html.Div(id='tab2hiddenValuey_axis', style={'display': 'None'}, children=[]),
+                                                html.Div(id='tab4hiddenValuex_axissecond', style={'display': 'None'},children=[]),
+                                                html.Div(id='tab4hiddenValuey_axissecond', style={'display': 'None'},children=[]),
+                                                html.Div(id='tab4hiddenValuex_axis', style={'display': 'None'},children=[]),
+                                                html.Div(id='hiddenTextHeader', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenTextNote', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenTextxaxis', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenTextyaxis', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenTextHeader4', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenTextNote4', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenTextxaxis4', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenTextyaxis4', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenShapeVal', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenShapeDate', children=[],style={'display': 'None'}), ], ),
+                                                html.Div(id='hiddenDifferance', children=[], style={'display': 'None'}),
+                                                dcc.Store(id='datastore'),
+                                                html.Div(id='retrieve', children=[], style={'display': 'None'}),
+                                                html.Div(id='datatablehidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='radiographhidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='sliderHeightTab1hidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='sliderWidthTab1hidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenShapeValtab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenShapeDatetab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenDifferancetab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='retrievetab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='datatablehiddentab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='radiographhiddentab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='sliderHeightTab1hiddentab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='sliderWidthTab1hiddentab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='minimumValueGraphhiddenfirst', children=[], style={'display': 'None'}),
+                                                html.Div(id='minimumValueGraphhiddensecond', children=[], style={'display': 'None'}),
+                                                html.Div(id='firstchoosenvalhidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='secondchoosenvalhidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='leftintegralfirsthidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='leftintegralsecondhidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='rightintegralfirsthidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='rightintegralsecondhidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenvaluechange', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddencleanshape', children=[], style={'display': 'None'}),
+                                                html.Div(id='firstchoosenvalhiddentab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='secondchoosenvalhiddentab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='leftintegralfirsthiddentab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='leftintegralsecondhiddentab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='rightintegralfirsthiddentab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='rightintegralsecondhiddentab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenchoosenChecklistLeft', children=[], style={'display': 'None'}),
+                                                html.Div(id='writeexcelhidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='writeexcelhiddenTab4', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenrecord1', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenrecord2', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenrecord3', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenrecord4', children=[], style={'display': 'None'}),
+                                                html.Div(id='inputRightY_axishidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='inputRightX_axishidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='checklistvaleurhidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='checklistvaleurhidden2', children=[], style={'display': 'None'}),
+                                                html.Div(id='shiftaxisdrophidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='shift_x_axishidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='shift_y_axishidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='tab1sendhidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='shiftaxisdroptab4hidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='shift_x_axistab4hidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='shift_y_axistab4hidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='output_s', children=[], style={'display': 'None'}),
+                                                html.Div(id='radiographtab4hidden', children=[], style={'display': 'None'}),
+                                                html.Div(dcc.Graph(id='graphhidden',
                                                      config={'displaylogo': False},
                                                      style={'display': 'None'},
                                                      figure={
-                                                         'layout': {'legend': {'tracegroupgap': 0},
-
-                                                                    }
-                                                     }
-
+                                                         'layout': {'legend': {'tracegroupgap': 0},}
+                                                            }
                                                      ), ),
-
-                              ]),
-                 ]),
-
+                              ]),]),
         html.Div(id='eightcolumnsdivforcharts', className='eight-columns-div-for-charts',
                  children=[
                      html.Div(
@@ -341,7 +280,6 @@ page_1_layout = html.Div(
 
                  ]
                  ),
-        # dcc.Graph(id = "first_value_graph", config = {'displayModeLine': True}, animate=True)
     ]),
 
 page_2_layout = html.Div(
@@ -353,7 +291,7 @@ page_2_layout = html.Div(
                                                           html.Div([html.Div([html.I(className="far fa-file-excel"), ]),
                                                                     dcc.Link('Analysis', href='/File', id='link5')],
                                                                    className='icon_position'),
-                                                        html.Div([html.Div([html.I(className="fas fa-server"), ]),
+                                                          html.Div([html.Div([html.I(className="fas fa-server"), ]),
                                                                      dcc.Link('Enerbat', href='/realTime_Enerbat', id='link3')],
                                                                    className='icon_position'),
                                                           html.Div([html.Div([html.I(className="fas fa-chart-line"), ]),
@@ -610,11 +548,6 @@ page_2_layout = html.Div(
                                              },
 
                                              fixed_rows={'headers': True},
-
-                                             # style_cell_conditional=[
-                                             # {'if': {'column_id': 'date'},
-                                             #  'width': '15%'}
-
                                              style_header={
                                                  'backgroundColor': 'rgb(230, 230, 230)',
                                                  'fontWeight': 'bold'
@@ -623,8 +556,6 @@ page_2_layout = html.Div(
                                              sort_action="native",
                                              sort_mode="multi",
                                              column_selectable="single",
-                                             # row_selectable="multi",
-                                             # row_deletable=True,
                                              selected_columns=[],
                                              selected_rows=[],
                                              page_action="native",
@@ -632,23 +563,11 @@ page_2_layout = html.Div(
                                              export_format='xlsx',
                                              export_headers='display',
                                              merge_duplicate_headers=True),style = {'width': '80%', 'margin': 'auto'}),
-               html.Div(id="hiddendb1", children=[], style={'display': 'None'}),
-               html.Div(id="hiddendb2", style={'display': 'None'}),
-               html.Div(id="hiddendb3", children=[], style={'display': 'None'}),
                html.Div(id='pointLeftFirstdb', children=[], style={'display': 'None'}),
                html.Div(id='pointLeftSeconddb', children=[], style={'display': 'None'}),
                html.Div(id='pointRightFirstdb', children=[], style={'display': 'None'}),
                html.Div(id='pointRightSeconddb', children=[], style={'display': 'None'}),
-               html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
-               html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
-               html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
-               html.Div(id='firstchoosenvalhiddendb', children=[], style={'display': 'None'}),
-               html.Div(id='secondchoosenvalhiddendb', children=[], style={'display': 'None'}),
-               html.Div(id='leftintegralfirsthiddendb', children=[], style={'display': 'None'}),
-               html.Div(id='rightintegralfirsthiddendb', children=[], style={'display': 'None'}),
-               html.Div(id='rightintegralsecondhiddendb', children=[], style={'display': 'None'}),
                html.Div(id='hiddenrecord1db', children=[], style={'display': 'None'}),
-               html.Div(id='hiddenrecord2db', children=[], style={'display': 'None'}),
                html.Div(id='hiddenrecord3db', children=[], style={'display': 'None'}),
                html.Div(id='hiddenrecord4db', children=[], style={'display': 'None'}),
                html.Div(id='writeexcelhiddendb', children=[], style={'display': 'None'}),
@@ -657,9 +576,6 @@ page_2_layout = html.Div(
 
 page_3_layout = html.Div([html.Div([
                             html.Div([html.Div([html.Div([
-
-
-
                                                           html.Div([html.Div([html.I(className="fas fa-home"), ]),
                                                                     dcc.Link('Home', href='/', id='link1')],
                                                                    className='icon_position3'),
@@ -678,9 +594,6 @@ page_3_layout = html.Div([html.Div([
                                                                               'style': {'fontSize': '22px', 'fontWeight': 'bold',},},
                                                                        labelPosition='bottom', on=False, size=100, color="green",style = {'margin':'3rem 0'},
                                                                        className='dark-theme-control'),]),
-
-
-
                                                dcc.Store(id='get_data_from_modbus'),
                                                html.Div(id='data_to_store_id', children=[], style={'display': 'None'}),
                                                html.Div(id='data_to_store_value', children=[], style={'display': 'None'}),
@@ -691,8 +604,6 @@ page_3_layout = html.Div([html.Div([
                                                    disabled=True,
                                                    interval=1 * 1000,  # in milliseconds
                                                    n_intervals=0),
-
-
                             html.Div([
                                      dcc.Dropdown(id='realvalue',
                                                        multi=True,
@@ -700,7 +611,6 @@ page_3_layout = html.Div([html.Div([
                                                        className='stockSelectorClassPage3',
                                                        clearable=True,
                                                        placeholder='Select Value',
-
                                                        ),
                                           html.Div([html.P('Enter interval value (Second)', style={'margin':'1em 2em 2em 5em'}),
                                                   dbc.Input(id='interval_value', type="text", value='1',
@@ -772,7 +682,6 @@ page_3_layout = html.Div([html.Div([
                                                                  'drawopenpath',
                                                                  'select2d',
                                                                  'eraseshape',
-
                                                              ]},
                                                      style={'marginTop': '20px', },
                                                      figure={
@@ -789,15 +698,12 @@ page_3_layout = html.Div([html.Div([
                                                       size=400,
                                                       vertical=True,
                                                       updatemode='drag'), ],style={'marginTop': '3rem'},className='abcdb_graph2'),
-
-
                         html.Div([html.Div(daq.Slider(id="sliderWidthreel",
                                                       max=2000,
                                                       min=600,
                                                       value=1000,
                                                       step=100,
                                                       size=600,
-
                                                       updatemode='drag'), style={'marginLeft': '2rem'}),
                                   ]),
                         html.Div(dash_table.DataTable(id="getrealtable",
@@ -830,19 +736,15 @@ page_3_layout = html.Div([html.Div([
                                                       export_headers='display',
                                                       merge_duplicate_headers=True))
                         ],className='four-columns-div-user-controlsreel'),
-
-
               html.Div(id='reelhidden1', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden2', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden3', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden4', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden5', children=[], style={'display': 'None'}),
               dcc.Store(id='reelhidden6'),
-              html.Div(id='reelhidden7', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden8', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden9', children=[], style={'display': 'None'}),
-              html.Div(id='reelhidden10', children=[], style={'display': 'None'}),
-              html.Div(id='ok_click_hidden', children=[], style={'display': 'None'}),],className='main_container',),
+              html.Div(id='reelhidden10', children=[], style={'display': 'None'}),],className='main_container',),
               ])
 
 page_4_layout = html.Div([html.Div([html.Div([html.Div([
@@ -854,7 +756,6 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                   dcc.Link('Database', href='/Database', id='link2')], className='icon_position4'),
                                                         html.Div([html.Div([html.I(className="fas fa-server"), ]),
                                                                   dcc.Link('Enerbat', href='/realTime_Enerbat', id='link2')], className='icon_position4'),
-
                                                          ],
                                                         className = 'abcdbpr' ),
                                                         dbc.Input(id='pr_Ip',
@@ -866,7 +767,6 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                   autoFocus=True,
                                                                   placeholder="Enter your IP number ...",
                                                                   ),
-
                                     html.Div([html.Div([html.Div([daq.PowerButton(id='my-toggle-switch-pr-db',
                                                                                   label={'label': 'Connection Database',
                                                                                          'style': {'fontSize': '22px',
@@ -884,7 +784,6 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=True,
                                                                                 placeholder='Select Database',
-
                                                                                 ),
                                                                    dcc.Dropdown(id='prvalchoosen',
                                                                                 # options=[{'label': i, 'value': i}
@@ -894,9 +793,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=True,
                                                                                 placeholder='Select Table...',
-
                                                                                 ),
-
                                                                    dcc.Dropdown(id='prvalname',
                                                                                 # options=[{'label': i, 'value': i}
                                                                                 #          for i in df.columns],
@@ -906,7 +803,6 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                                 clearable=True,
                                                                                 placeholder='Select your parameters...',
                                                                                 ),
-
                                                                    dcc.Dropdown(id='prvaldate',
                                                                                 # options=[{'label': i, 'value': i}
                                                                                 #          for i in df.columns],
@@ -986,8 +882,6 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                                     target = "download_pr",
                                                                                             ),
                                                                                 ]),
-
-
                                                                         className='abcd'),
                                                               html.Div([html.Div([html.P('Enter Table Name'),
                                                                                 dbc.Input(id='filenametodb', type="text", value='',
@@ -1002,32 +896,25 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                   html.Div(id='reelhidden2pr', children=[], style={'display': 'None'}),
                                   html.Div(id='reelhidden3pr', children=[], style={'display': 'None'}),
                                   html.Div(id='reelhidden4pr', children=[], style={'display': 'None'}),
-
-                                  html.Div(id='ok_click_hiddenpr', children=[], style={'display': 'None'}),
                                   ],className='abcdbpage4upleft')
                                 ],className='prstyle')
-
                                          ], className='page4reel'),
-
-
                                ], className='abcdbpage4'),
      dcc.Store(id='memory-outputpr'),
      html.Div([html.Div([html.Div([html.Div(dcc.Dropdown(id='firstgraph_pr_real',
-                       options=[{'label': i, 'value': i} for i in
-                                []],
-                       multi=True,
-                       style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
-                       clearable=True,
-                       placeholder='Values of Real Time',
-                       ),),
-                        html.Div(dcc.Dropdown(id='firstgraph_pr_db',
-                       options=[{'label': i, 'value': i} for i in
-                                []],
-                       multi=True,
-                       style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
-                       clearable=True,
-                       placeholder='Values of Database',
-                       ),),
+                                            options=[{'label': i, 'value': i} for i in []],
+                                            multi=True,
+                                            style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
+                                            clearable=True,
+                                            placeholder='Values of Real Time',
+                                                            ),),
+                                html.Div(dcc.Dropdown(id='firstgraph_pr_db',
+                                                options=[{'label': i, 'value': i} for i in []],
+                                                multi=True,
+                                                style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
+                                                clearable=True,
+                                                placeholder='Values of Database',
+                                                            ),),
                        html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph",
                                             config={'displayModeBar': True,
                                                     'scrollZoom': True,
@@ -1038,15 +925,11 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                         'drawopenpath',
                                                         'select2d',
                                                         'eraseshape',
-
                                                     ]},
                                             style={'marginTop': '20px', },
                                             figure={
-                                                'layout': {'legend': {'tracegroupgap': 0},
-
-                                                           }
+                                                'layout': {'legend': {'tracegroupgap': 0},}
                                             }
-
                                             ), ),
                          html.Div(daq.Slider(id="sliderHeightpr",
                                              max=1200,
@@ -1062,30 +945,22 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                             value=800,
                                             step=100,
                                             size=500,
-
                                                      updatemode='drag'), style={'marginLeft': '7rem'}),
                         ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign1'),
-
-
                          ]),
-
-                        html.Div(dcc.Dropdown(id='secondgraph_pr_real',
-                               options=[{'label': i, 'value': i} for i in
-                                        []],
-                               multi=True,
-                               style={'cursor': 'pointer', 'width': '30rem','margin' : '3rem 0 0 5rem'},
-
-                               clearable=True,
-                               placeholder='Values of Real Time',
+                       html.Div(dcc.Dropdown(id='secondgraph_pr_real',
+                                    options=[{'label': i, 'value': i} for i in []],
+                                    multi=True,
+                                    style={'cursor': 'pointer', 'width': '30rem','margin' : '3rem 0 0 5rem'},
+                                    clearable=True,
+                                    placeholder='Values of Real Time',
                                ),),
-                                html.Div(dcc.Dropdown(id='secondgraph_pr_db',
-                               options=[{'label': i, 'value': i} for i in
-                                        []],
-                               multi=True,
-                               style={'cursor': 'pointer', 'width': '30rem','margin' : '1rem 0 0 5rem'},
-
-                               clearable=True,
-                               placeholder='Values of Database',
+                               html.Div(dcc.Dropdown(id='secondgraph_pr_db',
+                                    options=[{'label': i, 'value': i} for i in []],
+                                    multi=True,
+                                    style={'cursor': 'pointer', 'width': '30rem','margin' : '1rem 0 0 5rem'},
+                                    clearable=True,
+                                    placeholder='Values of Database',
                                ),),
                                html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph2",
                                                     config={'displayModeBar': True,
@@ -1097,15 +972,11 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                 'drawopenpath',
                                                                 'select2d',
                                                                 'eraseshape',
-
                                                             ]},
                                                     style={'marginTop': '20px' },
                                                     figure={
-                                                        'layout': {'legend': {'tracegroupgap': 0},
-
-                                                                   }
+                                                        'layout': {'legend': {'tracegroupgap': 0},}
                                                     }
-
                                                     ), ),
                                                  html.Div(daq.Slider(id="sliderHeightpr2",
                                                                      max=1200,
@@ -1121,28 +992,25 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                     value=800,
                                                                     step=100,
                                                                     size=500,
-
                                                                              updatemode='drag'), style={'marginLeft': '6rem'}),
                                                 ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign2'),
-
-
                                                  ]),
 
                 html.Div([html.Div([html.Div([
                                 html.Div([dcc.Dropdown(id='thirdgraph_pr_real',
-                                       options=[{'label': i, 'value': i} for i in []],
-                                       multi=True,
-                                       style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
-                                       clearable=True,
-                                       placeholder='Values of Real Time',
-                                       ),
-                                                dcc.Dropdown(id='thirdgraph_pr_db',
-                                       options=[{'label': i, 'value': i} for i in []],
-                                       multi=True,
-                                       style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem' },
-                                       clearable=True,
-                                       placeholder='Values of Database',
-                                       ),], className = 'thirdgraphpr_db'),
+                                                options=[{'label': i, 'value': i} for i in []],
+                                                multi=True,
+                                                style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
+                                                clearable=True,
+                                                placeholder='Values of Real Time',
+                                                    ),
+                                        dcc.Dropdown(id='thirdgraph_pr_db',
+                                                options=[{'label': i, 'value': i} for i in []],
+                                                multi=True,
+                                                style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem' },
+                                                clearable=True,
+                                                placeholder='Values of Database',
+                                                )    ,], className = 'thirdgraphpr_db'),
                                        html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph3",
                                                             config={'displayModeBar': True,
                                                                     'scrollZoom': True,
@@ -1153,15 +1021,11 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                         'drawopenpath',
                                                                         'select2d',
                                                                         'eraseshape',
-
                                                                     ]},
                                                             style={'marginTop': '20px', },
                                                             figure={
-                                                                'layout': {'legend': {'tracegroupgap': 0},
-
-                                                                           }
+                                                                'layout': {'legend': {'tracegroupgap': 0},}
                                                             }
-
                                                             ), ),
                                          html.Div(daq.Slider(id="sliderHeightpr3",
                                                              max=1200,
@@ -1177,27 +1041,24 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                             value=800,
                                                             step=100,
                                                             size=500,
-
                                                                      updatemode='drag'), style={'marginLeft': '5rem'}),
                                         ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign3'),
-
-
                                          ]),
 
                                        html.Div([html.Div(dcc.Dropdown(id='fourgraph_pr_real',
-                                               options=[{'label': i, 'value': i} for i in []],
-                                               multi=True,
-                                               style={'cursor': 'pointer', 'width': '30rem', 'margin' : '3rem 0 0 5rem'},
-                                               clearable=True,
-                                               placeholder='Values of Real Time',
-                                               ),),
-                                                html.Div(dcc.Dropdown(id='fourgraph_pr_db',
-                                               options=[{'label': i, 'value': i} for i in []],
-                                               multi=True,
-                                               style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
-                                               clearable=True,
-                                               placeholder='Values of Database',
-                                               ),),], className = 'fourgraphpr_db'),
+                                                                    options=[{'label': i, 'value': i} for i in []],
+                                                                    multi=True,
+                                                                    style={'cursor': 'pointer', 'width': '30rem', 'margin' : '3rem 0 0 5rem'},
+                                                                    clearable=True,
+                                                                    placeholder='Values of Real Time',
+                                                                            ),),
+                                               html.Div(dcc.Dropdown(id='fourgraph_pr_db',
+                                                                options=[{'label': i, 'value': i} for i in []],
+                                                                multi=True,
+                                                                style={'cursor': 'pointer', 'width': '30rem', 'margin' : '1rem 0 0 5rem'},
+                                                                clearable=True,
+                                                                placeholder='Values of Database',
+                                                                ),),], className = 'fourgraphpr_db'),
                                                html.Div([html.Div([html.Div(dcc.Graph(id="getprgraph4",
                                                                     config={'displayModeBar': True,
                                                                             'scrollZoom': True,
@@ -1208,15 +1069,11 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                                 'drawopenpath',
                                                                                 'select2d',
                                                                                 'eraseshape',
-
                                                                             ]},
                                                                     style={'margin': '20px ' },
                                                                     figure={
-                                                                        'layout': {'legend': {'tracegroupgap': 0},
-
-                                                                                   }
+                                                                        'layout': {'legend': {'tracegroupgap': 0},}
                                                                     }
-
                                                                     ), ),
                                                                  html.Div(daq.Slider(id="sliderHeightpr4",
                                                                                      max=1200,
@@ -1232,13 +1089,9 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                                              value=800,
                                                                                              step=100,
                                                                                              size=500,
-
                                                                                              updatemode='drag'), style={'marginLeft': '5rem'}),
                                                                 ],style = {'margin':'1rem','padding':'10px'}, className='boxdesign4'),
-
-
                                                                  ], ), ]),], className='abcdbprGraph'),
-
 
                html.Div(dash_table.DataTable(id="getprtable",
                                              editable=True,
@@ -1253,21 +1106,13 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                              },
 
                                              fixed_rows={'headers': True},
-
-                                             # style_cell_conditional=[
-                                             # {'if': {'column_id': 'date'},
-                                             #  'width': '15%'}
-
                                              style_header={
                                                  'backgroundColor': 'rgb(230, 230, 230)',
-                                                 'fontWeight': 'bold'
-                                             },
+                                                 'fontWeight': 'bold' },
                                              filter_action="native",
                                              sort_action="native",
                                              sort_mode="multi",
                                              column_selectable="single",
-                                             # row_selectable="multi",
-                                             # row_deletable=True,
                                              selected_columns=[],
                                              selected_rows=[],
                                              page_action="native",
@@ -1275,70 +1120,37 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                              export_format='xlsx',
                                              export_headers='display',
                                              merge_duplicate_headers=True)),
-               html.Div(id="hiddenpr1", children=[], style={'display': 'None'}),
-               html.Div(id="hiddenpr2", style={'display': 'None'}),
-               html.Div(id="hiddenpr3", children=[], style={'display': 'None'}),
-               html.Div(id='pointLeftFirstpr', children=[], style={'display': 'None'}),
-               html.Div(id='pointLeftSecondpr', children=[], style={'display': 'None'}),
-               html.Div(id='pointRightFirstpr', children=[], style={'display': 'None'}),
-               html.Div(id='pointRightSecondpr', children=[], style={'display': 'None'}),
-               html.Div(id='leftintegralfirsthiddenpr', children=[], style={'display': 'None'}),
-               html.Div(id='leftintegralsecondhiddenpr', children=[], style={'display': 'None'}),
-               html.Div(id='rightintegralfirsthiddenpr', children=[], style={'display': 'None'}),
-               html.Div(id='rightintegralsecondhiddenpr', children=[], style={'display': 'None'}),
-               html.Div(id='firstchoosenvalhiddenpr', children=[], style={'display': 'None'}),
-               html.Div(id='secondchoosenvalhiddenpr', children=[], style={'display': 'None'}),
-               html.Div(id='leftintegralfirsthiddenpr', children=[], style={'display': 'None'}),
-               html.Div(id='leftintegralsecondhiddenpr', children=[], style={'display': 'None'}),
-               html.Div(id='rightintegralfirsthiddenpr', children=[], style={'display': 'None'}),
-               html.Div(id='rightintegralsecondhiddenpr', children=[], style={'display': 'None'}),
-               html.Div(id='hiddenrecord1pr', children=[], style={'display': 'None'}),
-               html.Div(id='hiddenrecord2pr', children=[], style={'display': 'None'}),
-               html.Div(id='hiddenrecord3pr', children=[], style={'display': 'None'}),
-               html.Div(id='hiddenrecord4pr', children=[], style={'display': 'None'}),
-               html.Div(id='writeexcelhiddenpr', children=[], style={'display': 'None'}),
-
                ], style = {'overflow-x' : 'visible'} ),
 
-
-
-@app.callback(
-    [Output("HVA1INLED", "value"),Output("HVA2INLED", "value"),
-     Output("HVA1OUTLED", "value"),Output("HVA2OUTLED", "value")],
-    [Input("HVA1IN", "value"), Input("HVA2IN", "value"),
-     Input("HVA1OUT", "value"), Input("HVA2OUT", "value")],
-)
+@app.callback([ Output("HVA1INLED", "value"),Output("HVA2INLED", "value"),
+                Output("HVA1OUTLED", "value"),Output("HVA2OUTLED", "value")],
+              [ Input("HVA1IN", "value"), Input("HVA2IN", "value"),
+                Input("HVA1OUT", "value"), Input("HVA2OUT", "value")],)
 def knobvalues(v1,v2,v3,v4):
     if v1 != None or v2 != None or v3 != None or v4 != None:
         v1,v2,v3,v4 = int((v1/100)*28000),int((v2/100)*28000),int((v3/100)*28000),int((v4/100)*28000)
         return v1,v2,v3,v4
     else: raise PreventUpdate
 
-@app.callback(Output("reelhidden6", "children"),
-              [Input("download_reel_valve", "n_clicks")],
-              [State("HVA1INLED", "value"), State("HVA2INLED", "value"),
-               State("HVA1OUTLED", "value"), State("HVA2OUTLED", "value")])
+@app.callback(  Output("reelhidden6", "children"),
+              [ Input("download_reel_valve", "n_clicks")],
+              [ State("HVA1INLED", "value"), State("HVA2INLED", "value"),
+                State("HVA1OUTLED", "value"), State("HVA2OUTLED", "value")])
 def toserver(nc, v1,v2,v3,v4):
-    # if from_modbus == None :
-    #     raise PreventUpdate
     if nc > 0 :
         opc = OpenOPC.client()
         opc.servers()
         opc.connect('Kepware.KEPServerEX.V6')
         opc.write([('Siemens.PLC1.Vanne3voies1', v1), ('Siemens.PLC1.Vanne3voies2', v2),('Siemens.PLC1.Vanne3voies3', v3), ('Siemens.PLC1.Vanne3voies4', v4)])
 
-
-@app.callback(
-    [Output("reelhidden3", "children"),Output("reelhidden5", "children")],
-    [Input("ok_reel", "n_clicks"), ],
-    [State("input_tablename", "value"),State("input_databasename", "value")],
-)
+@app.callback(  [Output("reelhidden3", "children"),Output("reelhidden5", "children")],
+                [Input("ok_reel", "n_clicks"), ],
+                [State("input_tablename", "value"),State("input_databasename", "value")],)
 def toggle_modal_1(nc, tbname, databasename):
     if tbname == None  or databasename==None:
         raise PreventUpdate
     if nc != None:
         return tbname,databasename
-
 
 @app.callback(
     Output("modal_reel", "is_open"),
@@ -1357,8 +1169,6 @@ def toggle_modal_2(n1, n2, n3, is_open):
      State("nametodb", "value")],
 )
 def toggle_modal_3(n1, name, nametodb):
-    # if n1 == None :
-    #     raise PreventUpdate
     if n1 > 0 :
         if name != '' and nametodb == '' :
             return name , 'enerbat'
@@ -1369,7 +1179,6 @@ def toggle_modal_3(n1, name, nametodb):
         else :
             return 'LERMAB_test', 'enerbat'
     else : return no_update, no_update
-
 
 @app.callback(Output('interval_component', 'disabled'),
               [Input("my-toggle-switch-reel", "on")],
@@ -1438,8 +1247,6 @@ def intervalcontrol2_pr_db(val):
                State('data_to_store_qualite', 'children'),
                State('data_to_store_date', 'children'), ])
 def values(on, n_intervals, id, val, qual, date):
-    # if from_modbus == None :
-    #     raise PreventUpdate
     if on == 1:
         opc = OpenOPC.client()
         opc.servers()
@@ -1479,15 +1286,12 @@ def values_pr(on,realval, n_intervals, id, val, qual, date):
             date.append(Timestamp)
     return id, val, qual, date
 
-#
 @app.callback([Output('get_data_from_modbus', 'data'), Output('realvalue', 'options')],
               [Input('data_to_store_id', 'children'),
                Input('data_to_store_value', 'children'),
                Input('data_to_store_qualite', 'children'),
                Input('data_to_store_date', 'children'), ], )
 def storedata(id, val, qual, date):
-    # if store == None :
-    #     raise PreventUpdate
     zipped_val = list(zip(id, val, qual, date))
     df = pd.DataFrame(list(zip(id, val, qual, date)),
                       columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
@@ -1500,10 +1304,7 @@ def storedata(id, val, qual, date):
                Input('data_to_store_qualite_pr', 'children'),
                Input('data_to_store_date_pr', 'children'), ], )
 def storedata_pr(id, val, qual, date):
-    # if store == None :
-    #     raise PreventUpdate
     zipped_val = list(zip(id, val, qual, date))
-
     return zipped_val
 
 @app.callback(Output('reelhidden1pr', 'children'),
@@ -1535,8 +1336,6 @@ def download_excel_pr():
         cache_timeout=0
     )
 
-
-
 @app.callback(Output('reelhidden2', 'children'),
               [Input("reelhidden3", "children"), Input("reelhidden5", "children"),], [State('get_data_from_modbus', 'data')])
 def pandastosql(name,dbname, data):
@@ -1561,7 +1360,6 @@ def pandastosql(name,dbname, data):
                 database=dbname,
                 port=3306, )
             db_cursor = db_connection.cursor()
-            # +
             # Here creating database table '
             db_cursor.execute(
                 f"CREATE OR REPLACE TABLE {name} (id BIGINT PRIMARY KEY, variable_name VARCHAR(255), variable_num_value DOUBLE, TIMESTAMP TIMESTAMP)")
@@ -1578,7 +1376,6 @@ def pandastosql(name,dbname, data):
                 db_cursor.close()
                 db_connection.close()
                 print("MySQL connection is closed")
-
 
 @app.callback(Output('reelhidden10', 'children'),
               [Input("reelhidden8", "children"), Input("reelhidden9", "children"),], [State("reelhidden6", "children")])
@@ -1600,7 +1397,6 @@ def pandastosql_valve(name,dbname, data):
             database=dbname,
             port=3306, )
         db_cursor = db_connection.cursor()
-            # +
             # Here creating database table '
         db_cursor.execute(
             f"CREATE OR REPLACE TABLE {name} (HV_A1_IN BIGINT PRIMARY KEY, HV_A2_IN BIGINT, HV_A1_OUT BIGINT, HV_A2_OUT BIGINT)")
@@ -1631,7 +1427,6 @@ def pandastosql_pr(on,interval, name,nametodb, data):
             b = [i for i in df['variable_name']]  # name of variable
             c = [i for i in df['variable_num_value']]
             d = [i for i in df['TIMESTAMP']]
-            print(df)
             df['TIMESTAMP'] = df['TIMESTAMP'].apply(lambda x: pd.Timestamp(x).strftime('%Y-%m-%d %H:%M:%S'))
             sql_insert = list(zip(a, df['variable_name'], df['variable_num_value'], df['TIMESTAMP']))
 
@@ -1642,7 +1437,6 @@ def pandastosql_pr(on,interval, name,nametodb, data):
                     passwd="dashapp",
                     database=nametodb)
                 db_cursor = db_connection.cursor()
-                # +
                 # Here creating database table as student'
 
                 # db_cursor.execute(f"REPAIR TABLE {name}")
@@ -1756,8 +1550,6 @@ def parse_contents(contents, filename, date):
         html.Hr(),  # horizontal line
     ])
 
-
-
 @app.callback([Output('datatablehidden', 'children'), Output('retrieve', 'children')],
               [Input('upload-data', 'contents'), Input("my-toggle-switch", "on"), ],
               [State('upload-data', 'filename'),
@@ -1777,16 +1569,13 @@ def update_output(list_of_contents, on, list_of_names, list_of_dates, retrieve, 
     else:
         return (no_update, no_update)
 
-
 @app.callback(Output('output-data-upload', 'children'),
               [Input('datatablehidden', 'children')]
               )
 def retrieve(retrieve):
     if retrieve == None or retrieve == []:
         raise PreventUpdate
-
     return retrieve
-
 
 @app.callback(ServersideOutput('datastore', 'data'),
               [Input('datatablehidden', 'children')],
@@ -1799,11 +1588,9 @@ def retrieve(retrieve):
         return xx
 
 @app.callback(Output('tab4DashTable', 'children'),
-              [Input('datatablehidden', 'children')],
-              )
+              [Input('datatablehidden', 'children')],)
 def retrieve4(retrieve):
     return retrieve
-
 
 @app.callback(
     Output('datatable-interactivity', 'style_data_conditional'),
@@ -1818,7 +1605,6 @@ def update_styles(selected_columns):
     # Output("opcLoad","children") : for load left and right side,
     # for this created a hiddev div as opcLoad,
     # Output('tab2','children') : also hidden tab, for the graph
-
 
 @app.callback([Output("opcLoad", "children"), Output('upload-data', 'style')],
               [Input("my-toggle-switch", "on")]
@@ -2027,7 +1813,6 @@ def displayLeftDropdown(n_clicks1, nc2, dropval, valeur, value, deletedval):
     else:
         no_update, no_update, no_update, no_update, no_update, no_update
 
-
 @app.callback(
     Output("modal", "is_open"),
     [Input("showLeft", "n_clicks"), Input("close", "n_clicks")],
@@ -2119,7 +1904,6 @@ def Inputaxis(okval):
         checklist = []
         for i in okval:
             m = i.split(' ')
-            print('mmmm',m)
             for k in m:
                 if k != 'Y-axis':
                     checklist.append(k)
@@ -2133,21 +1917,11 @@ def Inputaxis(okval):
                 b = a[:10] + ' ' + a[10:]
                 x_val.append(b)
                 i = m[:-2]
-            print('xval', x_val)
-            # i = m[:-1]
-            print('iiii',i)
             for j in range(len(i)):
-
                 if (i[j]).isdecimal():
                     y_val.append(i[j])
                 if '.' in i[j]:
                     y_val.append(float(i[j]))
-
-            # else :
-            #     y_val=(x_val[0])
-            print('yvalllllllll',y_val)
-
-
         return y_val,x_val,checklist
     else : return [],[],[]
 
@@ -2183,7 +1957,6 @@ def render_content(tab):
         ])
     else:
         pass
-
 
 @app.callback(Output('tab1Data', 'children'),
               [Input("my-toggle-switch", "on"),
@@ -2429,14 +2202,8 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                  updatemode='drag'),], className = 'design_page1')], className = 'design_page2'),
             html.Div(id='output-data-upload', children=[]),
         ]),
-
-
-        #
-
         return loadTab1
 
-
-# bunu bi duzeltmeye calisacam
 @app.callback(Output("leftSideChecklistValueHidden", "children"),
               [Input('choosenChecklistLeft', 'value'), ],
               [State("leftSideChecklistValueHidden", "children")]
@@ -2550,14 +2317,6 @@ def secondchleft(secondchoosen):
 def secondchleftTab4(secondchoosen):
     return secondchoosen
 
-
-@app.callback(Output("secondchoosenvalhiddendb", "children"),
-              [Input("secondChoosenValuedb", "value")],
-              )
-def secondchleftdb(secondchoosen):
-    return secondchoosen
-
-
 @app.callback(Output("secondchoosenvalhiddenpr", "children"),
               [Input("secondChoosenValuedb", "value")],
               )
@@ -2603,21 +2362,6 @@ def rightfrst(rightintfirst):
 def rightfrsttab4(rightintfirst):
     return rightintfirst
 
-
-@app.callback(Output("rightintegralfirsthiddendb", "children"),
-              [Input("rightIntegralFirstdb", "value")],
-              )
-def rightfrstdb(rightintfirst):
-    return rightintfirst
-
-
-@app.callback(Output("rightintegralfirsthiddenpr", "children"),
-              [Input("rightIntegralFirstpr", "value")],
-              )
-def rightfrstpr(rightintfirst):
-    return rightintfirst
-
-
 @app.callback(Output("rightintegralsecondhidden", "children"),
               [Input("rightIntegralSecond", "value")],
               )
@@ -2637,19 +2381,6 @@ def rightscndtab4(rightintsecond):
 def checklistval(val):
     return val
 
-
-@app.callback(Output("rightintegralsecondhiddendb", "children"),
-              [Input("rightIntegralSeconddb", "value")],
-              )
-def rightscnddb(rightintsecond):
-    return rightintsecond
-
-
-@app.callback(Output("rightintegralsecondhiddenpr", "children"),
-              [Input("rightIntegralSecondpr", "value")],
-              )
-def rightscndpr(rightintsecond):
-    return rightintsecond
 # for show graph and changement
 
 @app.callback(Output('shiftaxisdrophidden', 'children'),
@@ -2752,7 +2483,6 @@ def res2(on,val, radiograph, sliderheight, sliderwidth,
                 dt2 = dff2[['Date']]
                 dt2.columns = ['Date']
                 dt2 = dt2['Date'].apply(lambda x: x[:10] + '_' + x[11:])
-
 
         if 'date' in df.columns:
             if type(df['date'][0]) == 'str':
@@ -3205,7 +2935,6 @@ def res2(on,val, radiograph, sliderheight, sliderwidth,
 def aa(a):
     return a
 
-
 @app.callback(Output('tab4Data', 'children'),
               [Input("my-toggle-switch", "on")],
               [State('tabs-with-classes', 'value')]
@@ -3635,7 +3364,6 @@ def container4(val2, val3, radio):
             return a
         else:
             return ''
-
 
 @app.callback(
     Output('shiftaxisdroptab4', 'options'),
@@ -4274,26 +4002,12 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                                 color="#1f77b4"
                             )
                         ),
-                        # yaxis2=dict(
-                        #     title='' if g2 == [] else g2[-1],
-                        #     titlefont=dict(
-                        #         color="#d62728"
-                        #     ),
-                        #     tickfont=dict(
-                        #         color="#d62728"
-                        #     ),
-                        #     anchor="x",
-                        #     overlaying="y",
-                        #     side="right"),
-                        # hovermode='x unified',
                         uirevision=valysecond[0], ),
                     fig.add_annotation(text=note[-1] if len(note) > 0 else '',
                                        xref="paper", yref="paper",
                                        x=0, y=0.7, showarrow=False)
 
                 return fig
-
-
             else:
                 return no_update
         else:
@@ -4354,13 +4068,11 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rights
                             x_val = x_val + '00000+00:00'
                         else : x_val += '000+00:00'
                         dff = dff[dff['Date'] == x_val]
-
                     else:
                         a = ''
                         for v in df.columns:
                             if 'Temps' in v:
                                 a += v
-                                print('x+val', x_val)
                                 dff = df[df[v] == x_val]
                                 if shift_x != 0:
                                     x_val -= shift_x
@@ -4382,7 +4094,6 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rights
             # else : return (no_update, no_update)
     else:
         return (no_update, no_update)
-
 
 @app.callback(
     [Output('pointLeftFirstdb', 'children'),
@@ -4444,7 +4155,6 @@ def valintdb(clickData, firstchoosen, value, leftchild, rightchild, retrieve, db
                     elif dbch != 'received_variablevalues' and dbch != 'send_variablevalues':
                         dff = dff[dff.TIMESTAMP.str.startswith(x_val[:10])]
                         index = np.arange(0, len(dff['VARIABLE_NAME']))
-                        print(index)
                         dff.reset_index(drop=True, inplace=True)
                         dff.set_index(index, inplace=True)
                         dff = dff[(dff['TIMESTAMP'] == x_val)]
@@ -4509,38 +4219,12 @@ def display_hover_data_db1(leftchild, rightchild,firstchoosen):
     else:
         return (no_update, no_update)
 
-
-@app.callback([Output('leftIntegralFirstpr', 'value'), Output('leftIntegralSecondpr', 'value')],
-              [Input('pointLeftFirstpr', 'children'), Input('pointLeftSecondpr', 'children')],
-              )
-def display_hover_data_pr(leftchild, rightchild):
-    if leftchild == None or rightchild == None or leftchild == [] or rightchild == []:
-        raise PreventUpdate
-
-    minchild = 0
-    maxchild = 0
-    if firstchoosen != None and len(leftchild) == 2:
-        for i in range(len(leftchild)):
-            if leftchild[0] < leftchild[1]:
-                minchild = leftchild[0]
-                maxchild = leftchild[1]
-            else:
-                minchild = leftchild[1]
-                maxchild = leftchild[0]
-        return ('T ' + str(minchild), 'T ' + str(maxchild))
-    elif firstchoosen == None :
-        return '',''
-    else:
-        return (no_update, no_update)
-
-
 @app.callback(
     [Output('pointLeftFirstTab4', 'children'),
      Output('pointLeftSecondTab4', 'children')],
     [Input('graph4', 'clickData'),
      Input('radiographtab4hidden', 'children'),
      Input('firstChoosenValueTab4', 'value'),
-     # Input('shiftaxisdroptab4hidden', 'children'),
      ],  # describe variable of shift
     [State('tab4hiddenValuey_axissecond', 'children'),
      State('tab4hiddenValuex_axissecond', 'children'),
@@ -4649,16 +4333,9 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
                             if valxsecond != []:
                                 if firstchoosen in valxsecond :
                                     t = valxsecond.index(firstchoosen)
-                                    print(t)
                                     m = valysecond[t]
-                                    print(m)
                                     x_val = clickData4['points'][0]['x']
-                                    print(x_val)
-                                    print(firstchoosen)
-
                                     dff = df[df[m] == x_val]
-
-                                    print(dff)
                                     a = []
                                     a.append(dff[firstchoosen].index)
                                     for i in range(len(a)):
@@ -4700,10 +4377,6 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
             #     return (no_update, no_update)
     else:
         return (no_update, no_update)
-
-
-
-
 
 @app.callback([Output('leftIntegralFirstTab4', 'value'),
                Output('leftIntegralSecondTab4', 'value')],
@@ -4822,7 +4495,6 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x,righ
             # else : return (no_update, no_update)
     else:
         return (no_update, no_update)
-
 
 @app.callback(
     [Output('pointRightFirstdb', 'children'),
@@ -5096,7 +4768,6 @@ def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, val
     else:
         return (no_update, no_update)
 
-
 @app.callback(
     [Output('rightIntegralFirstTab4', 'value'),
      Output('rightIntegralSecondTab4', 'value')],
@@ -5177,7 +4848,6 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
                 area1 = abs(trapz((abs(c)), dx=1))
                 return area1
 
-
             else :
                 dff1 = df[(df[valuechoosenleft].index >= float(st1left)) & (df[valuechoosenleft].index <= float(st1right)) |
                       (df[valuechoosenleft].index >= float(st1right)) & (df[valuechoosenleft].index <= float(st1left))]
@@ -5197,8 +4867,6 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
             return 'total integration'
         elif st1left == '' and st1right != '' and valuechoosenleft == None:
             return 'total integration'
-    # return no_update
-
 
 @app.callback(Output('leftIntegraldb', 'value'),
               [Input('leftIntegralFirstdb', 'value'),
@@ -5261,7 +4929,6 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve, dbch, dbn
             return 'total integration'
 
 
-
 @app.callback(Output('leftIntegralTab4', 'value'),
               [Input('leftIntegralFirstTab4', 'value'),
                Input('leftIntegralSecondTab4', 'value'),
@@ -5320,7 +4987,6 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
             return 'total integration'
         elif st1left == '' and st1right != '' and valuechoosenleft == None:
             return 'total integration'
-    # return no_update
 
 
 @app.callback(Output('rightIntegral', 'value'),
@@ -5440,7 +5106,6 @@ def integralCalculationdb(st2left, st2right, valuechoosenright, retrieve, dbch, 
             return 'total integration'
         elif st2left == '' and st2right != '' and valuechoosenright == None:
             return 'total integration'
-
 
 
 @app.callback(Output('rightIntegralTab4', 'value'),
@@ -5573,8 +5238,6 @@ def differanceintegrationdb(value1, value2, ops):
 def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfirst, rightfirst, diff, retrieve):
     if hiddendif == None or hiddendif == [] or retrieve == None or retrieve == []:
         raise PreventUpdate
-
-    # (len(hiddendif)>=2 and len(valuechoosenright)==1) or (len(hiddendif)>=2 and len(valuechoosenleft)==1) or
     if (len(hiddendif) >= 2):
         a = 0
         b = 0
@@ -5757,7 +5420,6 @@ def differanceCalculationdb(valuechoosenleft, valuechoosenright, leftfirst, righ
         return diff
     else:
         return ['intersection']
-
 
 
 @app.callback(Output('intersectionTab4', 'value'),
@@ -6055,7 +5717,6 @@ def download_exceldb():
         cache_timeout=0
     )
 
-
 @app.callback(Output('dbvalchoosen', 'options'),
               [Input('db_name', 'value')], [State('db_Ip', 'value')])
 def relationdb(dbname, ipval):
@@ -6101,26 +5762,6 @@ def relationdb(dbname, ipval):
         return [{'label': i[0], 'value': i[0]} for i in val]
     else:
         no_update
-
-
-#             # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-#         b = f"select table_name from information_schema.tables where TABLE_SCHEMA= '{dbname}'"
-#             # a = "SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues "
-#
-#         cur.execute(b)
-#         t = cur.fetchall()
-#         df = pd.DataFrame(t)
-#         m = []
-#         for i in t:
-#             m.append(i[0])
-#         return [{'label': i, 'value': i} for i in m if i != 'app_variablerequest' and i != 'send_controlvalues' and
-#                 i != 'received_ack' and i != 'send_vw_variablerequestdestination' and i != 'flyway_schema_history'
-#                 and i != 'app_vw_messaging_followup' and i != 'received_variablerequest' and i != 'received_controlvalues'
-#                 and i != 'app_system_properties' and i != 'tbl_sites' and i != 'tbl_inventory' and i != 'send_messages'
-#                 and i != 'send_variablevaluesmessage']
-#
-#     # else:
-#     return no_update
 
 
 @app.callback(Output('prvalchoosen', 'options'),
@@ -6196,8 +5837,6 @@ def dbname(nc, nc2, dbch, dbname, ipval):
             sys.exit(1)
             # Get Cursor
 
-            # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
         if dbname == 'rcckn':
             if dbch == 'received_variablevalues':
                 cur1 = conn.cursor()
@@ -6247,7 +5886,6 @@ def dbname(nc, nc2, dbch, dbname, ipval):
                     f"SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{dbch}' ORDER BY ORDINAL_POSITION")
                 t = cur.fetchall()
                 x = [ i[0] for i in t]
-                print(x)
                 if 'REMOTE_TIMESTAMP' in x:
                     cur1 = conn.cursor()
                     cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {dbch} ")
@@ -6345,13 +5983,6 @@ def prname(on,interval, prch, prname, ipval):
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
 
-            # Get Cursor
-
-            # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-            # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-            #     'received_variablevalues')
-
-        # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
         if prname == 'rcckn':
             if prch == 'received_variablevalues':
                 cur1 = conn.cursor()
@@ -6409,7 +6040,6 @@ def prname(on,interval, prch, prname, ipval):
 
                 str_list = [i[0] for i in t2]
                 df = pd.DataFrame(str_list)
-                print('dfff',df)
                 if df.empty !=1 :
                     df.columns = ['TIMESTAMP']
                     df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
@@ -6485,11 +6115,6 @@ def dbname(valname, valdate, dbch, dbname, ipval):
         sys.exit(1)
         # Get Cursor
 
-        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-        #     'received_variablevalues')
-
-        # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
     if dbname == 'rcckn':
         if dbch == 'received_variablevalues':
             cur1 = conn.cursor()
@@ -6560,11 +6185,6 @@ def dbname(valname, valdate, dbch, dbname):
         sys.exit(1)
         # Get Cursor
 
-        # cur.execute("SELECT * FROM received_variablevalues WHERE LOCAL_TIMESTAMP <'2020-07-22 18:11:24'")
-        # b = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{}' ORDER BY ORDINAL_POSITION".format(
-        #     'received_variablevalues')
-
-        # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
     if dbname == 'rcckn':
         if dbch == 'received_variablevalues':
             cur1 = conn.cursor()
@@ -6591,7 +6211,6 @@ def dbname(valname, valdate, dbch, dbname):
         else:
 
             cur1 = conn.cursor()
-            print(valname)
             if len(valname) == 1:
                 cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME = '{valname[0]}'")
             elif len(valname) > 1:
@@ -6729,7 +6348,6 @@ def on_data_set_tablepr(data, valname, valdate,interval, prch, prname):
     if valname == None or valdate == None or prch == None or prname == None :
         raise PreventUpdate
     df = pd.DataFrame(data)
-    print('dftable',df)
     if prname == 'rcckn':
         if prch == 'received_variablevalues':
             if valdate != '' or valname != []:
@@ -6825,9 +6443,6 @@ def containerdb(val1):
     return [{'label': i, 'value': i} for i in val1], [{'label': i, 'value': i} for i in val1]
 
 
-#
-
-#
 @app.callback(Output('getdbgraph', 'figure'),
               [Input('memory-output', 'data'),
                Input('dbvalname', 'value'),
@@ -6840,7 +6455,6 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
     if data == None or valy == [] or valdat == [] or valdat == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
-    print(len(df.columns))
     fig = go.Figure()
     if dbname == 'rcckn':
         if dbch == 'received_variablevalues' or len(df.columns) == 11:
@@ -6920,7 +6534,6 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
                 raise PreventUpdate
         elif len(df.columns) == 4 :
             if df.empty != 1:
-                print('bu hangi dffdffdf',df)
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                 a = []
                 for col in df['TIMESTAMP']:
@@ -7047,7 +6660,6 @@ def delivre_dropdown(values) :
 def delivre_dropdown_db(values) :
     if values == None :
         raise PreventUpdate
-    print('values', values)
     return  [{'label' : i, 'value' : i} for i in values],[{'label' : i, 'value' : i} for i in values],[{'label': i, 'value': i} for i in values],[{'label' : i, 'value' : i} for i in values]
 
 @app.callback(Output('getprgraph', 'figure'),
@@ -7063,9 +6675,7 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
     if realval == None and valy == None:
         raise PreventUpdate
     df = pd.DataFrame(data2)
-    print('dfgraph',df)
     df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-    print('df2', df2)
     fig = go.Figure()
     if realval != None and valy != None:
         for i in realval:
@@ -7154,7 +6764,6 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
                     raise PreventUpdate
             else:
                 if df.empty != 1:
-                    print('graphdfsonraki', df)
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                     df = df[df['VARIABLE_NAME'].isin(prvalname)]
                     a = []
@@ -7375,7 +6984,6 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
             if df.empty != 1:
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                 df = df[df['VARIABLE_NAME'].isin(prvalname)]
-                print('enerbat df', df)
                 #
                 a = []
                 for col in df['TIMESTAMP']:
@@ -7426,9 +7034,7 @@ def on_data_set_graph2(data2,data, realval,valy, valdat, sliderw, sliderh,interv
     if realval == None and valy == None:
         raise PreventUpdate
     df = pd.DataFrame(data2)
-    print('dfgraph', df)
     df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-    print('df2', df2)
     fig = go.Figure()
     if realval != None and valy != None:
         for i in realval:
@@ -7517,7 +7123,6 @@ def on_data_set_graph2(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     raise PreventUpdate
             else:
                 if df.empty != 1:
-                    print('graphdfsonraki', df)
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                     df = df[df['VARIABLE_NAME'].isin(prvalname)]
                     a = []
@@ -7740,8 +7345,6 @@ def on_data_set_graph2(data2,data, realval,valy, valdat, sliderw, sliderh,interv
             if df.empty != 1:
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                 df = df[df['VARIABLE_NAME'].isin(prvalname)]
-                print('enerbat df', df)
-                #
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
@@ -7791,9 +7394,7 @@ def on_data_set_graph3(data2,data, realval,valy, valdat, sliderw, sliderh,interv
     if realval == None and valy == None:
         raise PreventUpdate
     df = pd.DataFrame(data2)
-    print('dfgraph', df)
     df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-    print('df2', df2)
     fig = go.Figure()
     if realval != None and valy != None:
         for i in realval:
@@ -7882,7 +7483,6 @@ def on_data_set_graph3(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     raise PreventUpdate
             else:
                 if df.empty != 1:
-                    print('graphdfsonraki', df)
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                     df = df[df['VARIABLE_NAME'].isin(prvalname)]
                     a = []
@@ -8105,7 +7705,6 @@ def on_data_set_graph3(data2,data, realval,valy, valdat, sliderw, sliderh,interv
             if df.empty != 1:
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                 df = df[df['VARIABLE_NAME'].isin(prvalname)]
-                print('enerbat df', df)
                 #
                 a = []
                 for col in df['TIMESTAMP']:
@@ -8156,9 +7755,7 @@ def on_data_set_graph4(data2,data, realval,valy, valdat, sliderw, sliderh,interv
     if realval == None and valy == None:
         raise PreventUpdate
     df = pd.DataFrame(data2)
-    print('dfgraph', df)
     df2 = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'TIMESTAMP'])
-    print('df2', df2)
     fig = go.Figure()
     if realval != None and valy != None:
         for i in realval:
@@ -8247,7 +7844,6 @@ def on_data_set_graph4(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                     raise PreventUpdate
             else:
                 if df.empty != 1:
-                    print('graphdfsonraki', df)
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                     df = df[df['VARIABLE_NAME'].isin(prvalname)]
                     a = []
@@ -8470,7 +8066,6 @@ def on_data_set_graph4(data2,data, realval,valy, valdat, sliderw, sliderh,interv
             if df.empty != 1:
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                 df = df[df['VARIABLE_NAME'].isin(prvalname)]
-                print('enerbat df', df)
                 #
                 a = []
                 for col in df['TIMESTAMP']:
