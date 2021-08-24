@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+import base64
+import io
 import datetime
 import time
 import dash
@@ -314,15 +316,15 @@ page_2_layout = html.Div(
                                            bs_size="mr",
                                            style={'width': '11rem', 'marginTop': '1.5rem'},
                                            autoFocus=True,
-                                           placeholder="Enter IP number"),
-                                         dbc.Input(id='givendb_name',
-                                                   type="text",
+                                           placeholder="Enter your IP number"),
+                                         dbc.Input(id='db_password',
+                                                   type="password",
                                                    debounce=True,
                                                    min=-10000, max=10000, step=1,
                                                    bs_size="mr",
                                                    style={'width': '11rem', 'marginTop': '1.5rem'},
                                                    autoFocus=True,
-                                                   placeholder="Enter Database"),], className = 'ab'),
+                                                   placeholder="Enter your password"),], className = 'ab'),
 
                                 ], className='page2design1'),
                    html.Div([
@@ -747,7 +749,7 @@ page_3_layout = html.Div([html.Div([
               html.Div(id='reelhidden10', children=[], style={'display': 'None'}),],className='main_container',),
               ])
 
-page_4_layout = html.Div([html.Div([html.Div([html.Div([
+page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                         html.Div([html.Div([html.I(className="fas fa-home"),], ),
                                                                   dcc.Link('Home', href='/', id='link1')], className='icon_position4'),
                                                         html.Div([html.Div([html.I(className="far fa-file-excel"),]),
@@ -755,18 +757,36 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                         html.Div([html.Div([html.I(className="fas fa-database"), ]),
                                                                   dcc.Link('Database', href='/Database', id='link2')], className='icon_position4'),
                                                         html.Div([html.Div([html.I(className="fas fa-server"), ]),
-                                                                  dcc.Link('Enerbat', href='/realTime_Enerbat', id='link2')], className='icon_position4'),
-                                                         ],
+                                                                  dcc.Link('Enerbat', href='/realTime_Enerbat', id='link3')], className='icon_position4'),
+
+                                                                                    ],
                                                         className = 'abcdbpr' ),
-                                                        dbc.Input(id='pr_Ip',
-                                                                  type="text",
-                                                                  debounce=True,
-                                                                  min=-10000, max=10000, step=1,
-                                                                  bs_size="mr",
-                                                                  style={'width': '11rem', 'marginTop': '1.5rem','display':'None'},
-                                                                  autoFocus=True,
-                                                                  placeholder="Enter your IP number ...",
-                                                                  ),
+                                                        html.Div(dbc.Button("Who Are You?", id='enter_pr',
+                                                                        n_clicks=0,color="danger",), style = {'float' : 'right', 'marginTop' : '-3rem'})]),
+
+                                                        dbc.Modal(
+                                                            [
+                                                                dbc.ModalHeader("Enter your username and password"),
+                                                                dbc.Input(id='username_pr',
+                                                                          type="text",
+                                                                          min=-10000, max=10000, step=1, bs_size="sm",
+                                                                          style={'width': '31rem', },
+                                                                          placeholder = 'Username',
+                                                                          autoFocus=True, ),
+                                                                dbc.Input(id='password_pr',
+                                                                          type="password",
+                                                                          min=-10000, max=10000, step=1, bs_size="sm",
+                                                                          style={'width': '31rem', },
+                                                                          placeholder = 'Password',
+                                                                          autoFocus=True, ),
+                                                                dbc.ModalFooter([
+                                                                    dbc.Button("Okey", id="ok_reel_pr", className='ml-auto'),
+                                                                    dbc.Button("Close", id="close_reel_pr", className='ml-auto')]
+                                                                ),
+                                                            ],
+                                                            id="modal_reel_pr",
+                                                        ),
+
                                     html.Div([html.Div([html.Div([daq.PowerButton(id='my-toggle-switch-pr-db',
                                                                                   label={'label': 'Connection Database',
                                                                                          'style': {'fontSize': '22px',
@@ -823,6 +843,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([
                                                                                ], className='page4reel'),
 
                                                                 ],className='abcdbpage4upleft'),
+
                                             html.Div([html.Div([
                                                                     html.Div([daq.PowerButton(id='my-toggle-switch-pr',
                                                                                      label={'label': "Conn. Enerbat",
@@ -1162,6 +1183,8 @@ def toggle_modal_2(n1, n2, n3, is_open):
         return not is_open
     return is_open
 
+
+
 @app.callback(
     [Output("reelhidden3pr", "children"),Output("reelhidden4pr", "children")],
     [Input('download_pr', 'n_clicks')],
@@ -1321,6 +1344,7 @@ def intervalcontrol2_pr(nc, data):
 def download_excel_pr():
     # Create DF
     dff = pd.read_excel("real.xlsx")
+    dff = dff.loc[:, ~df.columns.str.match('Unnamed')]
     # Convert DF
     buf = io.BytesIO()
     excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
@@ -1337,8 +1361,9 @@ def download_excel_pr():
     )
 
 @app.callback(Output('reelhidden2', 'children'),
-              [Input("reelhidden3", "children"), Input("reelhidden5", "children"),], [State('get_data_from_modbus', 'data')])
-def pandastosql(name,dbname, data):
+              [Input("reelhidden3", "children"), Input("reelhidden5", "children"),],
+              [State('get_data_from_modbus', 'data'),State('username_pr', 'value'), State('password_pr', 'value')])
+def pandastosql(name,dbname, data, user, passw):
     if name == None or dbname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -1352,25 +1377,32 @@ def pandastosql(name,dbname, data):
         sql_insert = list(zip(a, df['variable_name'], df['variable_num_value'], df['TIMESTAMP']))
         if dbname == None:
             dbname = 'enerbat'
+        ipadress = "193.54.2.211"
+        server = SSHTunnelForwarder(
+            (ipadress, 22),
+            ssh_username='soudani',
+            ssh_password="univ484067152",
+            remote_bind_address=(ipadress, 3306))
+        server.start()
         try:
-            db_connection = mysql.connector.connect(
-                host="193.54.2.211",
-                user="dashapp",
-                passwd="dashapp",
-                database=dbname,
-                port=3306, )
+            db_connection = mariadb.connect(
+                user='dashapp' if user == None else user,
+                password='dashapp' if passw == None else passw,
+                host=ipadress,
+                port=3306,
+                database=dbname)
             db_cursor = db_connection.cursor()
             # Here creating database table '
             db_cursor.execute(
                 f"CREATE OR REPLACE TABLE {name} (id BIGINT PRIMARY KEY, variable_name VARCHAR(255), variable_num_value DOUBLE, TIMESTAMP TIMESTAMP)")
-
             sql_query = f" INSERT INTO {name} (id, variable_name,variable_num_value,TIMESTAMP) VALUES (%s, %s, %s, %s)"
             # Get database table'
             db_cursor.executemany(sql_query, sql_insert)
             db_connection.commit()
             print(db_cursor.rowcount, "Record inserted successfully into ENERBAT Database")
-        except mysql.connector.Error as error:
-            print("Failed to insert record into MARIADB table {}".format(error))
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
         finally:
             if db_connection.is_connected():
                 db_cursor.close()
@@ -1378,8 +1410,9 @@ def pandastosql(name,dbname, data):
                 print("MySQL connection is closed")
 
 @app.callback(Output('reelhidden10', 'children'),
-              [Input("reelhidden8", "children"), Input("reelhidden9", "children"),], [State("reelhidden6", "children")])
-def pandastosql_valve(name,dbname, data):
+              [Input("reelhidden8", "children"), Input("reelhidden9", "children"),],
+              [State("reelhidden6", "children"), State('username_pr', 'value'), State('password_pr', 'value')])
+def pandastosql_valve(name,dbname, data, user, passw):
     if data == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -1389,25 +1422,33 @@ def pandastosql_valve(name,dbname, data):
     HV_A1_OUT = [i for i in df['HV_A1_OUT']]
     HV_A2_OUT = [i for i in df['HV_A2_OUT']]
     sql_insert = list(zip(HV_A1_IN, HV_A2_IN, HV_A1_OUT,  HV_A2_OUT))
+    ipadress = "193.54.2.211"
+    server = SSHTunnelForwarder(
+        (ipadress, 22),
+        ssh_username='soudani',
+        ssh_password="univ484067152",
+        remote_bind_address=(ipadress, 3306))
+
+    server.start()
     try:
-        db_connection = mysql.connector.connect(
-            host="193.54.2.211",
-            user="dashapp",
-            passwd="dashapp",
-            database=dbname,
-            port=3306, )
+        db_connection =  mariadb.connect(
+            user='dashapp' if user == None else user,
+            password='dashapp' if passw == None else passw,
+            host=ipadress,
+            port=3306,
+            database=dbname)
         db_cursor = db_connection.cursor()
             # Here creating database table '
         db_cursor.execute(
             f"CREATE OR REPLACE TABLE {name} (HV_A1_IN BIGINT PRIMARY KEY, HV_A2_IN BIGINT, HV_A1_OUT BIGINT, HV_A2_OUT BIGINT)")
-
         sql_query = f" INSERT INTO {name} (HV_A1_IN,HV_A2_IN,HV_A1_OUT,HV_A2_OUT) VALUES (%s, %s, %s, %s)"
             # Get database table'
         db_cursor.executemany(sql_query, sql_insert)
         db_connection.commit()
         print(db_cursor.rowcount, f"Record inserted successfully into {name} Database")
-    except mysql.connector.Error as error:
-        print("Failed to insert record into MARIADB table {}".format(error))
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
     finally:
         if db_connection.is_connected():
             db_cursor.close()
@@ -1416,8 +1457,9 @@ def pandastosql_valve(name,dbname, data):
 
 @app.callback(Output('reelhidden2pr', 'children'),
               [Input("my-toggle-switch-pr", "on"),Input('interval_component_pr', 'n_intervals')],
-              [State("reelhidden3pr", "children"),State("reelhidden4pr", "children"), State('get_data_from_modbus_pr', 'data')])
-def pandastosql_pr(on,interval, name,nametodb, data):
+              [State("reelhidden3pr", "children"),State("reelhidden4pr", "children"), State('get_data_from_modbus_pr', 'data'),
+               State('username_pr', 'value'), State('password_pr', 'value')])
+def pandastosql_pr(on,interval, name,nametodb, data, user, passw):
     if name == None :
         raise PreventUpdate
     if on == 1:
@@ -1429,15 +1471,22 @@ def pandastosql_pr(on,interval, name,nametodb, data):
             d = [i for i in df['TIMESTAMP']]
             df['TIMESTAMP'] = df['TIMESTAMP'].apply(lambda x: pd.Timestamp(x).strftime('%Y-%m-%d %H:%M:%S'))
             sql_insert = list(zip(a, df['variable_name'], df['variable_num_value'], df['TIMESTAMP']))
+            ipadress = "193.54.2.211"
+            server = SSHTunnelForwarder(
+                (ipadress, 22),
+                ssh_username='soudani',
+                ssh_password="univ484067152",
+                remote_bind_address=(ipadress, 3306))
 
+            server.start()
             try:
-                db_connection = mysql.connector.connect(
-                    host="193.54.2.211",
-                    user="dashapp",
-                    passwd="dashapp",
-                    database=nametodb)
+                db_connection = db_connection = mariadb.connect(
+                    user='dashapp' if user == None else user,
+                    password='dashapp' if passw == None else passw,
+                            host=ipadress,
+                            port=3306,
+                            database=nametodb)
                 db_cursor = db_connection.cursor()
-                # Here creating database table as student'
 
                 # db_cursor.execute(f"REPAIR TABLE {name}")
                 db_cursor.execute(f"CREATE OR REPLACE TABLE  {name} (ID BIGINT PRIMARY KEY, VARIABLE_NAME VARCHAR(255), VARIABLE_NUM_VALUE DOUBLE, TIMESTAMP TIMESTAMP)")
@@ -1446,8 +1495,9 @@ def pandastosql_pr(on,interval, name,nametodb, data):
                 db_cursor.executemany(sql_query, sql_insert)
                 db_connection.commit()
                 print(db_cursor.rowcount, f"Record inserted successfully into {nametodb} Database")
-            except mysql.connector.Error as error:
-                print("Failed to insert record into MARIADB table {}".format(error))
+            except mariadb.Error as e:
+                print(f"Error connecting to MariaDB Platform: {e}")
+                sys.exit(1)
             finally:
                 if db_connection.is_connected():
                     db_cursor.close()
@@ -1466,9 +1516,20 @@ def display_page(pathname):
     elif pathname == '/realTime_Enerbat':
         return page_3_layout
     elif pathname == '/RCC_KN':
+
         return page_4_layout
     elif pathname == '/File':
         return page_1_layout
+
+@app.callback(
+            Output("modal_reel_pr", "is_open"),
+            [Input("close_reel_pr", "n_clicks"), Input("ok_reel_pr", "n_clicks"),Input('enter_pr', 'n_clicks')],
+            [State("modal_reel_pr", "is_open")],
+        )
+def toggle_modal_pr(n2, n3, nc, is_open):
+    if nc > 0 or n2 or n3:
+        return not is_open
+    return is_open
 
 
 def parse_contents(contents, filename, date):
@@ -2168,28 +2229,29 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                 }
 
                                 ),
-                      html.Div(daq.Slider(id="sliderHeightTab1",
-                                          max=2100,
-                                          min=400,
-                                          value=530,
-                                          step=100,
-                                          size=420,
-                                          vertical=True,
-                                          updatemode='drag'), style={'margin': '20px'}),
+
                     html.Div([daq.BooleanSwitch(
                                         id="selectyaxis",
                                         label="Multiple Y-axis",
                                         labelPosition="bottom",
                                         color='red',
 
-                                    )
-                                ,
+                                    ),
+
                         dbc.Tooltip(
                             "You can select maximum 3 y-axis",
                             target="selectyaxis",
                             placement='bottom',
                         ),
                     ], className='pluraly'),
+                                html.Div(daq.Slider(id="sliderHeightTab1",
+                                                    max=2100,
+                                                    min=400,
+                                                    value=530,
+                                                    step=100,
+                                                    size=420,
+                                                    vertical=True,
+                                                    updatemode='drag'), style={'margin': '20px'}),
                                 ],
                      className='abcdb_page1'),
 
@@ -3206,6 +3268,20 @@ def LoadingDataTab4(on, tab):
                                                                         }
                                                          }
                                                          )]),
+                                                         html.Div([daq.BooleanSwitch(
+                                                             id="selectyaxistab4",
+                                                             label="Multiple Y-axis",
+                                                             labelPosition="bottom",
+                                                             color='red',
+
+                                                         )
+                                                             ,
+                                                             dbc.Tooltip(
+                                                                 "You can select maximum 3 y-axis",
+                                                                 target="selectyaxistab4",
+                                                                 placement='bottom',
+                                                             ),
+                                                         ], className='pluraly'),
                                                html.Div(daq.Slider(id="sliderHeightTab4",
                                                                    max=2100,
                                                                    min=400,
@@ -3498,7 +3574,8 @@ def relay7(valradio):
 
 
 @app.callback(Output('graph4', 'figure'),
-              [Input('radiograph4', 'value'),
+              [Input("selectyaxistab4", "on"),
+               Input('radiograph4', 'value'),
                Input('radiographtab4hidden', 'children'),
                Input('tab4hiddenValuex_axissecond', 'children'),
                Input('tab4hiddenValuey_axissecond', 'children'),
@@ -3528,7 +3605,7 @@ def relay7(valradio):
                State('rightIntegralSecondTab4', 'value'),
                ]
               )
-def detailedGraph4(radio, radioval,  valxsecond, valysecond,
+def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                    slideheight, slidewidth, g1, g2, head, note, nclick, firstchoosen, secondchoosen, nc,
                    valx2, valy2, cleanclick, axisdrop, shift_x, shift_y, retrieve, firstshape, secondshape,
                    leftfirstval, leftsecondval, rightfirstval, rightsecondval, ):
@@ -3538,6 +3615,7 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
     if radioval != None:
         if len(retrieve) > 0:
             df = pd.read_excel("appending.xlsx")
+            df = df.loc[:, ~df.columns.str.match('Unnamed')]
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 a = df['ID'].unique()
                 dff2 = pd.DataFrame([])
@@ -3832,7 +3910,7 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
             if len(firstshape) == 2 and firstchoosen == None:
                 del firstshape[1]
             if radioval == 'optionlibre' and valx2 != None and valy2 != None:
-
+                print(df)
                 lst = []
                 for j in zip(valy2, valx2):
                     lst.append(j)
@@ -3866,10 +3944,17 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                         for k in range(len(valx2)):
                             a = df[valy2[j]]
                             b = df[valx2[k]]
+                            if on == 1:
+                                if len(valx2) == 1:
+                                    fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
+                                    name="{}".format(valx2[k])))
+                                elif len(valx2) > 1:
+                                    fig.add_trace(go.Scattergl(x=a, y=b, mode=radio,
+                                                               marker=dict(line=dict(width=0.2, color='white')),
+                                                               name="{}".format(valx2[k]),yaxis = f'y{k+1}'))
+                            else :
+                                fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),name="{}".format(valx2[k])))
 
-                            fig.add_trace(
-                                go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
-                                             name="{}/{}".format(valy2[j], valx2[k])))
                             a = []
                             if nc > 0:
                                 a = controlShape()
@@ -3900,6 +3985,30 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                                 plot_bgcolor=colors['background'],
                                 shapes=a if (nc > cleanclick) else [],
                                 height=slideheight,
+                                yaxis2=dict(
+                                    titlefont=dict(
+                                        color="#d62728"
+                                    ),
+                                    tickfont=dict(
+                                        color="#d62728"
+                                    ),
+                                    anchor="free",
+                                    overlaying="y",
+                                    side="right",
+                                    position=1
+                                ),
+                                yaxis3=dict(
+                                    titlefont=dict(
+                                        color='green'
+                                    ),
+                                    tickfont=dict(
+                                        color="green"
+                                    ),
+                                    anchor="free",
+                                    overlaying="y",
+                                    side="right",
+                                    position=0.92
+                                ),
                                 margin=dict(
                                     l=50,
                                     r=50,
@@ -3919,6 +4028,7 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                 lst = []
                 for j in zip(valysecond, valxsecond):
                     lst.append(j)
+                print(lst)
                 s = -1
                 m = ''
                 for i in range(len(lst)):
@@ -3931,6 +4041,8 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                     s += 1
                     a = df[lst[i][0]]
                     b = df[lst[i][1]]
+                    print(a)
+                    print(b)
                     if q1  == "tab4send":
                         if axisdrop == lst[i][1]:
                             p = []
@@ -3954,9 +4066,21 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                             df[axisdrop] = pd.DataFrame(c)
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
+                    print('valxecond', valxsecond)
+                    if on == 1:
+                        print('valxsecond',valxsecond)
+                        if len(valxsecond) == 1:
+                            fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
+                                               name="{}".format(valxsecond[s])))
+                        if len(valxsecond) > 1:
+                            fig.add_trace(
+                                go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
+                                             name="{}".format(valxsecond[s]), yaxis = f'y{s+1}'))
 
-                    fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
-                                               name="{}/{}".format(valxsecond[s], valysecond[s])))
+                    else :
+                        fig.add_trace(
+                            go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
+                                         name="{}".format(valxsecond[s])))
 
                     a = []
                     if nc > 0:
@@ -3965,6 +4089,9 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                         tickangle=90,
                         title_text='' if g1 == [] else g1[-1],
                         title_font={"size": 20},
+                        title_standoff=25),
+                    fig.update_yaxes(
+                        title_text='' if g2 == [] else g2[-1],
                         title_standoff=25),
                     fig.update_shapes(yref='y'),
                     fig.update_layout(
@@ -3985,6 +4112,30 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                         ),
                         paper_bgcolor="LightSteelBlue",
                         plot_bgcolor=colors['background'],
+                        yaxis2=dict(
+                            titlefont=dict(
+                                color="#d62728"
+                            ),
+                            tickfont=dict(
+                                color="#d62728"
+                            ),
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=1
+                        ),
+                        yaxis3=dict(
+                            titlefont=dict(
+                                color='green'
+                            ),
+                            tickfont=dict(
+                                color="green"
+                            ),
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=0.92
+                        ),
                         margin=dict(
                             l=50,
                             r=50,
@@ -3993,15 +4144,6 @@ def detailedGraph4(radio, radioval,  valxsecond, valysecond,
                             pad=4
                         ),
 
-                        yaxis=dict(
-                            title='' if g2 == [] else g2[-1],
-                            titlefont=dict(
-                                color="#1f77b4"
-                            ),
-                            tickfont=dict(
-                                color="#1f77b4"
-                            )
-                        ),
                         uirevision=valysecond[0], ),
                     fig.add_annotation(text=note[-1] if len(note) > 0 else '',
                                        xref="paper", yref="paper",
@@ -4036,6 +4178,7 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rights
     spaceList2 = []
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
+        df = df.loc[:, ~df.columns.str.match('Unnamed')]
         df['index'] = df.index
 
         for i in range(len(rightside)):
@@ -4053,6 +4196,7 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rights
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
+                    print(x_val)
                     dff = pd.DataFrame([])
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
@@ -4077,12 +4221,11 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rights
                                 if shift_x != 0:
                                     x_val -= shift_x
                                     dff = df[df[v] == x_val]
-                            else : dff = df
                     a = []
                     if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                         a.append([dff[dff['ID'] == firstchoosen].index][0])
-
                     else : a.append(dff[firstchoosen].index)
+                    print(dff[firstchoosen].index)
                     for i in range(len(a)):
                         for j in a:
                             leftchild.append(j[i])
@@ -4246,6 +4389,7 @@ def valintTab4(clickData4, radioval, firstchoosen, valysecond, valxsecond, valy,
     spaceList2 = []
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
+        df = df.loc[:, ~df.columns.str.match('Unnamed')]
         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
             a = df['ID'].unique()
             dff2 = pd.DataFrame([])
@@ -4440,6 +4584,7 @@ def valint2(clickData, secondchoosen, value, leftchild, rightchild, shift_x,righ
     spaceList2 = []
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
+        df = df.loc[:, ~df.columns.str.match('Unnamed')]
         df['index'] = df.index
         for i in range(len(rightside)):
             spaceList1.append(zero)
@@ -4648,6 +4793,7 @@ def valintTab4_2(clickData, radioval, secondchoosen, valysecond, valxsecond, val
     spaceList2 = []
     if len(retrieve) > 0:
         df = pd.read_excel('appending.xlsx')
+        df = df.loc[:, ~df.columns.str.match('Unnamed')]
         if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
             a = df['ID'].unique()
             dff2 = pd.DataFrame([])
@@ -4835,6 +4981,7 @@ def integralCalculation(st1left, st1right, valuechoosenleft, retrieve):
     if len(retrieve) > 0:
         if st1left != '' and st1right != '':
             df = pd.read_excel('appending.xlsx')
+            df = df.loc[:, ~df.columns.str.match('Unnamed')]
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
@@ -4953,6 +5100,7 @@ def integralCalculationtab4(st1left, st1right, valuechoosenleft, retrieve):
     if len(retrieve) > 0:
         if st1left != '' and st1right != '':
             df = pd.read_excel('appending.xlsx')
+            df = df.loc[:, ~df.columns.str.match('Unnamed')]
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 a = df['ID'].unique()
                 dff2 = pd.DataFrame([])
@@ -5013,6 +5161,7 @@ def integralCalculation2(st2left, st2right, valuechoosenright, retrieve):
     if len(retrieve) > 0:
         if st2left != '' and st2right != '':
             df = pd.read_excel('appending.xlsx')
+            df = df.loc[:, ~df.columns.str.match('Unnamed')]
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
@@ -5132,6 +5281,7 @@ def integralCalculation4(st2left, st2right, valuechoosenright, retrieve):
     if len(retrieve) > 0:
         if st2left != '' and st2right != '':
             df = pd.read_excel('appending.xlsx')
+            df = df.loc[:, ~df.columns.str.match('Unnamed')]
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 a = df['ID'].unique()
                 dff2 = pd.DataFrame([])
@@ -5251,6 +5401,7 @@ def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfi
         differance = []
         if len(retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
             df = pd.read_excel('appending.xlsx')
+            df = df.loc[:, ~df.columns.str.match('Unnamed')]
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
@@ -5478,6 +5629,7 @@ def differanceCalculation4(firstshape, secondshape, valuechoosenleft, valuechoos
             first = differance[0]
             second = differance[1]
             df = pd.read_excel('appending.xlsx')
+            df = df.loc[:, ~df.columns.str.match('Unnamed')]
             if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                 a = df['ID'].unique()
                 dff2 = pd.DataFrame([])
@@ -5682,6 +5834,7 @@ def exportdatadb(valueparse):
 def download_excel():
     # Create DF
     dff = pd.read_excel("new_fichier.xlsx")
+    dff = dff.loc[:, ~df.columns.str.match('Unnamed')]
     # Convert DF
     buf = io.BytesIO()
     excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
@@ -5702,6 +5855,7 @@ def download_excel():
 def download_exceldb():
     # Create DF
     dff = pd.read_excel("new_fichier.xlsx")
+    dff = dff.loc[:, ~df.columns.str.match('Unnamed')]
     # Convert DF
     buf = io.BytesIO()
     excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
@@ -5718,8 +5872,8 @@ def download_exceldb():
     )
 
 @app.callback(Output('dbvalchoosen', 'options'),
-              [Input('db_name', 'value')], [State('db_Ip', 'value')])
-def relationdb(dbname, ipval):
+              [Input('db_name', 'value')], [State('db_Ip', 'value'),State('db_password', 'value')])
+def relationdb(dbname, ipval, password):
     if dbname == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
@@ -5733,11 +5887,11 @@ def relationdb(dbname, ipval):
 
     try:
         conn = mariadb.connect(
-            user="dashapp",
-            password="dashapp",
-            host=ipadress,
-            port=3306,
-            database=dbname)
+            user = ipval,
+            password = password,
+            host = ipadress,
+            port = 3306,
+            database = dbname)
 
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
@@ -5765,18 +5919,25 @@ def relationdb(dbname, ipval):
 
 
 @app.callback(Output('prvalchoosen', 'options'),
-              [Input('prname', 'value')], [State('pr_Ip', 'value')])
-def relationpr(prname, ipval):
+              [Input('prname', 'value')],[State('username_pr', 'value'), State('password_pr', 'value')])
+def relationpr(prname, user, passw):
     if prname == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
+    server = SSHTunnelForwarder(
+        (ipadress, 22),
+        ssh_username='soudani',
+        ssh_password="univ484067152",
+        remote_bind_address=(ipadress, 3306))
+
+    server.start()
     try:
-        conn = mysql.connector.connect(
-            host="193.54.2.211",
-            user="dashapp",
-            passwd="dashapp",
-            database=prname,
-            port=3306, )
+        conn = mariadb.connect(
+            user='dashapp' if user == None else user,
+            password='dashapp' if passw == None else passw,
+            host=ipadress,
+            port=3306,
+            database=prname)
         cur = conn.cursor()
 
     except mariadb.Error as e:
@@ -5808,8 +5969,8 @@ def relationpr(prname, ipval):
 
 @app.callback([Output('dbvalname', 'options'), Output('dbvaldate', 'options')],
               [Input('activatedb', 'n_clicks'), Input('deactivatedb', 'n_clicks')],
-              [State('dbvalchoosen', 'value'), State('db_name', 'value'), State('db_Ip', 'value')])
-def dbname(nc, nc2, dbch, dbname, ipval):
+              [State('dbvalchoosen', 'value'), State('db_name', 'value'), State('db_Ip', 'value'),State('db_password', 'value')])
+def dbname(nc, nc2, dbch, dbname, ipval, password):
     if dbname == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
@@ -5823,11 +5984,10 @@ def dbname(nc, nc2, dbch, dbname, ipval):
             remote_bind_address=(ipadress, 3306))
 
         server.start()
-
         try:
             conn = mariadb.connect(
-                user="dashapp",
-                password="dashapp",
+                user=ipval,
+                password=password,
                 host=ipadress,
                 port=3306,
                 database=dbname)
@@ -5964,22 +6124,27 @@ def dbname(nc, nc2, dbch, dbname, ipval):
 
 
 @app.callback([Output('prvalname', 'options'), Output('prvaldate', 'options')],
-              [Input('my-toggle-switch-pr-db', 'on'),Input('interval_component_pr_db', 'n_intervals')],
-              [State('prvalchoosen', 'value'), State('prname', 'value'), State('pr_Ip', 'value')])
-def prname(on,interval, prch, prname, ipval):
-    if prname == None:
+              [Input('my-toggle-switch-pr-db', 'on'),Input('interval_component_pr_db', 'n_intervals'),Input('ok_reel_pr', 'n_clicks')],
+              [State('prvalchoosen', 'value'), State('prname', 'value'),State('username_pr', 'value'), State('password_pr', 'value')])
+def prname(on,interval,ok,  prch, prname, user, passw):
+    if prname == None :
         raise PreventUpdate
     ipadress = "193.54.2.211"
-    if on ==1:
+    q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
+    if q1 == 'ok_reel_pr' :
+        if user != None or passw != None :
+            user = user
+            password = passw
+    if on == 1:
         try:
-            conn = mysql.connector.connect(
-                user="dashapp",
-                password="dashapp",
+            conn = mariadb.connect(
+                user='dashapp' if user == None else user,
+                password='dashapp' if passw == None else passw,
                 host=ipadress,
                 port=3306,
                 database=prname)
 
-        except mysql.connector.Error as e:
+        except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
 
@@ -6089,8 +6254,8 @@ def prname(on,interval, prch, prname, ipval):
 
 @app.callback(ServersideOutput('memory-output', 'data'),
               [Input('dbvalname', 'value'), Input('dbvaldate', 'value')],
-              [State('dbvalchoosen', 'value'), State('db_name', 'value'), State('db_Ip', 'value')])
-def dbname(valname, valdate, dbch, dbname, ipval):
+              [State('dbvalchoosen', 'value'), State('db_name', 'value'), State('db_Ip', 'value'),State('db_password', 'value')])
+def dbname(valname, valdate, dbch, dbname, ipval, password):
     if dbname == None or valname == None or valdate == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
@@ -6102,10 +6267,11 @@ def dbname(valname, valdate, dbch, dbname, ipval):
 
     server.start()
 
+
     try:
         conn = mariadb.connect(
-            user="dashapp",
-            password="dashapp",
+            user=ipval,
+            password=password,
             host=ipadress,
             port=3306,
             database=dbname)
@@ -6159,8 +6325,9 @@ def dbname(valname, valdate, dbch, dbname, ipval):
             return t1
 @app.callback(ServersideOutput('memory-outputpr', 'data'),
               [Input('prvalname', 'value'), Input('prvaldate', 'value')],
-              [State('prvalchoosen', 'value'), State('prname', 'value')])
-def dbname(valname, valdate, dbch, dbname):
+              [State('prvalchoosen', 'value'), State('prname', 'value'),
+               State('username_pr', 'value'), State('password_pr', 'value')])
+def dbname(valname, valdate, dbch, dbname, user, passw):
     if dbname == None or valname == None or valdate == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
@@ -6174,8 +6341,8 @@ def dbname(valname, valdate, dbch, dbname):
 
     try:
         conn = mariadb.connect(
-            user="dashapp",
-            password="dashapp",
+            user='dashapp' if user == None else user,
+            password='dashapp' if passw == None else passw,
             host=ipadress,
             port=3306,
             database=dbname)
