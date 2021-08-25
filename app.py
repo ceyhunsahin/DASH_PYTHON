@@ -379,6 +379,7 @@ page_2_layout = html.Div(
                                   style = {'margin': '5rem'}
                             )
                         ])
+
                 ], className='abcdb'),
      dcc.Store(id='memory-output'),
      html.Div(id='dbcheck', children=
@@ -489,7 +490,7 @@ page_2_layout = html.Div(
                           placeholder="Intersection")], className='aa')
       ], style={'display': 'None'},
               className='abdbase'),
-     html.Div([html.Div([html.Div(dcc.RadioItems(id="radiographdb",
+     html.Div([html.Div([html.Div([html.Div(dcc.RadioItems(id="radiographdb",
                                options=[
                                    {'label': 'Point', 'value': 'markers'},
                                    {'label': 'Line', 'value': 'lines'},
@@ -499,6 +500,24 @@ page_2_layout = html.Div(
                                labelStyle={'margin': '10px'},
                                inputStyle={'margin': '10px'}
                                ), className='abdbside-db'),
+                        html.Div([dcc.Dropdown(id="dropadddb",
+                                                       options=[
+                                                           {'label': 'Note', 'value': 'note'},
+                                                           {'label': 'Header', 'value': 'header'},
+                                                           {'label': 'x-axis', 'value': 'x_axis'},
+                                                           {'label': 'y-axis', 'value': 'y_axis'},],
+                                                       value='header',
+                                                       ),
+                                          dcc.Textarea(
+                                              id='textareadb',
+                                              value='',
+                                              style={'width': '15rem', 'marginTop': '0.5rem'},
+                                              autoFocus='Saisir',
+                                          ),
+                                          dbc.Button("Add Text", id='addTextdb', n_clicks=0,
+                                                                   className='mr-1', color="primary", style={'margin': '1rem 1rem 0 6vw'}),
+                                          ], className='aatabdb'),], className='abpagedb'),
+
                html.Div([html.Div([
                          html.Div(dcc.Loading(type='cube',children = dcc.Graph(id="getdbgraph",
                                             config={'displayModeBar': True,
@@ -588,6 +607,10 @@ page_2_layout = html.Div(
                html.Div(id='hiddenrecord3db', children=[], style={'display': 'None'}),
                html.Div(id='hiddenrecord4db', children=[], style={'display': 'None'}),
                html.Div(id='writeexcelhiddendb', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenTextHeaderdb', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenTextNotedb', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenTextxaxisdb', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenTextyaxisdb', children=[], style={'display': 'None'}),
 
                ],className='four-columns-div-user-controlsreel' ), ], ),
 
@@ -3595,6 +3618,33 @@ def detailedGraph4(addtextclick, textarea, add, g1, g2, head, note):
     else:
         return (no_update, no_update, no_update, no_update)
 
+@app.callback([Output('hiddenTextxaxisdb', 'children'), Output('hiddenTextyaxisdb', 'children'),
+               Output('hiddenTextHeaderdb', 'children'), Output('hiddenTextNotedb', 'children')],
+              [Input('addTextdb', 'n_clicks')],
+              [State('textareadb', 'value'), State('dropadddb', 'value'),
+               State('hiddenTextxaxisdb', 'children'), State('hiddenTextyaxisdb', 'children'),
+               State('hiddenTextHeaderdb', 'children'), State('hiddenTextNotedb', 'children')]
+              )
+def detailedGraphdb(addtextclick, textarea, add, g1, g2, head, note):
+    if add == None or g1 == None or g2 == None or head == None or note == None:
+        raise PreventUpdate
+
+    if addtextclick > 0:
+        if add == 'x_axis':
+            g1.append(textarea)
+
+        if add == 'y_axis':
+            g2.append(textarea)
+
+        if add == 'header':
+            head.append(textarea)
+
+        if add == 'note':
+            note.append(textarea)
+        textarea = ''
+        return g1, g2, head, note
+    else:
+        return (no_update, no_update, no_update, no_update)
 
 @app.callback(Output('shiftaxistab4', 'style'),
               [Input('shiftaxisdroptab4', 'value')])
@@ -6675,9 +6725,14 @@ def containerdb(val1):
                Input('dbvaldate', 'value'),
                Input('sliderWidthdb', 'value'),
                Input('sliderHeightdb', 'value'),
-               Input('radiographdb', 'value'),],
+               Input('radiographdb', 'value'),
+               Input('hiddenTextxaxisdb', 'children'),
+               Input('hiddenTextyaxisdb', 'children'),
+               Input('hiddenTextHeaderdb', 'children'),
+               Input('hiddenTextNotedb', 'children'),
+               ],
               [State('dbvalchoosen', 'value'), State('db_name', 'value'), ])
-def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
+def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, head, note, dbch, dbname):
     if data == None or valy == [] or valdat == [] or valdat == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -6750,7 +6805,18 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio, dbch, dbna
                             side="right",
                             position=0.92
                         ),
-                        uirevision=valy[j]),
+                        uirevision=valy[j],
+                        title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]) ,),
+                    fig.update_xaxes(
+                        tickangle=90,
+                        title_text='' if g1 == [] else g1[-1],
+                        title_standoff=25, title_font={"size": 20}, ),
+                    fig.update_yaxes(
+                        title_text='' if g2 == [] else g2[-1],
+                        title_standoff=25, title_font={"size": 20}, ),
+                    fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+                                           xref="paper", yref="paper",
+                                           x=0, y=0.7, showarrow=False)
                 return fig
             else:
                 raise PreventUpdate
@@ -6821,7 +6887,19 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio, dbch, dbna
                             ),
 
 
-                            uirevision=valy[j], ),
+                            uirevision=valy[j],
+                            title_text=head[-1] if len(head) > 0 else "{}".format(valy[0],) ),
+                        fig.update_xaxes(
+                                tickangle=90,
+                                title_text='' if g1 == [] else g1[-1],
+                                title_standoff=25, title_font={"size": 20}, ),
+
+                        fig.update_yaxes(
+                                title_text='' if g2 == [] else g2[-1],
+                                title_standoff=25, title_font={"size": 20}, ),
+                        fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+                                               xref="paper", yref="paper",
+                                               x=0, y=0.7, showarrow=False)
                 return fig
             else:
                 raise PreventUpdate
@@ -6891,7 +6969,19 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio, dbch, dbna
                             position=0.92
                         ),
 
-                            uirevision=valy[j], ),
+                            uirevision=valy[j],
+                            title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]), ),
+                        fig.update_xaxes(
+                                tickangle=90,
+                                title_text='' if g1 == [] else g1[-1],
+                                title_standoff=25, title_font={"size": 20}, ),
+
+                        fig.update_yaxes(
+                                title_text='' if g2 == [] else g2[-1],
+                                title_standoff=25, title_font={"size": 20}, ),
+                        fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+                                               xref="paper", yref="paper",
+                                               x=0, y=0.7, showarrow=False)
                 return fig
             else:
                 raise PreventUpdate
@@ -6963,7 +7053,19 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio, dbch, dbna
                             position=0.92
                         ),
 
-                        uirevision=valy[j], ),
+                        uirevision=valy[j],
+                    title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]) ,),
+                    fig.update_xaxes(
+                        tickangle=90,
+                        title_text='' if g1 == [] else g1[-1],
+                        title_standoff=25, title_font={"size": 20}, ),
+
+                    fig.update_yaxes(
+                        title_text='' if g2 == [] else g2[-1],
+                        title_standoff=25, title_font={"size": 20}, ),
+                    fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+                                           xref="paper", yref="paper",
+                                           x=0, y=0.7, showarrow=False)
             return fig
         else:
             raise PreventUpdate
