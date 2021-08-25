@@ -1181,6 +1181,8 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                              merge_duplicate_headers=True)),
                ], style = {'overflow-x' : 'visible'} ),
 
+
+
 @app.callback([ Output("HVA1INLED", "value"),Output("HVA2INLED", "value"),
                 Output("HVA1OUTLED", "value"),Output("HVA2OUTLED", "value")],
               [ Input("HVA1IN", "value"), Input("HVA2IN", "value"),
@@ -1249,6 +1251,19 @@ def intervalcontrol(on):
         return False
     else:
         return True
+
+@app.callback([Output('activatedb', 'color'),Output('deactivatedb', 'color')],
+              [Input('activatedb', 'n_clicks'),Input('deactivatedb', 'n_clicks')],
+              [State('activatedb', 'color'),State('deactivatedb', 'color')],
+              )
+def buttoncontrol(on1, on2, col1, col2):
+    q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
+    print(col1)
+    if q1 == 'activatedb':
+        return 'success', 'secondary'
+    if q1 == 'deactivatedb':
+        return 'secondary', 'danger'
+    else : return no_update, no_update
 
 @app.callback(Output('interval_component_pr', 'disabled'),
               [Input("my-toggle-switch-pr", "on")],
@@ -2270,6 +2285,7 @@ def LoadingDataTab1(on, dropdownhidden, tab):
 
                       ], className='abcd'),
 
+
             html.Div([html.Div([dcc.Graph(id='graph',
                                 config={'displayModeBar': True,
                                         'scrollZoom': True,
@@ -2584,7 +2600,7 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
          minValfirst, minValsecond, firstchoosen, secondchoosen, rightsidedrop, right_y_axis, right_x_axis,
          nclick, nc, cleanclick, axis, shift_x, shift_y, differance, retrieve, leftfirstval, leftsecondval,
          rightfirstval, rightsecondval, firstshape, secondshape):
-    if retrieve == None or retrieve == [] or nc == None:
+    if retrieve == None or retrieve == [] or nc == None or note == None:
         raise PreventUpdate
     if retrieve != []:
         df = pd.DataFrame(retrieve)
@@ -2627,7 +2643,10 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
             else :
                 dt = df['date']
         fig = go.Figure()
-        color = {0: 'blue', 1: 'red', 2: 'green', 3: 'purple', 4: 'orange'}
+        color = {0: 'blue', 1: 'red', 2: 'green', 3: 'purple', 4: 'orange', 5: '#ff69b4',
+                    6: 'black', 7: 'cyan', 8: 'magenta', 9: '#faebd7',
+                    10: '#2e8b57', 11: '#eeefff', 12: '#da70d6', 13: '#ff7f50', 14: '#cd853f',
+                    15: '#bc8f8f', 16: '#5f9ea0', 17: '#daa520'}
         if rightsidedrop != None :
             if right_x_axis != [] and right_y_axis != []:
                 for k in range(len(rightsidedrop)):
@@ -3031,10 +3050,20 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
                 ),
                 paper_bgcolor="LightSteelBlue",
                 plot_bgcolor=colors['background'],),
-            fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                   xref="paper", yref="paper",
-                                   x=0, y=0.7, showarrow=False)
-
+            note_new = []
+            if note != None and len(note) > 0 :
+                note = note[-1].split(' ')
+            x = ''
+            for i in note:
+                note_new.append(i)
+                if len(note_new) % 4 == 0:
+                    note_new[-1] += '<br>'
+            x += ' '.join(note_new)
+            note = [x]
+            fig.add_annotation(text=note[-1] if len(note) > 0 else '',align = 'left',bordercolor = 'black',
+                               borderwidth=1,xref="paper", yref="paper",bgcolor = "white", font=dict(
+                                family="Arial, sans-serif" , size=14,),
+                                x=1, y=1, showarrow=False)
 
             if len(firstshape) == 2 and len(secondshape) == 2:
                 a = int(firstshape[0])
@@ -3590,6 +3619,7 @@ def detailedGraph(addtextclick, textarea, add, g1, g2, head, note):
         if add == 'note':
             note.append(textarea)
         textarea = ''
+        print('note', note)
         return g1, g2, head, note
     else:
         return (no_update, no_update, no_update, no_update)
@@ -3647,6 +3677,7 @@ def detailedGraphdb(addtextclick, textarea, add, g1, g2, head, note):
         if add == 'note':
             note.append(textarea)
         textarea = ''
+
         return g1, g2, head, note
     else:
         return (no_update, no_update, no_update, no_update)
@@ -4133,9 +4164,21 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                                 ),
                                 # hovermode='x unified',
                                 uirevision=valy2[0], ),
-                            fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                               xref="paper", yref="paper",
-                                               x=0, y=0.7, showarrow=False)
+                            note_new = []
+                            if note != None and len(note) > 0:
+                                note = note[-1].split(' ')
+                            x = ''
+                            for i in note:
+                                note_new.append(i)
+                                if len(note_new) % 4 == 0:
+                                    note_new[-1] += '<br>'
+                            x += ' '.join(note_new)
+                            note = [x]
+                            fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left',
+                                               bordercolor='black',
+                                               borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
+                                    family="Arial, sans-serif", size=14, ),
+                                               x=1, y=1, showarrow=False)
 
                     return fig
 
@@ -4262,9 +4305,20 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                         ),
 
                         uirevision=valysecond[0], ),
-                    fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                       xref="paper", yref="paper",
-                                       x=0, y=0.7, showarrow=False)
+                    note_new = []
+                    if note != None and len(note) > 0:
+                        note = note[-1].split(' ')
+                    x = ''
+                    for i in note:
+                        note_new.append(i)
+                        if len(note_new) % 4 == 0:
+                            note_new[-1] += '<br>'
+                    x += ' '.join(note_new)
+                    note = [x]
+                    fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
+                                       borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
+                            family="Arial, sans-serif", size=14, ),
+                                       x=1, y=1, showarrow=False)
 
                 return fig
             else:
@@ -5826,18 +5880,17 @@ def write_excel(nc, a, b, c, d, e, f, g, h, i, j,ref_Y, ref_X):
                State('rightIntegralTab4', 'value'),
                State('operationTab4', 'value'),
                State('intersectionTab4', 'value'),
-               State('inputRightY_axis', "value"),
-               State('inputRightX_axis', "value"),
+
                ],
               )
-def write_excelTab4(nc, a, b, c, d, e, f, g, h, i, j,ref_Y, ref_X):
+def write_excelTab4(nc, a, b, c, d, e, f, g, h, i, j):
     if nc > 0:
         now = datetime.datetime.now()
         if i == []:
             i = None
         if j == ['intersection']:
             j = None
-        x = (now, a, b, c, d, e, f, g, h, i, j,ref_Y, ref_X)
+        x = (now, a, b, c, d, e, f, g, h, i, j)
 
         if x != None: return x
 
@@ -5873,7 +5926,7 @@ def exportdata(valueparse):
             a_parse.append('None')
         else:
             a_parse.append(i)
-        if len(a_parse) % 13 == 0:
+        if len(a_parse) % 13 == 0 or len(a_parse) % 11 == 0:
             t_parse.append(a_parse)
             a_parse = []
     t_parse.insert(0, ['time', 'firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
@@ -6827,9 +6880,20 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         tickfont_size=16,
                         title_text='' if g2 == [] else g2[-1],
                         title_standoff=25, title_font={"size": 20}, ),
-                    fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                           xref="paper", yref="paper",
-                                           x=0, y=0.7, showarrow=False)
+                    note_new = []
+                    if note != None and len(note) > 0:
+                        note = note[-1].split(' ')
+                    x = ''
+                    for i in note:
+                        note_new.append(i)
+                        if len(note_new) % 4 == 0:
+                            note_new[-1] += '<br>'
+                    x += ' '.join(note_new)
+                    note = [x]
+                    fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
+                                       borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
+                            family="Arial, sans-serif", size=14, ),
+                                       x=1, y=1, showarrow=False)
                 return fig
             else:
                 raise PreventUpdate
@@ -6912,9 +6976,20 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                                 tickfont_size=16,
                                 title_text='' if g2 == [] else g2[-1],
                                 title_standoff=25, title_font={"size": 20}, ),
-                        fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                               xref="paper", yref="paper",
-                                               x=0, y=0.7, showarrow=False)
+                        note_new = []
+                        if note != None and len(note) > 0:
+                            note = note[-1].split(' ')
+                        x = ''
+                        for i in note:
+                            note_new.append(i)
+                            if len(note_new) % 4 == 0:
+                                note_new[-1] += '<br>'
+                        x += ' '.join(note_new)
+                        note = [x]
+                        fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
+                                           borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
+                                family="Arial, sans-serif", size=14, ),
+                                           x=1, y=1, showarrow=False)
                 return fig
             else:
                 raise PreventUpdate
@@ -6996,9 +7071,20 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                                 tickfont_size=16,
                                 title_text='' if g2 == [] else g2[-1],
                                 title_standoff=25, title_font={"size": 20}, ),
-                        fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                               xref="paper", yref="paper",
-                                               x=0, y=0.7, showarrow=False)
+                        note_new = []
+                        if note != None and len(note) > 0:
+                            note = note[-1].split(' ')
+                        x = ''
+                        for i in note:
+                            note_new.append(i)
+                            if len(note_new) % 4 == 0:
+                                note_new[-1] += '<br>'
+                        x += ' '.join(note_new)
+                        note = [x]
+                        fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
+                                           borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
+                                           family="Arial, sans-serif", size=14, ),
+                                           x=1, y=1, showarrow=False)
                 return fig
             else:
                 raise PreventUpdate
@@ -7082,9 +7168,20 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         tickfont_size=16,
                         title_text='' if g2 == [] else g2[-1],
                         title_standoff=25, title_font={"size": 20}, ),
-                    fig.add_annotation(text=note[-1] if len(note) > 0 else '',
-                                           xref="paper", yref="paper",
-                                           x=0, y=0.7, showarrow=False)
+                    note_new = []
+                    if note != None and len(note) > 0:
+                        note = note[-1].split(' ')
+                    x = ''
+                    for i in note:
+                        note_new.append(i)
+                        if len(note_new) % 4 == 0:
+                            note_new[-1] += '<br>'
+                    x += ' '.join(note_new)
+                    note = [x]
+                    fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
+                                       borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
+                                       family="Arial, sans-serif", size=14, ),
+                                       x=1, y=1, showarrow=False)
             return fig
         else:
             raise PreventUpdate
