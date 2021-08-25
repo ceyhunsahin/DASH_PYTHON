@@ -59,7 +59,7 @@ server = app.server
 app.config.suppress_callback_exceptions = True
 
 # Referance values
-extra_data_list = [
+extra_data_list = ['General Ref Point',
     'Mass de Bois', 'Volume gaz', 'Vitesse de rotation', 'Puissance Thermique',
     'Puissance Electrique', 'CO', 'CO2', 'NO', 'NOX', 'Temperature de Fumée'
 ]
@@ -429,7 +429,7 @@ page_2_layout = html.Div(
                                                # # download="rawdata.csv",
                                                href="/download_exceldb/",
                                                # target="_blank"
-                                               )
+                                               ),
                                         ], className='ad')
 
                 ]),
@@ -1382,7 +1382,6 @@ def intervalcontrol2_pr(nc, data):
 def download_excel_pr():
     # Create DF
     dff = pd.read_excel("real.xlsx")
-    dff = dff.loc[:, ~df.columns.str.match('Unnamed')]
     # Convert DF
     buf = io.BytesIO()
     excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
@@ -2111,7 +2110,11 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                              # # download="rawdata.csv",
                              href="/download_excel/",
                              # target="_blank"
-                             )
+                             ),
+                      html.Button("Save DB", id="save_to_db", n_clicks=0,
+                                  style={'fontSize': '1rem', 'width': '5rem',
+                                         'margin': '1rem'},
+                                  ),
                       ], className='ad')
 
         ]),
@@ -2624,6 +2627,7 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
             else :
                 dt = df['date']
         fig = go.Figure()
+        color = {0: 'blue', 1: 'red', 2: 'green', 3: 'purple', 4: 'orange'}
         if rightsidedrop != None :
             if right_x_axis != [] and right_y_axis != []:
                 for k in range(len(rightsidedrop)):
@@ -2634,7 +2638,6 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
                             x = [right_x_axis[k]]
                         y = [right_y_axis[k]]
                         fig.add_trace(go.Scatter(mode="markers", x=x, y=y, marker_symbol='diamond-x',
-                                                 marker_line_color="midnightblue", marker_color="lightskyblue",
                                                  marker_line_width=2, marker_size=8,hovertemplate=f"Ref_point{k}: %{y}/%{x}",
                                                  name=f"Ref_point{k}: {y}/{x}",
                                       )),
@@ -2693,7 +2696,7 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
                     go.Scattergl(x=x_axis, y=y_axis, mode=radiograph, marker=dict(line=dict(width=0.2, color='white')),
                                  name=val[i_val]))
 
-            color = {0: 'blue', 1: 'red', 2: 'green', 3: 'purple', 4: 'orange'}
+
             if len(firstshape) == 2 and leftfirstval != firstshape[0] and leftfirstval != []:
                 if leftfirstval.startswith('T') == 1:
                     del firstshape[0]
@@ -2967,11 +2970,13 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
             if nc > 0:
                 a = controlShape_Tab()
             fig.update_xaxes(
+                tickfont_size=16,
                 tickangle=90,
                 title_text='' if g1 == [] else g1[-1],
                 title_standoff=25,title_font={"size": 20},),
 
             fig.update_yaxes(
+                tickfont_size=16,
                 title_text='' if g2 == [] else g2[-1],
                 title_standoff=25,
                 title_font = {"size": 20},)
@@ -4066,11 +4071,13 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                             if nc > 0:
                                 a = controlShape()
                             fig.update_xaxes(
+                                tickfont_size=16,
                                 tickangle=90,
                                 title_text='' if g1 == [] else g1[-1],
                                 title_standoff=25, title_font={"size": 20},),
 
                             fig.update_yaxes(
+                                tickfont_size=16,
                                 title_text='' if g2 == [] else g2[-1],
                                 title_standoff=25,title_font={"size": 20},),
 
@@ -4194,11 +4201,13 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                     if nc > 0:
                         a = controlShape()
                     fig.update_xaxes(
+                        tickfont_size=16,
                         tickangle=90,
                         title_text='' if g1 == [] else g1[-1],
                         title_font={"size": 20},
                         title_standoff=25),
                     fig.update_yaxes(
+                        tickfont_size=16,
                         title_text='' if g2 == [] else g2[-1],
                         title_standoff=25),
                     fig.update_shapes(yref='y'),
@@ -5789,17 +5798,19 @@ def differanceCalculation4(firstshape, secondshape, valuechoosenleft, valuechoos
                State('rightIntegral', 'value'),
                State('operation', 'value'),
                State('intersection', 'value'),
+               State('inputRightY_axis', "value"),
+               State('inputRightX_axis', "value"),
                ],
               )
-def write_excel(nc, a, b, c, d, e, f, g, h, i, j):
+def write_excel(nc, a, b, c, d, e, f, g, h, i, j,ref_Y, ref_X):
     if nc > 0:
         now = datetime.datetime.now()
         if i == []:
             i = None
         if j == ['intersection']:
             j = None
-        x = (now, a, b, c, d, e, f, g, h, i, j)
-
+        x = (now, a, b, c, d, e, f, g, h, i, j, ref_Y, ref_X)
+        print(x)
         if x != None: return x
 
 
@@ -5815,16 +5826,18 @@ def write_excel(nc, a, b, c, d, e, f, g, h, i, j):
                State('rightIntegralTab4', 'value'),
                State('operationTab4', 'value'),
                State('intersectionTab4', 'value'),
+               State('inputRightY_axis', "value"),
+               State('inputRightX_axis', "value"),
                ],
               )
-def write_excelTab4(nc, a, b, c, d, e, f, g, h, i, j):
+def write_excelTab4(nc, a, b, c, d, e, f, g, h, i, j,ref_Y, ref_X):
     if nc > 0:
         now = datetime.datetime.now()
         if i == []:
             i = None
         if j == ['intersection']:
             j = None
-        x = (now, a, b, c, d, e, f, g, h, i, j)
+        x = (now, a, b, c, d, e, f, g, h, i, j,ref_Y, ref_X)
 
         if x != None: return x
 
@@ -5860,15 +5873,15 @@ def exportdata(valueparse):
             a_parse.append('None')
         else:
             a_parse.append(i)
-        if len(a_parse) % 11 == 0:
+        if len(a_parse) % 13 == 0:
             t_parse.append(a_parse)
             a_parse = []
     t_parse.insert(0, ['time', 'firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
-                       'secondChoosenValue','rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation', 'intersection'])
+                       'secondChoosenValue','rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation',
+                       'intersection', 'referance Y', 'referance X'])
 
     df = pd.DataFrame(t_parse)
     df.to_excel('new_fichier.xlsx')
-
 
 @app.callback(Output('writeexcelhiddendb', 'children'),
               [Input('write_exceldb', 'n_clicks')],
@@ -5927,12 +5940,12 @@ def exportdatadb(valueparse):
             a_parse.append('None')
         else:
             a_parse.append(i)
-        if len(a_parse) % 11 == 0:
+        if len(a_parse) % 13 == 0:
             t_parse.append(a_parse)
             a_parse = []
     t_parse.insert(0, ['time', 'firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
-                       'secondChoosenValue',
-                       'rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation', 'intersection'])
+                       'secondChoosenValue','rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation',
+                       'intersection', 'referance Y', 'referance X'])
 
     df = pd.DataFrame(t_parse)
     df.to_excel('new_fichier.xlsx')
@@ -5942,7 +5955,6 @@ def exportdatadb(valueparse):
 def download_excel():
     # Create DF
     dff = pd.read_excel("new_fichier.xlsx")
-    dff = dff.loc[:, ~df.columns.str.match('Unnamed')]
     # Convert DF
     buf = io.BytesIO()
     excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
@@ -5963,7 +5975,6 @@ def download_excel():
 def download_exceldb():
     # Create DF
     dff = pd.read_excel("new_fichier.xlsx")
-    dff = dff.loc[:, ~df.columns.str.match('Unnamed')]
     # Convert DF
     buf = io.BytesIO()
     excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
@@ -6808,10 +6819,12 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         uirevision=valy[j],
                         title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]) ,),
                     fig.update_xaxes(
+                        tickfont_size=16,
                         tickangle=90,
                         title_text='' if g1 == [] else g1[-1],
                         title_standoff=25, title_font={"size": 20}, ),
                     fig.update_yaxes(
+                        tickfont_size=16,
                         title_text='' if g2 == [] else g2[-1],
                         title_standoff=25, title_font={"size": 20}, ),
                     fig.add_annotation(text=note[-1] if len(note) > 0 else '',
@@ -6890,11 +6903,13 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                             uirevision=valy[j],
                             title_text=head[-1] if len(head) > 0 else "{}".format(valy[0],) ),
                         fig.update_xaxes(
+                                tickfont_size=16,
                                 tickangle=90,
                                 title_text='' if g1 == [] else g1[-1],
                                 title_standoff=25, title_font={"size": 20}, ),
 
                         fig.update_yaxes(
+                                tickfont_size=16,
                                 title_text='' if g2 == [] else g2[-1],
                                 title_standoff=25, title_font={"size": 20}, ),
                         fig.add_annotation(text=note[-1] if len(note) > 0 else '',
@@ -6972,11 +6987,13 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                             uirevision=valy[j],
                             title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]), ),
                         fig.update_xaxes(
+                                tickfont_size=16,
                                 tickangle=90,
                                 title_text='' if g1 == [] else g1[-1],
                                 title_standoff=25, title_font={"size": 20}, ),
 
                         fig.update_yaxes(
+                                tickfont_size=16,
                                 title_text='' if g2 == [] else g2[-1],
                                 title_standoff=25, title_font={"size": 20}, ),
                         fig.add_annotation(text=note[-1] if len(note) > 0 else '',
@@ -7056,11 +7073,13 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         uirevision=valy[j],
                     title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]) ,),
                     fig.update_xaxes(
+                        tickfont_size= 16,
                         tickangle=90,
                         title_text='' if g1 == [] else g1[-1],
                         title_standoff=25, title_font={"size": 20}, ),
 
                     fig.update_yaxes(
+                        tickfont_size=16,
                         title_text='' if g2 == [] else g2[-1],
                         title_standoff=25, title_font={"size": 20}, ),
                     fig.add_annotation(text=note[-1] if len(note) > 0 else '',
