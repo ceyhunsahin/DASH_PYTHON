@@ -172,6 +172,7 @@ page_1_layout = html.Div(
                                                 html.Div(id='hiddenTextNote', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenTextxaxis', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenTextyaxis', children=[], style={'display': 'None'}),
+                                                html.Div(id='selectyaxishidden', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenTextHeader4', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenTextNote4', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenTextxaxis4', children=[], style={'display': 'None'}),
@@ -519,6 +520,20 @@ page_2_layout = html.Div(
                                             }
 
                                             ), ),),
+                                        html.Div([daq.BooleanSwitch(
+                                                             id="selectyaxisdb",
+                                                             label="Multiple Y-axis",
+                                                             labelPosition="bottom",
+                                                             color='red',
+
+                                                         )
+                                                             ,
+                                                             dbc.Tooltip(
+                                                                 "You can select maximum 3 y-axis",
+                                                                 target="selectyaxisdb",
+                                                                 placement='bottom',
+                                                             ),
+                                                         ], className='pluraly'),
                          html.Div(daq.Slider(id="sliderHeightdb",
                                              max=2100,
                                              min=400,
@@ -1411,8 +1426,8 @@ def pandastosql(name,dbname, data, user, passw):
 
 @app.callback(Output('reelhidden10', 'children'),
               [Input("reelhidden8", "children"), Input("reelhidden9", "children"),],
-              [State("reelhidden6", "children"), State('username_pr', 'value'), State('password_pr', 'value')])
-def pandastosql_valve(name,dbname, data, user, passw):
+              [State("reelhidden6", "children"),])
+def pandastosql_valve(name,dbname, data, ):
     if data == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -1432,8 +1447,8 @@ def pandastosql_valve(name,dbname, data, user, passw):
     server.start()
     try:
         db_connection =  mariadb.connect(
-            user='dashapp' if user == None else user,
-            password='dashapp' if passw == None else passw,
+            user='dashapp',
+            password='dashapp',
             host=ipadress,
             port=3306,
             database=dbname)
@@ -2168,6 +2183,26 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                     target="minimumValueGraphSecond",
                                     placement='right',
                                 ),
+                                html.Div([dcc.Dropdown(id="dropadd1",
+                                                       options=[
+                                                           {'label': 'Note', 'value': 'note'},
+                                                           {'label': 'Header', 'value': 'header'},
+                                                           {'label': 'x-axis', 'value': 'x_axis'},
+                                                           {'label': 'y-axis', 'value': 'y_axis'},
+
+                                                       ],
+                                                       value='header',
+                                                       ),
+                                          dcc.Textarea(
+                                              id='textarea1',
+                                              value='',
+                                              style={'width': '15rem', 'marginTop': '0.5rem'},
+                                              autoFocus='Saisir',
+                                          ),
+                                          ], className='aatab1'),
+                                html.Button('Add Text', id='addText1', n_clicks=0,
+                                            style={'fontSize': '1rem', 'width': '4rem',
+                                                   'margin': '1rem'},),
                                 ], className='shift'),
 
                       ], className='abcd'),
@@ -2468,6 +2503,10 @@ def relay3(val):
 def relay7(val):
     return val
 
+@app.callback(Output('selectyaxishidden', 'children'),
+              [Input("selectyaxis", "on")], )
+def relay8(val):
+    return val
 
 @app.callback(Output('shiftaxis', 'style'),
               [Input('shiftaxisdrop', 'value')])
@@ -2480,7 +2519,11 @@ def shiftingaxes(val):
 
 @app.callback([Output('graphhidden', 'figure'),
                Output('hiddenDifferance', 'children'), ],
-              [Input("selectyaxis", "on"),
+              [Input('selectyaxishidden', 'children'),
+               Input('hiddenTextxaxis', 'children'),
+               Input('hiddenTextyaxis', 'children'),
+               Input('hiddenTextHeader', 'children'),
+               Input('hiddenTextNote', 'children'),
                Input("hiddenchoosenChecklistLeft", "children"),
                Input("radiographhidden", "children"),
                Input("sliderHeightTab1hidden", "children"),
@@ -2508,9 +2551,10 @@ def shiftingaxes(val):
                State('pointLeftFirst', 'children'),
                State('pointRightFirst', 'children'),
 
+
                ]
               )
-def res2(on,val, radiograph, sliderheight, sliderwidth,
+def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
          minValfirst, minValsecond, firstchoosen, secondchoosen, rightsidedrop, right_y_axis, right_x_axis,
          nclick, nc, cleanclick, axis, shift_x, shift_y, differance, retrieve, leftfirstval, leftsecondval,
          rightfirstval, rightsecondval, firstshape, secondshape):
@@ -2899,7 +2943,17 @@ def res2(on,val, radiograph, sliderheight, sliderwidth,
 
             if nc > 0:
                 a = controlShape_Tab()
+            fig.update_xaxes(
+                tickangle=90,
+                title_text='' if g1 == [] else g1[-1],
+                title_standoff=25,title_font={"size": 20},),
+
+            fig.update_yaxes(
+                title_text='' if g2 == [] else g2[-1],
+                title_standoff=25,
+                title_font = {"size": 20},)
             fig.update_layout(
+                title_text=head[-1] if len(head) > 0 else "{}".format(val[0]),
                 autosize=False,
                 width=sliderwidth,
                 height=sliderheight,
@@ -2948,8 +3002,11 @@ def res2(on,val, radiograph, sliderheight, sliderwidth,
 
                 ),
                 paper_bgcolor="LightSteelBlue",
-                plot_bgcolor=colors['background'],
-            ),
+                plot_bgcolor=colors['background'],),
+            fig.add_annotation(text=note[-1] if len(note) > 0 else '',
+                                   xref="paper", yref="paper",
+                                   x=0, y=0.7, showarrow=False)
+
 
             if len(firstshape) == 2 and len(secondshape) == 2:
                 a = int(firstshape[0])
@@ -3483,8 +3540,8 @@ def container4_2(val, radio,data):
 
 @app.callback([Output('hiddenTextxaxis', 'children'), Output('hiddenTextyaxis', 'children'),
                Output('hiddenTextHeader', 'children'), Output('hiddenTextNote', 'children')],
-              [Input('addText', 'n_clicks')],
-              [State('textarea', 'value'), State('dropadd', 'value'),
+              [Input('addText1', 'n_clicks')],
+              [State('textarea1', 'value'), State('dropadd1', 'value'),
                State('hiddenTextxaxis', 'children'), State('hiddenTextyaxis', 'children'),
                State('hiddenTextHeader', 'children'), State('hiddenTextNote', 'children')]
               )
@@ -3961,12 +4018,13 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                             fig.update_xaxes(
                                 tickangle=90,
                                 title_text='' if g1 == [] else g1[-1],
-                                title_font={"size": 20},
-                                title_standoff=25),
+                                title_standoff=25, title_font={"size": 20},),
 
                             fig.update_yaxes(
                                 title_text='' if g2 == [] else g2[-1],
-                                title_standoff=25),
+                                title_standoff=25,title_font={"size": 20},),
+
+
                             fig.update_layout(
                                 title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx2[0], valy2[0]),
                                 autosize=True,
@@ -4066,9 +4124,9 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                             df[axisdrop] = pd.DataFrame(c)
                             b = df[axisdrop]
                             df.to_excel("appending.xlsx")
-                    print('valxecond', valxsecond)
+
                     if on == 1:
-                        print('valxsecond',valxsecond)
+
                         if len(valxsecond) == 1:
                             fig.add_trace(go.Scattergl(x=a, y=b, mode=radio, marker=dict(line=dict(width=0.2, color='white')),
                                                name="{}".format(valxsecond[s])))
@@ -6611,14 +6669,15 @@ def containerdb(val1):
 
 
 @app.callback(Output('getdbgraph', 'figure'),
-              [Input('memory-output', 'data'),
+              [Input("selectyaxisdb", "on"),
+               Input('memory-output', 'data'),
                Input('dbvalname', 'value'),
                Input('dbvaldate', 'value'),
                Input('sliderWidthdb', 'value'),
                Input('sliderHeightdb', 'value'),
                Input('radiographdb', 'value'),],
               [State('dbvalchoosen', 'value'), State('db_name', 'value'), ])
-def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
+def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
     if data == None or valy == [] or valdat == [] or valdat == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -6642,9 +6701,20 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
                         b = df[df['VARIABLE_NAME'] == valy[j]]['REMOTE_TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
                         time.sleep(1)
-                        fig.add_trace(
-                            go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
-                                         name="{}/{}".format(valy[j], valdate_new[k]))),
+                        if on == 1:
+                            if len(valy) == 1:
+                                fig.add_trace(go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                         name="{}".format(valy[j]))),
+                            elif len(valy) > 1:
+                                fig.add_trace(
+                                    go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                                 name="{}".format(valy[j]), yaxis = f'y{j+1}')),
+                        else :
+                            fig.add_trace(
+                                go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                             name="{}".format(valy[j]))),
+
+
                     fig.update_layout(
                         autosize=True,
                         width=sliderw,
@@ -6655,6 +6725,30 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
                             b=50,
                             t=50,
                             pad=4
+                        ),
+                        yaxis2=dict(
+                            titlefont=dict(
+                                color="#d62728"
+                            ),
+                            tickfont=dict(
+                                color="#d62728"
+                            ),
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=1
+                        ),
+                        yaxis3=dict(
+                            titlefont=dict(
+                                color='green'
+                            ),
+                            tickfont=dict(
+                                color="green"
+                            ),
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=0.92
                         ),
                         uirevision=valy[j]),
                 return fig
@@ -6677,12 +6771,19 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        fig.add_trace(go.Scattergl(x=b, y=a, mode=radio,
-                                                   marker=dict(
-                                                       line=dict(
-                                                           width=0.2,
-                                                           color='white')),
-                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
+                        if on == 1:
+                            if len(valy) == 1:
+                                fig.add_trace(
+                                    go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                                 name="{}".format(valy[j]))),
+                            elif len(valy) > 1:
+                                fig.add_trace(
+                                    go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                                 name="{}".format(valy[j]), yaxis=f'y{j + 1}')),
+                        else:
+                            fig.add_trace(
+                                go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                             name="{}".format(valy[j]))),
                         fig.update_layout(
                             autosize=True,
                             width=sliderw,
@@ -6694,6 +6795,31 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
                                 t=50,
                                 pad=4
                             ),
+                            yaxis2=dict(
+                                titlefont=dict(
+                                    color="#d62728"
+                                ),
+                                tickfont=dict(
+                                    color="#d62728"
+                                ),
+                                anchor="free",
+                                overlaying="y",
+                                side="right",
+                                position=1
+                            ),
+                            yaxis3=dict(
+                                titlefont=dict(
+                                    color='green'
+                                ),
+                                tickfont=dict(
+                                    color="green"
+                                ),
+                                anchor="free",
+                                overlaying="y",
+                                side="right",
+                                position=0.92
+                            ),
+
 
                             uirevision=valy[j], ),
                 return fig
@@ -6715,12 +6841,19 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
                         a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                         b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                         b = [i for i in b if i.startswith(valdate_new[k])]
-                        fig.add_trace(go.Scattergl(x=b, y=a, mode=radio,
-                                                   marker=dict(
-                                                       line=dict(
-                                                           width=0.2,
-                                                           color='white')),
-                                                   name="{}/{}".format(valy[j], valdate_new[k]))),
+                        if on == 1:
+                            if len(valy) == 1:
+                                fig.add_trace(
+                                    go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                                 name="{}".format(valy[j]))),
+                            elif len(valy) > 1:
+                                fig.add_trace(
+                                    go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                                 name="{}".format(valy[j]), yaxis=f'y{j + 1}')),
+                        else:
+                            fig.add_trace(
+                                go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                             name="{}".format(valy[j]))),
                         fig.update_layout(
                             autosize=True,
                             width=sliderw,
@@ -6732,6 +6865,31 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
                                 t=50,
                                 pad=4
                             ),
+
+                        yaxis2=dict(
+                            titlefont=dict(
+                                color="#d62728"
+                            ),
+                            tickfont=dict(
+                                color="#d62728"
+                            ),
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=1
+                        ),
+                        yaxis3=dict(
+                            titlefont=dict(
+                                color='green'
+                            ),
+                            tickfont=dict(
+                                color="green"
+                            ),
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=0.92
+                        ),
 
                             uirevision=valy[j], ),
                 return fig
@@ -6755,12 +6913,19 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
                     a = a[a['dates'].isin(valdate_new)]['VARIABLE_NUM_VALUE']
                     b = df[df['VARIABLE_NAME'] == valy[j]]['TIMESTAMP']
                     b = [i for i in b if i.startswith(valdate_new[k])]
-                    fig.add_trace(go.Scattergl(x=b, y=a, mode=radio,
-                                               marker=dict(
-                                                   line=dict(
-                                                       width=0.2,
-                                                       color='white')),
-                                               name="{}/{}".format(valy[j], valdate_new[k]))),
+                    if on == 1:
+                        if len(valy) == 1:
+                            fig.add_trace(
+                                go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                             name="{}".format(valy[j]))),
+                        elif len(valy) > 1:
+                            fig.add_trace(
+                                go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                             name="{}".format(valy[j]), yaxis=f'y{j + 1}')),
+                    else:
+                        fig.add_trace(
+                            go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
+                                         name="{}".format(valy[j]))),
                     fig.update_layout(
                         autosize=True,
                         width=sliderw,
@@ -6771,6 +6936,31 @@ def on_data_set_graph(data, valy, valdat, sliderw, sliderh,radio, dbch, dbname):
                             b=50,
                             t=50,
                             pad=4
+                        ),
+
+                        yaxis2=dict(
+                            titlefont=dict(
+                                color="#d62728"
+                            ),
+                            tickfont=dict(
+                                color="#d62728"
+                            ),
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=1
+                        ),
+                        yaxis3=dict(
+                            titlefont=dict(
+                                color='green'
+                            ),
+                            tickfont=dict(
+                                color="green"
+                            ),
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=0.92
                         ),
 
                         uirevision=valy[j], ),
