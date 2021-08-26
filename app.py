@@ -231,6 +231,11 @@ page_1_layout = html.Div(
                                                 html.Div(id='shift_y_axistab4hidden', children=[], style={'display': 'None'}),
                                                 html.Div(id='output_s', children=[], style={'display': 'None'}),
                                                 html.Div(id='radiographtab4hidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='reelhidden11', children=[], style={'display': 'None'}),
+                                                html.Div(id='reelhidden12', children=[], style={'display': 'None'}),
+                                                html.Div(id='reelhidden13', children=[], style={'display': 'None'}),
+                                                html.Div(id='reelhidden14', children=[], style={'display': 'None'}),
+                                                html.Div(id='reelhidden15', children=[], style={'display': 'None'}),
                                                 html.Div(dcc.Graph(id='graphhidden',
                                                      config={'displaylogo': False},
                                                      style={'display': 'None'},
@@ -1232,7 +1237,26 @@ def toggle_modal_2(n1, n2, n3, is_open):
         return not is_open
     return is_open
 
+@app.callback(
+    Output("modal_reel_analysis", "is_open"),
+    [Input("save_to_db", "n_clicks"), Input("close_reel_analysis", "n_clicks"), Input("ok_reel_analysis", "n_clicks")],
+    [State("modal_reel_analysis", "is_open")],
+)
+def toggle_modal_analysis(n1, n2, n3, is_open):
+    if n1 or n2 or n3:
+        return not is_open
+    return is_open
 
+@app.callback(  [Output("reelhidden11", "children"),Output("reelhidden12", "children"),
+                 Output("reelhidden14", "children"),Output("reelhidden15", "children")],
+                [Input("ok_reel_analysis", "n_clicks"), ],
+                [State("input_tblname", "value"),State("input_dbname", "value"),
+                 State("input_user", "value"),State("input_pswrd", "value")],)
+def toggle_modal_analaysis(nc, tbname, databasename,user, pswrd):
+    if tbname == None  or databasename==None:
+        raise PreventUpdate
+    if nc != None:
+        return tbname,databasename, user, pswrd
 
 @app.callback(
     [Output("reelhidden3pr", "children"),Output("reelhidden4pr", "children")],
@@ -1463,11 +1487,60 @@ def pandastosql(name,dbname, data, user, passw):
         except mariadb.Error as e:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
-        finally:
-            if db_connection.is_connected():
-                db_cursor.close()
-                db_connection.close()
-                print("MySQL connection is closed")
+
+@app.callback(Output('reelhidden13', 'children'),
+              [Input("reelhidden11", "children"), Input("reelhidden12", "children"),
+               Input("reelhidden14", "children"),Input("reelhidden15", "children")],)
+def pandastosql_analysis(name,dbname, user, passw):
+    if name == None or dbname == None:
+        raise PreventUpdate
+    print(name)
+    print(dbname)
+    print(user)
+    print(passw)
+    df = pd.read_excel('appending.xlsx')
+    if name != None:
+        #df = pd.DataFrame(data, columns=['variable_name', 'variable_num_value', 'quality', 'TIMESTAMP'])
+        a = [i for i in range(len(df.index))]  # for ID
+        df['Time'] = df['time'].apply(lambda x: pd.Timestamp(x).strftime('%Y-%m-%d %H:%M:%S'))
+        sql_insert = list(zip(a, df['firstChoosenValue'],df['leftIntegralFirst'],df['leftIntegralSecond'], df['leftIntegral'],
+                              df['secondChoosenValue'],df['rightIntegralFirst'],df['rightIntegralSecond'], df['rightIntegral'],
+                              df['operation'],df['intersection'],df['Time']))
+        print(sql_insert)
+        if dbname == None:
+            dbname = 'enerbat'
+        ipadress = "193.54.2.211"
+        server = SSHTunnelForwarder(
+            (ipadress, 22),
+            ssh_username='soudani',
+            ssh_password="univ484067152",
+            remote_bind_address=(ipadress, 3306))
+        server.start()
+        try:
+            db_connection = mariadb.connect(
+                            user='dashapp' if user == None else user,
+                            password='dashapp' if passw == None else passw,
+                            host=ipadress,
+                            port=3306,
+                            database=dbname)
+            db_cursor = db_connection.cursor()
+            # Here creating database table '
+            db_cursor.execute(
+                f"CREATE OR REPLACE TABLE {name} (id BIGINT PRIMARY KEY ,First_Choosen_Value VARCHAR(255), First_Left_Point VARCHAR(255), Second_Left_Point VARCHAR(255),\
+                Left_Integral FLOAT(10), Second_Choosen_Value VARCHAR(255), First_Right_Point VARCHAR(255), Second_Right_Point VARCHAR(255),\
+                Right_Integral FLOAT(10), Math_Ops FLOAT(10), Intersection FLOAT(10), Time TIMESTAMP)")
+            print('burda mi')
+            sql_query = f" INSERT INTO {name} (id, First_Choosen_Value, First_Left_Point, Second_Left_Point, Left_Integral, Second_Choosen_Value, First_Right_Point,\
+                        Second_Right_Point, Right_Integral, Math_Ops, Intersection, Time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s);"
+            # Get database table'
+            sql_insert = tuple(sql_insert)
+            db_cursor.execute(sql_query, sql_insert)
+            db_connection.commit()
+            print(db_cursor.rowcount, "Record inserted successfully into ENERBAT Database")
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+
 
 @app.callback(Output('reelhidden10', 'children'),
               [Input("reelhidden8", "children"), Input("reelhidden9", "children"),],
@@ -1492,11 +1565,11 @@ def pandastosql_valve(name,dbname, data, ):
     server.start()
     try:
         db_connection =  mariadb.connect(
-            user='dashapp',
-            password='dashapp',
-            host=ipadress,
-            port=3306,
-            database=dbname)
+                            user='dashapp',
+                            password='dashapp',
+                            host=ipadress,
+                            port=3306,
+                            database=dbname)
         db_cursor = db_connection.cursor()
             # Here creating database table '
         db_cursor.execute(
@@ -1509,11 +1582,6 @@ def pandastosql_valve(name,dbname, data, ):
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
-    finally:
-        if db_connection.is_connected():
-            db_cursor.close()
-            db_connection.close()
-            print("MySQL connection is closed")
 
 @app.callback(Output('reelhidden2pr', 'children'),
               [Input("my-toggle-switch-pr", "on"),Input('interval_component_pr', 'n_intervals')],
@@ -1540,9 +1608,9 @@ def pandastosql_pr(on,interval, name,nametodb, data, user, passw):
 
             server.start()
             try:
-                db_connection = db_connection = mariadb.connect(
-                    user='dashapp' if user == None else user,
-                    password='dashapp' if passw == None else passw,
+                db_connection = mariadb.connect(
+                            user='dashapp' if user == None else user,
+                            password='dashapp' if passw == None else passw,
                             host=ipadress,
                             port=3306,
                             database=nametodb)
@@ -1558,10 +1626,6 @@ def pandastosql_pr(on,interval, name,nametodb, data, user, passw):
             except mariadb.Error as e:
                 print(f"Error connecting to MariaDB Platform: {e}")
                 sys.exit(1)
-            finally:
-                if db_connection.is_connected():
-                    db_cursor.close()
-                    db_connection.close()
 
 
 # surf between pages
@@ -2195,6 +2259,41 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                 autoFocus=True,
                                 placeholder="Intersection")], className='aa')],
             className='ab-tab-1'),
+            dbc.Modal(
+                [
+                    dbc.ModalHeader("Save Your Table In Database"),
+
+                    dbc.Input(id='input_user',
+                              type="text",
+                              min=-10000, max=10000, step=1, bs_size="sm",
+                              style={'width': '31rem', },
+                              placeholder='Enter Username',
+                              autoFocus=True, ),
+                    dbc.Input(id='input_pswrd',
+                              type="password",
+                              min=-10000, max=10000, step=1, bs_size="sm",
+                              style={'width': '31rem', },
+                              placeholder='Enter Password',
+                              autoFocus=True, ),
+                    dbc.Input(id='input_dbname',
+                              type="text",
+                              min=-10000, max=10000, step=1, bs_size="sm",
+                              style={'width': '31rem', },
+                              placeholder='Enter Database name',
+                              autoFocus=True, ),
+                    dbc.Input(id='input_tblname',
+                              type="text",
+                              min=-10000, max=10000, step=1, bs_size="sm",
+                              style={'width': '31rem', },
+                              placeholder='Enter Table name',
+                              autoFocus=True, ),
+                    dbc.ModalFooter([
+                        dbc.Button("Okey", id="ok_reel_analysis", className='ml-auto'),
+                        dbc.Button("Close", id="close_reel_analysis", className='ml-auto')]
+                    ),
+                ],
+                id="modal_reel_analysis",
+            ),
             html.Div([dcc.RadioItems(id="radiograph",
                                      options=[
                                          {'label': 'Point', 'value': 'markers'},
@@ -5868,16 +5967,18 @@ def differanceCalculation4(firstshape, secondshape, valuechoosenleft, valuechoos
                State('rightIntegral', 'value'),
                State('operation', 'value'),
                State('intersection', 'value'),
+               State('inputRightX_axis', 'value'),
+               State('inputRightY_axis', 'value')
                ],
               )
-def write_excel(nc, a, b, c, d, e, f, g, h, i, j):
+def write_excel(nc, a, b, c, d, e, f, g, h, i, j,ref_X, ref_Y):
     if nc > 0:
         now = datetime.datetime.now()
         if i == []:
             i = None
         if j == ['intersection']:
             j = None
-        x = (now, a, b, c, d, e, f, g, h, i, j)
+        x = (now, a, b, c, d, e, f, g, h, i, j,ref_X,ref_Y)
         if x != None: return x
 
 
@@ -5939,12 +6040,12 @@ def exportdata(valueparse):
             a_parse.append('None')
         else:
             a_parse.append(i)
-        if len(a_parse) % 11 == 0:
+        if len(a_parse) % 13 == 0:
             t_parse.append(a_parse)
             a_parse = []
     t_parse.insert(0, ['time', 'firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
                        'secondChoosenValue','rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation',
-                       'intersection'])
+                       'intersection','referance X', 'referance Y'])
 
     df = pd.DataFrame(t_parse)
     df.to_excel('new_fichier.xlsx')
