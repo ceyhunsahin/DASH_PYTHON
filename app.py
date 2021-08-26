@@ -202,6 +202,7 @@ page_1_layout = html.Div(
                                                 html.Div(id='leftintegralsecondhidden', children=[], style={'display': 'None'}),
                                                 html.Div(id='rightintegralfirsthidden', children=[], style={'display': 'None'}),
                                                 html.Div(id='rightintegralsecondhidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddencharactere', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenvaluechange', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddencleanshape', children=[], style={'display': 'None'}),
                                                 html.Div(id='firstchoosenvalhiddentab4', children=[], style={'display': 'None'}),
@@ -512,10 +513,18 @@ page_2_layout = html.Div(
                                               id='textareadb',
                                               value='',
                                               style={'width': '15rem', 'marginTop': '0.5rem'},
-                                              autoFocus='Saisir',
                                           ),
                                           dbc.Button("Add Text", id='addTextdb', n_clicks=0,
                                                                    className='mr-1', color="primary", style={'margin': '1rem 1rem 0 6vw'}),
+
+                                          dcc.Dropdown(id='characteredb',
+                                                    options=[{'label': i, 'value': i} for i in [8,12,14,16,18,20,22,24,26,28]],
+                                                    value = 16,
+                                                    multi=False,
+                                                    style={'cursor': 'pointer', 'width': '120px', 'margin': '1rem'},
+                                                    clearable=True,
+                                                    placeholder='Charactere...',
+                                                    ),
                                           ], className='aatabdb'),], className='abpagedb'),
 
                html.Div([html.Div([
@@ -1258,7 +1267,6 @@ def intervalcontrol(on):
               )
 def buttoncontrol(on1, on2, col1, col2):
     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
-    print(col1)
     if q1 == 'activatedb':
         return 'success', 'secondary'
     if q1 == 'deactivatedb':
@@ -1586,8 +1594,8 @@ def toggle_modal_pr(n2, n3, nc, is_open):
 
 def parse_contents(contents, filename, date):
     content_type, content_string = contents.split(',')
-
     decoded = base64.b64decode(content_string)
+
     try:
         if 'csv' in filename:
             # Assume that the user uploaded a CSV file
@@ -1596,17 +1604,17 @@ def parse_contents(contents, filename, date):
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             df.to_excel("appending.xlsx")
         elif 'xls' in filename:
-            # Assume that the user uploaded an excel file
             df = pd.read_excel(io.BytesIO(decoded))
+            df = df.filter(regex='^\D') ### very important for filter the excel columns which is starts with number
             df['index'] = df.index
             df = df.reindex(columns=sorted(df.columns, reverse=True))
             df.to_excel("appending.xlsx")
+
     except Exception as e:
         print(e)
         return html.Div([
             'There was an error processing this file.'
         ])
-
     return html.Div([
         html.H5(filename, style = {'color' : 'black'}),
         html.H6(datetime.datetime.fromtimestamp(date), style = {'color' : 'black'}),
@@ -1673,10 +1681,9 @@ def update_output(list_of_contents, on, list_of_names, list_of_dates, retrieve, 
     if on == 0:
         raise PreventUpdate
     if list_of_contents is not None:
-
+        pairs = zip(list_of_contents, list_of_names, list_of_dates)
         content = [
-            parse_contents(c, n, d) for c, n, d in
-            zip(list_of_contents, list_of_names, list_of_dates)]
+            parse_contents(c, n, d) for c, n, d in pairs]
         retrieve = list_of_names
         return content, retrieve
     else:
@@ -1691,8 +1698,8 @@ def retrieve(retrieve):
     return retrieve
 
 @app.callback(ServersideOutput('datastore', 'data'),
-              [Input('datatablehidden', 'children')],
-              )
+              [Input('datatablehidden', 'children')],)
+
 def retrieve(retrieve):
     if retrieve == None or retrieve == []:
         raise PreventUpdate
@@ -2045,6 +2052,7 @@ def Inputaxis(okval):
               State("inputRightX_axis", "value")]
               )
 def clear(nclick, st1, st2):
+
     if st1 == None or st2 == None:
         raise PreventUpdate
     if nclick > 0:
@@ -2282,6 +2290,15 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                  color="warning", style={'height': '2.5em', 'margin': '1.8rem'}),
                       dbc.Button("Clean Surface", id="cleanshape", n_clicks=0,
                                  color="danger", style={'height': '2.5em', 'margin': '1.8rem'}),
+                      dcc.Dropdown(id='charactere',
+                                   options=[{'label': i, 'value': i} for i in [8,12,14,16,18,20,22,24,26,28]],
+                                   value = 16,
+                                   multi=False,
+                                   style={'cursor': 'pointer', 'width': '120px', 'margin': '1rem'},
+
+                                   clearable=True,
+                                   placeholder='Charactere...',
+                                   ),
 
                       ], className='abcd'),
 
@@ -2393,6 +2410,14 @@ def tabheighttab4(height):
               [Input("valuechange", "n_clicks")],
               )
 def valuechange(val):
+    if val == None:
+        raise PreventUpdate
+    return val
+
+@app.callback(Output("hiddencharactere", "children"),
+              [Input("charactere", "value")],
+              )
+def charactereval(val):
     if val == None:
         raise PreventUpdate
     return val
@@ -2559,8 +2584,7 @@ def shiftingaxes(val):
 
 
 
-@app.callback([Output('graphhidden', 'figure'),
-               Output('hiddenDifferance', 'children'), ],
+@app.callback( Output('graphhidden', 'figure'),
               [Input('selectyaxishidden', 'children'),
                Input('hiddenTextxaxis', 'children'),
                Input('hiddenTextyaxis', 'children'),
@@ -2580,11 +2604,11 @@ def shiftingaxes(val):
                Input('tab1sendhidden', 'children'),
                Input('hiddenvaluechange', 'children'),
                Input('hiddencleanshape', 'children'),
+               Input('hiddencharactere', 'children'),
                ],
               [State('shiftaxisdrophidden', 'children'),
                State('shift_x_axishidden', 'children'),
                State('shift_y_axishidden', 'children'),
-               State('hiddenDifferance', 'children'),
                State('datastore', 'data'),
                State('leftintegralfirsthidden', 'children'),
                State('leftintegralsecondhidden', 'children'),
@@ -2598,7 +2622,7 @@ def shiftingaxes(val):
               )
 def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
          minValfirst, minValsecond, firstchoosen, secondchoosen, rightsidedrop, right_y_axis, right_x_axis,
-         nclick, nc, cleanclick, axis, shift_x, shift_y, differance, retrieve, leftfirstval, leftsecondval,
+         nclick, nc, cleanclick,car, axis, shift_x, shift_y, retrieve, leftfirstval, leftsecondval,
          rightfirstval, rightsecondval, firstshape, secondshape):
     if retrieve == None or retrieve == [] or nc == None or note == None:
         raise PreventUpdate
@@ -2989,18 +3013,19 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
             if nc > 0:
                 a = controlShape_Tab()
             fig.update_xaxes(
-                tickfont_size=16,
+                tickfont_size= car,
                 tickangle=90,
                 title_text='' if g1 == [] else g1[-1],
-                title_standoff=25,title_font={"size": 20},),
+                title_standoff=25,title_font={"size": car},),
 
             fig.update_yaxes(
-                tickfont_size=16,
+                tickfont_size=car,
                 title_text='' if g2 == [] else g2[-1],
                 title_standoff=25,
-                title_font = {"size": 20},)
+                title_font = {"size": car},)
             fig.update_layout(
                 title_text=head[-1] if len(head) > 0 else "{}".format(val[0]),
+                title_font={"size": car},
                 autosize=False,
                 width=sliderwidth,
                 height=sliderheight,
@@ -3009,7 +3034,7 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
                     traceorder="normal",
                     font=dict(
                         family="sans-serif",
-                        size=12,
+                        size= car,
                         color=colors['figure_text']
                     ),
                     bgcolor=colors['background'],
@@ -3017,10 +3042,12 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
                 ),
                 yaxis2=dict(
                     titlefont=dict(
-                        color="#d62728"
+                        color="#d62728",
+                        size = car
                     ),
                     tickfont=dict(
-                        color="#d62728"
+                        color="#d62728",
+                        size=car
                     ),
                     anchor="free",
                     overlaying="y",
@@ -3029,10 +3056,10 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
                 ),
                 yaxis3=dict(
                     titlefont=dict(
-                        color='green'
+                        color='green',size = car
                     ),
                     tickfont=dict(
-                        color="green"
+                        color="green",size = car
                     ),
                     anchor="free",
                     overlaying="y",
@@ -3062,48 +3089,13 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
             note = [x]
             fig.add_annotation(text=note[-1] if len(note) > 0 else '',align = 'left',bordercolor = 'black',
                                borderwidth=1,xref="paper", yref="paper",bgcolor = "white", font=dict(
-                                family="Arial, sans-serif" , size=14,),
+                                family="Arial, sans-serif" , size= car,),
                                 x=1, y=1, showarrow=False)
 
-            if len(firstshape) == 2 and len(secondshape) == 2:
-                a = int(firstshape[0])
-                c = int(secondshape[0])
-                b = int(firstshape[1])
-                d = int(secondshape[1])
-                if len(set(range(a, b)).intersection(set(range(c, d)))) >= 1 or len(
-                        set(range(c, d)).intersection(set(range(a, b)))) >= 1:
-                    if a <= c:
-                        if len(differance) == 2:
-                            differance.pop(0)
-                            differance.append(b)
-                        differance.append(b)
-                    if a >= c:
-                        if len(differance) == 2:
-                            differance.pop(0)
-                            differance.append(a)
-                        differance.append(a)
-                    if b <= d:
-                        if len(differance) == 2:
-                            differance.pop(0)
-                            differance.append(c)
-                        differance.append(c)
-                    if b >= d:
-                        if len(differance) == 2:
-                            differance.pop(0)
-                            differance.append(d)
-                        differance.append(d)
-                    if set(range(a, b)).issuperset(set(range(c, d))) == 1:
-                        differance.append(c)
-                        differance.append(d)
-                    if set(range(c, d)).issuperset(set(range(a, b))) == 1:
-                        differance.append(a)
-                        differance.append(b)
-                else:
-                    differance = [0, 0]
-        return fig, differance[-2:]
+        return fig
 
     else:
-        return (no_update, no_update)
+        return (no_update)
 
 
 @app.callback(Output('graph', 'figure'),
@@ -3363,6 +3355,17 @@ def LoadingDataTab4(on, tab):
                                                            color="danger",
                                                            style={'height': '2.5em', 'marginLeft': '1.8rem'}
                                                            ),
+                                                dcc.Dropdown(id='characteretab4',
+                                                             options=[{'label': i, 'value': i} for i in
+                                                                      [8, 12, 14, 16, 18, 20, 22, 24, 26, 28]],
+                                                             value=16,
+                                                             multi=False,
+                                                             style={'cursor': 'pointer', 'width': '120px',
+                                                                    'height': '2.5em', 'marginLeft': '0.8rem'},
+
+                                                             clearable=True,
+                                                             placeholder='Charactere...',
+                                                             ),
 
                                                 ], className='add_design'),
 
@@ -3619,7 +3622,6 @@ def detailedGraph(addtextclick, textarea, add, g1, g2, head, note):
         if add == 'note':
             note.append(textarea)
         textarea = ''
-        print('note', note)
         return g1, g2, head, note
     else:
         return (no_update, no_update, no_update, no_update)
@@ -3735,6 +3737,7 @@ def relay7(valradio):
                Input('tab2hiddenValuex_axis', 'children'),
                Input('tab2hiddenValuey_axis', 'children'),
                Input('cleanshapetab4', 'n_clicks'),
+               Input('characteretab4', 'value'),
                ],
               [State('shiftaxisdroptab4hidden', 'children'),
                State('shift_x_axistab4hidden', 'children'),
@@ -3750,7 +3753,7 @@ def relay7(valradio):
               )
 def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                    slideheight, slidewidth, g1, g2, head, note, nclick, firstchoosen, secondchoosen, nc,
-                   valx2, valy2, cleanclick, axisdrop, shift_x, shift_y, retrieve, firstshape, secondshape,
+                   valx2, valy2, cleanclick,car,  axisdrop, shift_x, shift_y, retrieve, firstshape, secondshape,
                    leftfirstval, leftsecondval, rightfirstval, rightsecondval, ):
     if g1 == None or g2 == None or head == None or note == None or radioval == []:
         raise PreventUpdate
@@ -4053,7 +4056,6 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
             if len(firstshape) == 2 and firstchoosen == None:
                 del firstshape[1]
             if radioval == 'optionlibre' and valx2 != None and valy2 != None:
-                print(df)
                 lst = []
                 for j in zip(valy2, valx2):
                     lst.append(j)
@@ -4102,26 +4104,27 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                             if nc > 0:
                                 a = controlShape()
                             fig.update_xaxes(
-                                tickfont_size=16,
+                                tickfont_size=car,
                                 tickangle=90,
                                 title_text='' if g1 == [] else g1[-1],
-                                title_standoff=25, title_font={"size": 20},),
+                                title_standoff=25, title_font={"size": car},),
 
                             fig.update_yaxes(
-                                tickfont_size=16,
+                                tickfont_size=car,
                                 title_text='' if g2 == [] else g2[-1],
-                                title_standoff=25,title_font={"size": 20},),
+                                title_standoff=25,title_font={"size": car},),
 
 
                             fig.update_layout(
                                 title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx2[0], valy2[0]),
+                                title_font={"size": car},
                                 autosize=True,
                                 width=slidewidth,
                                 legend=dict(
                                     traceorder="normal",
                                     font=dict(
                                         family="sans-serif",
-                                        size=12,
+                                        size=car,
                                         color=colors['figure_text']
                                     ),
                                     bgcolor=colors['background'],
@@ -4133,10 +4136,12 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                                 height=slideheight,
                                 yaxis2=dict(
                                     titlefont=dict(
-                                        color="#d62728"
+                                        color="#d62728",
+                                        size = car
                                     ),
                                     tickfont=dict(
-                                        color="#d62728"
+                                        color="#d62728",
+                                        size = car
                                     ),
                                     anchor="free",
                                     overlaying="y",
@@ -4145,10 +4150,12 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                                 ),
                                 yaxis3=dict(
                                     titlefont=dict(
-                                        color='green'
+                                        color='green',
+                                        size = car
                                     ),
                                     tickfont=dict(
-                                        color="green"
+                                        color="green",
+                                        size=car
                                     ),
                                     anchor="free",
                                     overlaying="y",
@@ -4177,7 +4184,7 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                             fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left',
                                                bordercolor='black',
                                                borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
-                                    family="Arial, sans-serif", size=14, ),
+                                    family="Arial, sans-serif", size=car, ),
                                                x=1, y=1, showarrow=False)
 
                     return fig
@@ -4186,7 +4193,6 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                 lst = []
                 for j in zip(valysecond, valxsecond):
                     lst.append(j)
-                print(lst)
                 s = -1
                 m = ''
                 for i in range(len(lst)):
@@ -4199,8 +4205,7 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                     s += 1
                     a = df[lst[i][0]]
                     b = df[lst[i][1]]
-                    print(a)
-                    print(b)
+
                     if q1  == "tab4send":
                         if axisdrop == lst[i][1]:
                             p = []
@@ -4244,18 +4249,19 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                     if nc > 0:
                         a = controlShape()
                     fig.update_xaxes(
-                        tickfont_size=16,
+                        tickfont_size=car,
                         tickangle=90,
                         title_text='' if g1 == [] else g1[-1],
-                        title_font={"size": 20},
+                        title_font={"size": car},
                         title_standoff=25),
                     fig.update_yaxes(
-                        tickfont_size=16,
+                        tickfont_size=car,
                         title_text='' if g2 == [] else g2[-1],
                         title_standoff=25),
                     fig.update_shapes(yref='y'),
                     fig.update_layout(
                         title_text=head[-1] if len(head) > 0 else "{}/{}".format(valxsecond[0], valysecond[0]),
+                        title_font={"size": car},
                         autosize=True,
                         width=slidewidth,
                         shapes=a if (nc > cleanclick) else [],
@@ -4264,7 +4270,7 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                             traceorder="normal",
                             font=dict(
                                 family="sans-serif",
-                                size=12,
+                                size=car,
                                 color=colors['figure_text']
                             ),
                             bgcolor=colors['background'],
@@ -4274,10 +4280,10 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                         plot_bgcolor=colors['background'],
                         yaxis2=dict(
                             titlefont=dict(
-                                color="#d62728"
+                                color="#d62728",size = car
                             ),
                             tickfont=dict(
-                                color="#d62728"
+                                color="#d62728",size = car
                             ),
                             anchor="free",
                             overlaying="y",
@@ -4286,10 +4292,10 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                         ),
                         yaxis3=dict(
                             titlefont=dict(
-                                color='green'
+                                color='green',size = car
                             ),
                             tickfont=dict(
-                                color="green"
+                                color="green", size = car
                             ),
                             anchor="free",
                             overlaying="y",
@@ -4317,7 +4323,7 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                     note = [x]
                     fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
                                        borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
-                            family="Arial, sans-serif", size=14, ),
+                            family="Arial, sans-serif", size=car, ),
                                        x=1, y=1, showarrow=False)
 
                 return fig
@@ -4367,7 +4373,6 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rights
             if k[1] == firstchoosen:
                 if k[0] == curvenumber:
                     x_val = clickData['points'][0]['x']
-                    print(x_val)
                     dff = pd.DataFrame([])
                     if 'date' in df.columns:
                         dff = df[df['date'] == x_val]
@@ -4396,7 +4401,6 @@ def valint(clickData, firstchoosen, value, leftchild, rightchild, shift_x,rights
                     if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
                         a.append([dff[dff['ID'] == firstchoosen].index][0])
                     else : a.append(dff[firstchoosen].index)
-                    print(dff[firstchoosen].index)
                     for i in range(len(a)):
                         for j in a:
                             leftchild.append(j[i])
@@ -5548,7 +5552,8 @@ def differanceintegrationdb(value1, value2, ops):
         return []
 
 @app.callback(Output('intersection', 'value'),
-              [Input('hiddenDifferance', 'children'),
+              [Input('pointLeftFirst', 'children'),
+               Input('pointRightFirst', 'children'),
                Input('firstChoosenValue', 'value'),
                Input('secondChoosenValue', 'value'),
                Input('leftIntegralFirst', 'value'),
@@ -5556,77 +5561,88 @@ def differanceintegrationdb(value1, value2, ops):
               [State('intersection', 'value'), State('retrieve', 'children'),
                ]
               )
-def differanceCalculation(hiddendif, valuechoosenleft, valuechoosenright, leftfirst, rightfirst, diff, retrieve):
-    if hiddendif == None or hiddendif == [] or retrieve == None or retrieve == []:
+def differanceCalculation(firstshape, secondshape, valuechoosenleft, valuechoosenright, leftfirst, rightfirst, diff, retrieve):
+    if retrieve == None or retrieve == []:
         raise PreventUpdate
-    if (len(hiddendif) >= 2):
-        a = 0
-        b = 0
-        for i in range(len(hiddendif)):
-            if hiddendif[0] < hiddendif[1]:
-                a = hiddendif[0]
-                b = hiddendif[1]
-            else:
-                a = hiddendif[1]
-                b = hiddendif[0]
-        differance = []
-        if len(retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
-            df = pd.read_excel('appending.xlsx')
-            df = df.loc[:, ~df.columns.str.match('Unnamed')]
-            df['index'] = df.index
-            df = df.reindex(columns=sorted(df.columns, reverse=True))
-            if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
-                df1 = df.loc[df['ID'] == valuechoosenleft]
-                index = np.arange(0, len(df1['ID']))
-                df1.reset_index(drop=True, inplace=True)
-                df1.set_index(index, inplace=True)
-                dff1 =  df1[(df1[df1['ID'] == valuechoosenleft].index >= float(a)) & (df1[df1['ID'] == valuechoosenleft].index <= float(b))]
-                l = dff1['Value']
-
-                df2 = df.loc[df['ID'] == valuechoosenright]
-                index = np.arange(0, len(df2['ID']))
-                df2.reset_index(drop=True, inplace=True)
-                df2.set_index(index, inplace=True)
-                dff2 = df2[(df2[df2['ID'] == valuechoosenright].index >= float(a)) & (
-                        df2[df2['ID'] == valuechoosenright].index <= float(b))]
-                r = dff2['Value']
-                tt = []
-                yy = []
-                for i in l:
-                    tt.append(i)
-                for i in r:
-                    yy.append(i)
-                for i in range(len(tt)):
-                    if tt[i] <= yy[i]:
-                        differance.append(tt[i])
-                    if yy[i] < tt[i]:
-                        differance.append(yy[i])
-                diff = (abs(trapz(differance, dx=1)))
-                return diff
-
-            else :
-                dff = df[(df[valuechoosenright].index >= float(a)) & (df[valuechoosenright].index <= float(b)) |
-                         (df[valuechoosenright].index >= float(b)) & (df[valuechoosenright].index <= float(a))]
-                l = dff[valuechoosenright]
-
-                dff2 = df[(df[valuechoosenleft].index >= float(a)) & (df[valuechoosenleft].index <= float(b)) |
-                          (df[valuechoosenleft].index >= float(b)) & (df[valuechoosenleft].index <= float(a))]
-                r = dff2[valuechoosenleft]
-                tt = []
-                yy = []
-                for i in l:
-                    tt.append(i)
-                for i in r:
-                    yy.append(i)
-                for i in range(len(tt)):
-                    if tt[i] <= yy[i]:
-                        differance.append(tt[i])
-                    if yy[i] < tt[i]:
-                        differance.append(yy[i])
-                diff = (abs(trapz(differance, dx=1)))
-                return diff
+    differance = []
+    if len(firstshape) == 2 and len(secondshape) == 2:
+        a = int(firstshape[0])
+        c = int(secondshape[0])
+        b = int(firstshape[1])
+        d = int(secondshape[1])
+        if set(range(a, b)).issuperset(set(range(c, d))) == 1:
+            differance.append(c)
+            differance.append(d)
+        elif set(range(c, d)).issuperset(set(range(a, b))) == 1:
+            differance.append(a)
+            differance.append(b)
+        elif len(set(range(a, b)).intersection(set(range(c, d)))) >= 1 or len(
+                set(range(c, d)).intersection(set(range(a, b)))) >= 1:
+            if a <= c:
+                if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(b)
+                differance.append(b)
+            if a >= c:
+                if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(a)
+                differance.append(a)
+            if b <= d:
+                 if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(c)
+                 differance.append(c)
+            if b >= d:
+                if len(differance) == 2:
+                    differance.pop(0)
+                    differance.append(d)
+                differance.append(d)
         else:
             return ['intersection']
+        differancelast = []
+        if len(retrieve) > 0 and valuechoosenright != None and valuechoosenleft != None and leftfirst != None and rightfirst != None:
+            first = differance[0]
+            second = differance[1]
+            df = pd.read_excel('appending.xlsx')
+            df = df.loc[:, ~df.columns.str.match('Unnamed')]
+            if 'ID' and 'Value' and 'Quality' and 'Date' in df.columns:
+                a = df['ID'].unique()
+                dff2 = pd.DataFrame([])
+                for i in a:
+                    dff = df[df['ID'] == i]
+
+                    index = np.arange(0, len(dff))
+                    dff.reset_index(drop=True, inplace=True)
+                    dff.set_index(index, inplace=True)
+                    # dff.drop(['Unnamed: 0', 'Unnamed: 0.1', 'Unnamed: 0.1.1'], axis=1, inplace=True)
+                    dff = dff.pivot(values='Value', columns='ID')
+                    dff2 = pd.concat([dff2, dff], axis=1)
+                df = dff2.copy()
+
+            else:
+                df['index'] = df.index
+                df = df.reindex(columns=sorted(df.columns, reverse=True))
+            dff = df[(df[valuechoosenright].index >= float(first)) & (df[valuechoosenright].index <= float(second)) |
+                     (df[valuechoosenright].index >= float(second)) & (df[valuechoosenright].index <= float(first))]
+            l = dff[valuechoosenright]
+
+            dff2 = df[(df[valuechoosenleft].index >= float(first)) & (df[valuechoosenleft].index <= float(second)) |
+                      (df[valuechoosenleft].index >= float(second)) & (df[valuechoosenleft].index <= float(first))]
+            r = dff2[valuechoosenleft]
+            tt = []
+            yy = []
+            for i in l:
+                tt.append(i)
+            for i in r:
+                yy.append(i)
+            for i in range(len(tt)):
+                if tt[i] <= yy[i]:
+                    differancelast.append(tt[i])
+                if yy[i] < tt[i]:
+                    differancelast.append(yy[i])
+            diff = (abs(trapz(differancelast, dx=1)))
+            return diff
 
 
 @app.callback(Output('intersectiondb', 'value'),
@@ -5852,19 +5868,16 @@ def differanceCalculation4(firstshape, secondshape, valuechoosenleft, valuechoos
                State('rightIntegral', 'value'),
                State('operation', 'value'),
                State('intersection', 'value'),
-               State('inputRightY_axis', "value"),
-               State('inputRightX_axis', "value"),
                ],
               )
-def write_excel(nc, a, b, c, d, e, f, g, h, i, j,ref_Y, ref_X):
+def write_excel(nc, a, b, c, d, e, f, g, h, i, j):
     if nc > 0:
         now = datetime.datetime.now()
         if i == []:
             i = None
         if j == ['intersection']:
             j = None
-        x = (now, a, b, c, d, e, f, g, h, i, j, ref_Y, ref_X)
-        print(x)
+        x = (now, a, b, c, d, e, f, g, h, i, j)
         if x != None: return x
 
 
@@ -5926,12 +5939,12 @@ def exportdata(valueparse):
             a_parse.append('None')
         else:
             a_parse.append(i)
-        if len(a_parse) % 13 == 0 or len(a_parse) % 11 == 0:
+        if len(a_parse) % 11 == 0:
             t_parse.append(a_parse)
             a_parse = []
     t_parse.insert(0, ['time', 'firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
                        'secondChoosenValue','rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation',
-                       'intersection', 'referance Y', 'referance X'])
+                       'intersection'])
 
     df = pd.DataFrame(t_parse)
     df.to_excel('new_fichier.xlsx')
@@ -5993,14 +6006,16 @@ def exportdatadb(valueparse):
             a_parse.append('None')
         else:
             a_parse.append(i)
-        if len(a_parse) % 13 == 0:
+        if len(a_parse) % 11 == 0:
             t_parse.append(a_parse)
             a_parse = []
     t_parse.insert(0, ['time', 'firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
                        'secondChoosenValue','rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation',
-                       'intersection', 'referance Y', 'referance X'])
+                       'intersection'])
 
     df = pd.DataFrame(t_parse)
+    df.columns = df.iloc[0]
+    df.drop(df.index[0], inplace=True, axis=0)
     df.to_excel('new_fichier.xlsx')
 
 
@@ -6008,6 +6023,9 @@ def exportdatadb(valueparse):
 def download_excel():
     # Create DF
     dff = pd.read_excel("new_fichier.xlsx")
+    dff.columns = dff.iloc[0]
+    dff.drop(dff.index[0], inplace=True, axis=0)
+    dff = dff.filter(regex='^\D')
     # Convert DF
     buf = io.BytesIO()
     excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
@@ -6582,7 +6600,7 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
         raise PreventUpdate
     df = pd.DataFrame(data)
     if dbname == 'rcckn':
-        if dbch == 'received_variablevalues':
+        if dbch != None and len(df.columns) == 11:
             if valdate != '' or valname != []:
                 if df.empty != 1:
                     df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'VARIABLE_STR_VALUE', 'LOCAL_TIMESTAMP',
@@ -6644,6 +6662,13 @@ def on_data_set_table(data, valname, valdate, nc2, dbch, dbname):
                 else:
                     raise PreventUpdate
             else:
+                raise PreventUpdate
+        if dbch == None :
+            if valdate != '' or valname != []:
+                raise PreventUpdate
+            if valdate == '' or valname != []:
+                raise PreventUpdate
+            if valdate != '' or valname == []:
                 raise PreventUpdate
     if dbname == 'enerbat':
         if dbch != None:
@@ -6794,9 +6819,10 @@ def containerdb(val1):
                Input('hiddenTextyaxisdb', 'children'),
                Input('hiddenTextHeaderdb', 'children'),
                Input('hiddenTextNotedb', 'children'),
+               Input('characteredb', 'value'),
                ],
               [State('dbvalchoosen', 'value'), State('db_name', 'value'), ])
-def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, head, note, dbch, dbname):
+def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, head, note,car, dbch, dbname):
     if data == None or valy == [] or valdat == [] or valdat == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -6835,6 +6861,7 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
 
 
                     fig.update_layout(
+                        title_font={"size": car},
                         autosize=True,
                         width=sliderw,
                         height=sliderh,
@@ -6847,10 +6874,10 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         ),
                         yaxis2=dict(
                             titlefont=dict(
-                                color="#d62728"
+                                color="#d62728",size = car
                             ),
                             tickfont=dict(
-                                color="#d62728"
+                                color="#d62728",size = car
                             ),
                             anchor="free",
                             overlaying="y",
@@ -6859,10 +6886,10 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         ),
                         yaxis3=dict(
                             titlefont=dict(
-                                color='green'
+                                color='green',size = car
                             ),
                             tickfont=dict(
-                                color="green"
+                                color="green",size = car
                             ),
                             anchor="free",
                             overlaying="y",
@@ -6872,14 +6899,14 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         uirevision=valy[j],
                         title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]) ,),
                     fig.update_xaxes(
-                        tickfont_size=16,
+                        tickfont_size=car,
                         tickangle=90,
                         title_text='' if g1 == [] else g1[-1],
-                        title_standoff=25, title_font={"size": 20}, ),
+                        title_standoff=25, title_font={"size": car}, ),
                     fig.update_yaxes(
-                        tickfont_size=16,
+                        tickfont_size=car,
                         title_text='' if g2 == [] else g2[-1],
-                        title_standoff=25, title_font={"size": 20}, ),
+                        title_standoff=25, title_font={"size": car}, ),
                     note_new = []
                     if note != None and len(note) > 0:
                         note = note[-1].split(' ')
@@ -6892,7 +6919,7 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                     note = [x]
                     fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
                                        borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
-                            family="Arial, sans-serif", size=14, ),
+                            family="Arial, sans-serif", size=car, ),
                                        x=1, y=1, showarrow=False)
                 return fig
             else:
@@ -6928,6 +6955,7 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                                 go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
                                              name="{}".format(valy[j]))),
                         fig.update_layout(
+                            title_font={"size": car},
                             autosize=True,
                             width=sliderw,
                             height=sliderh,
@@ -6940,10 +6968,10 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                             ),
                             yaxis2=dict(
                                 titlefont=dict(
-                                    color="#d62728"
+                                    color="#d62728",size = car
                                 ),
                                 tickfont=dict(
-                                    color="#d62728"
+                                    color="#d62728",size = car
                                 ),
                                 anchor="free",
                                 overlaying="y",
@@ -6952,10 +6980,10 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                             ),
                             yaxis3=dict(
                                 titlefont=dict(
-                                    color='green'
+                                    color='green',size = car
                                 ),
                                 tickfont=dict(
-                                    color="green"
+                                    color="green",size = car
                                 ),
                                 anchor="free",
                                 overlaying="y",
@@ -6967,15 +6995,15 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                             uirevision=valy[j],
                             title_text=head[-1] if len(head) > 0 else "{}".format(valy[0],) ),
                         fig.update_xaxes(
-                                tickfont_size=16,
+                                tickfont_size=car,
                                 tickangle=90,
                                 title_text='' if g1 == [] else g1[-1],
-                                title_standoff=25, title_font={"size": 20}, ),
+                                title_standoff=25, title_font={"size": car}, ),
 
                         fig.update_yaxes(
-                                tickfont_size=16,
+                                tickfont_size=car,
                                 title_text='' if g2 == [] else g2[-1],
-                                title_standoff=25, title_font={"size": 20}, ),
+                                title_standoff=25, title_font={"size": car}, ),
                         note_new = []
                         if note != None and len(note) > 0:
                             note = note[-1].split(' ')
@@ -6988,7 +7016,7 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         note = [x]
                         fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
                                            borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
-                                family="Arial, sans-serif", size=14, ),
+                                family="Arial, sans-serif", size=car, ),
                                            x=1, y=1, showarrow=False)
                 return fig
             else:
@@ -7023,6 +7051,7 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                                 go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
                                              name="{}".format(valy[j]))),
                         fig.update_layout(
+                            title_font={"size": car},
                             autosize=True,
                             width=sliderw,
                             height=sliderh,
@@ -7036,10 +7065,10 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
 
                         yaxis2=dict(
                             titlefont=dict(
-                                color="#d62728"
+                                color="#d62728",size = car
                             ),
                             tickfont=dict(
-                                color="#d62728"
+                                color="#d62728",size = car
                             ),
                             anchor="free",
                             overlaying="y",
@@ -7048,10 +7077,10 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         ),
                         yaxis3=dict(
                             titlefont=dict(
-                                color='green'
+                                color='green',size = car
                             ),
                             tickfont=dict(
-                                color="green"
+                                color="green",size = car
                             ),
                             anchor="free",
                             overlaying="y",
@@ -7062,15 +7091,15 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                             uirevision=valy[j],
                             title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]), ),
                         fig.update_xaxes(
-                                tickfont_size=16,
+                                tickfont_size=car,
                                 tickangle=90,
                                 title_text='' if g1 == [] else g1[-1],
-                                title_standoff=25, title_font={"size": 20}, ),
+                                title_standoff=25, title_font={"size": car}, ),
 
                         fig.update_yaxes(
-                                tickfont_size=16,
+                                tickfont_size=car,
                                 title_text='' if g2 == [] else g2[-1],
-                                title_standoff=25, title_font={"size": 20}, ),
+                                title_standoff=25, title_font={"size": car}, ),
                         note_new = []
                         if note != None and len(note) > 0:
                             note = note[-1].split(' ')
@@ -7083,7 +7112,7 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         note = [x]
                         fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
                                            borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
-                                           family="Arial, sans-serif", size=14, ),
+                                           family="Arial, sans-serif", size=car, ),
                                            x=1, y=1, showarrow=False)
                 return fig
             else:
@@ -7120,6 +7149,7 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                             go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
                                          name="{}".format(valy[j]))),
                     fig.update_layout(
+                        title_font={"size": car},
                         autosize=True,
                         width=sliderw,
                         height=sliderh,
@@ -7133,10 +7163,10 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
 
                         yaxis2=dict(
                             titlefont=dict(
-                                color="#d62728"
+                                color="#d62728",size = car
                             ),
                             tickfont=dict(
-                                color="#d62728"
+                                color="#d62728",size = car
                             ),
                             anchor="free",
                             overlaying="y",
@@ -7145,10 +7175,10 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         ),
                         yaxis3=dict(
                             titlefont=dict(
-                                color='green'
+                                color='green',size = car
                             ),
                             tickfont=dict(
-                                color="green"
+                                color="green",size = car
                             ),
                             anchor="free",
                             overlaying="y",
@@ -7159,15 +7189,15 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         uirevision=valy[j],
                     title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]) ,),
                     fig.update_xaxes(
-                        tickfont_size= 16,
+                        tickfont_size= car,
                         tickangle=90,
                         title_text='' if g1 == [] else g1[-1],
-                        title_standoff=25, title_font={"size": 20}, ),
+                        title_standoff=25, title_font={"size": car}, ),
 
                     fig.update_yaxes(
-                        tickfont_size=16,
+                        tickfont_size=car,
                         title_text='' if g2 == [] else g2[-1],
-                        title_standoff=25, title_font={"size": 20}, ),
+                        title_standoff=25, title_font={"size": car}, ),
                     note_new = []
                     if note != None and len(note) > 0:
                         note = note[-1].split(' ')
@@ -7180,7 +7210,7 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                     note = [x]
                     fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
                                        borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
-                                       family="Arial, sans-serif", size=14, ),
+                                       family="Arial, sans-serif", size=car, ),
                                        x=1, y=1, showarrow=False)
             return fig
         else:
@@ -7202,6 +7232,7 @@ def graphreelTime(data, val, sliderwidth, sliderheight):
                                    marker=dict(line=dict(width=0.2, color='white')), name="{}".format(i),
                                    ))
     fig.update_layout(
+
         autosize=False,
         width=sliderwidth,
         height=sliderheight,
