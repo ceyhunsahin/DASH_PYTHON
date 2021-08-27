@@ -172,11 +172,17 @@ page_1_layout = html.Div(
                                                 html.Div(id='hiddenTextNote', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenTextxaxis', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenTextyaxis', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenTexty1axis', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenTexty2axis', children=[], style={'display': 'None'}),
                                                 html.Div(id='selectyaxishidden', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenTextHeader4', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenTextNote4', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenTextxaxis4', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenTextyaxis4', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenShapeVal', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenTexty1axis4', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenTexty2axis4', children=[], style={'display': 'None'}),
+                                                html.Div(id='hiddenShapeVal', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenShapeVal', children=[], style={'display': 'None'}),
                                                 html.Div(id='hiddenShapeDate', children=[],style={'display': 'None'}), ], ),
                                                 html.Div(id='hiddenDifferance', children=[], style={'display': 'None'}),
@@ -323,7 +329,7 @@ page_2_layout = html.Div(
                                            bs_size="mr",
                                            style={'width': '11rem', 'marginTop': '1.5rem'},
                                            autoFocus=True,
-                                           placeholder="Enter your IP number"),
+                                           placeholder="Enter your Username"),
                                          dbc.Input(id='db_password',
                                                    type="password",
                                                    debounce=True,
@@ -511,7 +517,9 @@ page_2_layout = html.Div(
                                                            {'label': 'Note', 'value': 'note'},
                                                            {'label': 'Header', 'value': 'header'},
                                                            {'label': 'x-axis', 'value': 'x_axis'},
-                                                           {'label': 'y-axis', 'value': 'y_axis'},],
+                                                           {'label': 'y-axis', 'value': 'y_axis'},
+                                                           {'label': 'y2-axis', 'value': 'y2_axis'},
+                                                           {'label': 'y3-axis', 'value': 'y3_axis'},],
                                                        value='header',
                                                        ),
                                           dcc.Textarea(
@@ -625,6 +633,8 @@ page_2_layout = html.Div(
                html.Div(id='hiddenTextNotedb', children=[], style={'display': 'None'}),
                html.Div(id='hiddenTextxaxisdb', children=[], style={'display': 'None'}),
                html.Div(id='hiddenTextyaxisdb', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenTexty1axisdb', children=[], style={'display': 'None'}),
+               html.Div(id='hiddenTexty2axisdb', children=[], style={'display': 'None'}),
 
                ],className='four-columns-div-user-controlsreel' ), ], ),
 
@@ -1193,7 +1203,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                              export_format='xlsx',
                                              export_headers='display',
                                              merge_duplicate_headers=True)),
-               ], style = {'overflow-x' : 'visible'} ),
+               ], style = {'overflow-x' : 'auto'} ),
 
 
 
@@ -1292,9 +1302,9 @@ def intervalcontrol(on):
 def buttoncontrol(on1, on2, col1, col2):
     q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
     if q1 == 'activatedb':
-        return 'success', 'secondary'
-    if q1 == 'deactivatedb':
         return 'secondary', 'danger'
+    if q1 == 'deactivatedb':
+        return 'success','secondary'
     else : return no_update, no_update
 
 @app.callback(Output('interval_component_pr', 'disabled'),
@@ -2337,6 +2347,8 @@ def LoadingDataTab1(on, dropdownhidden, tab):
                                                            {'label': 'Header', 'value': 'header'},
                                                            {'label': 'x-axis', 'value': 'x_axis'},
                                                            {'label': 'y-axis', 'value': 'y_axis'},
+                                                           {'label': 'y2-axis', 'value': 'y2_axis'},
+                                                           {'label': 'y3-axis', 'value': 'y3_axis'}
 
                                                        ],
                                                        value='header',
@@ -2689,6 +2701,8 @@ def shiftingaxes(val):
                Input('hiddenTextyaxis', 'children'),
                Input('hiddenTextHeader', 'children'),
                Input('hiddenTextNote', 'children'),
+               Input('hiddenTexty1axis', 'children'),
+               Input('hiddenTexty2axis', 'children'),
                Input("hiddenchoosenChecklistLeft", "children"),
                Input("radiographhidden", "children"),
                Input("sliderHeightTab1hidden", "children"),
@@ -2719,7 +2733,7 @@ def shiftingaxes(val):
 
                ]
               )
-def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
+def res2(on,g1, g2, head, note,y1,y2, val, radiograph, sliderheight, sliderwidth,
          minValfirst, minValsecond, firstchoosen, secondchoosen, rightsidedrop, right_y_axis, right_x_axis,
          nclick, nc, cleanclick,car, axis, shift_x, shift_y, retrieve, leftfirstval, leftsecondval,
          rightfirstval, rightsecondval, firstshape, secondshape):
@@ -3121,50 +3135,68 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
                 tickfont_size=car,
                 title_text='' if g2 == [] else g2[-1],
                 title_standoff=25,
-                title_font = {"size": car},)
+                titlefont=dict(
+                    color="#636EFA",
+                    size = car
+                ),
+                tickfont=dict(
+                    color="#636EFA"
+                )),
             fig.update_layout(
                 title_text=head[-1] if len(head) > 0 else "{}".format(val[0]),
                 title_font={"size": car},
-                autosize=False,
                 width=sliderwidth,
                 height=sliderheight,
                 shapes=a if nc > cleanclick else [],
                 legend=dict(
+
                     traceorder="normal",
                     font=dict(
                         family="sans-serif",
                         size= car,
                         color=colors['figure_text']
                     ),
+                    yanchor="bottom",
+                    y=-0.4,
+                    xanchor="right",
+                    x=1,
                     bgcolor=colors['background'],
-                    borderwidth=5
+                    borderwidth=1,
+                    orientation = 'h',
                 ),
                 yaxis2=dict(
+                    title_text='y2_axis' if y1 == [] else y1[-1],
                     titlefont=dict(
-                        color="#d62728",
+                        color="#EF553B",
                         size = car
                     ),
                     tickfont=dict(
-                        color="#d62728",
-                        size=car
+                        color="#EF553B"
                     ),
+                    title_standoff = 10,
                     anchor="free",
                     overlaying="y",
                     side="right",
                     position=1
+
                 ),
+
                 yaxis3=dict(
+                    title_text='y3_axis' if y2 ==[] else y2[-1],
                     titlefont=dict(
-                        color='green',size = car
+                        color="#00CC96",
+                        size=car
                     ),
                     tickfont=dict(
-                        color="green",size = car
+                        color="#00CC96",
                     ),
+                    title_standoff=10,
                     anchor="free",
                     overlaying="y",
                     side="right",
-                    position=0.92
+                    position=0.87
                 ),
+
 
                 margin=dict(
                     l=50,
@@ -3190,6 +3222,7 @@ def res2(on,g1, g2, head, note, val, radiograph, sliderheight, sliderwidth,
                                borderwidth=1,xref="paper", yref="paper",bgcolor = "white", font=dict(
                                 family="Arial, sans-serif" , size= car,),
                                 x=1, y=1, showarrow=False)
+            fig.update_layout()
 
         return fig
 
@@ -3277,6 +3310,8 @@ def LoadingDataTab4(on, tab):
                                            {'label': 'Header', 'value': 'header'},
                                            {'label': 'x-axis', 'value': 'x_axis'},
                                            {'label': 'y-axis', 'value': 'y_axis'},
+                                           {'label': 'y2-axis', 'value': 'y2_axis'},
+                                           {'label': 'y3-axis', 'value': 'y3_axis'}
 
                                        ],
                                        value='header',
@@ -3698,14 +3733,16 @@ def container4_2(val, radio,data):
 
 
 @app.callback([Output('hiddenTextxaxis', 'children'), Output('hiddenTextyaxis', 'children'),
-               Output('hiddenTextHeader', 'children'), Output('hiddenTextNote', 'children')],
+               Output('hiddenTextHeader', 'children'), Output('hiddenTextNote', 'children'),
+               Output('hiddenTexty1axis', 'children'),Output('hiddenTexty2axis', 'children')],
               [Input('addText1', 'n_clicks')],
               [State('textarea1', 'value'), State('dropadd1', 'value'),
                State('hiddenTextxaxis', 'children'), State('hiddenTextyaxis', 'children'),
-               State('hiddenTextHeader', 'children'), State('hiddenTextNote', 'children')]
+               State('hiddenTextHeader', 'children'), State('hiddenTextNote', 'children'),
+               State('hiddenTexty1axis', 'children'),State('hiddenTexty2axis', 'children')]
               )
-def detailedGraph(addtextclick, textarea, add, g1, g2, head, note):
-    if add == None or g1 == None or g2 == None or head == None or note == None:
+def detailedGraph(addtextclick, textarea, add, g1, g2, head, note, y1,y2):
+    if add == None or g1 == None or g2 == None or head == None or note == None or y1 == None or y2== None:
         raise PreventUpdate
 
     if addtextclick > 0:
@@ -3715,26 +3752,34 @@ def detailedGraph(addtextclick, textarea, add, g1, g2, head, note):
         if add == 'y_axis':
             g2.append(textarea)
 
+        if add == 'y2_axis':
+            y1.append(textarea)
+
+        if add == 'y3_axis':
+            y2.append(textarea)
+
         if add == 'header':
             head.append(textarea)
 
         if add == 'note':
             note.append(textarea)
         textarea = ''
-        return g1, g2, head, note
+        return g1, g2, head, note, y1, y2
     else:
-        return (no_update, no_update, no_update, no_update)
+        return (no_update, no_update, no_update, no_update, no_update, no_update)
 
 
 @app.callback([Output('hiddenTextxaxis4', 'children'), Output('hiddenTextyaxis4', 'children'),
-               Output('hiddenTextHeader4', 'children'), Output('hiddenTextNote4', 'children')],
+               Output('hiddenTextHeader4', 'children'), Output('hiddenTextNote4', 'children'),
+               Output('hiddenTexty1axis4', 'children'),Output('hiddenTexty2axis4', 'children')],
               [Input('addText4', 'n_clicks')],
               [State('textarea4', 'value'), State('dropadd4', 'value'),
                State('hiddenTextxaxis4', 'children'), State('hiddenTextyaxis4', 'children'),
-               State('hiddenTextHeader4', 'children'), State('hiddenTextNote4', 'children')]
+               State('hiddenTextHeader4', 'children'), State('hiddenTextNote4', 'children'),
+               State('hiddenTexty1axis4', 'children'),State('hiddenTexty2axis4', 'children')]
               )
-def detailedGraph4(addtextclick, textarea, add, g1, g2, head, note):
-    if add == None or g1 == None or g2 == None or head == None or note == None:
+def detailedGraph4(addtextclick, textarea, add, g1, g2, head, note,y1,y2):
+    if add == None or g1 == None or g2 == None or head == None or note == None or y1 == None or y2== None:
         raise PreventUpdate
 
     if addtextclick > 0:
@@ -3744,25 +3789,33 @@ def detailedGraph4(addtextclick, textarea, add, g1, g2, head, note):
         if add == 'y_axis':
             g2.append(textarea)
 
+        if add == 'y2_axis':
+            y1.append(textarea)
+
+        if add == 'y3_axis':
+            y2.append(textarea)
+
         if add == 'header':
             head.append(textarea)
 
         if add == 'note':
             note.append(textarea)
         textarea = ''
-        return g1, g2, head, note
+        return g1, g2, head, note,y1,y2
     else:
-        return (no_update, no_update, no_update, no_update)
+        return (no_update, no_update, no_update, no_update, no_update, no_update)
 
 @app.callback([Output('hiddenTextxaxisdb', 'children'), Output('hiddenTextyaxisdb', 'children'),
-               Output('hiddenTextHeaderdb', 'children'), Output('hiddenTextNotedb', 'children')],
+               Output('hiddenTextHeaderdb', 'children'), Output('hiddenTextNotedb', 'children'),
+               Output('hiddenTexty1axisdb', 'children'),Output('hiddenTexty2axisdb', 'children')],
               [Input('addTextdb', 'n_clicks')],
               [State('textareadb', 'value'), State('dropadddb', 'value'),
                State('hiddenTextxaxisdb', 'children'), State('hiddenTextyaxisdb', 'children'),
-               State('hiddenTextHeaderdb', 'children'), State('hiddenTextNotedb', 'children')]
+               State('hiddenTextHeaderdb', 'children'), State('hiddenTextNotedb', 'children'),
+               State('hiddenTexty1axisdb', 'children'),State('hiddenTexty2axisdb', 'children')]
               )
-def detailedGraphdb(addtextclick, textarea, add, g1, g2, head, note):
-    if add == None or g1 == None or g2 == None or head == None or note == None:
+def detailedGraphdb(addtextclick, textarea, add, g1, g2, head, note, y1,y2):
+    if add == None or g1 == None or g2 == None or head == None or note == None or y1 == None or y2== None:
         raise PreventUpdate
 
     if addtextclick > 0:
@@ -3771,6 +3824,11 @@ def detailedGraphdb(addtextclick, textarea, add, g1, g2, head, note):
 
         if add == 'y_axis':
             g2.append(textarea)
+        if add == 'y2_axis':
+            y1.append(textarea)
+
+        if add == 'y3_axis':
+            y2.append(textarea)
 
         if add == 'header':
             head.append(textarea)
@@ -3779,9 +3837,9 @@ def detailedGraphdb(addtextclick, textarea, add, g1, g2, head, note):
             note.append(textarea)
         textarea = ''
 
-        return g1, g2, head, note
+        return g1, g2, head, note,y1,y2
     else:
-        return (no_update, no_update, no_update, no_update)
+        return (no_update, no_update, no_update, no_update, no_update, no_update)
 
 @app.callback(Output('shiftaxistab4', 'style'),
               [Input('shiftaxisdroptab4', 'value')])
@@ -3829,6 +3887,8 @@ def relay7(valradio):
                Input('hiddenTextyaxis4', 'children'),
                Input('hiddenTextHeader4', 'children'),
                Input('hiddenTextNote4', 'children'),
+               Input('hiddenTexty1axis4', 'children'),
+               Input('hiddenTexty2axis4', 'children'),
                Input('tab4send', 'n_clicks'),
                Input('firstChoosenValueTab4', 'value'),
                Input('secondChoosenValueTab4', 'value'),
@@ -3851,7 +3911,7 @@ def relay7(valradio):
                ]
               )
 def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
-                   slideheight, slidewidth, g1, g2, head, note, nclick, firstchoosen, secondchoosen, nc,
+                   slideheight, slidewidth, g1, g2, head, note,y1,y2, nclick, firstchoosen, secondchoosen, nc,
                    valx2, valy2, cleanclick,car,  axisdrop, shift_x, shift_y, retrieve, firstshape, secondshape,
                    leftfirstval, leftsecondval, rightfirstval, rightsecondval, ):
     if g1 == None or g2 == None or head == None or note == None or radioval == []:
@@ -4206,70 +4266,85 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                                 tickfont_size=car,
                                 tickangle=90,
                                 title_text='' if g1 == [] else g1[-1],
-                                title_standoff=25, title_font={"size": car},),
+                                title_standoff=25, title_font={"size": car}, ),
 
                             fig.update_yaxes(
                                 tickfont_size=car,
                                 title_text='' if g2 == [] else g2[-1],
-                                title_standoff=25,title_font={"size": car},),
-
+                                title_standoff=25,
+                                titlefont=dict(
+                                    color="#636EFA",
+                                    size=car
+                                ),
+                                tickfont=dict(
+                                    color="#636EFA"
+                                )),
 
                             fig.update_layout(
-                                title_text=head[-1] if len(head) > 0 else "{}/{}".format(valx2[0], valy2[0]),
+                                title_text=head[-1] if len(head) > 0 else "{}".format(valy2[0]),
                                 title_font={"size": car},
-                                autosize=True,
                                 width=slidewidth,
+                                height=slideheight,
+                                shapes=a if nc > cleanclick else [],
                                 legend=dict(
+
                                     traceorder="normal",
                                     font=dict(
                                         family="sans-serif",
                                         size=car,
                                         color=colors['figure_text']
                                     ),
+                                    yanchor="bottom",
+                                    y=-0.4,
+                                    xanchor="right",
+                                    x=1,
                                     bgcolor=colors['background'],
-                                    borderwidth=5
+                                    borderwidth=1,
+                                    orientation='h',
                                 ),
-                                paper_bgcolor="LightSteelBlue",
-                                plot_bgcolor=colors['background'],
-                                shapes=a if (nc > cleanclick) else [],
-                                height=slideheight,
                                 yaxis2=dict(
+                                    title_text='y2_axis' if y1 == [] else y1[-1],
                                     titlefont=dict(
-                                        color="#d62728",
-                                        size = car
+                                        color="#EF553B",
+                                        size=car
                                     ),
                                     tickfont=dict(
-                                        color="#d62728",
-                                        size = car
+                                        color="#EF553B"
                                     ),
+                                    title_standoff=10,
                                     anchor="free",
                                     overlaying="y",
                                     side="right",
                                     position=1
+
                                 ),
+
                                 yaxis3=dict(
+                                    title_text='y3_axis' if y2 == [] else y2[-1],
                                     titlefont=dict(
-                                        color='green',
-                                        size = car
-                                    ),
-                                    tickfont=dict(
-                                        color="green",
+                                        color="#00CC96",
                                         size=car
                                     ),
+                                    tickfont=dict(
+                                        color="#00CC96",
+                                    ),
+                                    title_standoff=10,
                                     anchor="free",
                                     overlaying="y",
                                     side="right",
-                                    position=0.92
+                                    position=0.87
                                 ),
+
                                 margin=dict(
                                     l=50,
                                     r=50,
-                                    b=50,
+                                    b=100,
                                     t=50,
                                     pad=4
+
                                 ),
-                                # hovermode='x unified',
-                                uirevision=valy2[0], ),
+                                paper_bgcolor="LightSteelBlue",
+                                plot_bgcolor=colors['background'], ),
                             note_new = []
                             if note != None and len(note) > 0:
                                 note = note[-1].split(' ')
@@ -4285,6 +4360,7 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                                                borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
                                     family="Arial, sans-serif", size=car, ),
                                                x=1, y=1, showarrow=False)
+                            fig.update_layout()
 
                     return fig
 
@@ -4351,65 +4427,85 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                         tickfont_size=car,
                         tickangle=90,
                         title_text='' if g1 == [] else g1[-1],
-                        title_font={"size": car},
-                        title_standoff=25),
+                        title_standoff=25, title_font={"size": car}, ),
+
                     fig.update_yaxes(
                         tickfont_size=car,
                         title_text='' if g2 == [] else g2[-1],
-                        title_standoff=25),
+                        title_standoff=25,
+                        titlefont=dict(
+                            color="#636EFA",
+                            size=car
+                        ),
+                        tickfont=dict(
+                            color="#636EFA"
+                        )),
                     fig.update_shapes(yref='y'),
                     fig.update_layout(
                         title_text=head[-1] if len(head) > 0 else "{}/{}".format(valxsecond[0], valysecond[0]),
                         title_font={"size": car},
-                        autosize=True,
                         width=slidewidth,
-                        shapes=a if (nc > cleanclick) else [],
                         height=slideheight,
+                        shapes=a if nc > cleanclick else [],
                         legend=dict(
+
                             traceorder="normal",
                             font=dict(
                                 family="sans-serif",
                                 size=car,
                                 color=colors['figure_text']
                             ),
+                            yanchor="bottom",
+                            y=-0.4,
+                            xanchor="right",
+                            x=1,
                             bgcolor=colors['background'],
-                            borderwidth=5
+                            borderwidth=1,
+                            orientation='h',
                         ),
-                        paper_bgcolor="LightSteelBlue",
-                        plot_bgcolor=colors['background'],
                         yaxis2=dict(
+                            title_text='y2_axis' if y1 == [] else y1[-1],
                             titlefont=dict(
-                                color="#d62728",size = car
+                                color="#EF553B",
+                                size=car
                             ),
                             tickfont=dict(
-                                color="#d62728",size = car
+                                color="#EF553B"
                             ),
+                            title_standoff=10,
                             anchor="free",
                             overlaying="y",
                             side="right",
                             position=1
+
                         ),
+
                         yaxis3=dict(
+                            title_text='y3_axis' if y2 == [] else y2[-1],
                             titlefont=dict(
-                                color='green',size = car
+                                color="#00CC96",
+                                size=car
                             ),
                             tickfont=dict(
-                                color="green", size = car
+                                color="#00CC96",
                             ),
+                            title_standoff=10,
                             anchor="free",
                             overlaying="y",
                             side="right",
-                            position=0.92
+                            position=0.87
                         ),
+
                         margin=dict(
                             l=50,
                             r=50,
-                            b=50,
+                            b=100,
                             t=50,
                             pad=4
-                        ),
 
-                        uirevision=valysecond[0], ),
+                        ),
+                        paper_bgcolor="LightSteelBlue",
+                        plot_bgcolor=colors['background'], ),
                     note_new = []
                     if note != None and len(note) > 0:
                         note = note[-1].split(' ')
@@ -4424,6 +4520,7 @@ def detailedGraph4(on,radio, radioval,  valxsecond, valysecond,
                                        borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
                             family="Arial, sans-serif", size=car, ),
                                        x=1, y=1, showarrow=False)
+                    fig.update_layout()
 
                 return fig
             else:
@@ -6918,12 +7015,14 @@ def containerdb(val1):
                Input('radiographdb', 'value'),
                Input('hiddenTextxaxisdb', 'children'),
                Input('hiddenTextyaxisdb', 'children'),
+               Input('hiddenTexty1axisdb', 'children'),
+               Input('hiddenTexty2axisdb', 'children'),
                Input('hiddenTextHeaderdb', 'children'),
                Input('hiddenTextNotedb', 'children'),
                Input('characteredb', 'value'),
                ],
               [State('dbvalchoosen', 'value'), State('db_name', 'value'), ])
-def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, head, note,car, dbch, dbname):
+def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, y1,y2,head, note,car, dbch, dbname):
     if data == None or valy == [] or valdat == [] or valdat == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -6960,54 +7059,88 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                                 go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
                                              name="{}".format(valy[j]))),
 
-
-                    fig.update_layout(
-                        title_font={"size": car},
-                        autosize=True,
-                        width=sliderw,
-                        height=sliderh,
-                        margin=dict(
-                            l=50,
-                            r=50,
-                            b=50,
-                            t=50,
-                            pad=4
-                        ),
-                        yaxis2=dict(
-                            titlefont=dict(
-                                color="#d62728",size = car
-                            ),
-                            tickfont=dict(
-                                color="#d62728",size = car
-                            ),
-                            anchor="free",
-                            overlaying="y",
-                            side="right",
-                            position=1
-                        ),
-                        yaxis3=dict(
-                            titlefont=dict(
-                                color='green',size = car
-                            ),
-                            tickfont=dict(
-                                color="green",size = car
-                            ),
-                            anchor="free",
-                            overlaying="y",
-                            side="right",
-                            position=0.92
-                        ),
-                        uirevision=valy[j],
-                        title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]) ,),
                     fig.update_xaxes(
                         tickfont_size=car,
                         tickangle=90,
                         title_text='' if g1 == [] else g1[-1],
                         title_standoff=25, title_font={"size": car}, ),
+
                     fig.update_yaxes(
                         tickfont_size=car,
                         title_text='' if g2 == [] else g2[-1],
-                        title_standoff=25, title_font={"size": car}, ),
+                        title_standoff=25,
+                        titlefont=dict(
+                            color="#636EFA",
+                            size=car
+                        ),
+                        tickfont=dict(
+                            color="#636EFA"
+                        )),
+
+                    fig.update_layout(
+                        title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]),
+                        title_font={"size": car},
+                        width=sliderw,
+                        height=sliderh,
+                        legend=dict(
+
+                            traceorder="normal",
+                            font=dict(
+                                family="sans-serif",
+                                size=car,
+                                color=colors['figure_text']
+                            ),
+                            yanchor="bottom",
+                            y=-0.7,
+                            xanchor="right",
+                            x=1,
+                            bgcolor=colors['background'],
+                            borderwidth=1,
+                            orientation='h',
+                        ),
+                        yaxis2=dict(
+                            title_text='y2_axis' if y1 == [] else y1[-1],
+                            titlefont=dict(
+                                color="#EF553B",
+                                size=car
+                            ),
+                            tickfont=dict(
+                                color="#EF553B"
+                            ),
+                            title_standoff=10,
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=1
+
+                        ),
+
+                        yaxis3=dict(
+                            title_text='y3_axis' if y2 == [] else y2[-1],
+                            titlefont=dict(
+                                color="#00CC96",
+                                size=car
+                            ),
+                            tickfont=dict(
+                                color="#00CC96",
+                            ),
+                            title_standoff=10,
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=0.87
+                        ),
+
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=100,
+                            t=50,
+                            pad=4
+
+                        ),
+                        paper_bgcolor="LightSteelBlue",
+                        plot_bgcolor=colors['background'], ),
                     note_new = []
                     if note != None and len(note) > 0:
                         note = note[-1].split(' ')
@@ -7018,10 +7151,12 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                             note_new[-1] += '<br>'
                     x += ' '.join(note_new)
                     note = [x]
-                    fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
+                    fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left',
+                                       bordercolor='black',
                                        borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
                             family="Arial, sans-serif", size=car, ),
                                        x=1, y=1, showarrow=False)
+                    fig.update_layout()
                 return fig
             else:
                 raise PreventUpdate
@@ -7055,56 +7190,88 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                             fig.add_trace(
                                 go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
                                              name="{}".format(valy[j]))),
+                        fig.update_xaxes(
+                            tickfont_size=car,
+                            tickangle=90,
+                            title_text='' if g1 == [] else g1[-1],
+                            title_standoff=25, title_font={"size": car}, ),
+
+                        fig.update_yaxes(
+                            tickfont_size=car,
+                            title_text='' if g2 == [] else g2[-1],
+                            title_standoff=25,
+                            titlefont=dict(
+                                color="#636EFA",
+                                size=car
+                            ),
+                            tickfont=dict(
+                                color="#636EFA"
+                            )),
+
                         fig.update_layout(
+                            title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]),
                             title_font={"size": car},
-                            autosize=True,
                             width=sliderw,
                             height=sliderh,
-                            margin=dict(
-                                l=50,
-                                r=50,
-                                b=50,
-                                t=50,
-                                pad=4
+                            legend=dict(
+
+                                traceorder="normal",
+                                font=dict(
+                                    family="sans-serif",
+                                    size=car,
+                                    color=colors['figure_text']
+                                ),
+                                yanchor="bottom",
+                                y=-0.7,
+                                xanchor="right",
+                                x=1,
+                                bgcolor=colors['background'],
+                                borderwidth=1,
+                                orientation='h',
                             ),
                             yaxis2=dict(
+                                title_text='y2_axis' if y1 == [] else y1[-1],
                                 titlefont=dict(
-                                    color="#d62728",size = car
+                                    color="#EF553B",
+                                    size=car
                                 ),
                                 tickfont=dict(
-                                    color="#d62728",size = car
+                                    color="#EF553B"
                                 ),
+                                title_standoff=10,
                                 anchor="free",
                                 overlaying="y",
                                 side="right",
                                 position=1
+
                             ),
+
                             yaxis3=dict(
+                                title_text='y3_axis' if y2 == [] else y2[-1],
                                 titlefont=dict(
-                                    color='green',size = car
+                                    color="#00CC96",
+                                    size=car
                                 ),
                                 tickfont=dict(
-                                    color="green",size = car
+                                    color="#00CC96",
                                 ),
+                                title_standoff=10,
                                 anchor="free",
                                 overlaying="y",
                                 side="right",
-                                position=0.92
+                                position=0.87
                             ),
 
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=100,
+                                t=50,
+                                pad=4
 
-                            uirevision=valy[j],
-                            title_text=head[-1] if len(head) > 0 else "{}".format(valy[0],) ),
-                        fig.update_xaxes(
-                                tickfont_size=car,
-                                tickangle=90,
-                                title_text='' if g1 == [] else g1[-1],
-                                title_standoff=25, title_font={"size": car}, ),
-
-                        fig.update_yaxes(
-                                tickfont_size=car,
-                                title_text='' if g2 == [] else g2[-1],
-                                title_standoff=25, title_font={"size": car}, ),
+                            ),
+                            paper_bgcolor="LightSteelBlue",
+                            plot_bgcolor=colors['background'], ),
                         note_new = []
                         if note != None and len(note) > 0:
                             note = note[-1].split(' ')
@@ -7115,10 +7282,12 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                                 note_new[-1] += '<br>'
                         x += ' '.join(note_new)
                         note = [x]
-                        fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
+                        fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left',
+                                           bordercolor='black',
                                            borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
                                 family="Arial, sans-serif", size=car, ),
                                            x=1, y=1, showarrow=False)
+                        fig.update_layout()
                 return fig
             else:
                 raise PreventUpdate
@@ -7151,56 +7320,88 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                             fig.add_trace(
                                 go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
                                              name="{}".format(valy[j]))),
+                        fig.update_xaxes(
+                            tickfont_size=car,
+                            tickangle=90,
+                            title_text='' if g1 == [] else g1[-1],
+                            title_standoff=25, title_font={"size": car}, ),
+
+                        fig.update_yaxes(
+                            tickfont_size=car,
+                            title_text='' if g2 == [] else g2[-1],
+                            title_standoff=25,
+                            titlefont=dict(
+                                color="#636EFA",
+                                size=car
+                            ),
+                            tickfont=dict(
+                                color="#636EFA"
+                            )),
+
                         fig.update_layout(
+                            title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]),
                             title_font={"size": car},
-                            autosize=True,
                             width=sliderw,
                             height=sliderh,
+                            legend=dict(
+
+                                traceorder="normal",
+                                font=dict(
+                                    family="sans-serif",
+                                    size=car,
+                                    color=colors['figure_text']
+                                ),
+                                yanchor="bottom",
+                                y=-0.7,
+                                xanchor="right",
+                                x=1,
+                                bgcolor=colors['background'],
+                                borderwidth=1,
+                                orientation='h',
+                            ),
+                            yaxis2=dict(
+                                title_text='y2_axis' if y1 == [] else y1[-1],
+                                titlefont=dict(
+                                    color="#EF553B",
+                                    size=car
+                                ),
+                                tickfont=dict(
+                                    color="#EF553B"
+                                ),
+                                title_standoff=10,
+                                anchor="free",
+                                overlaying="y",
+                                side="right",
+                                position=1
+
+                            ),
+
+                            yaxis3=dict(
+                                title_text='y3_axis' if y2 == [] else y2[-1],
+                                titlefont=dict(
+                                    color="#00CC96",
+                                    size=car
+                                ),
+                                tickfont=dict(
+                                    color="#00CC96",
+                                ),
+                                title_standoff=10,
+                                anchor="free",
+                                overlaying="y",
+                                side="right",
+                                position=0.87
+                            ),
+
                             margin=dict(
                                 l=50,
                                 r=50,
-                                b=50,
+                                b=100,
                                 t=50,
                                 pad=4
-                            ),
 
-                        yaxis2=dict(
-                            titlefont=dict(
-                                color="#d62728",size = car
                             ),
-                            tickfont=dict(
-                                color="#d62728",size = car
-                            ),
-                            anchor="free",
-                            overlaying="y",
-                            side="right",
-                            position=1
-                        ),
-                        yaxis3=dict(
-                            titlefont=dict(
-                                color='green',size = car
-                            ),
-                            tickfont=dict(
-                                color="green",size = car
-                            ),
-                            anchor="free",
-                            overlaying="y",
-                            side="right",
-                            position=0.92
-                        ),
-
-                            uirevision=valy[j],
-                            title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]), ),
-                        fig.update_xaxes(
-                                tickfont_size=car,
-                                tickangle=90,
-                                title_text='' if g1 == [] else g1[-1],
-                                title_standoff=25, title_font={"size": car}, ),
-
-                        fig.update_yaxes(
-                                tickfont_size=car,
-                                title_text='' if g2 == [] else g2[-1],
-                                title_standoff=25, title_font={"size": car}, ),
+                            paper_bgcolor="LightSteelBlue",
+                            plot_bgcolor=colors['background'], ),
                         note_new = []
                         if note != None and len(note) > 0:
                             note = note[-1].split(' ')
@@ -7211,10 +7412,12 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                                 note_new[-1] += '<br>'
                         x += ' '.join(note_new)
                         note = [x]
-                        fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
+                        fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left',
+                                           bordercolor='black',
                                            borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
-                                           family="Arial, sans-serif", size=car, ),
+                                family="Arial, sans-serif", size=car, ),
                                            x=1, y=1, showarrow=False)
+                        fig.update_layout()
                 return fig
             else:
                 raise PreventUpdate
@@ -7249,48 +7452,8 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                         fig.add_trace(
                             go.Scattergl(x=b, y=a, mode=radio, marker=dict(line=dict(width=0.2, color='blue')),
                                          name="{}".format(valy[j]))),
-                    fig.update_layout(
-                        title_font={"size": car},
-                        autosize=True,
-                        width=sliderw,
-                        height=sliderh,
-                        margin=dict(
-                            l=50,
-                            r=50,
-                            b=50,
-                            t=50,
-                            pad=4
-                        ),
-
-                        yaxis2=dict(
-                            titlefont=dict(
-                                color="#d62728",size = car
-                            ),
-                            tickfont=dict(
-                                color="#d62728",size = car
-                            ),
-                            anchor="free",
-                            overlaying="y",
-                            side="right",
-                            position=1
-                        ),
-                        yaxis3=dict(
-                            titlefont=dict(
-                                color='green',size = car
-                            ),
-                            tickfont=dict(
-                                color="green",size = car
-                            ),
-                            anchor="free",
-                            overlaying="y",
-                            side="right",
-                            position=0.92
-                        ),
-
-                        uirevision=valy[j],
-                    title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]) ,),
                     fig.update_xaxes(
-                        tickfont_size= car,
+                        tickfont_size=car,
                         tickangle=90,
                         title_text='' if g1 == [] else g1[-1],
                         title_standoff=25, title_font={"size": car}, ),
@@ -7298,7 +7461,79 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                     fig.update_yaxes(
                         tickfont_size=car,
                         title_text='' if g2 == [] else g2[-1],
-                        title_standoff=25, title_font={"size": car}, ),
+                        title_standoff=25,
+                        titlefont=dict(
+                            color="#636EFA",
+                            size=car
+                        ),
+                        tickfont=dict(
+                            color="#636EFA"
+                        )),
+
+                    fig.update_layout(
+                        title_text=head[-1] if len(head) > 0 else "{}".format(valy[0]),
+                        title_font={"size": car},
+                        width=sliderw,
+                        height=sliderh,
+                        legend=dict(
+
+                            traceorder="normal",
+                            font=dict(
+                                family="sans-serif",
+                                size=car,
+                                color=colors['figure_text']
+                            ),
+                            yanchor="bottom",
+                            y=-0.6,
+                            xanchor="right",
+                            x=1,
+                            bgcolor=colors['background'],
+                            borderwidth=1,
+                            orientation='h',
+                        ),
+                        yaxis2=dict(
+                            title_text='y2_axis' if y1 == [] else y1[-1],
+                            titlefont=dict(
+                                color="#EF553B",
+                                size=car
+                            ),
+                            tickfont=dict(
+                                color="#EF553B"
+                            ),
+                            title_standoff=10,
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=1
+
+                        ),
+
+                        yaxis3=dict(
+                            title_text='y3_axis' if y2 == [] else y2[-1],
+                            titlefont=dict(
+                                color="#00CC96",
+                                size=car
+                            ),
+                            tickfont=dict(
+                                color="#00CC96",
+                            ),
+                            title_standoff=10,
+                            anchor="free",
+                            overlaying="y",
+                            side="right",
+                            position=0.87
+                        ),
+
+                        margin=dict(
+                            l=50,
+                            r=50,
+                            b=100,
+                            t=50,
+                            pad=4
+
+                        ),
+                        paper_bgcolor="LightSteelBlue",
+                        plot_bgcolor=colors['background'], ),
                     note_new = []
                     if note != None and len(note) > 0:
                         note = note[-1].split(' ')
@@ -7309,10 +7544,12 @@ def on_data_set_graph(on, data, valy, valdat, sliderw, sliderh,radio,g1, g2, hea
                             note_new[-1] += '<br>'
                     x += ' '.join(note_new)
                     note = [x]
-                    fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left', bordercolor='black',
+                    fig.add_annotation(text=note[-1] if len(note) > 0 else '', align='left',
+                                       bordercolor='black',
                                        borderwidth=1, xref="paper", yref="paper", bgcolor="white", font=dict(
-                                       family="Arial, sans-serif", size=car, ),
+                            family="Arial, sans-serif", size=car, ),
                                        x=1, y=1, showarrow=False)
+                    fig.update_layout()
             return fig
         else:
             raise PreventUpdate
