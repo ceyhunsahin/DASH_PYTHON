@@ -20,7 +20,6 @@ from dash.exceptions import PreventUpdate
 import numpy as np
 from numpy import trapz
 from flask import send_file
-from openpyxl import Workbook, load_workbook
 from dash_extensions.enrich import ServersideOutput
 import OpenOPC
 from sshtunnel import SSHTunnelForwarder
@@ -226,6 +225,8 @@ page_1_layout = html.Div(
                                                 html.Div(id='hiddenrecord4', children=[], style={'display': 'None'}),
                                                 html.Div(id='inputRightY_axishidden', children=[], style={'display': 'None'}),
                                                 html.Div(id='inputRightX_axishidden', children=[], style={'display': 'None'}),
+                                                html.Div(id='inputRightY_axishdn', children=[], style={'display': 'None'}),
+                                                html.Div(id='inputRightX_axishdn', children=[], style={'display': 'None'}),
                                                 html.Div(id='checklistvaleurhidden', children=[], style={'display': 'None'}),
                                                 html.Div(id='checklistvaleurhidden2', children=[], style={'display': 'None'}),
                                                 html.Div(id='shiftaxisdrophidden', children=[], style={'display': 'None'}),
@@ -1509,19 +1510,21 @@ def pandastosql_analysis(name,dbname, user, passw):
     print(user)
     print(passw)
     df = pd.read_excel('new_fichier.xlsx',index_col=[0])
-    df.columns = df.iloc[0]
-    df = df[1:]
+    # df.columns =  ['firstChoosenValue','leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral','secondChoosenValue',
+    #                'rightIntegralFirst', 'rightIntegralSecond','rightIntegral','operation','intersection','referance_X'
+    #                'referance_Y', 'time' ]
+    print(df)
+    df.reset_index(drop=True, inplace=True)
 
     if name != None:
         #df = pd.DataFrame(data, columns=['variable_name', 'variable_num_value', 'quality', 'TIMESTAMP'])
         a = [i for i in range(0,len(df.index))]  # for ID
-        index = a
-        sql_insert = list(zip(df['firstChoosenValue'],df['leftIntegralFirst'],df['leftIntegralSecond'], df['leftIntegral'],
+        sql_insert = list(zip(a,df['firstChoosenValue'],df['leftIntegralFirst'],df['leftIntegralSecond'], df['leftIntegral'],
                               df['secondChoosenValue'],df['rightIntegralFirst'],df['rightIntegralSecond'], df['rightIntegral'],
-                              df['operation'],df['intersection'],df['referance X'], df['referance Y'],df['time']))
+                              df['operation'],df['intersection'],df['referance_X'], df['referance_Y'],df['time']))
         print(sql_insert)
-        df.rename({'index':'0'},axis='columns',inplace=True)
         print(df)
+        print('bura1')
         if dbname == None:
             dbname = 'enerbat'
         ipadress = "193.54.2.211"
@@ -1531,6 +1534,7 @@ def pandastosql_analysis(name,dbname, user, passw):
             ssh_password="univ484067152",
             remote_bind_address=(ipadress, 3306))
         server.start()
+        print('bura2')
         try:
             db_connection = mariadb.connect(
                             user='dashapp' if user == None else user,
@@ -1540,16 +1544,19 @@ def pandastosql_analysis(name,dbname, user, passw):
                             database=dbname)
             db_cursor = db_connection.cursor()
             # Here creating database table '
+            print('bura3')
             db_cursor.execute(
                 f"CREATE OR REPLACE TABLE {name} (id BIGINT PRIMARY KEY ,First_Choosen_Value VARCHAR(255), First_Left_Point VARCHAR(255), Second_Left_Point VARCHAR(255),\
-                Left_Integral FLOAT(10), Second_Choosen_Value VARCHAR(255), First_Right_Point VARCHAR(255), Second_Right_Point VARCHAR(255),\
-                Right_Integral FLOAT(10), Math_Ops FLOAT(10), Intersection FLOAT(10),Referance_X BIGINT,Referance_Y BIGINT, Time TIMESTAMP)")
-            print('burda mi')
+                Left_Integral FLOAT(30), Second_Choosen_Value VARCHAR(255), First_Right_Point VARCHAR(255), Second_Right_Point VARCHAR(255),\
+                Right_Integral FLOAT(30), Math_Ops FLOAT(30), Intersection FLOAT(30),Referance_X FLOAT(30),Referance_Y FLOAT(30), Time TIMESTAMP)")
+            print('burda mi1')
             sql_query = f" INSERT INTO {name} (id, First_Choosen_Value, First_Left_Point, Second_Left_Point, Left_Integral, Second_Choosen_Value, First_Right_Point,\
                         Second_Right_Point, Right_Integral, Math_Ops, Intersection,Referance_X,Referance_Y, Time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s, %s, %s);"
             # Get database table'
-            sql_insert = tuple(sql_insert)
-            db_cursor.execute(sql_query, sql_insert)
+            print('burda mi2',sql_query)
+            print('burda mi3',sql_insert )
+            db_cursor.executemany(sql_query, sql_insert)
+            print('burda mi4')
             db_connection.commit()
             print(db_cursor.rowcount, "Record inserted successfully into ENERBAT Database")
         except mariadb.Error as e:
@@ -2072,9 +2079,6 @@ def displayLeftDropdownRight(n_clicks1, nc2, valy, valx,dropval, valeur, value, 
     for i in a:
         if q1 == 'showRight' and i not in valeur:
             valeur.append(x)
-
-
-
         if q1 == 'clearRight' and i not in deletedval:
             pass
     if q1 == 'showRight':
@@ -2140,6 +2144,17 @@ def clear(nclick, st1, st2):
         return (st1, st2)
     else:
         (no_update, no_update)
+
+@app.callback([Output("inputRightY_axishdn", "children"),
+               Output("inputRightX_axishdn", "children")],
+              [Input("inputRightY_axis", "value"),
+              Input("inputRightX_axis", "value")]
+              )
+def clear(st1, st2):
+    if st1 == None or st2 == None:
+        raise PreventUpdate
+    return (st1, st2)
+
 
 @app.callback(Output('tabs-content-classes', 'children'),
               [Input('tabs-with-classes', 'value')],
@@ -6069,18 +6084,28 @@ def differanceCalculation4(firstshape, secondshape, valuechoosenleft, valuechoos
                State('rightIntegral', 'value'),
                State('operation', 'value'),
                State('intersection', 'value'),
-               State('inputRightX_axis', 'value'),
-               State('inputRightY_axis', 'value')
+               State('inputRightX_axishdn', 'children'),
+               State('inputRightY_axishdn', 'children')
                ],
               )
 def write_excel(nc, a, b, c, d, e, f, g, h, i, j,ref_X, ref_Y):
     if nc > 0:
         now = datetime.datetime.now()
-        if i == []:
-            i = None
-        if j == ['intersection']:
-            j = None
-        x = ( a, b, c, d, e, f, g, h, i, j,ref_X,ref_Y,now)
+        m='5'
+        print(i)
+        if i == [] or i == 'total integration' or i == None:
+            i = 0.0
+        if j == None:
+            j = 0.0
+        if ref_X == None:
+            ref_X =0.0
+        if ref_Y == None :
+            ref_Y = 0.0
+        if h == 'total integration' or h == None:
+            h == 0.0
+        if d == None or d == 'total integration':
+            d == 0.0
+        x = (m, a, b, c, d, e, f, g, h, i, j,ref_X,ref_Y,now)
         if x != None: return x
 
 
@@ -6132,7 +6157,7 @@ def lastfunc(hiddenvalchild, lastvalchild):
 
 
 @app.callback(Output('hiddenrecord1', 'children'),
-              [Input('hiddenrecord4', 'children')],
+              [Input('hiddenrecord4', 'children'),],
               )
 def exportdata(valueparse):
     a_parse = []
@@ -6142,15 +6167,17 @@ def exportdata(valueparse):
             a_parse.append('None')
         else:
             a_parse.append(i)
-        if len(a_parse) % 13 == 0:
+        if len(a_parse) % 14 == 0:
             t_parse.append(a_parse)
             a_parse = []
-    t_parse.insert(0, ['firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
+    t_parse.insert(0, ['index','firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
                        'secondChoosenValue','rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation',
-                       'intersection','referance X', 'referance Y','time'])
+                       'intersection','referance_X', 'referance_Y','time'])
 
     df = pd.DataFrame(t_parse)
-    df.to_excel('new_fichier.xlsx')
+    df.columns = df.iloc[0]
+    df = df[1:]
+    df.to_excel('new_fichier.xlsx', index = False)
 
 @app.callback(Output('writeexcelhiddendb', 'children'),
               [Input('write_exceldb', 'n_clicks')],
@@ -6217,8 +6244,6 @@ def exportdatadb(valueparse):
                        'intersection'])
 
     df = pd.DataFrame(t_parse)
-    df.columns = df.iloc[0]
-    df.drop(df.index[0], inplace=True, axis=0)
     df.to_excel('new_fichier.xlsx')
 
 
