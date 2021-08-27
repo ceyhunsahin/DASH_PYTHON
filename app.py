@@ -1508,15 +1508,20 @@ def pandastosql_analysis(name,dbname, user, passw):
     print(dbname)
     print(user)
     print(passw)
-    df = pd.read_excel('appending.xlsx')
+    df = pd.read_excel('new_fichier.xlsx',index_col=[0])
+    df.columns = df.iloc[0]
+    df = df[1:]
+
     if name != None:
         #df = pd.DataFrame(data, columns=['variable_name', 'variable_num_value', 'quality', 'TIMESTAMP'])
-        a = [i for i in range(len(df.index))]  # for ID
-        df['Time'] = df['time'].apply(lambda x: pd.Timestamp(x).strftime('%Y-%m-%d %H:%M:%S'))
-        sql_insert = list(zip(a, df['firstChoosenValue'],df['leftIntegralFirst'],df['leftIntegralSecond'], df['leftIntegral'],
+        a = [i for i in range(0,len(df.index))]  # for ID
+        index = a
+        sql_insert = list(zip(df['firstChoosenValue'],df['leftIntegralFirst'],df['leftIntegralSecond'], df['leftIntegral'],
                               df['secondChoosenValue'],df['rightIntegralFirst'],df['rightIntegralSecond'], df['rightIntegral'],
-                              df['operation'],df['intersection'],df['Time']))
+                              df['operation'],df['intersection'],df['referance X'], df['referance Y'],df['time']))
         print(sql_insert)
+        df.rename({'index':'0'},axis='columns',inplace=True)
+        print(df)
         if dbname == None:
             dbname = 'enerbat'
         ipadress = "193.54.2.211"
@@ -1538,10 +1543,10 @@ def pandastosql_analysis(name,dbname, user, passw):
             db_cursor.execute(
                 f"CREATE OR REPLACE TABLE {name} (id BIGINT PRIMARY KEY ,First_Choosen_Value VARCHAR(255), First_Left_Point VARCHAR(255), Second_Left_Point VARCHAR(255),\
                 Left_Integral FLOAT(10), Second_Choosen_Value VARCHAR(255), First_Right_Point VARCHAR(255), Second_Right_Point VARCHAR(255),\
-                Right_Integral FLOAT(10), Math_Ops FLOAT(10), Intersection FLOAT(10), Time TIMESTAMP)")
+                Right_Integral FLOAT(10), Math_Ops FLOAT(10), Intersection FLOAT(10),Referance_X BIGINT,Referance_Y BIGINT, Time TIMESTAMP)")
             print('burda mi')
             sql_query = f" INSERT INTO {name} (id, First_Choosen_Value, First_Left_Point, Second_Left_Point, Left_Integral, Second_Choosen_Value, First_Right_Point,\
-                        Second_Right_Point, Right_Integral, Math_Ops, Intersection, Time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s);"
+                        Second_Right_Point, Right_Integral, Math_Ops, Intersection,Referance_X,Referance_Y, Time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s, %s, %s);"
             # Get database table'
             sql_insert = tuple(sql_insert)
             db_cursor.execute(sql_query, sql_insert)
@@ -6075,7 +6080,7 @@ def write_excel(nc, a, b, c, d, e, f, g, h, i, j,ref_X, ref_Y):
             i = None
         if j == ['intersection']:
             j = None
-        x = (now, a, b, c, d, e, f, g, h, i, j,ref_X,ref_Y)
+        x = ( a, b, c, d, e, f, g, h, i, j,ref_X,ref_Y,now)
         if x != None: return x
 
 
@@ -6140,9 +6145,9 @@ def exportdata(valueparse):
         if len(a_parse) % 13 == 0:
             t_parse.append(a_parse)
             a_parse = []
-    t_parse.insert(0, ['time', 'firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
+    t_parse.insert(0, ['firstChoosenValue', 'leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral',
                        'secondChoosenValue','rightIntegralFirst', 'rightIntegralSecond', 'rightIntegral', 'operation',
-                       'intersection','referance X', 'referance Y'])
+                       'intersection','referance X', 'referance Y','time'])
 
     df = pd.DataFrame(t_parse)
     df.to_excel('new_fichier.xlsx')
