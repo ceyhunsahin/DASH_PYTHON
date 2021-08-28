@@ -2121,8 +2121,11 @@ def Inputaxis(okval):
                 x_val.append(b)
                 i = m[:-2]
             for j in range(len(i)):
-                if (i[j]).isdecimal():
-                    y_val.append(i[j])
+                print('i,j', type(i[j]))
+                try:
+                    y_val.append(int(i[j]))
+                except ValueError:
+                    pass
                 if '.' in i[j]:
                     y_val.append(float(i[j]))
         return y_val,x_val,checklist
@@ -2806,6 +2809,9 @@ def res2(on,g1, g2, head, note,y1,y2, val, radiograph, sliderheight, sliderwidth
                     15: '#bc8f8f', 16: '#5f9ea0', 17: '#daa520'}
         if rightsidedrop != None :
             if right_x_axis != [] and right_y_axis != []:
+                print(rightsidedrop)
+                print(right_x_axis)
+                print(right_y_axis)
                 for k in range(len(rightsidedrop)):
                     if len(rightsidedrop) == len(right_x_axis) and len(rightsidedrop) == len(right_y_axis):
                         if len(right_x_axis[k]) < 6 :
@@ -2814,8 +2820,8 @@ def res2(on,g1, g2, head, note,y1,y2, val, radiograph, sliderheight, sliderwidth
                             x = [right_x_axis[k]]
                         y = [right_y_axis[k]]
                         fig.add_trace(go.Scatter(mode="markers", x=x, y=y, marker_symbol='diamond-x',
-                                                 marker_line_width=2, marker_size=8,hovertemplate=f"Ref_point{k}: %{y}/%{x}",
-                                                 name=f"Ref_point{k}: {y}/{x}",
+                                                 marker_line_width=2, marker_size=8,hovertemplate=f"Ref{k}: {y[0]}/{x[0]}",
+                                                 name=f"Ref{k}: {y[0]}/{x[0]}",
                                       )),
                         fig.update_layout(margin=dict(b=0, r=0),)
         for i_val in range(len(val)):
@@ -9078,4 +9084,4 @@ def on_data_set_graph4(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                 raise PreventUpdate
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port=8049)
+    app.run_server(debug=True, host='127.0.0.1', port=8049)
