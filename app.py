@@ -328,7 +328,7 @@ page_2_layout = html.Div(
                                            debounce=True,
                                            min=-10000, max=10000, step=1,
                                            bs_size="mr",
-                                           style={'width': '11rem', 'marginTop': '1.5rem'},
+                                           style={'width': '11rem', 'marginTop': '1.5rem', 'borderRadius' : '1rem'},
                                            autoFocus=True,
                                            placeholder="Enter your Username"),
                                          dbc.Input(id='db_password',
@@ -336,7 +336,7 @@ page_2_layout = html.Div(
                                                    debounce=True,
                                                    min=-10000, max=10000, step=1,
                                                    bs_size="mr",
-                                                   style={'width': '11rem', 'marginTop': '1.5rem'},
+                                                   style={'width': '11rem', 'marginTop': '1.5rem','borderRadius' : '1rem'},
                                                    autoFocus=True,
                                                    placeholder="Enter your password"),], className = 'ab'),
 
@@ -346,7 +346,7 @@ page_2_layout = html.Div(
                                     options=[{'label': i, 'value': i}
                                              for i in ['rcckn', 'enerbat']],
                                     multi=False,
-                                    style={'cursor': 'pointer', 'marginTop': '5px'},
+                                    style={'cursor': 'pointer', 'marginTop': '5px','borderRadius' : '1rem'},
                                     className='stockSelectorClass3',
                                     clearable=True,
                                     placeholder='Select Database',
@@ -356,7 +356,7 @@ page_2_layout = html.Div(
                                     # options=[{'label': i, 'value': i}
                                     #          for i in df.columns],
                                     multi=False,
-                                    style={'cursor': 'pointer', 'marginTop': '5px'},
+                                    style={'cursor': 'pointer', 'marginTop': '5px','borderRadius' : '1rem'},
                                     className='stockSelectorClass3',
                                     clearable=True,
                                     placeholder='Select Table ...',
@@ -367,7 +367,7 @@ page_2_layout = html.Div(
                                     # options=[{'label': i, 'value': i}
                                     #          for i in df.columns],
                                     multi=True,
-                                    style={'cursor': 'pointer', 'marginTop': '13px'},
+                                    style={'cursor': 'pointer', 'marginTop': '13px','borderRadius' : '1rem'},
                                     className='stockSelectorClass3',
                                     clearable=True,
                                     placeholder='Select your parameters...',
@@ -377,7 +377,7 @@ page_2_layout = html.Div(
                                     # options=[{'label': i, 'value': i}
                                     #          for i in df.columns],
                                     multi=True,
-                                    style={'cursor': 'pointer', 'marginTop': '13px'},
+                                    style={'cursor': 'pointer', 'marginTop': '13px','borderRadius' : '1rem'},
                                     className='stockSelectorClass3',
                                     clearable=False,
                                     placeholder='Select your time...',
@@ -843,7 +843,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
 
                                                         dbc.Modal(
                                                             [
-                                                                dbc.ModalHeader("Enter your username and password"),
+                                                                dbc.ModalHeader("Enter your username and password for access Kepserver"),
                                                                 dbc.Input(id='username_pr',
                                                                           type="text",
                                                                           min=-10000, max=10000, step=1, bs_size="sm",
@@ -877,7 +877,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                 options=[{'label': i, 'value': i}
                                                                                          for i in ['rcckn', 'enerbat']],
                                                                                 multi=False,
-                                                                                style={'cursor': 'pointer', 'marginTop': '5px'},
+                                                                                style={'cursor': 'pointer', 'marginTop': '5px','borderRadius' : '0.5rem'},
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=True,
                                                                                 placeholder='Select Database',
@@ -886,7 +886,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                 # options=[{'label': i, 'value': i}
                                                                                 #          for i in df.columns],
                                                                                 multi=False,
-                                                                                style={'cursor': 'pointer', 'marginTop': '5px'},
+                                                                                style={'cursor': 'pointer', 'marginTop': '5px','borderRadius' : '0.5rem'},
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=True,
                                                                                 placeholder='Select Table...',
@@ -895,7 +895,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                 # options=[{'label': i, 'value': i}
                                                                                 #          for i in df.columns],
                                                                                 multi=True,
-                                                                                style={'cursor': 'pointer','marginTop': '13px'},
+                                                                                style={'cursor': 'pointer','marginTop': '13px','borderRadius' : '0.5rem'},
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=True,
                                                                                 placeholder='Select your parameters...',
@@ -904,7 +904,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                 # options=[{'label': i, 'value': i}
                                                                                 #          for i in df.columns],
                                                                                 multi=True,
-                                                                                style={'cursor': 'pointer', 'marginTop': '13px'},
+                                                                                style={'cursor': 'pointer', 'marginTop': '13px','borderRadius' : '0.5rem'},
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=False,
                                                                                 placeholder='Select your time...',
@@ -916,7 +916,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                  interval=1 * 1000,  # in milliseconds
                                                                                  n_intervals=0),
                                                                    dbc.Input(id='interval_value_pr_db', type="text", value='5',
-                                                                             min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
+                                                                             min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem','borderRadius' : '0.5rem'}, ),
                                                                                ], className='page4reel'),
 
                                                                 ],className='abcdbpage4upleft'),
@@ -956,7 +956,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                                         'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
                                                                                                         'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg' ]],
                                                                            multi=True,
-                                                                           style={'cursor': 'pointer', 'margin': '5px 5px 10px 0',
+                                                                           style={'cursor': 'pointer', 'margin': '5px 5px 10px 0','borderRadius' : '0.5rem'
                                                                                   },
                                                                            className='stockSelectorClass3',
                                                                            clearable=True,
@@ -965,7 +965,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                            ),
                                                               html.P('Enter interval value (Second)'),
                                                               dbc.Input(id='interval_value_pr', type="text", value='5',
-                                                                        min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
+                                                                        min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem','borderRadius' : '0.5rem'} ),
 
                                                               html.Div(
                                                                         html.Div(
@@ -987,7 +987,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                         html.Div([html.P('Enter Database Name', style={'marginLeft': '1rem', }),
                                                                                 dbc.Input(id='nametodb', type="text", value='',
                                                                                 min=0, max=1000000000, step=1, bs_size="lg",
-                                                                                style={'width': '10rem', 'marginLeft': '1rem', }, ),])],className='abcd',),
+                                                                                style={'width': '10rem', 'marginLeft': '1rem','borderRadius' : '0.5rem' }, ),])],className='abcd',),
                                                           ], className='page4reel', ),
 
                                   html.Div(id='reelhidden1pr', children=[], style={'display': 'None'}),
