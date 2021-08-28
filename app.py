@@ -689,6 +689,18 @@ page_3_layout = html.Div([html.Div([
                                                         dbc.Modal(
                                                             [
                                                                 dbc.ModalHeader("Save Your Table In Database"),
+                                                                dbc.Input(id='input_user_real',
+                                                                          type="text",
+                                                                          min=-10000, max=10000, step=1, bs_size="sm",
+                                                                          style={'width': '31rem', },
+                                                                          placeholder='Enter Username',
+                                                                          autoFocus=True, ),
+                                                                dbc.Input(id='input_pswrd_real',
+                                                                          type="password",
+                                                                          min=-10000, max=10000, step=1, bs_size="sm",
+                                                                          style={'width': '31rem', },
+                                                                          placeholder='Enter Password',
+                                                                          autoFocus=True, ),
                                                                 dbc.Input(id='input_databasename',
                                                                           type="text",
                                                                           min=-10000, max=10000, step=1, bs_size="sm",
@@ -804,6 +816,8 @@ page_3_layout = html.Div([html.Div([
               html.Div(id='reelhidden1', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden2', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden3', children=[], style={'display': 'None'}),
+              html.Div(id='reelhidden_user', children=[], style={'display': 'None'}),
+              html.Div(id='reelhidden_pswrd', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden4', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden5', children=[], style={'display': 'None'}),
               dcc.Store(id='reelhidden6'),
@@ -1229,14 +1243,16 @@ def toserver(nc, v1,v2,v3,v4):
         opc.connect('Kepware.KEPServerEX.V6')
         opc.write([('Siemens.PLC1.Vanne3voies1', v1), ('Siemens.PLC1.Vanne3voies2', v2),('Siemens.PLC1.Vanne3voies3', v3), ('Siemens.PLC1.Vanne3voies4', v4)])
 
-@app.callback(  [Output("reelhidden3", "children"),Output("reelhidden5", "children")],
+@app.callback(  [Output("reelhidden3", "children"),Output("reelhidden5", "children"),
+                 Output("reelhidden_user", "children"),Output("reelhidden_pswrd", "children")],
                 [Input("ok_reel", "n_clicks"), ],
-                [State("input_tablename", "value"),State("input_databasename", "value")],)
-def toggle_modal_1(nc, tbname, databasename):
+                [State("input_tablename", "value"),State("input_databasename", "value"),
+                 State("input_user_real", "value"),State("input_pswrd_real", "value")],)
+def toggle_modal_1(nc, tbname, databasename,user,passw):
     if tbname == None  or databasename==None:
         raise PreventUpdate
     if nc != None:
-        return tbname,databasename
+        return tbname,databasename, user, passw
 
 @app.callback(
     Output("modal_reel", "is_open"),
@@ -1456,9 +1472,10 @@ def download_excel_pr():
     )
 
 @app.callback(Output('reelhidden2', 'children'),
-              [Input("reelhidden3", "children"), Input("reelhidden5", "children"),],
-              [State('get_data_from_modbus', 'data'),State('username_pr', 'value'), State('password_pr', 'value')])
-def pandastosql(name,dbname, data, user, passw):
+              [Input("reelhidden3", "children"), Input("reelhidden5", "children"),
+               Input("reelhidden_user", "children"), Input("reelhidden_pswrd", "children"),],
+              [State('get_data_from_modbus', 'data')])
+def pandastosql(name,dbname, user, passw, data):
     if name == None or dbname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -1505,10 +1522,6 @@ def pandastosql(name,dbname, data, user, passw):
 def pandastosql_analysis(name,dbname, user, passw):
     if name == None or dbname == None:
         raise PreventUpdate
-    print(name)
-    print(dbname)
-    print(user)
-    print(passw)
     df = pd.read_excel('new_fichier.xlsx',index_col=[0])
     # df.columns =  ['firstChoosenValue','leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral','secondChoosenValue',
     #                'rightIntegralFirst', 'rightIntegralSecond','rightIntegral','operation','intersection','referance_X'
@@ -1544,19 +1557,14 @@ def pandastosql_analysis(name,dbname, user, passw):
                             database=dbname)
             db_cursor = db_connection.cursor()
             # Here creating database table '
-            print('bura3')
             db_cursor.execute(
                 f"CREATE OR REPLACE TABLE {name} (id BIGINT PRIMARY KEY ,First_Choosen_Value VARCHAR(255), First_Left_Point VARCHAR(255), Second_Left_Point VARCHAR(255),\
                 Left_Integral FLOAT(30), Second_Choosen_Value VARCHAR(255), First_Right_Point VARCHAR(255), Second_Right_Point VARCHAR(255),\
                 Right_Integral FLOAT(30), Math_Ops FLOAT(30), Intersection FLOAT(30),Referance_X FLOAT(30),Referance_Y FLOAT(30), Time TIMESTAMP)")
-            print('burda mi1')
             sql_query = f" INSERT INTO {name} (id, First_Choosen_Value, First_Left_Point, Second_Left_Point, Left_Integral, Second_Choosen_Value, First_Right_Point,\
                         Second_Right_Point, Right_Integral, Math_Ops, Intersection,Referance_X,Referance_Y, Time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s, %s, %s);"
             # Get database table'
-            print('burda mi2',sql_query)
-            print('burda mi3',sql_insert )
             db_cursor.executemany(sql_query, sql_insert)
-            print('burda mi4')
             db_connection.commit()
             print(db_cursor.rowcount, "Record inserted successfully into ENERBAT Database")
         except mariadb.Error as e:
@@ -1565,9 +1573,10 @@ def pandastosql_analysis(name,dbname, user, passw):
 
 
 @app.callback(Output('reelhidden10', 'children'),
-              [Input("reelhidden8", "children"), Input("reelhidden9", "children"),],
+              [Input("reelhidden8", "children"), Input("reelhidden9", "children"),
+               Input("reelhidden_user", "children"), Input("reelhidden_pswrd", "children"),],
               [State("reelhidden6", "children"),])
-def pandastosql_valve(name,dbname, data, ):
+def pandastosql_valve(name,dbname,user, passw, data, ):
     if data == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -1587,8 +1596,8 @@ def pandastosql_valve(name,dbname, data, ):
     server.start()
     try:
         db_connection =  mariadb.connect(
-                            user='dashapp',
-                            password='dashapp',
+                            user='dashapp' if user == None else user,
+                            password='dashapp' if passw == None else passw,
                             host=ipadress,
                             port=3306,
                             database=dbname)
