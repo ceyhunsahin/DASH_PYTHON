@@ -323,12 +323,12 @@ page_2_layout = html.Div(
                                                              size="lg", className='mr-1', color="danger",
                                                              style={'width': '25rem', 'marginBottom' : '1rem','borderRadius' : '2rem'}
                                                              )]),
-                                 html.Div([dbc.Input(id='db_user',
+                                 html.Div([dbc.Input(id='db_Ip',
                                            type="text",
                                            debounce=True,
                                            min=-10000, max=10000, step=1,
                                            bs_size="mr",
-                                           style={'width': '11rem', 'marginTop': '1.5rem', 'borderRadius' : '1rem'},
+                                           style={'width': '11rem', 'marginTop': '1.5rem'},
                                            autoFocus=True,
                                            placeholder="Enter your Username"),
                                          dbc.Input(id='db_password',
@@ -336,7 +336,7 @@ page_2_layout = html.Div(
                                                    debounce=True,
                                                    min=-10000, max=10000, step=1,
                                                    bs_size="mr",
-                                                   style={'width': '11rem', 'marginTop': '1.5rem','borderRadius' : '1rem'},
+                                                   style={'width': '11rem', 'marginTop': '1.5rem'},
                                                    autoFocus=True,
                                                    placeholder="Enter your password"),], className = 'ab'),
 
@@ -346,7 +346,7 @@ page_2_layout = html.Div(
                                     options=[{'label': i, 'value': i}
                                              for i in ['rcckn', 'enerbat']],
                                     multi=False,
-                                    style={'cursor': 'pointer', 'marginTop': '5px','borderRadius' : '1rem'},
+                                    style={'cursor': 'pointer', 'marginTop': '5px'},
                                     className='stockSelectorClass3',
                                     clearable=True,
                                     placeholder='Select Database',
@@ -356,7 +356,7 @@ page_2_layout = html.Div(
                                     # options=[{'label': i, 'value': i}
                                     #          for i in df.columns],
                                     multi=False,
-                                    style={'cursor': 'pointer', 'marginTop': '5px','borderRadius' : '1rem'},
+                                    style={'cursor': 'pointer', 'marginTop': '5px'},
                                     className='stockSelectorClass3',
                                     clearable=True,
                                     placeholder='Select Table ...',
@@ -367,7 +367,7 @@ page_2_layout = html.Div(
                                     # options=[{'label': i, 'value': i}
                                     #          for i in df.columns],
                                     multi=True,
-                                    style={'cursor': 'pointer', 'marginTop': '13px','borderRadius' : '1rem'},
+                                    style={'cursor': 'pointer', 'marginTop': '13px'},
                                     className='stockSelectorClass3',
                                     clearable=True,
                                     placeholder='Select your parameters...',
@@ -377,7 +377,7 @@ page_2_layout = html.Div(
                                     # options=[{'label': i, 'value': i}
                                     #          for i in df.columns],
                                     multi=True,
-                                    style={'cursor': 'pointer', 'marginTop': '13px','borderRadius' : '1rem'},
+                                    style={'cursor': 'pointer', 'marginTop': '13px'},
                                     className='stockSelectorClass3',
                                     clearable=False,
                                     placeholder='Select your time...',
@@ -689,18 +689,6 @@ page_3_layout = html.Div([html.Div([
                                                         dbc.Modal(
                                                             [
                                                                 dbc.ModalHeader("Save Your Table In Database"),
-                                                                dbc.Input(id='input_user_real',
-                                                                          type="text",
-                                                                          min=-10000, max=10000, step=1, bs_size="sm",
-                                                                          style={'width': '31rem', },
-                                                                          placeholder='Enter Username',
-                                                                          autoFocus=True, ),
-                                                                dbc.Input(id='input_pswrd_real',
-                                                                          type="password",
-                                                                          min=-10000, max=10000, step=1, bs_size="sm",
-                                                                          style={'width': '31rem', },
-                                                                          placeholder='Enter Password',
-                                                                          autoFocus=True, ),
                                                                 dbc.Input(id='input_databasename',
                                                                           type="text",
                                                                           min=-10000, max=10000, step=1, bs_size="sm",
@@ -816,8 +804,6 @@ page_3_layout = html.Div([html.Div([
               html.Div(id='reelhidden1', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden2', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden3', children=[], style={'display': 'None'}),
-              html.Div(id='reelhidden_user', children=[], style={'display': 'None'}),
-              html.Div(id='reelhidden_pswrd', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden4', children=[], style={'display': 'None'}),
               html.Div(id='reelhidden5', children=[], style={'display': 'None'}),
               dcc.Store(id='reelhidden6'),
@@ -838,10 +824,12 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
 
                                                                                     ],
                                                         className = 'abcdbpr' ),
+                                                        html.Div(dbc.Button("Who Are You?", id='enter_pr',
+                                                                        n_clicks=0,color="danger",), style = {'float' : 'right', 'marginTop' : '-3rem'})]),
 
                                                         dbc.Modal(
                                                             [
-                                                                dbc.ModalHeader("Enter your username and password for access Kepserver"),
+                                                                dbc.ModalHeader("Enter your username and password"),
                                                                 dbc.Input(id='username_pr',
                                                                           type="text",
                                                                           min=-10000, max=10000, step=1, bs_size="sm",
@@ -875,7 +863,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                 options=[{'label': i, 'value': i}
                                                                                          for i in ['rcckn', 'enerbat']],
                                                                                 multi=False,
-                                                                                style={'cursor': 'pointer', 'marginTop': '5px','borderRadius' : '0.5rem'},
+                                                                                style={'cursor': 'pointer', 'marginTop': '5px'},
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=True,
                                                                                 placeholder='Select Database',
@@ -884,7 +872,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                 # options=[{'label': i, 'value': i}
                                                                                 #          for i in df.columns],
                                                                                 multi=False,
-                                                                                style={'cursor': 'pointer', 'marginTop': '5px','borderRadius' : '0.5rem'},
+                                                                                style={'cursor': 'pointer', 'marginTop': '5px'},
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=True,
                                                                                 placeholder='Select Table...',
@@ -893,7 +881,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                 # options=[{'label': i, 'value': i}
                                                                                 #          for i in df.columns],
                                                                                 multi=True,
-                                                                                style={'cursor': 'pointer','marginTop': '13px','borderRadius' : '0.5rem'},
+                                                                                style={'cursor': 'pointer','marginTop': '13px'},
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=True,
                                                                                 placeholder='Select your parameters...',
@@ -902,7 +890,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                 # options=[{'label': i, 'value': i}
                                                                                 #          for i in df.columns],
                                                                                 multi=True,
-                                                                                style={'cursor': 'pointer', 'marginTop': '13px','borderRadius' : '0.5rem'},
+                                                                                style={'cursor': 'pointer', 'marginTop': '13px'},
                                                                                 className='stockSelectorClass3',
                                                                                 clearable=False,
                                                                                 placeholder='Select your time...',
@@ -913,8 +901,8 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                  disabled=True,
                                                                                  interval=1 * 1000,  # in milliseconds
                                                                                  n_intervals=0),
-                                                                   dbc.Input(id='interval_value_pr_db', type="text", value='10',
-                                                                             min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem','borderRadius' : '0.5rem'}, ),
+                                                                   dbc.Input(id='interval_value_pr_db', type="text", value='5',
+                                                                             min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
                                                                                ], className='page4reel'),
 
                                                                 ],className='abcdbpage4upleft'),
@@ -954,7 +942,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                                                         'sauter.EY6AS680.Teg', 'sauter.EY6AS680.Tsc',
                                                                                                         'sauter.EY6AS680.Tsev', 'sauter.EY6AS680.Tsg' ]],
                                                                            multi=True,
-                                                                           style={'cursor': 'pointer', 'margin': '5px 5px 10px 0','borderRadius' : '0.5rem'
+                                                                           style={'cursor': 'pointer', 'margin': '5px 5px 10px 0',
                                                                                   },
                                                                            className='stockSelectorClass3',
                                                                            clearable=True,
@@ -963,7 +951,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                            ),
                                                               html.P('Enter interval value (Second)'),
                                                               dbc.Input(id='interval_value_pr', type="text", value='5',
-                                                                        min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem','borderRadius' : '0.5rem'} ),
+                                                                        min=0, max=1000000000, step=1, bs_size="lg", style={'width': '6rem'}, ),
 
                                                               html.Div(
                                                                         html.Div(
@@ -985,7 +973,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                                                         html.Div([html.P('Enter Database Name', style={'marginLeft': '1rem', }),
                                                                                 dbc.Input(id='nametodb', type="text", value='',
                                                                                 min=0, max=1000000000, step=1, bs_size="lg",
-                                                                                style={'width': '10rem', 'marginLeft': '1rem','borderRadius' : '0.5rem' }, ),])],className='abcd',),
+                                                                                style={'width': '10rem', 'marginLeft': '1rem', }, ),])],className='abcd',),
                                                           ], className='page4reel', ),
 
                                   html.Div(id='reelhidden1pr', children=[], style={'display': 'None'}),
@@ -1216,7 +1204,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                              export_format='xlsx',
                                              export_headers='display',
                                              merge_duplicate_headers=True)),
-               ], style = {'overflow-x' : 'auto'} ),])
+               ], style = {'overflow-x' : 'auto'} ),
 
 
 
@@ -1241,16 +1229,14 @@ def toserver(nc, v1,v2,v3,v4):
         opc.connect('Kepware.KEPServerEX.V6')
         opc.write([('Siemens.PLC1.Vanne3voies1', v1), ('Siemens.PLC1.Vanne3voies2', v2),('Siemens.PLC1.Vanne3voies3', v3), ('Siemens.PLC1.Vanne3voies4', v4)])
 
-@app.callback(  [Output("reelhidden3", "children"),Output("reelhidden5", "children"),
-                 Output("reelhidden_user", "children"),Output("reelhidden_pswrd", "children")],
+@app.callback(  [Output("reelhidden3", "children"),Output("reelhidden5", "children")],
                 [Input("ok_reel", "n_clicks"), ],
-                [State("input_tablename", "value"),State("input_databasename", "value"),
-                 State("input_user_real", "value"),State("input_pswrd_real", "value")],)
-def toggle_modal_1(nc, tbname, databasename,user,passw):
+                [State("input_tablename", "value"),State("input_databasename", "value")],)
+def toggle_modal_1(nc, tbname, databasename):
     if tbname == None  or databasename==None:
         raise PreventUpdate
     if nc != None:
-        return tbname,databasename, user, passw
+        return tbname,databasename
 
 @app.callback(
     Output("modal_reel", "is_open"),
@@ -1366,8 +1352,8 @@ def intervalcontrol2_pr_db(val):
               )
 def intervalcontrol2_pr_db(val):
     if val == 'rcckn' :
-        return '15'
-    return '10'
+        return '10'
+    return '5'
 
 
 @app.callback([Output('data_to_store_id', 'children'),
@@ -1440,40 +1426,39 @@ def storedata_pr(id, val, qual, date):
     zipped_val = list(zip(id, val, qual, date))
     return zipped_val
 
-# @app.callback(Output('reelhidden1pr', 'children'),
-#               [Input("write_excel_pr", "n_clicks")],
-#               [State('get_data_from_modbus_pr', 'data')],
-#               )
-# def intervalcontrol2_pr(nc, data):
-#     if nc > 0:
-#         df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'date'])
-#         df.to_excel('real.xlsx')
-#
-#
-# @app.server.route("/download_excel_pr/")
-# def download_excel_pr():
-#     # Create DF
-#     dff = pd.read_excel("real.xlsx")
-#     # Convert DF
-#     buf = io.BytesIO()
-#     excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
-#     dff.to_excel(excel_writer, sheet_name="sheet1")
-#     excel_writer.save()
-#     excel_data = buf.getvalue()
-#     buf.seek(0)
-#     return send_file(
-#         buf,
-#         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-#         attachment_filename="real.xlsx",
-#         as_attachment=True,
-#         cache_timeout=0
-#     )
+@app.callback(Output('reelhidden1pr', 'children'),
+              [Input("write_excel_pr", "n_clicks")],
+              [State('get_data_from_modbus_pr', 'data')],
+              )
+def intervalcontrol2_pr(nc, data):
+    if nc > 0:
+        df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'date'])
+        df.to_excel('real.xlsx')
+
+
+@app.server.route("/download_excel_pr/")
+def download_excel_pr():
+    # Create DF
+    dff = pd.read_excel("real.xlsx")
+    # Convert DF
+    buf = io.BytesIO()
+    excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
+    dff.to_excel(excel_writer, sheet_name="sheet1")
+    excel_writer.save()
+    excel_data = buf.getvalue()
+    buf.seek(0)
+    return send_file(
+        buf,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        attachment_filename="real.xlsx",
+        as_attachment=True,
+        cache_timeout=0
+    )
 
 @app.callback(Output('reelhidden2', 'children'),
-              [Input("reelhidden3", "children"), Input("reelhidden5", "children"),
-               Input("reelhidden_user", "children"), Input("reelhidden_pswrd", "children"),],
-              [State('get_data_from_modbus', 'data')])
-def pandastosql(name,dbname, user, passw, data):
+              [Input("reelhidden3", "children"), Input("reelhidden5", "children"),],
+              [State('get_data_from_modbus', 'data'),State('username_pr', 'value'), State('password_pr', 'value')])
+def pandastosql(name,dbname, data, user, passw):
     if name == None or dbname == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -1520,6 +1505,10 @@ def pandastosql(name,dbname, user, passw, data):
 def pandastosql_analysis(name,dbname, user, passw):
     if name == None or dbname == None:
         raise PreventUpdate
+    print(name)
+    print(dbname)
+    print(user)
+    print(passw)
     df = pd.read_excel('new_fichier.xlsx',index_col=[0])
     # df.columns =  ['firstChoosenValue','leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral','secondChoosenValue',
     #                'rightIntegralFirst', 'rightIntegralSecond','rightIntegral','operation','intersection','referance_X'
@@ -1555,14 +1544,19 @@ def pandastosql_analysis(name,dbname, user, passw):
                             database=dbname)
             db_cursor = db_connection.cursor()
             # Here creating database table '
+            print('bura3')
             db_cursor.execute(
                 f"CREATE OR REPLACE TABLE {name} (id BIGINT PRIMARY KEY ,First_Choosen_Value VARCHAR(255), First_Left_Point VARCHAR(255), Second_Left_Point VARCHAR(255),\
                 Left_Integral FLOAT(30), Second_Choosen_Value VARCHAR(255), First_Right_Point VARCHAR(255), Second_Right_Point VARCHAR(255),\
                 Right_Integral FLOAT(30), Math_Ops FLOAT(30), Intersection FLOAT(30),Referance_X FLOAT(30),Referance_Y FLOAT(30), Time TIMESTAMP)")
+            print('burda mi1')
             sql_query = f" INSERT INTO {name} (id, First_Choosen_Value, First_Left_Point, Second_Left_Point, Left_Integral, Second_Choosen_Value, First_Right_Point,\
                         Second_Right_Point, Right_Integral, Math_Ops, Intersection,Referance_X,Referance_Y, Time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s,%s, %s,%s, %s, %s, %s);"
             # Get database table'
+            print('burda mi2',sql_query)
+            print('burda mi3',sql_insert )
             db_cursor.executemany(sql_query, sql_insert)
+            print('burda mi4')
             db_connection.commit()
             print(db_cursor.rowcount, "Record inserted successfully into ENERBAT Database")
         except mariadb.Error as e:
@@ -1571,10 +1565,9 @@ def pandastosql_analysis(name,dbname, user, passw):
 
 
 @app.callback(Output('reelhidden10', 'children'),
-              [Input("reelhidden8", "children"), Input("reelhidden9", "children"),
-               Input("reelhidden_user", "children"), Input("reelhidden_pswrd", "children"),],
+              [Input("reelhidden8", "children"), Input("reelhidden9", "children"),],
               [State("reelhidden6", "children"),])
-def pandastosql_valve(name,dbname,user, passw, data, ):
+def pandastosql_valve(name,dbname, data, ):
     if data == None:
         raise PreventUpdate
     df = pd.DataFrame(data)
@@ -1594,8 +1587,8 @@ def pandastosql_valve(name,dbname,user, passw, data, ):
     server.start()
     try:
         db_connection =  mariadb.connect(
-                            user='dashapp' if user == None else user,
-                            password='dashapp' if passw == None else passw,
+                            user='dashapp',
+                            password='dashapp',
                             host=ipadress,
                             port=3306,
                             database=dbname)
@@ -1614,12 +1607,13 @@ def pandastosql_valve(name,dbname,user, passw, data, ):
 
 @app.callback(Output('reelhidden2pr', 'children'),
               [Input("my-toggle-switch-pr", "on"),Input('interval_component_pr', 'n_intervals')],
-              [State("reelhidden3pr", "children"),State("reelhidden4pr", "children"), State('get_data_from_modbus_pr', 'data')])
-def pandastosql_pr(on,interval, name,nametodb, data):
-    if name == None or data == None:
+              [State("reelhidden3pr", "children"),State("reelhidden4pr", "children"), State('get_data_from_modbus_pr', 'data'),
+               State('username_pr', 'value'), State('password_pr', 'value')])
+def pandastosql_pr(on,interval, name,nametodb, data, user, passw):
+    if name == None :
         raise PreventUpdate
     if on == 1:
-        if data != None:
+        if name != None:
             df = pd.DataFrame(data, columns=['variable_name', 'variable_num_value', 'quality', 'TIMESTAMP'])
             a = [i for i in range(len(df.index))]  # for ID
             b = [i for i in df['variable_name']]  # name of variable
@@ -1628,28 +1622,32 @@ def pandastosql_pr(on,interval, name,nametodb, data):
             df['TIMESTAMP'] = df['TIMESTAMP'].apply(lambda x: pd.Timestamp(x).strftime('%Y-%m-%d %H:%M:%S'))
             sql_insert = list(zip(a, df['variable_name'], df['variable_num_value'], df['TIMESTAMP']))
             ipadress = "193.54.2.211"
+            server = SSHTunnelForwarder(
+                (ipadress, 22),
+                ssh_username='soudani',
+                ssh_password="univ484067152",
+                remote_bind_address=(ipadress, 3306))
+
+            server.start()
             try:
-                db_connection = mysql.connector.connect(
-                    host="193.54.2.211",
-                    user="dashapp",
-                    passwd="dashapp",
-                    database=nametodb)
+                db_connection = mariadb.connect(
+                            user='dashapp' if user == None else user,
+                            password='dashapp' if passw == None else passw,
+                            host=ipadress,
+                            port=3306,
+                            database=nametodb)
                 db_cursor = db_connection.cursor()
+
                 # db_cursor.execute(f"REPAIR TABLE {name}")
                 db_cursor.execute(f"CREATE OR REPLACE TABLE  {name} (ID BIGINT PRIMARY KEY, VARIABLE_NAME VARCHAR(255), VARIABLE_NUM_VALUE DOUBLE, TIMESTAMP TIMESTAMP)")
                 sql_query = f" INSERT INTO {name} (id, variable_name, variable_num_value,TIMESTAMP) VALUES (%s, %s, %s, %s)"
                 # Get database table'
                 db_cursor.executemany(sql_query, sql_insert)
                 db_connection.commit()
-                db_connection.close()
                 print(db_cursor.rowcount, f"Record inserted successfully into {nametodb} Database")
-            except mysql.connector.Error as error:
-                print("Failed to insert record into MARIADB table {}".format(error))
-            finally:
-                if db_connection.is_connected():
-                    db_cursor.close()
-                    db_connection.close()
-                    print("MariaDB connection is closed")
+            except mariadb.Error as e:
+                print(f"Error connecting to MariaDB Platform: {e}")
+                sys.exit(1)
 
 
 # surf between pages
@@ -1669,15 +1667,15 @@ def display_page(pathname):
     elif pathname == '/File':
         return page_1_layout
 
-# @app.callback(
-#             Output("modal_reel_pr", "is_open"),
-#             [Input("close_reel_pr", "n_clicks"), Input("ok_reel_pr", "n_clicks")],
-#             [State("modal_reel_pr", "is_open")],
-#         )
-# def toggle_modal_pr(n2, n3, is_open):
-#     if  n2 or n3:
-#         return not is_open
-#     return is_open
+@app.callback(
+            Output("modal_reel_pr", "is_open"),
+            [Input("close_reel_pr", "n_clicks"), Input("ok_reel_pr", "n_clicks"),Input('enter_pr', 'n_clicks')],
+            [State("modal_reel_pr", "is_open")],
+        )
+def toggle_modal_pr(n2, n3, nc, is_open):
+    if nc > 0 or n2 or n3:
+        return not is_open
+    return is_open
 
 
 def parse_contents(contents, filename, date):
@@ -2123,11 +2121,8 @@ def Inputaxis(okval):
                 x_val.append(b)
                 i = m[:-2]
             for j in range(len(i)):
-                print('i,j', type(i[j]))
-                try:
-                    y_val.append(int(i[j]))
-                except ValueError:
-                    pass
+                if (i[j]).isdecimal():
+                    y_val.append(i[j])
                 if '.' in i[j]:
                     y_val.append(float(i[j]))
         return y_val,x_val,checklist
@@ -2811,9 +2806,6 @@ def res2(on,g1, g2, head, note,y1,y2, val, radiograph, sliderheight, sliderwidth
                     15: '#bc8f8f', 16: '#5f9ea0', 17: '#daa520'}
         if rightsidedrop != None :
             if right_x_axis != [] and right_y_axis != []:
-                print(rightsidedrop)
-                print(right_x_axis)
-                print(right_y_axis)
                 for k in range(len(rightsidedrop)):
                     if len(rightsidedrop) == len(right_x_axis) and len(rightsidedrop) == len(right_y_axis):
                         if len(right_x_axis[k]) < 6 :
@@ -2822,8 +2814,8 @@ def res2(on,g1, g2, head, note,y1,y2, val, radiograph, sliderheight, sliderwidth
                             x = [right_x_axis[k]]
                         y = [right_y_axis[k]]
                         fig.add_trace(go.Scatter(mode="markers", x=x, y=y, marker_symbol='diamond-x',
-                                                 marker_line_width=2, marker_size=8,hovertemplate=f"Ref{k}: {y[0]}/{x[0]}",
-                                                 name=f"Ref{k}: {y[0]}/{x[0]}",
+                                                 marker_line_width=2, marker_size=8,hovertemplate=f"Ref_point{k}: %{y}/%{x}",
+                                                 name=f"Ref_point{k}: {y}/{x}",
                                       )),
                         fig.update_layout(margin=dict(b=0, r=0),)
         for i_val in range(len(val)):
@@ -6298,7 +6290,7 @@ def download_exceldb():
     )
 
 @app.callback(Output('dbvalchoosen', 'options'),
-              [Input('db_name', 'value')], [State('db_user', 'value'),State('db_password', 'value')])
+              [Input('db_name', 'value')], [State('db_Ip', 'value'),State('db_password', 'value')])
 def relationdb(dbname, ipval, password):
     if dbname == None:
         raise PreventUpdate
@@ -6345,53 +6337,57 @@ def relationdb(dbname, ipval, password):
 
 
 @app.callback(Output('prvalchoosen', 'options'),
-              [Input('prname', 'value')])
-def relationpr(prname):
+              [Input('prname', 'value')],[State('username_pr', 'value'), State('password_pr', 'value')])
+def relationpr(prname, user, passw):
     if prname == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
-    try:
-        db_connection = mysql.connector.connect(
-            host="193.54.2.211",
-            user="dashapp",
-            passwd="dashapp",
-            database=prname,
-            port=3306, )
-        db_cursor = db_connection.cursor()
-        if prname == 'rcckn':
-            db_cursor.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'rcckn'")
-            val = db_cursor.fetchall()
-            db_connection.close()
-            return [{'label': i[0], 'value': i[0]} for i in val if
-                    i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
-                    i[0] != 'received_ack' and i[0] != 'send_vw_variablerequestdestination' and i[
-                        0] != 'flyway_schema_history'
-                    and i[0] != 'app_vw_messaging_followup' and i[0] != 'received_variablerequest' and i[
-                        0] != 'received_controlvalues'
-                    and i[0] != 'app_system_properties' and i[0] != 'tbl_sites' and i[0] != 'tbl_inventory' and i[
-                        0] != 'send_messages'
-                    and i[0] != 'send_variablevaluesmessage']
-        elif prname == 'enerbat':
-            db_cursor = db_connection.cursor()
-            db_cursor.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'enerbat'")
-            val = db_cursor.fetchall()
-            db_connection.close()
-            return [{'label': i[0], 'value': i[0]} for i in val]
-        else:
-            return no_update
-    except mysql.connector.Error as error:
-            print("Failed to insert record into MARIADB table {}".format(error))
-    finally:
-        if db_connection.is_connected():
-            db_cursor.close()
-            db_connection.close()
-            print("MySQL connection is closed")
+    server = SSHTunnelForwarder(
+        (ipadress, 22),
+        ssh_username='soudani',
+        ssh_password="univ484067152",
+        remote_bind_address=(ipadress, 3306))
 
+    server.start()
+    try:
+        conn = mariadb.connect(
+            user='dashapp' if user == None else user,
+            password='dashapp' if passw == None else passw,
+            host=ipadress,
+            port=3306,
+            database=prname)
+        cur = conn.cursor()
+
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+    if prname == 'rcckn':
+        cur = conn.cursor()
+        cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'rcckn'")
+        val = cur.fetchall()
+
+        return [{'label': i[0], 'value': i[0]} for i in val if
+                i[0] != 'app_variablerequest' and i[0] != 'send_controlvalues' and
+                i[0] != 'received_ack' and i[0] != 'send_vw_variablerequestdestination' and i[
+                    0] != 'flyway_schema_history'
+                and i[0] != 'app_vw_messaging_followup' and i[0] != 'received_variablerequest' and i[
+                    0] != 'received_controlvalues'
+                and i[0] != 'app_system_properties' and i[0] != 'tbl_sites' and i[0] != 'tbl_inventory' and i[
+                    0] != 'send_messages'
+                and i[0] != 'send_variablevaluesmessage']
+    elif prname == 'enerbat':
+        cur = conn.cursor()
+        cur.execute(f"select table_name from information_schema.tables where TABLE_SCHEMA= 'enerbat'")
+        val = cur.fetchall()
+
+        return [{'label': i[0], 'value': i[0]} for i in val]
+    else:
+        no_update
 
 
 @app.callback([Output('dbvalname', 'options'), Output('dbvaldate', 'options')],
               [Input('activatedb', 'n_clicks'), Input('deactivatedb', 'n_clicks')],
-              [State('dbvalchoosen', 'value'), State('db_name', 'value'), State('db_user', 'value'),State('db_password', 'value')])
+              [State('dbvalchoosen', 'value'), State('db_name', 'value'), State('db_Ip', 'value'),State('db_password', 'value')])
 def dbname(nc, nc2, dbch, dbname, ipval, password):
     if dbname == None:
         raise PreventUpdate
@@ -6525,7 +6521,6 @@ def dbname(nc, nc2, dbch, dbname, ipval, password):
                 str_list = [i[0] for i in t2]
                 df = pd.DataFrame(str_list)
                 df.columns = ['TIMESTAMP']
-
                 df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
                 df["day"] = df.TIMESTAMP.dt.day
                 df["month"] = df.TIMESTAMP.dt.month
@@ -6547,137 +6542,128 @@ def dbname(nc, nc2, dbch, dbname, ipval, password):
 
 
 @app.callback([Output('prvalname', 'options'), Output('prvaldate', 'options')],
-              [Input('my-toggle-switch-pr-db', 'on'),Input('interval_component_pr_db', 'n_intervals')],
-              [State('prvalchoosen', 'value'), State('prname', 'value')])
-def pr_get_val(on,interval, prch, prname):
-    if prname == None:
+              [Input('my-toggle-switch-pr-db', 'on'),Input('interval_component_pr_db', 'n_intervals'),Input('ok_reel_pr', 'n_clicks')],
+              [State('prvalchoosen', 'value'), State('prname', 'value'),State('username_pr', 'value'), State('password_pr', 'value')])
+def prname(on,interval,ok,  prch, prname, user, passw):
+    if prname == None :
         raise PreventUpdate
     ipadress = "193.54.2.211"
-    if on ==1:
+    q1 = dash.callback_context.triggered[0]["prop_id"].split(".")[0]
+    if q1 == 'ok_reel_pr' :
+        if user != None or passw != None :
+            user = user
+            password = passw
+    if on == 1:
         try:
-            conn = mysql.connector.connect(
-                user="dashapp",
-                password="dashapp",
+            conn = mariadb.connect(
+                user='dashapp' if user == None else user,
+                password='dashapp' if passw == None else passw,
                 host=ipadress,
                 port=3306,
                 database=prname)
-            # Get Cursor
-            # cur.execute("SELECT DISTINCT VARIABLE_NAME FROM {} ".format(dbch))
-            if prname == 'rcckn':
-                if prch == 'received_variablevalues':
-                    cur1 = conn.cursor()
-                    cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues ")
-                    t1 = cur1.fetchall()
-                    name = [i[0] for i in t1]
-                    cur2 = conn.cursor()
-                    cur2.execute("SELECT DISTINCT REMOTE_TIMESTAMP FROM received_variablevalues ")
-                    t2 = cur2.fetchall()
 
-                    str_list = [i[0] for i in t2]
-                    df = pd.DataFrame(str_list)
-                    df.columns = ['REMOTE_TIMESTAMP']
-                    df['REMOTE_TIMESTAMP'] = df.REMOTE_TIMESTAMP.apply(pd.to_datetime)
-                    df["day"] = df.REMOTE_TIMESTAMP.dt.day
-                    df["month"] = df.REMOTE_TIMESTAMP.dt.month
-                    df["year"] = df.REMOTE_TIMESTAMP.dt.year
-                    a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-                    a = list(set(a))
-                    b = pd.to_datetime(a)
-                    b = sorted(b)
-                    str_list = [t.strftime("%Y-%m-%d") for t in b]
-                    cur1.close()
-                    cur2.close()
-                    return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-                elif prch == "send_variablevalues" :
-                    cur1 = conn.cursor()
-                    cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM send_variablevalues ")
-                    t1 = cur1.fetchall()
-                    name = [i[0] for i in t1]
-                    cur2 = conn.cursor()
-                    cur2.execute("SELECT DISTINCT TIMESTAMP FROM send_variablevalues ")
-                    t2 = cur2.fetchall()
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
 
-                    str_list = [i[0] for i in t2]
-                    df = pd.DataFrame(str_list)
-                    df.columns = ['TIMESTAMP']
-                    df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
-                    df["day"] = df.TIMESTAMP.dt.day
-                    df["month"] = df.TIMESTAMP.dt.month
-                    df["year"] = df.TIMESTAMP.dt.year
-                    a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-                    a = list(set(a))
-                    b = pd.to_datetime(a)
-                    b = sorted(b)
-                    str_list = [t.strftime("%Y-%m-%d") for t in b]
-                    cur1.close()
-                    cur2.close()
-                    return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-                else:
-                    cur1 = conn.cursor()
-                    cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {prch} ")
-                    t1 = cur1.fetchall()
-                    name = [i[0] for i in t1]
-                    cur2 = conn.cursor()
-                    cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {prch}  ")
-                    t2 = cur2.fetchall()
+        if prname == 'rcckn':
+            if prch == 'received_variablevalues':
+                cur1 = conn.cursor()
+                cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM received_variablevalues ")
+                t1 = cur1.fetchall()
+                name = [i[0] for i in t1]
+                cur2 = conn.cursor()
+                cur2.execute("SELECT DISTINCT REMOTE_TIMESTAMP FROM received_variablevalues ")
+                t2 = cur2.fetchall()
 
-                    str_list = [i[0] for i in t2]
-                    df = pd.DataFrame(str_list)
-                    if df.empty !=1 :
-                        df.columns = ['TIMESTAMP']
-                        df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
-                        df["day"] = df.TIMESTAMP.dt.day
-                        df["month"] = df.TIMESTAMP.dt.month
-                        df["year"] = df.TIMESTAMP.dt.year
-                        a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-                        a = list(set(a))
-                        b = pd.to_datetime(a)
-                        b = sorted(b)
-                        str_list = [t.strftime("%Y-%m-%d") for t in b]
-                        cur1.close()
-                        cur2.close()
-                        return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-                    else : raise PreventUpdate
+                str_list = [i[0] for i in t2]
+                df = pd.DataFrame(str_list)
+                df.columns = ['REMOTE_TIMESTAMP']
+                df['REMOTE_TIMESTAMP'] = df.REMOTE_TIMESTAMP.apply(pd.to_datetime)
+                df["day"] = df.REMOTE_TIMESTAMP.dt.day
+                df["month"] = df.REMOTE_TIMESTAMP.dt.month
+                df["year"] = df.REMOTE_TIMESTAMP.dt.year
+                a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+                a = list(set(a))
+                b = pd.to_datetime(a)
+                b = sorted(b)
+                str_list = [t.strftime("%Y-%m-%d") for t in b]
+                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+            elif prch == "send_variablevalues" :
+                cur1 = conn.cursor()
+                cur1.execute("SELECT DISTINCT VARIABLE_NAME FROM send_variablevalues ")
+                t1 = cur1.fetchall()
+                name = [i[0] for i in t1]
+                cur2 = conn.cursor()
+                cur2.execute("SELECT DISTINCT TIMESTAMP FROM send_variablevalues ")
+                t2 = cur2.fetchall()
 
-            if prname == 'enerbat':
-                if prch != None:
-                    cur1 = conn.cursor()
-                    cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {prch} ")
-                    t1 = cur1.fetchall()
-                    name = [i[0] for i in t1]
-                    print('name',name)
-                    cur2 = conn.cursor()
-                    cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {prch}  ")
-                    t2 = cur2.fetchall()
-
-                    str_list = [i[0] for i in t2]
-                    print('str_list', str_list)
-                    df = pd.DataFrame(str_list)
-                    df.columns = ['TIMESTAMP']
-                    print('dfffffffffffff', df)
-                    df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
-                    df["day"] = df.TIMESTAMP.dt.day
-                    df["month"] = df.TIMESTAMP.dt.month
-                    df["year"] = df.TIMESTAMP.dt.year
-                    a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
-                    a = list(set(a))
-                    b = pd.to_datetime(a)
-                    b = sorted(b)
-                    cur1.close()
-                    cur2.close()
-                    str_list = [t.strftime("%Y-%m-%d") for t in b]
-                    return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
-                elif prch == None:
-                    raise PreventUpdate
+                str_list = [i[0] for i in t2]
+                df = pd.DataFrame(str_list)
+                df.columns = ['TIMESTAMP']
+                df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
+                df["day"] = df.TIMESTAMP.dt.day
+                df["month"] = df.TIMESTAMP.dt.month
+                df["year"] = df.TIMESTAMP.dt.year
+                a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+                a = list(set(a))
+                b = pd.to_datetime(a)
+                b = sorted(b)
+                str_list = [t.strftime("%Y-%m-%d") for t in b]
+                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+            elif prch == None: raise PreventUpdate
             else:
-                no_update, no_update
-        except mysql.connector.Error as error:
-                print("Failed to insert record into MARIADB table {}".format(error))
-        finally:
-            if conn.is_connected():
-                cur1.close()
-                cur2.close()
-                print("MySQL connection is closed")
+                cur1 = conn.cursor()
+                cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {prch} ")
+                t1 = cur1.fetchall()
+                name = [i[0] for i in t1]
+                cur2 = conn.cursor()
+                cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {prch}  ")
+                t2 = cur2.fetchall()
+
+                str_list = [i[0] for i in t2]
+                df = pd.DataFrame(str_list)
+                if df.empty !=1 :
+                    df.columns = ['TIMESTAMP']
+                    df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
+                    df["day"] = df.TIMESTAMP.dt.day
+                    df["month"] = df.TIMESTAMP.dt.month
+                    df["year"] = df.TIMESTAMP.dt.year
+                    a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+                    a = list(set(a))
+                    b = pd.to_datetime(a)
+                    b = sorted(b)
+                    str_list = [t.strftime("%Y-%m-%d") for t in b]
+                    return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+                else : raise PreventUpdate
+
+        if prname == 'enerbat':
+            if prch != None:
+                cur1 = conn.cursor()
+                cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {prch} ")
+                t1 = cur1.fetchall()
+                name = [i[0] for i in t1]
+                cur2 = conn.cursor()
+                cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {prch}  ")
+                t2 = cur2.fetchall()
+
+                str_list = [i[0] for i in t2]
+                df = pd.DataFrame(str_list)
+                df.columns = ['TIMESTAMP']
+                df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
+                df["day"] = df.TIMESTAMP.dt.day
+                df["month"] = df.TIMESTAMP.dt.month
+                df["year"] = df.TIMESTAMP.dt.year
+                a = [str(i) + '-' + str(j) + '-' + str(k) for i, j, k in zip(df["year"], df["month"], df["day"])]
+                a = list(set(a))
+                b = pd.to_datetime(a)
+                b = sorted(b)
+                str_list = [t.strftime("%Y-%m-%d") for t in b]
+                return [{'label': i, 'value': i} for i in name], [{'label': i, 'value': i} for i in str_list]
+            elif prch == None:
+                raise PreventUpdate
+        else:
+            no_update, no_update
     if on == 0:
         kk = [{'label': i, 'value': i} for i in '']
         return [{'label': i, 'value': i} for i in ''], [{'label': i, 'value': i} for i in '']
@@ -6686,8 +6672,8 @@ def pr_get_val(on,interval, prch, prname):
 
 @app.callback(ServersideOutput('memory-output', 'data'),
               [Input('dbvalname', 'value'), Input('dbvaldate', 'value')],
-              [State('dbvalchoosen', 'value'), State('db_name', 'value'),State('db_user', 'value'), State('db_password', 'value')])
-def dbname(valname, valdate, dbch, dbname,ipval, password):
+              [State('dbvalchoosen', 'value'), State('db_name', 'value'), State('db_Ip', 'value'),State('db_password', 'value')])
+def dbname(valname, valdate, dbch, dbname, ipval, password):
     if dbname == None or valname == None or valdate == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
@@ -6756,77 +6742,81 @@ def dbname(valname, valdate, dbch, dbname,ipval, password):
             t1 = cur1.fetchall()
             return t1
 @app.callback(ServersideOutput('memory-outputpr', 'data'),
-              [Input('prvalname', 'value'), Input('prvaldate', 'value'),Input('interval_component_pr_db', 'n_intervals')],
-              [State('prvalchoosen', 'value'), State('prname', 'value')])
-def dbname(valname, valdate,int, dbch, dbname):
-    if dbname == None or valname == None or valdate == None or dbch == None:
+              [Input('prvalname', 'value'), Input('prvaldate', 'value')],
+              [State('prvalchoosen', 'value'), State('prname', 'value'),
+               State('username_pr', 'value'), State('password_pr', 'value')])
+def dbname(valname, valdate, dbch, dbname, user, passw):
+    if dbname == None or valname == None or valdate == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
+    server = SSHTunnelForwarder(
+        (ipadress, 22),
+        ssh_username='soudani',
+        ssh_password="univ484067152",
+        remote_bind_address=(ipadress, 3306))
+
+    server.start()
+
     try:
-        conn = mysql.connector.connect(
-            host="193.54.2.211",
-            user="dashapp",
-            passwd="dashapp",
+        conn = mariadb.connect(
+            user='dashapp' if user == None else user,
+            password='dashapp' if passw == None else passw,
+            host=ipadress,
+            port=3306,
             database=dbname)
 
-        if dbname == 'rcckn':
-            if dbch == 'received_variablevalues':
-                cur1 = conn.cursor()
-                if len(valname) == 1:
-                    cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
-                elif len(valname) > 1:
-                    valname = tuple(valname)
-                    cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME IN {valname}")
-                else:
-                    return no_update
-                t1 = cur1.fetchall()
-                cur1.close()
-                return t1
-            elif dbch == "send_variablevalues":
-                cur1 = conn.cursor()
-                if len(valname) == 1:
-                    cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
-                elif len(valname) > 1:
-                    valname = tuple(valname)
-                    cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
-                else:
-                    return no_update
-                t1 = cur1.fetchall()
-                cur1.close()
-                return t1
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+        # Get Cursor
+
+    if dbname == 'rcckn':
+        if dbch == 'received_variablevalues':
+            cur1 = conn.cursor()
+            if len(valname) == 1:
+                cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
+            elif len(valname) > 1:
+                valname = tuple(valname)
+                cur1.execute(f"SELECT * FROM received_variablevalues WHERE VARIABLE_NAME IN {valname}")
             else:
-                cur1 = conn.cursor()
-                print(valname)
-                if len(valname) == 1:
-                    cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME = '{valname[0]}'")
-                elif len(valname) > 1:
-                    valname = tuple(valname)
-                    cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
-                else:
-                    return no_update
-                t1 = cur1.fetchall()
-                cur1.close()
-                return t1
-        if dbname == 'enerbat':
-            if dbch != None:
-                cur1 = conn.cursor()
-                if len(valname) == 1:
-                    cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME = '{valname[0]}'")
-                elif len(valname) > 1:
-                    valname = tuple(valname)
-                    cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
-                else:
-                    return no_update
-                t1 = cur1.fetchall()
-                cur1.close()
-                return t1
+                return no_update
+            t1 = cur1.fetchall()
+            return t1
+        elif dbch == "send_variablevalues":
+            cur1 = conn.cursor()
+            if len(valname) == 1:
+                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME = '{valname[0]}'")
+            elif len(valname) > 1:
+                valname = tuple(valname)
+                cur1.execute(f"SELECT * FROM send_variablevalues WHERE VARIABLE_NAME IN {valname}")
+            else:
+                return no_update
+            t1 = cur1.fetchall()
+            return t1
+        else:
 
-    except mysql.connector.Error as error:
-        print("Failed to insert record into MARIADB table {}".format(error))
-    finally:
-        if conn.is_connected():
-            cur1.close()
-
+            cur1 = conn.cursor()
+            if len(valname) == 1:
+                cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME = '{valname[0]}'")
+            elif len(valname) > 1:
+                valname = tuple(valname)
+                cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
+            else:
+                return no_update
+            t1 = cur1.fetchall()
+            return t1
+    if dbname == 'enerbat':
+        if dbch != None:
+            cur1 = conn.cursor()
+            if len(valname) == 1:
+                cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME = '{valname[0]}'")
+            elif len(valname) > 1:
+                valname = tuple(valname)
+                cur1.execute(f"SELECT * FROM {dbch} WHERE VARIABLE_NAME IN {valname}")
+            else:
+                return no_update
+            t1 = cur1.fetchall()
+            return t1
 @app.callback([Output('getdbtable', 'data'),
                Output('getdbtable', 'columns'), ],
               [Input('memory-output', 'data'), Input('dbvalname', 'value'),
@@ -7644,7 +7634,6 @@ def delivre_dropdown(values) :
 def delivre_dropdown_db(values) :
     if values == None :
         raise PreventUpdate
-    print('values', values)
     return  [{'label' : i, 'value' : i} for i in values],[{'label' : i, 'value' : i} for i in values],[{'label': i, 'value': i} for i in values],[{'label' : i, 'value' : i} for i in values]
 
 @app.callback(Output('getprgraph', 'figure'),
@@ -7791,7 +7780,6 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
             if df.empty != 1:
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                 df = df[df['VARIABLE_NAME'].isin(prvalname)]
-                print('dfrg dfbfxb xcvbxc' ,df)
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
@@ -7970,8 +7958,6 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
             if df.empty != 1:
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                 df = df[df['VARIABLE_NAME'].isin(prvalname)]
-
-                print('bu df onemli',df)
                 #
                 a = []
                 for col in df['TIMESTAMP']:
@@ -7980,8 +7966,6 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
                 valdate_new = []
                 for i in range(len(valdat)):
                     valdate_new.append(valdat[i][:10])
-                print('valy ne', valy)
-                print('valdate ne', valdate_new)
                 for j in range(len(valy)):
                     for k in range(len(valdate_new)):
                         a = df[df['VARIABLE_NAME'] == valy[j]]
@@ -9094,4 +9078,4 @@ def on_data_set_graph4(data2,data, realval,valy, valdat, sliderw, sliderh,interv
                 raise PreventUpdate
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='127.0.0.1', port=8049)
+    app.run_server(debug=True, host='0.0.0.0', port=8049)
