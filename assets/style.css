@@ -149,6 +149,19 @@
     justify-content: center;
     margin : 1rem;
 }
+.aatab1{
+    display: flex;
+    flex-direction : column;
+    justify-content: center;
+    margin-Left : 1rem
+}
+.aatabdb{
+    display: flex;
+    flex-direction : column;
+    justify-content: center;
+    margin-Top : 3rem;
+
+}
 
 
 .ac{
@@ -223,11 +236,20 @@
     display: flex;
     flex-direction : column;
     align-items : center;
-    justify-content : space-evenly;
+    justify-content : space-around;
     align-content : center;
     border-radius: 0.5rem;
-
-
+}
+.abpagedb{
+    display: flex;
+    flex-direction : column;
+    align-items : center;
+    justify-content : flex-start;
+    align-content : center;
+    border-radius: 0.5rem;
+    border : 2px solid black;
+    margin-left : -15rem;
+    background-color : #dedbd9
 }
 .abpage2{
     display: flex;
@@ -325,7 +347,7 @@
     background-image: radial-gradient( circle farthest-corner at 0.5% 99%, rgba(141,182,244,1) 0%, rgba(18,116,231,1) 90.1% );
     box-sizing: border-box;
     width : 10vw;
-    height : 10vw;
+    height : 8vw;
     border-radius: 0.5rem;
 
 }
@@ -340,6 +362,7 @@
     color : black;
 
     }
+
 .abTab4{
     display: flex;
     flex-direction : row;
@@ -683,7 +706,7 @@ html {
   overflow-y: scroll;
 }
 
-#showLeft, #showTab, #upload_data, #write_excel,#write_exceldb,#addText,#addText4, #write_excelTab4, #download, #download_data,#download_dataTab4,#download_datadb {
+#showLeft, #showTab, #upload_data,#save_to_db, #write_excel,#write_exceldb,#addText,#addText4,#addText1, #write_excelTab4, #download, #download_data,#download_dataTab4,#download_datadb {
     background-color: #0996ce; 
     border: none;
     color: white;
@@ -695,11 +718,11 @@ html {
     cursor: pointer;
     border-radius: 0.3rem;
 }
-#showLeft:hover, #showTab:hover,#write_exceldb:hover, #write_excel:hover,#write_excelTab4:hover,#addText:hover,#addText4:hover, #download:hover,#download_data:hover,#download_datadb:hover,#download_dataTab4:hover  {
+#showLeft:hover, #showTab:hover,#write_exceldb:hover, #save_to_db:hover,#write_excel:hover,#write_excelTab4:hover,#addText:hover,#addText4:hover,#addText1:hover, #download:hover,#download_data:hover,#download_datadb:hover,#download_dataTab4:hover  {
     background-color: #052b5e; 
     color: white;
 }
-#showLeft:active, #showTab:active ,#write_exceldb:active, #write_excel:active,#write_excelTab4:active,#addText:active,#addText4:active, #download:active, #download_data:active,#download_dataTab4:active, #download_datadb:active{
+#showLeft:active, #showTab:active ,#write_exceldb:active,#save_to_db:hover, #write_excel:active,#write_excelTab4:active,#addText:active,#addText4:active,#addText1:active, #download:active, #download_data:active,#download_dataTab4:active, #download_datadb:active{
     background-color: #052b5e; 
     color: white;
 }
