@@ -841,7 +841,7 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
 
                                                         dbc.Modal(
                                                             [
-                                                                dbc.ModalHeader("Enter your username and password for access Kepserver"),
+                                                                dbc.ModalHeader("Enter your username and password for access Databases"),
                                                                 dbc.Input(id='username_pr',
                                                                           type="text",
                                                                           min=-10000, max=10000, step=1, bs_size="sm",
@@ -992,6 +992,8 @@ page_4_layout = html.Div([html.Div([html.Div([html.Div([html.Div([
                                   html.Div(id='reelhidden2pr', children=[], style={'display': 'None'}),
                                   html.Div(id='reelhidden3pr', children=[], style={'display': 'None'}),
                                   html.Div(id='reelhidden4pr', children=[], style={'display': 'None'}),
+                                  html.Div(id='reelhidden5pr', children=[], style={'display': 'None'}),
+                                  html.Div(id='reelhidden6pr', children=[], style={'display': 'None'}),
                                   ],className='abcdbpage4upleft')
                                 ],className='prstyle')
                                          ], className='page4reel'),
@@ -1277,7 +1279,7 @@ def toggle_modal_analysis(n1, n2, n3, is_open):
                 [Input("ok_reel_analysis", "n_clicks"), ],
                 [State("input_tblname", "value"),State("input_dbname", "value"),
                  State("input_user", "value"),State("input_pswrd", "value")],)
-def toggle_modal_analaysis(nc, tbname, databasename,user, pswrd):
+def toggle_modal_analysis(nc, tbname, databasename,user, pswrd):
     if tbname == None  or databasename==None:
         raise PreventUpdate
     if nc != None:
@@ -1287,7 +1289,8 @@ def toggle_modal_analaysis(nc, tbname, databasename,user, pswrd):
     [Output("reelhidden3pr", "children"),Output("reelhidden4pr", "children")],
     [Input('download_pr', 'n_clicks')],
     [State("filenametodb", "value"),
-     State("nametodb", "value")],
+     State("nametodb", "value"),
+     ],
 )
 def toggle_modal_3(n1, name, nametodb):
     if n1 > 0 :
@@ -1300,6 +1303,19 @@ def toggle_modal_3(n1, name, nametodb):
         else :
             return 'LERMAB_test', 'enerbat'
     else : return no_update, no_update
+
+@app.callback(
+    [Output("reelhidden5pr", "children"),Output("reelhidden6pr", "children")],
+    [Input("ok_reel_pr", "n_clicks"), ],
+    [State("username_pr", "value"),
+     State("password_pr", "value")
+     ],)
+
+def toggle_modal_pr(nc, user, pswrd):
+    if user == None or pswrd ==None:
+        raise PreventUpdate
+    if nc > 0:
+        return user, pswrd
 
 @app.callback(Output('interval_component', 'disabled'),
               [Input("my-toggle-switch-reel", "on")],
@@ -1496,8 +1512,8 @@ def pandastosql(name,dbname, user, passw, data):
         server.start()
         try:
             db_connection = mariadb.connect(
-                user='dashapp' if user == None else user,
-                password='dashapp' if passw == None else passw,
+                user='dashapp' if user == [] else user,
+                password='dashapp' if passw == [] else passw,
                 host=ipadress,
                 port=3306,
                 database=dbname)
@@ -1548,8 +1564,8 @@ def pandastosql_analysis(name,dbname, user, passw):
         print('bura2')
         try:
             db_connection = mariadb.connect(
-                            user='dashapp' if user == None else user,
-                            password='dashapp' if passw == None else passw,
+                            user='dashapp' if user == [] else user,
+                            password='dashapp' if passw == [] else passw,
                             host=ipadress,
                             port=3306,
                             database=dbname)
@@ -1594,8 +1610,8 @@ def pandastosql_valve(name,dbname,user, passw, data, ):
     server.start()
     try:
         db_connection =  mariadb.connect(
-                            user='dashapp' if user == None else user,
-                            password='dashapp' if passw == None else passw,
+                            user='dashapp' if user == [] else user,
+                            password='dashapp' if passw == [] else passw,
                             host=ipadress,
                             port=3306,
                             database=dbname)
@@ -1614,8 +1630,9 @@ def pandastosql_valve(name,dbname,user, passw, data, ):
 
 @app.callback(Output('reelhidden2pr', 'children'),
               [Input("my-toggle-switch-pr", "on"),Input('interval_component_pr', 'n_intervals')],
-              [State("reelhidden3pr", "children"),State("reelhidden4pr", "children"), State('get_data_from_modbus_pr', 'data')])
-def pandastosql_pr(on,interval, name,nametodb, data):
+              [State("reelhidden3pr", "children"),State("reelhidden4pr", "children"), State('get_data_from_modbus_pr', 'data'),
+               State("reelhidden5pr", "children"),State("reelhidden6pr", "children"),])
+def pandastosql_pr(on,interval, name,nametodb, data, user, passw):
     if name == None or data == None:
         raise PreventUpdate
     if on == 1:
@@ -1628,11 +1645,12 @@ def pandastosql_pr(on,interval, name,nametodb, data):
             df['TIMESTAMP'] = df['TIMESTAMP'].apply(lambda x: pd.Timestamp(x).strftime('%Y-%m-%d %H:%M:%S'))
             sql_insert = list(zip(a, df['variable_name'], df['variable_num_value'], df['TIMESTAMP']))
             ipadress = "193.54.2.211"
+
             try:
                 db_connection = mysql.connector.connect(
                     host="193.54.2.211",
-                    user="dashapp",
-                    passwd="dashapp",
+                    user='dashapp' if user == [] else user,
+                    password='dashapp' if passw == [] else passw,
                     database=nametodb)
                 db_cursor = db_connection.cursor()
                 # db_cursor.execute(f"REPAIR TABLE {name}")
@@ -1641,7 +1659,6 @@ def pandastosql_pr(on,interval, name,nametodb, data):
                 # Get database table'
                 db_cursor.executemany(sql_query, sql_insert)
                 db_connection.commit()
-                db_connection.close()
                 print(db_cursor.rowcount, f"Record inserted successfully into {nametodb} Database")
             except mysql.connector.Error as error:
                 print("Failed to insert record into MARIADB table {}".format(error))
@@ -1669,15 +1686,15 @@ def display_page(pathname):
     elif pathname == '/File':
         return page_1_layout
 
-# @app.callback(
-#             Output("modal_reel_pr", "is_open"),
-#             [Input("close_reel_pr", "n_clicks"), Input("ok_reel_pr", "n_clicks")],
-#             [State("modal_reel_pr", "is_open")],
-#         )
-# def toggle_modal_pr(n2, n3, is_open):
-#     if  n2 or n3:
-#         return not is_open
-#     return is_open
+@app.callback(
+            Output("modal_reel_pr", "is_open"),
+            [Input('download_pr', 'n_clicks'),Input("close_reel_pr", "n_clicks"), Input("ok_reel_pr", "n_clicks")],
+            [State("modal_reel_pr", "is_open")],
+        )
+def toggle_modal_pr(n1,n2, n3, is_open):
+    if n1 or n2 or n3:
+        return not is_open
+    return is_open
 
 
 def parse_contents(contents, filename, date):
@@ -6345,16 +6362,16 @@ def relationdb(dbname, ipval, password):
 
 
 @app.callback(Output('prvalchoosen', 'options'),
-              [Input('prname', 'value')])
-def relationpr(prname):
+              [Input('prname', 'value')], [State("reelhidden5pr", 'children'),State("reelhidden6pr", 'children')])
+def relationpr(prname, user, passw):
     if prname == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
     try:
         db_connection = mysql.connector.connect(
             host="193.54.2.211",
-            user="dashapp",
-            passwd="dashapp",
+            user='dashapp' if user == [] else user,
+            password='dashapp' if passw == [] else passw,
             database=prname,
             port=3306, )
         db_cursor = db_connection.cursor()
@@ -6548,16 +6565,17 @@ def dbname(nc, nc2, dbch, dbname, ipval, password):
 
 @app.callback([Output('prvalname', 'options'), Output('prvaldate', 'options')],
               [Input('my-toggle-switch-pr-db', 'on'),Input('interval_component_pr_db', 'n_intervals')],
-              [State('prvalchoosen', 'value'), State('prname', 'value')])
-def pr_get_val(on,interval, prch, prname):
+              [State('prvalchoosen', 'value'), State('prname', 'value'),
+               State("reelhidden5pr", 'children'),State("reelhidden6pr", 'children')])
+def pr_get_val(on,interval, prch, prname, user, passw):
     if prname == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
     if on ==1:
         try:
             conn = mysql.connector.connect(
-                user="dashapp",
-                password="dashapp",
+                user='dashapp' if user == [] else user,
+                password='dashapp' if passw == [] else passw,
                 host=ipadress,
                 port=3306,
                 database=prname)
@@ -6645,16 +6663,13 @@ def pr_get_val(on,interval, prch, prname):
                     cur1.execute(f"SELECT DISTINCT VARIABLE_NAME FROM {prch} ")
                     t1 = cur1.fetchall()
                     name = [i[0] for i in t1]
-                    print('name',name)
                     cur2 = conn.cursor()
                     cur2.execute(f"SELECT DISTINCT TIMESTAMP FROM {prch}  ")
                     t2 = cur2.fetchall()
 
                     str_list = [i[0] for i in t2]
-                    print('str_list', str_list)
                     df = pd.DataFrame(str_list)
                     df.columns = ['TIMESTAMP']
-                    print('dfffffffffffff', df)
                     df['TIMESTAMP'] = df.TIMESTAMP.apply(pd.to_datetime)
                     df["day"] = df.TIMESTAMP.dt.day
                     df["month"] = df.TIMESTAMP.dt.month
@@ -6677,7 +6692,7 @@ def pr_get_val(on,interval, prch, prname):
             if conn.is_connected():
                 cur1.close()
                 cur2.close()
-                print("MySQL connection is closed")
+                print("MariaDB connection is closed")
     if on == 0:
         kk = [{'label': i, 'value': i} for i in '']
         return [{'label': i, 'value': i} for i in ''], [{'label': i, 'value': i} for i in '']
@@ -6757,16 +6772,17 @@ def dbname(valname, valdate, dbch, dbname,ipval, password):
             return t1
 @app.callback(ServersideOutput('memory-outputpr', 'data'),
               [Input('prvalname', 'value'), Input('prvaldate', 'value'),Input('interval_component_pr_db', 'n_intervals')],
-              [State('prvalchoosen', 'value'), State('prname', 'value')])
-def dbname(valname, valdate,int, dbch, dbname):
+              [State('prvalchoosen', 'value'), State('prname', 'value'),
+               State("reelhidden5pr", 'children'),State("reelhidden6pr", 'children')])
+def dbname(valname, valdate,int, dbch, dbname, user, passw):
     if dbname == None or valname == None or valdate == None or dbch == None:
         raise PreventUpdate
     ipadress = "193.54.2.211"
     try:
         conn = mysql.connector.connect(
             host="193.54.2.211",
-            user="dashapp",
-            passwd="dashapp",
+            user='dashapp' if user == [] else user,
+            password='dashapp' if passw == [] else passw,
             database=dbname)
 
         if dbname == 'rcckn':
@@ -7791,7 +7807,6 @@ def on_data_set_graph(data2,data, realval,valy, valdat, sliderw, sliderh,interva
             if df.empty != 1:
                 df.columns = ['ID', 'VARIABLE_NAME', 'VARIABLE_NUM_VALUE', 'TIMESTAMP']
                 df = df[df['VARIABLE_NAME'].isin(prvalname)]
-                print('dfrg dfbfxb xcvbxc' ,df)
                 a = []
                 for col in df['TIMESTAMP']:
                     a.append(col[:10])
