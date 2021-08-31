@@ -1537,40 +1537,21 @@ def pandastosql_analysis(name,dbname, user, passw):
     if name == None or dbname == None:
         raise PreventUpdate
     df = pd.read_excel('new_fichier.xlsx',index_col=[0])
-    # df.columns =  ['firstChoosenValue','leftIntegralFirst', 'leftIntegralSecond', 'leftIntegral','secondChoosenValue',
-    #                'rightIntegralFirst', 'rightIntegralSecond','rightIntegral','operation','intersection','referance_X'
-    #                'referance_Y', 'time' ]
-    print(df)
     df.reset_index(drop=True, inplace=True)
 
     if name != None:
-        #df = pd.DataFrame(data, columns=['variable_name', 'variable_num_value', 'quality', 'TIMESTAMP'])
-        a = [i for i in range(0,len(df.index))]  # for ID
+        a = [i for i in range(0,len(df.shape))]  # for ID
         sql_insert = list(zip(a,df['firstChoosenValue'],df['leftIntegralFirst'],df['leftIntegralSecond'], df['leftIntegral'],
                               df['secondChoosenValue'],df['rightIntegralFirst'],df['rightIntegralSecond'], df['rightIntegral'],
                               df['operation'],df['intersection'],df['referance_X'], df['referance_Y'],df['time']))
-        print(sql_insert)
-        print(df)
-        print('bura1')
-        if dbname == None:
-            dbname = 'enerbat'
-        ipadress = "193.54.2.211"
-        server = SSHTunnelForwarder(
-            (ipadress, 22),
-            ssh_username='soudani',
-            ssh_password="univ484067152",
-            remote_bind_address=(ipadress, 3306))
-        server.start()
-        print('bura2')
         try:
-            db_connection = mariadb.connect(
-                            user='dashapp' if user == [] else user,
-                            password='dashapp' if passw == [] else passw,
-                            host=ipadress,
-                            port=3306,
-                            database=dbname)
-            db_cursor = db_connection.cursor()
+            db_connection = mysql.connector.connect(
+                host="193.54.2.211",
+                user='dashapp' if user == [] else user,
+                password='dashapp' if passw == [] else passw,
+                database='enerbat' if dbname == [] else dbname)
             # Here creating database table '
+            db_cursor = db_connection.cursor()
             db_cursor.execute(
                 f"CREATE OR REPLACE TABLE {name} (id BIGINT PRIMARY KEY ,First_Choosen_Value VARCHAR(255), First_Left_Point VARCHAR(255), Second_Left_Point VARCHAR(255),\
                 Left_Integral FLOAT(30), Second_Choosen_Value VARCHAR(255), First_Right_Point VARCHAR(255), Second_Right_Point VARCHAR(255),\
@@ -1581,9 +1562,13 @@ def pandastosql_analysis(name,dbname, user, passw):
             db_cursor.executemany(sql_query, sql_insert)
             db_connection.commit()
             print(db_cursor.rowcount, "Record inserted successfully into ENERBAT Database")
-        except mariadb.Error as e:
-            print(f"Error connecting to MariaDB Platform: {e}")
-            sys.exit(1)
+        except mysql.connector.Error as error:
+            print("Failed to insert record into MARIADB table {}".format(error))
+        finally:
+            if db_connection.is_connected():
+                db_cursor.close()
+                db_connection.close()
+                print("MariaDB connection is closed")
 
 
 @app.callback(Output('reelhidden10', 'children'),
@@ -6116,15 +6101,15 @@ def differanceCalculation4(firstshape, secondshape, valuechoosenleft, valuechoos
 def write_excel(nc, a, b, c, d, e, f, g, h, i, j,ref_X, ref_Y):
     if nc > 0:
         now = datetime.datetime.now()
-        m='5'
+        m='0'
         print(i)
         if i == [] or i == 'total integration' or i == None:
             i = 0.0
         if j == None:
             j = 0.0
-        if ref_X == None:
+        if ref_X == None or ref_X == []:
             ref_X =0.0
-        if ref_Y == None :
+        if ref_Y == None or ref_Y == [] :
             ref_Y = 0.0
         if h == 'total integration' or h == None:
             h == 0.0
