@@ -582,6 +582,7 @@ page_3_layout = html.Div([html.Div([
                             html.Div([
                                      dcc.Dropdown(id='realvalue',
                                                        multi=True,
+                                                       options = [{'label': i[16:], 'value': i} for i in parameters_name],
                                                        style={'cursor': 'pointer'},
                                                        className='stockSelectorClassPage3',
                                                        clearable=True,

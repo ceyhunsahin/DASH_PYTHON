@@ -318,35 +318,6 @@ def storedata_pr(id, val, qual, date):
     zipped_val = list(zip(id, val, qual, date))
     return zipped_val
 
-# @app.callback(Output('reelhidden1pr', 'children'),
-#               [Input("write_excel_pr", "n_clicks")],
-#               [State('get_data_from_modbus_pr', 'data')],
-#               )
-# def intervalcontrol2_pr(nc, data):
-#     if nc > 0:
-#         df = pd.DataFrame(data, columns=['ID', 'Value', 'Quality', 'date'])
-#         df.to_excel('real.xlsx')
-#
-#
-# @app.server.route("/download_excel_pr/")
-# def download_excel_pr():
-#     # Create DF
-#     dff = pd.read_excel("real.xlsx")
-#     # Convert DF
-#     buf = io.BytesIO()
-#     excel_writer = pd.ExcelWriter(buf, engine="xlsxwriter")
-#     dff.to_excel(excel_writer, sheet_name="sheet1")
-#     excel_writer.save()
-#     excel_data = buf.getvalue()
-#     buf.seek(0)
-#     return send_file(
-#         buf,
-#         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-#         attachment_filename="real.xlsx",
-#         as_attachment=True,
-#         cache_timeout=0
-#     )
-
 @app.callback(Output('reelhidden2', 'children'),
               [Input("reelhidden3", "children"), Input("reelhidden5", "children"),
                Input("reelhidden_user", "children"), Input("reelhidden_pswrd", "children"),],
